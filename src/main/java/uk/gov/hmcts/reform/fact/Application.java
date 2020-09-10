@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.demo;
+package uk.gov.hmcts.reform.fact;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
