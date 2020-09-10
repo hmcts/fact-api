@@ -6,7 +6,7 @@ import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
 def product = "fact"
-def component = "fact-api"
+def component = "api"
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
