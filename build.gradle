@@ -112,8 +112,8 @@ project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 sonarqube {
   properties {
-    property "sonar.projectName", "Reform :: fact-backend"
-    property "sonar.projectKey", "uk.gov.hmcts.reform:fact-backend"
+    property "sonar.projectName", "Reform :: fact-api"
+    property "sonar.projectKey", "uk.gov.hmcts.reform:fact-api"
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
   }
 }
@@ -214,7 +214,7 @@ mainClassName = 'uk.gov.hmcts.reform.fact.Application'
 
 bootJar {
   getArchiveFileName().set(provider {
-    'fact-backend.jar'
+    'fact-api.jar'
   })
 
   manifest {

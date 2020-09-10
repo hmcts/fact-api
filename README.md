@@ -1,6 +1,6 @@
-# fact-backend
+# FACT-API
 
-[![Build Status](https://travis-ci.org/hmcts/fact-fact-backend.svg?branch=master)](https://travis-ci.org/hmcts/fact-fact-backend)
+[![Build Status](https://travis-ci.org/hmcts/fact-api.svg?branch=master)](https://travis-ci.org/hmcts/fact-api)
 
 ## Notes
 
@@ -35,7 +35,7 @@ Create docker image:
   docker-compose build
 ```
 
-Run the distribution (created in `build/install/fact-backend` directory)
+Run the distribution (created in `build/install/fact-api` directory)
 by executing the following command:
 
 ```bash
