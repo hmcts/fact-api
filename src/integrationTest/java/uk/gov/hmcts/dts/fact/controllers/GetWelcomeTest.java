@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.fact.controllers;
+package uk.gov.hmcts.dts.fact.controllers;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
