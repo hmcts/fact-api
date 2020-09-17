@@ -2,6 +2,21 @@ provider "azurerm" {
   features {}
 }
 
+locals {
+  app = "fact-api"
+  app_full_name = "${var.product}-${var.component}"
+  vault_name = "${local.app_full_name}-${var.env}"
+}
+
+module "app" {
+  source = "git@github.com:hmcts/cnp-module-webapp?ref=master"
+  product = "${local.app_full_name}"
+  location = "${var.location}"
+  env = "${var.env}"
+  ilbIp = "${var.ilbIp}"
+  subscription = "${var.subscription}"
+}
+
 module "fact_api_key_vault" {
   source = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
   product = "${local.app_full_name}"
