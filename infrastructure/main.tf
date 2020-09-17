@@ -15,6 +15,10 @@ module "app" {
   env = var.env
   ilbIp = var.ilbIp
   subscription = var.subscription
+  common_tags  = var.common_tags
+  app_settings = {
+    managed_identity_object_id = var.managed_identity_object_id
+  }
 }
 
 module "key_vault" {
