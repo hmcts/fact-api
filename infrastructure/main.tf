@@ -48,7 +48,7 @@ resource "azurerm_key_vault_secret" "POSTGRES_DATABASE" {
   key_vault_id = data.azurerm_key_vault.fact_api_key_vault.id
 }
 
-module "recipe-database" {
+module "fact-database" {
   source             = "git@github.com:hmcts/cnp-module-postgres?ref=master"
   product            = var.product
   location           = var.location
