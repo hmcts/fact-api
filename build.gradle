@@ -236,9 +236,9 @@ wrapper {
 }
 
 flyway {
-  url = System.getenv('FLYWAY_URL')
-  user = System.getenv('FLYWAY_USER')
-  password = System.getenv('FLYWAY_PASSWORD')
+  url = "jdbc:postgresql://" + System.getenv('POSTGRES_HOST') + ":" + System.getenv('POSTGRES_PORT') + "/" + System.getenv('POSTGRES_DATABASE')
+  user = System.getenv('POSTGRES_USER')
+  password = System.getenv('POSTGRES_PASSWORD')
   baselineOnMigrate = true
   baselineVersion = '000'
 }
