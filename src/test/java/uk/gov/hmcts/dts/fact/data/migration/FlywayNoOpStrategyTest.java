@@ -43,7 +43,7 @@ public class FlywayNoOpStrategyTest {
     }
 
     @Test
-    public void should_not_throw_exception_when_all_migrations_are_applied() {
+    public void shouldNotThrowExceptionWhenAllMigrationsAreApplied() {
         MigrationInfo[] infos = {info, info};
         given(flyway.info()).willReturn(infoService);
         given(infoService.all()).willReturn(infos);
@@ -54,7 +54,7 @@ public class FlywayNoOpStrategyTest {
     }
 
     @Test
-    public void should_throw_exception_when_one_migration_is_pending() {
+    public void shouldThrowExceptionWhenOneMigrationIsPending() {
         MigrationInfo[] infos = {info, info};
         given(flyway.info()).willReturn(infoService);
         given(infoService.all()).willReturn(infos);
