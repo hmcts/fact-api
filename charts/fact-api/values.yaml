@@ -4,7 +4,7 @@ java:
   ingressHost: fact-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fact
   keyVaults:
-    em-stitching:
+    fact-api:
       resourceGroup: fact-api
       secrets:
         - AppInsightsInstrumentationKey
