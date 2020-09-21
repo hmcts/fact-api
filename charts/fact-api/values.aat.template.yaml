@@ -1,4 +1,14 @@
 # Don't modify this file, it is only needed for the pipeline to set the image and ingressHost
 java:
+  keyVaults:
+    fact:
+      resourceGroup: fact
+      secrets:
+        - AppInsightsInstrumentationKey
+        - fact-api-POSTGRES-DATABASE
+        - fact-api-POSTGRES-HOST
+        - fact-api-POSTGRES-PASS
+        - fact-api-POSTGRES-PORT
+        - fact-api-POSTGRES-USER
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
