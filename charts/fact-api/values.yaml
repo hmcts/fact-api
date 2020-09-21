@@ -4,8 +4,8 @@ java:
   ingressHost: fact-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fact
   keyVaults:
-    fact-api:
-      resourceGroup: fact-api
+    fact:
+      resourceGroup: fact
       secrets:
         - AppInsightsInstrumentationKey
         - fact-api-POSTGRES-DATABASE
