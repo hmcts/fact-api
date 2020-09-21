@@ -2,7 +2,7 @@ spring:
   cloud:
     propertiesvolume:
       enabled: true
-      prefixed: false
+      prefixed: true
       paths: /mnt/secrets/fact-api
       aliases:
         fact-api-POSTGRES_HOST: POSTGRES_HOST
