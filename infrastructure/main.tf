@@ -8,7 +8,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.product}-${var.component}-${var.env}"
+  name     = local.vault_name
   location = var.location
 
   tags = var.common_tags
