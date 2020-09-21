@@ -32,8 +32,3 @@ variable "ilbIp"{}
 variable "managed_identity_object_id" {
   default = ""
 }
-
-variable "appinsights_location" {
-  default     = "West Europe"
-  description = "Location for Application Insights"
-}
