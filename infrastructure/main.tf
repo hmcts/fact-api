@@ -7,13 +7,6 @@ locals {
   resource_group_name = "${var.product}-${var.env}"
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = local.vault_name
-  location = var.location
-
-  tags = var.common_tags
-}
-
 data "azurerm_key_vault" "fact_key_vault" {
   name = "s2s-${var.env}"
   resource_group_name = "rpe-service-auth-provider-${var.env}"
