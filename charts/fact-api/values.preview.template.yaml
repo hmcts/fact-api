@@ -2,8 +2,17 @@ java:
   postgresql:
     enabled: true
   environment:
-    DUMMY: true
     RUN_DB_MIGRATION_ON_STARTUP: true
+  keyVaults:
+    fact:
+      resourceGroup: fact
+      secrets:
+        - AppInsightsInstrumentationKey
+        - fact-api-POSTGRES-DATABASE
+        - fact-api-POSTGRES-HOST
+        - fact-api-POSTGRES-PASS
+        - fact-api-POSTGRES-PORT
+        - fact-api-POSTGRES-USER
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}

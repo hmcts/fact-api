@@ -3,16 +3,6 @@ java:
   image: 'hmctspublic.azurecr.io/fact/fact-api:latest'
   ingressHost: fact-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fact
-  keyVaults:
-    fact:
-      resourceGroup: fact
-      secrets:
-        - AppInsightsInstrumentationKey
-        - fact-api-POSTGRES-DATABASE
-        - fact-api-POSTGRES-HOST
-        - fact-api-POSTGRES-PASS
-        - fact-api-POSTGRES-PORT
-        - fact-api-POSTGRES-USER
   environment:
     POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
     POSTGRES_SSL_MODE: disable
