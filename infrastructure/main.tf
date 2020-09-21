@@ -8,11 +8,6 @@ locals {
 }
 
 data "azurerm_key_vault" "fact_key_vault" {
-  name = "s2s-${var.env}"
-  resource_group_name = "rpe-service-auth-provider-${var.env}"
-}
-
-data "azurerm_key_vault" "fact_key_vault" {
   name = local.vault_name
   resource_group_name = local.resource_group_name
 }
