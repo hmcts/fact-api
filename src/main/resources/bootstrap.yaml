@@ -6,6 +6,6 @@ spring:
       paths: /mnt/secrets/fact
       aliases:
         fact-api-POSTGRES_HOST: POSTGRES_HOST
-        fact-api-POSTGRES_SSL_MODE: POSTGRES_SSL_MODE
+        fact-api-POSTGRES_PASS: POSTGRES-PASS
         fact-api-POSTGRES_DATABASE: POSTGRES_DATABASE
         fact-api-POSTGRES_USER: POSTGRES_USER
