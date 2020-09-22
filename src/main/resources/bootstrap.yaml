@@ -5,7 +5,7 @@ spring:
       prefixed: false
       paths: /mnt/secrets/fact
       aliases:
-        fact-api-POSTGRES_HOST: POSTGRES_HOST
-        fact-api-POSTGRES_PASS: POSTGRES_PASS
-        fact-api-POSTGRES_DATABASE: POSTGRES_DATABASE
-        fact-api-POSTGRES_USER: POSTGRES_USER
+        fact-api-POSTGRES-HOST: POSTGRES_HOST
+        fact-api-POSTGRES-PASS: POSTGRES_PASS
+        fact-api-POSTGRES-DATABASE: POSTGRES_DATABASE
+        fact-api-POSTGRES-USER: POSTGRES_USER
