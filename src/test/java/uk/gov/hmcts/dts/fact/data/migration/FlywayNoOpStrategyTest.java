@@ -4,13 +4,10 @@ import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationInfo;
 import org.flywaydb.core.api.MigrationInfoService;
 import org.flywaydb.core.api.MigrationState;
-import org.junit.After;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import uk.gov.hmcts.dts.fact.exception.PendingMigrationScriptException;
@@ -23,9 +20,6 @@ import static org.mockito.BDDMockito.reset;
 @ExtendWith(MockitoExtension.class)
 public class FlywayNoOpStrategyTest {
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
     @Mock
     private Flyway flyway;
 
@@ -37,7 +31,7 @@ public class FlywayNoOpStrategyTest {
 
     private final FlywayMigrationStrategy strategy = new FlywayNoOpStrategy();
 
-    @After
+    @AfterEach
     public void tearUp() {
         reset(flyway, infoService, info);
     }
@@ -62,8 +56,8 @@ public class FlywayNoOpStrategyTest {
 
         Throwable exception = catchThrowable(() -> strategy.migrate(flyway));
         assertThat(exception)
-            .isInstanceOf(PendingMigrationScriptException.class)
-            .hasMessageStartingWith("Found migration not yet applied");
+                .isInstanceOf(PendingMigrationScriptException.class)
+                .hasMessageStartingWith("Found migration not yet applied");
     }
 }
 
