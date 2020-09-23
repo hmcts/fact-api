@@ -12,7 +12,7 @@ GradleBuilder builder = new GradleBuilder(this, product)
 
 withPipeline(type, product, component) {
   disableLegacyDeployment()
-  enableDbMigration('fact-api')
+  enableDbMigration('fact')
 
   after('test') {
     builder.gradle('integration')
