@@ -24,7 +24,7 @@ SET row_security = off;
 --
 --
 -- --
--- -- Name: EXTENSION cube; Type: COMMENT; Schema: -; Owner:
+-- -- Name: EXTENSION cube; Type: COMMENT; Schema: -; Owner: -
 -- --
 --
 -- COMMENT ON EXTENSION cube IS 'data type for multidimensional cubes';
@@ -38,7 +38,7 @@ SET row_security = off;
 --
 --
 -- --
--- -- Name: EXTENSION earthdistance; Type: COMMENT; Schema: -; Owner:
+-- -- Name: EXTENSION earthdistance; Type: COMMENT; Schema: -; Owner: -
 -- --
 --
 -- COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
@@ -56,10 +56,8 @@ CREATE TABLE public.search_addresstype (
 );
 
 
-ALTER TABLE public.search_addresstype OWNER TO fact;
-
 --
--- Name: search_addresstype_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_addresstype_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_addresstype_id_seq
@@ -70,17 +68,15 @@ CREATE SEQUENCE public.search_addresstype_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_addresstype_id_seq OWNER TO fact;
-
 --
--- Name: search_addresstype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_addresstype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_addresstype_id_seq OWNED BY public.search_addresstype.id;
 
 
 --
--- Name: search_areaoflaw; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_areaoflaw; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_areaoflaw (
@@ -95,10 +91,8 @@ CREATE TABLE public.search_areaoflaw (
 );
 
 
-ALTER TABLE public.search_areaoflaw OWNER TO fact;
-
 --
--- Name: search_areaoflaw_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_areaoflaw_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_areaoflaw_id_seq
@@ -109,17 +103,15 @@ CREATE SEQUENCE public.search_areaoflaw_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_areaoflaw_id_seq OWNER TO fact;
-
 --
--- Name: search_areaoflaw_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_areaoflaw_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_areaoflaw_id_seq OWNED BY public.search_areaoflaw.id;
 
 
 --
--- Name: search_contact; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_contact; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_contact (
@@ -133,10 +125,8 @@ CREATE TABLE public.search_contact (
 );
 
 
-ALTER TABLE public.search_contact OWNER TO fact;
-
 --
--- Name: search_contact_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_contact_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_contact_id_seq
@@ -147,17 +137,15 @@ CREATE SEQUENCE public.search_contact_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_contact_id_seq OWNER TO fact;
-
 --
--- Name: search_contact_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_contact_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_contact_id_seq OWNED BY public.search_contact.id;
 
 
 --
--- Name: search_court; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_court; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_court (
@@ -195,10 +183,8 @@ CREATE TABLE public.search_court (
 );
 
 
-ALTER TABLE public.search_court OWNER TO fact;
-
 --
--- Name: search_court_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_court_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_court_id_seq
@@ -209,17 +195,15 @@ CREATE SEQUENCE public.search_court_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_court_id_seq OWNER TO fact;
-
 --
--- Name: search_court_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_court_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_court_id_seq OWNED BY public.search_court.id;
 
 
 --
--- Name: search_courtaddress; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtaddress; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtaddress (
@@ -234,10 +218,8 @@ CREATE TABLE public.search_courtaddress (
 );
 
 
-ALTER TABLE public.search_courtaddress OWNER TO fact;
-
 --
--- Name: search_courtaddress_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtaddress_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtaddress_id_seq
@@ -248,17 +230,15 @@ CREATE SEQUENCE public.search_courtaddress_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtaddress_id_seq OWNER TO fact;
-
 --
--- Name: search_courtaddress_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtaddress_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtaddress_id_seq OWNED BY public.search_courtaddress.id;
 
 
 --
--- Name: search_courtareaoflaw; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtareaoflaw (
@@ -269,10 +249,8 @@ CREATE TABLE public.search_courtareaoflaw (
 );
 
 
-ALTER TABLE public.search_courtareaoflaw OWNER TO fact;
-
 --
--- Name: search_courtareaoflaw_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtareaoflaw_id_seq
@@ -283,17 +261,15 @@ CREATE SEQUENCE public.search_courtareaoflaw_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtareaoflaw_id_seq OWNER TO fact;
-
 --
--- Name: search_courtareaoflaw_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtareaoflaw_id_seq OWNED BY public.search_courtareaoflaw.id;
 
 
 --
--- Name: search_courtattribute; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtattribute; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtattribute (
@@ -304,10 +280,8 @@ CREATE TABLE public.search_courtattribute (
 );
 
 
-ALTER TABLE public.search_courtattribute OWNER TO fact;
-
 --
--- Name: search_courtattribute_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtattribute_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtattribute_id_seq
@@ -318,17 +292,15 @@ CREATE SEQUENCE public.search_courtattribute_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtattribute_id_seq OWNER TO fact;
-
 --
--- Name: search_courtattribute_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtattribute_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtattribute_id_seq OWNED BY public.search_courtattribute.id;
 
 
 --
--- Name: search_courtattributetype; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtattributetype; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtattributetype (
@@ -337,10 +309,8 @@ CREATE TABLE public.search_courtattributetype (
 );
 
 
-ALTER TABLE public.search_courtattributetype OWNER TO fact;
-
 --
--- Name: search_courtattributetype_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtattributetype_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtattributetype_id_seq
@@ -351,17 +321,15 @@ CREATE SEQUENCE public.search_courtattributetype_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtattributetype_id_seq OWNER TO fact;
-
 --
--- Name: search_courtattributetype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtattributetype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtattributetype_id_seq OWNED BY public.search_courtattributetype.id;
 
 
 --
--- Name: search_courtcontact; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtcontact; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtcontact (
@@ -371,10 +339,8 @@ CREATE TABLE public.search_courtcontact (
 );
 
 
-ALTER TABLE public.search_courtcontact OWNER TO fact;
-
 --
--- Name: search_courtcontact_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtcontact_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtcontact_id_seq
@@ -385,17 +351,15 @@ CREATE SEQUENCE public.search_courtcontact_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtcontact_id_seq OWNER TO fact;
-
 --
--- Name: search_courtcontact_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtcontact_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtcontact_id_seq OWNED BY public.search_courtcontact.id;
 
 
 --
--- Name: search_courtcourttype; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtcourttype; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtcourttype (
@@ -405,10 +369,8 @@ CREATE TABLE public.search_courtcourttype (
 );
 
 
-ALTER TABLE public.search_courtcourttype OWNER TO fact;
-
 --
--- Name: search_courtcourttype_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtcourttype_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtcourttype_id_seq
@@ -419,17 +381,15 @@ CREATE SEQUENCE public.search_courtcourttype_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtcourttype_id_seq OWNER TO fact;
-
 --
--- Name: search_courtcourttype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtcourttype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtcourttype_id_seq OWNED BY public.search_courtcourttype.id;
 
 
 --
--- Name: search_courtemail; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtemail; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtemail (
@@ -440,10 +400,8 @@ CREATE TABLE public.search_courtemail (
 );
 
 
-ALTER TABLE public.search_courtemail OWNER TO fact;
-
 --
--- Name: search_courtemail_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtemail_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtemail_id_seq
@@ -454,17 +412,15 @@ CREATE SEQUENCE public.search_courtemail_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtemail_id_seq OWNER TO fact;
-
 --
--- Name: search_courtemail_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtemail_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtemail_id_seq OWNED BY public.search_courtemail.id;
 
 
 --
--- Name: search_courtfacility; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtfacility; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtfacility (
@@ -474,10 +430,8 @@ CREATE TABLE public.search_courtfacility (
 );
 
 
-ALTER TABLE public.search_courtfacility OWNER TO fact;
-
 --
--- Name: search_courtfacility_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtfacility_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtfacility_id_seq
@@ -488,17 +442,15 @@ CREATE SEQUENCE public.search_courtfacility_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtfacility_id_seq OWNER TO fact;
-
 --
--- Name: search_courtfacility_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtfacility_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtfacility_id_seq OWNED BY public.search_courtfacility.id;
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtlocalauthorityareaoflaw (
@@ -509,10 +461,8 @@ CREATE TABLE public.search_courtlocalauthorityareaoflaw (
 );
 
 
-ALTER TABLE public.search_courtlocalauthorityareaoflaw OWNER TO fact;
-
 --
--- Name: search_courtlocalauthorityareaoflaw_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtlocalauthorityareaoflaw_id_seq
@@ -523,17 +473,15 @@ CREATE SEQUENCE public.search_courtlocalauthorityareaoflaw_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtlocalauthorityareaoflaw_id_seq OWNER TO fact;
-
 --
--- Name: search_courtlocalauthorityareaoflaw_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtlocalauthorityareaoflaw_id_seq OWNED BY public.search_courtlocalauthorityareaoflaw.id;
 
 
 --
--- Name: search_courtopeningtime; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtopeningtime; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtopeningtime (
@@ -544,10 +492,8 @@ CREATE TABLE public.search_courtopeningtime (
 );
 
 
-ALTER TABLE public.search_courtopeningtime OWNER TO fact;
-
 --
--- Name: search_courtopeningtime_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtopeningtime_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtopeningtime_id_seq
@@ -558,17 +504,15 @@ CREATE SEQUENCE public.search_courtopeningtime_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtopeningtime_id_seq OWNER TO fact;
-
 --
--- Name: search_courtopeningtime_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtopeningtime_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtopeningtime_id_seq OWNED BY public.search_courtopeningtime.id;
 
 
 --
--- Name: search_courtpostcode; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courtpostcode; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courtpostcode (
@@ -578,10 +522,8 @@ CREATE TABLE public.search_courtpostcode (
 );
 
 
-ALTER TABLE public.search_courtpostcode OWNER TO fact;
-
 --
--- Name: search_courtpostcode_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courtpostcode_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courtpostcode_id_seq
@@ -592,17 +534,15 @@ CREATE SEQUENCE public.search_courtpostcode_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courtpostcode_id_seq OWNER TO fact;
-
 --
--- Name: search_courtpostcode_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courtpostcode_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courtpostcode_id_seq OWNED BY public.search_courtpostcode.id;
 
 
 --
--- Name: search_courttype; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_courttype; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_courttype (
@@ -611,10 +551,8 @@ CREATE TABLE public.search_courttype (
 );
 
 
-ALTER TABLE public.search_courttype OWNER TO fact;
-
 --
--- Name: search_courttype_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_courttype_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_courttype_id_seq
@@ -625,17 +563,15 @@ CREATE SEQUENCE public.search_courttype_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_courttype_id_seq OWNER TO fact;
-
 --
--- Name: search_courttype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_courttype_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_courttype_id_seq OWNED BY public.search_courttype.id;
 
 
 --
--- Name: search_datastatus; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_datastatus; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_datastatus (
@@ -645,10 +581,8 @@ CREATE TABLE public.search_datastatus (
 );
 
 
-ALTER TABLE public.search_datastatus OWNER TO fact;
-
 --
--- Name: search_datastatus_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_datastatus_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_datastatus_id_seq
@@ -659,17 +593,15 @@ CREATE SEQUENCE public.search_datastatus_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_datastatus_id_seq OWNER TO fact;
-
 --
--- Name: search_datastatus_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_datastatus_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_datastatus_id_seq OWNED BY public.search_datastatus.id;
 
 
 --
--- Name: search_email; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_email; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_email (
@@ -681,10 +613,8 @@ CREATE TABLE public.search_email (
 );
 
 
-ALTER TABLE public.search_email OWNER TO fact;
-
 --
--- Name: search_email_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_email_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_email_id_seq
@@ -695,17 +625,15 @@ CREATE SEQUENCE public.search_email_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_email_id_seq OWNER TO fact;
-
 --
--- Name: search_email_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_email_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_email_id_seq OWNED BY public.search_email.id;
 
 
 --
--- Name: search_emergencymessage; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_emergencymessage; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_emergencymessage (
@@ -716,10 +644,8 @@ CREATE TABLE public.search_emergencymessage (
 );
 
 
-ALTER TABLE public.search_emergencymessage OWNER TO fact;
-
 --
--- Name: search_emergencymessage_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_emergencymessage_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_emergencymessage_id_seq
@@ -730,17 +656,15 @@ CREATE SEQUENCE public.search_emergencymessage_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_emergencymessage_id_seq OWNER TO fact;
-
 --
--- Name: search_emergencymessage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_emergencymessage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_emergencymessage_id_seq OWNED BY public.search_emergencymessage.id;
 
 
 --
--- Name: search_facility; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_facility; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_facility (
@@ -754,10 +678,8 @@ CREATE TABLE public.search_facility (
 );
 
 
-ALTER TABLE public.search_facility OWNER TO fact;
-
 --
--- Name: search_facility_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_facility_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_facility_id_seq
@@ -768,17 +690,15 @@ CREATE SEQUENCE public.search_facility_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_facility_id_seq OWNER TO fact;
-
 --
--- Name: search_facility_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_facility_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_facility_id_seq OWNED BY public.search_facility.id;
 
 
 --
--- Name: search_localauthority; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_localauthority; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_localauthority (
@@ -787,10 +707,8 @@ CREATE TABLE public.search_localauthority (
 );
 
 
-ALTER TABLE public.search_localauthority OWNER TO fact;
-
 --
--- Name: search_localauthority_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_localauthority_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_localauthority_id_seq
@@ -801,17 +719,15 @@ CREATE SEQUENCE public.search_localauthority_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_localauthority_id_seq OWNER TO fact;
-
 --
--- Name: search_localauthority_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_localauthority_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_localauthority_id_seq OWNED BY public.search_localauthority.id;
 
 
 --
--- Name: search_openingtime; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_openingtime; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_openingtime (
@@ -821,10 +737,8 @@ CREATE TABLE public.search_openingtime (
 );
 
 
-ALTER TABLE public.search_openingtime OWNER TO fact;
-
 --
--- Name: search_openingtime_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_openingtime_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_openingtime_id_seq
@@ -835,17 +749,15 @@ CREATE SEQUENCE public.search_openingtime_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_openingtime_id_seq OWNER TO fact;
-
 --
--- Name: search_openingtime_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_openingtime_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_openingtime_id_seq OWNED BY public.search_openingtime.id;
 
 
 --
--- Name: search_parkinginfo; Type: TABLE; Schema: public; Owner: fact
+-- Name: search_parkinginfo; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.search_parkinginfo (
@@ -856,10 +768,8 @@ CREATE TABLE public.search_parkinginfo (
 );
 
 
-ALTER TABLE public.search_parkinginfo OWNER TO fact;
-
 --
--- Name: search_parkinginfo_id_seq; Type: SEQUENCE; Schema: public; Owner: fact
+-- Name: search_parkinginfo_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.search_parkinginfo_id_seq
@@ -870,178 +780,176 @@ CREATE SEQUENCE public.search_parkinginfo_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.search_parkinginfo_id_seq OWNER TO fact;
-
 --
--- Name: search_parkinginfo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fact
+-- Name: search_parkinginfo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.search_parkinginfo_id_seq OWNED BY public.search_parkinginfo.id;
 
 
 --
--- Name: search_addresstype id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_addresstype id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_addresstype ALTER COLUMN id SET DEFAULT nextval('public.search_addresstype_id_seq'::regclass);
 
 
 --
--- Name: search_areaoflaw id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_areaoflaw id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_areaoflaw ALTER COLUMN id SET DEFAULT nextval('public.search_areaoflaw_id_seq'::regclass);
 
 
 --
--- Name: search_contact id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_contact id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_contact ALTER COLUMN id SET DEFAULT nextval('public.search_contact_id_seq'::regclass);
 
 
 --
--- Name: search_court id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_court id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_court ALTER COLUMN id SET DEFAULT nextval('public.search_court_id_seq'::regclass);
 
 
 --
--- Name: search_courtaddress id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtaddress id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtaddress ALTER COLUMN id SET DEFAULT nextval('public.search_courtaddress_id_seq'::regclass);
 
 
 --
--- Name: search_courtareaoflaw id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtareaoflaw ALTER COLUMN id SET DEFAULT nextval('public.search_courtareaoflaw_id_seq'::regclass);
 
 
 --
--- Name: search_courtattribute id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtattribute id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtattribute ALTER COLUMN id SET DEFAULT nextval('public.search_courtattribute_id_seq'::regclass);
 
 
 --
--- Name: search_courtattributetype id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtattributetype id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtattributetype ALTER COLUMN id SET DEFAULT nextval('public.search_courtattributetype_id_seq'::regclass);
 
 
 --
--- Name: search_courtcontact id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtcontact id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcontact ALTER COLUMN id SET DEFAULT nextval('public.search_courtcontact_id_seq'::regclass);
 
 
 --
--- Name: search_courtcourttype id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtcourttype id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcourttype ALTER COLUMN id SET DEFAULT nextval('public.search_courtcourttype_id_seq'::regclass);
 
 
 --
--- Name: search_courtemail id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtemail id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtemail ALTER COLUMN id SET DEFAULT nextval('public.search_courtemail_id_seq'::regclass);
 
 
 --
--- Name: search_courtfacility id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtfacility id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtfacility ALTER COLUMN id SET DEFAULT nextval('public.search_courtfacility_id_seq'::regclass);
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw ALTER COLUMN id SET DEFAULT nextval('public.search_courtlocalauthorityareaoflaw_id_seq'::regclass);
 
 
 --
--- Name: search_courtopeningtime id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtopeningtime id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtopeningtime ALTER COLUMN id SET DEFAULT nextval('public.search_courtopeningtime_id_seq'::regclass);
 
 
 --
--- Name: search_courtpostcode id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courtpostcode id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtpostcode ALTER COLUMN id SET DEFAULT nextval('public.search_courtpostcode_id_seq'::regclass);
 
 
 --
--- Name: search_courttype id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_courttype id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courttype ALTER COLUMN id SET DEFAULT nextval('public.search_courttype_id_seq'::regclass);
 
 
 --
--- Name: search_datastatus id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_datastatus id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_datastatus ALTER COLUMN id SET DEFAULT nextval('public.search_datastatus_id_seq'::regclass);
 
 
 --
--- Name: search_email id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_email id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_email ALTER COLUMN id SET DEFAULT nextval('public.search_email_id_seq'::regclass);
 
 
 --
--- Name: search_emergencymessage id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_emergencymessage id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_emergencymessage ALTER COLUMN id SET DEFAULT nextval('public.search_emergencymessage_id_seq'::regclass);
 
 
 --
--- Name: search_facility id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_facility id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_facility ALTER COLUMN id SET DEFAULT nextval('public.search_facility_id_seq'::regclass);
 
 
 --
--- Name: search_localauthority id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_localauthority id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_localauthority ALTER COLUMN id SET DEFAULT nextval('public.search_localauthority_id_seq'::regclass);
 
 
 --
--- Name: search_openingtime id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_openingtime id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_openingtime ALTER COLUMN id SET DEFAULT nextval('public.search_openingtime_id_seq'::regclass);
 
 
 --
--- Name: search_parkinginfo id; Type: DEFAULT; Schema: public; Owner: fact
+-- Name: search_parkinginfo id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_parkinginfo ALTER COLUMN id SET DEFAULT nextval('public.search_parkinginfo_id_seq'::regclass);
 
 
 --
--- Data for Name: flyway_schema_history; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: flyway_schema_history; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.flyway_schema_history (installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success) FROM stdin;
@@ -1049,7 +957,7 @@ COPY public.flyway_schema_history (installed_rank, version, description, type, s
 
 
 --
--- Data for Name: search_addresstype; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_addresstype; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_addresstype (id, name) FROM stdin;
@@ -1060,7 +968,7 @@ COPY public.search_addresstype (id, name) FROM stdin;
 
 
 --
--- Data for Name: search_areaoflaw; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_areaoflaw; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_areaoflaw (id, name, external_link, external_link_desc, external_link_desc_cy, external_link_cy, alt_name, alt_name_cy) FROM stdin;
@@ -1084,7 +992,7 @@ COPY public.search_areaoflaw (id, name, external_link, external_link_desc, exter
 
 
 --
--- Data for Name: search_contact; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_contact; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_contact (id, name, number, sort_order, explanation, in_leaflet, explanation_cy) FROM stdin;
@@ -3968,7 +3876,7 @@ COPY public.search_contact (id, name, number, sort_order, explanation, in_leafle
 
 
 --
--- Data for Name: search_court; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_court; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_court (id, admin_id, name, slug, displayed, lat, lon, number, alert, directions, image_file, cci_code, updated_at, created_at, parking_id, info, hide_aols, defence_leaflet, info_leaflet, juror_leaflet, prosecution_leaflet, magistrate_code, welsh_enabled, alert_cy, directions_cy, info_cy, defence_leaflet_cy, info_leaflet_cy, prosecution_leaflet_cy, name_cy, gbs) FROM stdin;
@@ -4739,7 +4647,7 @@ COPY public.search_court (id, admin_id, name, slug, displayed, lat, lon, number,
 
 
 --
--- Data for Name: search_courtaddress; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtaddress; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtaddress (id, address, postcode, address_type_id, court_id, town_name, address_cy, town_name_cy) FROM stdin;
@@ -5517,7 +5425,7 @@ COPY public.search_courtaddress (id, address, postcode, address_type_id, court_i
 
 
 --
--- Data for Name: search_courtareaoflaw; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtareaoflaw; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtareaoflaw (id, area_of_law_id, court_id, single_point_of_entry) FROM stdin;
@@ -7259,7 +7167,7 @@ COPY public.search_courtareaoflaw (id, area_of_law_id, court_id, single_point_of
 
 
 --
--- Data for Name: search_courtattribute; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtattribute; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtattribute (id, value, attribute_type_id, court_id) FROM stdin;
@@ -7267,7 +7175,7 @@ COPY public.search_courtattribute (id, value, attribute_type_id, court_id) FROM 
 
 
 --
--- Data for Name: search_courtattributetype; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtattributetype; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtattributetype (id, name) FROM stdin;
@@ -7275,7 +7183,7 @@ COPY public.search_courtattributetype (id, name) FROM stdin;
 
 
 --
--- Data for Name: search_courtcontact; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtcontact; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtcontact (id, contact_id, court_id) FROM stdin;
@@ -10090,7 +9998,7 @@ COPY public.search_courtcontact (id, contact_id, court_id) FROM stdin;
 
 
 --
--- Data for Name: search_courtcourttype; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtcourttype; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtcourttype (id, court_id, court_type_id) FROM stdin;
@@ -10839,7 +10747,7 @@ COPY public.search_courtcourttype (id, court_id, court_type_id) FROM stdin;
 
 
 --
--- Data for Name: search_courtemail; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtemail; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtemail (id, court_id, email_id, "order") FROM stdin;
@@ -12132,7 +12040,7 @@ COPY public.search_courtemail (id, court_id, email_id, "order") FROM stdin;
 
 
 --
--- Data for Name: search_courtfacility; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtfacility; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtfacility (id, court_id, facility_id) FROM stdin;
@@ -15683,7 +15591,7 @@ COPY public.search_courtfacility (id, court_id, facility_id) FROM stdin;
 
 
 --
--- Data for Name: search_courtlocalauthorityareaoflaw; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtlocalauthorityareaoflaw; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtlocalauthorityareaoflaw (id, area_of_law_id, court_id, local_authority_id) FROM stdin;
@@ -18168,7 +18076,7 @@ COPY public.search_courtlocalauthorityareaoflaw (id, area_of_law_id, court_id, l
 
 
 --
--- Data for Name: search_courtopeningtime; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtopeningtime; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtopeningtime (id, court_id, opening_time_id, sort) FROM stdin;
@@ -19046,7 +18954,7 @@ COPY public.search_courtopeningtime (id, court_id, opening_time_id, sort) FROM s
 
 
 --
--- Data for Name: search_courtpostcode; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courtpostcode; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courtpostcode (id, postcode, court_id) FROM stdin;
@@ -40489,7 +40397,7 @@ COPY public.search_courtpostcode (id, postcode, court_id) FROM stdin;
 
 
 --
--- Data for Name: search_courttype; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_courttype; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_courttype (id, name) FROM stdin;
@@ -40502,7 +40410,7 @@ COPY public.search_courttype (id, name) FROM stdin;
 
 
 --
--- Data for Name: search_datastatus; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_datastatus; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_datastatus (id, data_hash, last_ingestion_date) FROM stdin;
@@ -40511,7 +40419,7 @@ COPY public.search_datastatus (id, data_hash, last_ingestion_date) FROM stdin;
 
 
 --
--- Data for Name: search_email; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_email; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_email (id, description, address, explanation, explanation_cy) FROM stdin;
@@ -41822,7 +41730,7 @@ COPY public.search_email (id, description, address, explanation, explanation_cy)
 
 
 --
--- Data for Name: search_emergencymessage; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_emergencymessage; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_emergencymessage (id, message, show, message_cy) FROM stdin;
@@ -41831,7 +41739,7 @@ COPY public.search_emergencymessage (id, message, show, message_cy) FROM stdin;
 
 
 --
--- Data for Name: search_facility; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_facility; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_facility (id, name, description, image, image_description, image_file_path, description_cy) FROM stdin;
@@ -45421,7 +45329,7 @@ COPY public.search_facility (id, name, description, image, image_description, im
 
 
 --
--- Data for Name: search_localauthority; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_localauthority; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_localauthority (id, name) FROM stdin;
@@ -45603,7 +45511,7 @@ COPY public.search_localauthority (id, name) FROM stdin;
 
 
 --
--- Data for Name: search_openingtime; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_openingtime; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_openingtime (id, hours, type) FROM stdin;
@@ -46498,7 +46406,7 @@ COPY public.search_openingtime (id, hours, type) FROM stdin;
 
 
 --
--- Data for Name: search_parkinginfo; Type: TABLE DATA; Schema: public; Owner: fact
+-- Data for Name: search_parkinginfo; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.search_parkinginfo (id, onsite, offsite, blue_badge) FROM stdin;
@@ -46617,168 +46525,168 @@ COPY public.search_parkinginfo (id, onsite, offsite, blue_badge) FROM stdin;
 
 
 --
--- Name: search_addresstype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_addresstype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_addresstype_id_seq', 5882, true);
 
 
 --
--- Name: search_areaoflaw_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_areaoflaw_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_areaoflaw_id_seq', 34263, true);
 
 
 --
--- Name: search_contact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_contact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_contact_id_seq', 5558555, true);
 
 
 --
--- Name: search_court_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_court_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_court_id_seq', 1480137, true);
 
 
 --
--- Name: search_courtaddress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtaddress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtaddress_id_seq', 1960513, true);
 
 
 --
--- Name: search_courtareaoflaw_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtareaoflaw_id_seq', 3901324, true);
 
 
 --
--- Name: search_courtattribute_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtattribute_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtattribute_id_seq', 1, false);
 
 
 --
--- Name: search_courtattributetype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtattributetype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtattributetype_id_seq', 1, false);
 
 
 --
--- Name: search_courtcontact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtcontact_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtcontact_id_seq', 7162654, true);
 
 
 --
--- Name: search_courtcourttype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtcourttype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtcourttype_id_seq', 1658283, true);
 
 
 --
--- Name: search_courtemail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtemail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtemail_id_seq', 3194622, true);
 
 
 --
--- Name: search_courtfacility_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtfacility_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtfacility_id_seq', 7760720, true);
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtlocalauthorityareaoflaw_id_seq', 5572792, true);
 
 
 --
--- Name: search_courtopeningtime_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtopeningtime_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtopeningtime_id_seq', 2542241, true);
 
 
 --
--- Name: search_courtpostcode_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courtpostcode_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courtpostcode_id_seq', 48182909, true);
 
 
 --
--- Name: search_courttype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_courttype_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_courttype_id_seq', 11420, true);
 
 
 --
--- Name: search_datastatus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_datastatus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_datastatus_id_seq', 2284, true);
 
 
 --
--- Name: search_email_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_email_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_email_id_seq', 2290024, true);
 
 
 --
--- Name: search_emergencymessage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_emergencymessage_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_emergencymessage_id_seq', 1209, true);
 
 
 --
--- Name: search_facility_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_facility_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_facility_id_seq', 2382356, true);
 
 
 --
--- Name: search_localauthority_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_localauthority_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_localauthority_id_seq', 397416, true);
 
 
 --
--- Name: search_openingtime_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_openingtime_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_openingtime_id_seq', 1084113, true);
 
 
 --
--- Name: search_parkinginfo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: fact
+-- Name: search_parkinginfo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.search_parkinginfo_id_seq', 252174, true);
 
 
 --
--- Name: flyway_schema_history flyway_schema_history_pk; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: flyway_schema_history flyway_schema_history_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.flyway_schema_history
@@ -46786,7 +46694,7 @@ ALTER TABLE ONLY public.flyway_schema_history
 
 
 --
--- Name: search_addresstype search_addresstype_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_addresstype search_addresstype_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_addresstype
@@ -46794,7 +46702,7 @@ ALTER TABLE ONLY public.search_addresstype
 
 
 --
--- Name: search_areaoflaw search_areaoflaw_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_areaoflaw search_areaoflaw_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_areaoflaw
@@ -46802,7 +46710,7 @@ ALTER TABLE ONLY public.search_areaoflaw
 
 
 --
--- Name: search_contact search_contact_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_contact search_contact_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_contact
@@ -46810,7 +46718,7 @@ ALTER TABLE ONLY public.search_contact
 
 
 --
--- Name: search_court search_court_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_court search_court_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_court
@@ -46818,7 +46726,7 @@ ALTER TABLE ONLY public.search_court
 
 
 --
--- Name: search_courtaddress search_courtaddress_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtaddress search_courtaddress_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtaddress
@@ -46826,7 +46734,7 @@ ALTER TABLE ONLY public.search_courtaddress
 
 
 --
--- Name: search_courtareaoflaw search_courtareaoflaw_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw search_courtareaoflaw_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtareaoflaw
@@ -46834,7 +46742,7 @@ ALTER TABLE ONLY public.search_courtareaoflaw
 
 
 --
--- Name: search_courtattribute search_courtattribute_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtattribute search_courtattribute_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtattribute
@@ -46842,7 +46750,7 @@ ALTER TABLE ONLY public.search_courtattribute
 
 
 --
--- Name: search_courtattributetype search_courtattributetype_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtattributetype search_courtattributetype_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtattributetype
@@ -46850,7 +46758,7 @@ ALTER TABLE ONLY public.search_courtattributetype
 
 
 --
--- Name: search_courtcontact search_courtcontact_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtcontact search_courtcontact_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcontact
@@ -46858,7 +46766,7 @@ ALTER TABLE ONLY public.search_courtcontact
 
 
 --
--- Name: search_courtcourttype search_courtcourttype_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtcourttype search_courtcourttype_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcourttype
@@ -46866,7 +46774,7 @@ ALTER TABLE ONLY public.search_courtcourttype
 
 
 --
--- Name: search_courtemail search_courtemail_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtemail search_courtemail_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtemail
@@ -46874,7 +46782,7 @@ ALTER TABLE ONLY public.search_courtemail
 
 
 --
--- Name: search_courtfacility search_courtfacility_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtfacility search_courtfacility_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtfacility
@@ -46882,7 +46790,7 @@ ALTER TABLE ONLY public.search_courtfacility
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw search_courtlocalauthorityareaoflaw_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw search_courtlocalauthorityareaoflaw_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
@@ -46890,7 +46798,7 @@ ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
 
 
 --
--- Name: search_courtopeningtime search_courtopeningtime_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtopeningtime search_courtopeningtime_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtopeningtime
@@ -46898,7 +46806,7 @@ ALTER TABLE ONLY public.search_courtopeningtime
 
 
 --
--- Name: search_courtpostcode search_courtpostcode_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtpostcode search_courtpostcode_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtpostcode
@@ -46906,7 +46814,7 @@ ALTER TABLE ONLY public.search_courtpostcode
 
 
 --
--- Name: search_courttype search_courttype_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courttype search_courttype_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courttype
@@ -46914,7 +46822,7 @@ ALTER TABLE ONLY public.search_courttype
 
 
 --
--- Name: search_datastatus search_datastatus_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_datastatus search_datastatus_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_datastatus
@@ -46922,7 +46830,7 @@ ALTER TABLE ONLY public.search_datastatus
 
 
 --
--- Name: search_email search_email_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_email search_email_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_email
@@ -46930,7 +46838,7 @@ ALTER TABLE ONLY public.search_email
 
 
 --
--- Name: search_emergencymessage search_emergencymessage_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_emergencymessage search_emergencymessage_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_emergencymessage
@@ -46938,7 +46846,7 @@ ALTER TABLE ONLY public.search_emergencymessage
 
 
 --
--- Name: search_facility search_facility_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_facility search_facility_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_facility
@@ -46946,7 +46854,7 @@ ALTER TABLE ONLY public.search_facility
 
 
 --
--- Name: search_localauthority search_localauthority_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_localauthority search_localauthority_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_localauthority
@@ -46954,7 +46862,7 @@ ALTER TABLE ONLY public.search_localauthority
 
 
 --
--- Name: search_openingtime search_openingtime_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_openingtime search_openingtime_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_openingtime
@@ -46962,7 +46870,7 @@ ALTER TABLE ONLY public.search_openingtime
 
 
 --
--- Name: search_parkinginfo search_parkinginfo_pkey; Type: CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_parkinginfo search_parkinginfo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_parkinginfo
@@ -46970,175 +46878,175 @@ ALTER TABLE ONLY public.search_parkinginfo
 
 
 --
--- Name: flyway_schema_history_s_idx; Type: INDEX; Schema: public; Owner: fact
+-- Name: flyway_schema_history_s_idx; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX flyway_schema_history_s_idx ON public.flyway_schema_history USING btree (success);
 
 
 --
--- Name: search_court_2dbcba41; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_court_2dbcba41; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_court_2dbcba41 ON public.search_court USING btree (slug);
 
 
 --
--- Name: search_court_4ee427cf; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_court_4ee427cf; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_court_4ee427cf ON public.search_court USING btree (parking_id);
 
 
 --
--- Name: search_court_slug_7c80adb42dfde9f4_like; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_court_slug_7c80adb42dfde9f4_like; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_court_slug_7c80adb42dfde9f4_like ON public.search_court USING btree (slug varchar_pattern_ops);
 
 
 --
--- Name: search_courtaddress_18232d5b; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtaddress_18232d5b; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtaddress_18232d5b ON public.search_courtaddress USING btree (address_type_id);
 
 
 --
--- Name: search_courtaddress_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtaddress_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtaddress_7a46e69c ON public.search_courtaddress USING btree (court_id);
 
 
 --
--- Name: search_courtareaoflaw_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtareaoflaw_7a46e69c ON public.search_courtareaoflaw USING btree (court_id);
 
 
 --
--- Name: search_courtareaoflaw_894a130b; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw_894a130b; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtareaoflaw_894a130b ON public.search_courtareaoflaw USING btree (area_of_law_id);
 
 
 --
--- Name: search_courtattribute_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtattribute_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtattribute_7a46e69c ON public.search_courtattribute USING btree (court_id);
 
 
 --
--- Name: search_courtattribute_d3163989; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtattribute_d3163989; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtattribute_d3163989 ON public.search_courtattribute USING btree (attribute_type_id);
 
 
 --
--- Name: search_courtcontact_6d82f13d; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtcontact_6d82f13d; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtcontact_6d82f13d ON public.search_courtcontact USING btree (contact_id);
 
 
 --
--- Name: search_courtcontact_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtcontact_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtcontact_7a46e69c ON public.search_courtcontact USING btree (court_id);
 
 
 --
--- Name: search_courtcourttype_25109d70; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtcourttype_25109d70; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtcourttype_25109d70 ON public.search_courtcourttype USING btree (court_type_id);
 
 
 --
--- Name: search_courtcourttype_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtcourttype_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtcourttype_7a46e69c ON public.search_courtcourttype USING btree (court_id);
 
 
 --
--- Name: search_courtemail_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtemail_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtemail_7a46e69c ON public.search_courtemail USING btree (court_id);
 
 
 --
--- Name: search_courtemail_fdfd0ebf; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtemail_fdfd0ebf; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtemail_fdfd0ebf ON public.search_courtemail USING btree (email_id);
 
 
 --
--- Name: search_courtfacility_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtfacility_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtfacility_7a46e69c ON public.search_courtfacility USING btree (court_id);
 
 
 --
--- Name: search_courtfacility_e32a5395; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtfacility_e32a5395; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtfacility_e32a5395 ON public.search_courtfacility USING btree (facility_id);
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtlocalauthorityareaoflaw_7a46e69c ON public.search_courtlocalauthorityareaoflaw USING btree (court_id);
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw_894a130b; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw_894a130b; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtlocalauthorityareaoflaw_894a130b ON public.search_courtlocalauthorityareaoflaw USING btree (area_of_law_id);
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw_8f900b2f; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw_8f900b2f; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtlocalauthorityareaoflaw_8f900b2f ON public.search_courtlocalauthorityareaoflaw USING btree (local_authority_id);
 
 
 --
--- Name: search_courtopeningtime_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtopeningtime_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtopeningtime_7a46e69c ON public.search_courtopeningtime USING btree (court_id);
 
 
 --
--- Name: search_courtopeningtime_e7960b27; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtopeningtime_e7960b27; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtopeningtime_e7960b27 ON public.search_courtopeningtime USING btree (opening_time_id);
 
 
 --
--- Name: search_courtpostcode_7a46e69c; Type: INDEX; Schema: public; Owner: fact
+-- Name: search_courtpostcode_7a46e69c; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX search_courtpostcode_7a46e69c ON public.search_courtpostcode USING btree (court_id);
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw D3d5d43a25ef16ede0d6bb26f2d6235f; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw D3d5d43a25ef16ede0d6bb26f2d6235f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
@@ -47146,7 +47054,7 @@ ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
 
 
 --
--- Name: search_courtattribute cb9d425a98f9e7fdd83988d8b9e712f3; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtattribute cb9d425a98f9e7fdd83988d8b9e712f3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtattribute
@@ -47154,7 +47062,7 @@ ALTER TABLE ONLY public.search_courtattribute
 
 
 --
--- Name: search_courtaddress searc_address_type_id_374aad16e9812a7e_fk_search_addresstype_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtaddress searc_address_type_id_374aad16e9812a7e_fk_search_addresstype_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtaddress
@@ -47162,7 +47070,7 @@ ALTER TABLE ONLY public.search_courtaddress
 
 
 --
--- Name: search_courtopeningtime searc_opening_time_id_3520633a43f4343a_fk_search_openingtime_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtopeningtime searc_opening_time_id_3520633a43f4343a_fk_search_openingtime_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtopeningtime
@@ -47170,7 +47078,7 @@ ALTER TABLE ONLY public.search_courtopeningtime
 
 
 --
--- Name: search_courtareaoflaw search_c_area_of_law_id_3ccd060a89b2c51c_fk_search_areaoflaw_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw search_c_area_of_law_id_3ccd060a89b2c51c_fk_search_areaoflaw_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtareaoflaw
@@ -47178,7 +47086,7 @@ ALTER TABLE ONLY public.search_courtareaoflaw
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw search_c_area_of_law_id_51c81667c0533ba2_fk_search_areaoflaw_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw search_c_area_of_law_id_51c81667c0533ba2_fk_search_areaoflaw_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
@@ -47186,7 +47094,7 @@ ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
 
 
 --
--- Name: search_courtcourttype search_co_court_type_id_70496aba10001ae0_fk_search_courttype_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtcourttype search_co_court_type_id_70496aba10001ae0_fk_search_courttype_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcourttype
@@ -47194,7 +47102,7 @@ ALTER TABLE ONLY public.search_courtcourttype
 
 
 --
--- Name: search_court search_cou_parking_id_18e3384a9d609705_fk_search_parkinginfo_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_court search_cou_parking_id_18e3384a9d609705_fk_search_parkinginfo_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_court
@@ -47202,7 +47110,7 @@ ALTER TABLE ONLY public.search_court
 
 
 --
--- Name: search_courtfacility search_court_facility_id_5944171196d27776_fk_search_facility_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtfacility search_court_facility_id_5944171196d27776_fk_search_facility_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtfacility
@@ -47210,7 +47118,7 @@ ALTER TABLE ONLY public.search_courtfacility
 
 
 --
--- Name: search_courtaddress search_courtaddress_court_id_5d290f84c484459_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtaddress search_courtaddress_court_id_5d290f84c484459_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtaddress
@@ -47218,7 +47126,7 @@ ALTER TABLE ONLY public.search_courtaddress
 
 
 --
--- Name: search_courtareaoflaw search_courtareaof_court_id_27fad8c9e0fd7751_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtareaoflaw search_courtareaof_court_id_27fad8c9e0fd7751_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtareaoflaw
@@ -47226,7 +47134,7 @@ ALTER TABLE ONLY public.search_courtareaoflaw
 
 
 --
--- Name: search_courtattribute search_courtattribu_court_id_977804779b9611b_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtattribute search_courtattribu_court_id_977804779b9611b_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtattribute
@@ -47234,7 +47142,7 @@ ALTER TABLE ONLY public.search_courtattribute
 
 
 --
--- Name: search_courtcontact search_courtco_contact_id_11e8833896a8d622_fk_search_contact_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtcontact search_courtco_contact_id_11e8833896a8d622_fk_search_contact_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcontact
@@ -47242,7 +47150,7 @@ ALTER TABLE ONLY public.search_courtcontact
 
 
 --
--- Name: search_courtcontact search_courtcontac_court_id_4209a69a52612e9d_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtcontact search_courtcontac_court_id_4209a69a52612e9d_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcontact
@@ -47250,7 +47158,7 @@ ALTER TABLE ONLY public.search_courtcontact
 
 
 --
--- Name: search_courtcourttype search_courtcourtt_court_id_12b1730e46c52836_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtcourttype search_courtcourtt_court_id_12b1730e46c52836_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtcourttype
@@ -47258,7 +47166,7 @@ ALTER TABLE ONLY public.search_courtcourttype
 
 
 --
--- Name: search_courtemail search_courtemail_court_id_19e24f7c412141f_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtemail search_courtemail_court_id_19e24f7c412141f_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtemail
@@ -47266,7 +47174,7 @@ ALTER TABLE ONLY public.search_courtemail
 
 
 --
--- Name: search_courtemail search_courtemail_email_id_3471f8536ca454ba_fk_search_email_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtemail search_courtemail_email_id_3471f8536ca454ba_fk_search_email_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtemail
@@ -47274,7 +47182,7 @@ ALTER TABLE ONLY public.search_courtemail
 
 
 --
--- Name: search_courtfacility search_courtfacilit_court_id_5a119f760569021_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtfacility search_courtfacilit_court_id_5a119f760569021_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtfacility
@@ -47282,7 +47190,7 @@ ALTER TABLE ONLY public.search_courtfacility
 
 
 --
--- Name: search_courtlocalauthorityareaoflaw search_courtlocala_court_id_410335b1d0fa2083_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtlocalauthorityareaoflaw search_courtlocala_court_id_410335b1d0fa2083_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
@@ -47290,7 +47198,7 @@ ALTER TABLE ONLY public.search_courtlocalauthorityareaoflaw
 
 
 --
--- Name: search_courtopeningtime search_courtopenin_court_id_3c8e23a63a00e42a_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtopeningtime search_courtopenin_court_id_3c8e23a63a00e42a_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtopeningtime
@@ -47298,7 +47206,7 @@ ALTER TABLE ONLY public.search_courtopeningtime
 
 
 --
--- Name: search_courtpostcode search_courtpostco_court_id_728948f8c360e731_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: fact
+-- Name: search_courtpostcode search_courtpostco_court_id_728948f8c360e731_fk_search_court_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.search_courtpostcode
