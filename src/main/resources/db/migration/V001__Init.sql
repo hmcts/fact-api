@@ -949,14 +949,6 @@ ALTER TABLE ONLY public.search_parkinginfo ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- Data for Name: flyway_schema_history; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.flyway_schema_history (installed_rank, version, description, type, script, checksum, installed_by, installed_on, execution_time, success) FROM stdin;
-\.
-
-
---
 -- Data for Name: search_addresstype; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -46684,15 +46676,6 @@ SELECT pg_catalog.setval('public.search_openingtime_id_seq', 1084113, true);
 
 SELECT pg_catalog.setval('public.search_parkinginfo_id_seq', 252174, true);
 
-
---
--- Name: flyway_schema_history flyway_schema_history_pk; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.flyway_schema_history
-    ADD CONSTRAINT flyway_schema_history_pk PRIMARY KEY (installed_rank);
-
-
 --
 -- Name: search_addresstype search_addresstype_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
@@ -46875,13 +46858,6 @@ ALTER TABLE ONLY public.search_openingtime
 
 ALTER TABLE ONLY public.search_parkinginfo
     ADD CONSTRAINT search_parkinginfo_pkey PRIMARY KEY (id);
-
-
---
--- Name: flyway_schema_history_s_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX flyway_schema_history_s_idx ON public.flyway_schema_history USING btree (success);
 
 
 --
