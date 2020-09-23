@@ -16,8 +16,8 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping(
-    path = "/courts",
-    produces = {MediaType.APPLICATION_JSON_VALUE}
+        path = "/courts",
+        produces = {MediaType.APPLICATION_JSON_VALUE}
 )
 public class CourtsController {
 
@@ -27,11 +27,7 @@ public class CourtsController {
     @Deprecated
     @GetMapping(path = "/{slug}.json")
     @ApiOperation("Find court details by name")
-    public ResponseEntity<Court> findCourtByName(
-
-        @PathVariable String slug
-    ) {
+    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(courtService.getCourtBySlug(slug));
     }
-
 }
