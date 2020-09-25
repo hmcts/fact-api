@@ -1,0 +1,107 @@
+{
+  "name": "Aylesbury Magistrates' Court and Family Court",
+  "slug": "aylesbury-magistrates-court-and-family-court",
+  "info": "",
+  "open": false,
+  "directions": null,
+  "lat": 51.8107798286529,
+  "lon": -0.808171203854906,
+  "crown_location_code": 1129,
+  "county_location_code": null,
+  "magistrates_location_code": null,
+  "areas_of_law": [
+    "Adoption",
+    "Children",
+    "Crime",
+    "Divorce",
+    "Domestic violence"
+  ],
+  "types": [
+    "Magistrates' Court",
+    "Family Court"
+  ],
+  "emails": [],
+  "contacts": [
+    {
+      "number": "01908 451 145",
+      "description": "Enquiries",
+      "explanation": null
+    },
+    {
+      "number": "01264 785107",
+      "description": "Fax",
+      "explanation": null
+    },
+    {
+      "number": "0300  790 9901",
+      "description": "Pay a fine",
+      "explanation": null
+    },
+    {
+      "number": "01869 853290",
+      "description": "Fine queries",
+      "explanation": null
+    },
+    {
+      "number": "149920 Aylesbury 10",
+      "description": "DX",
+      "explanation": null
+    },
+    {
+      "number": "0300 332 1000",
+      "description": "Witness service",
+      "explanation": null
+    }
+  ],
+  "opening_times": [
+    {
+      "description": "Court building open",
+      "hours": "8.45 am - 4.45 pm"
+    }
+  ],
+  "facilities": [
+    {
+      "description": "<p>Assistance dogs are welcome.</p>",
+      "name": "Assistance dogs"
+    },
+    {
+      "description": "<p>The car park is unavailable for public access.</p>\r\n<p>&nbsp;</p>",
+      "name": "Parking"
+    },
+    {
+      "description": "<p>4 interview rooms are available on the ground floor</p>",
+      "name": "Interview room"
+    },
+    {
+      "description": "<p>The building has hearing enhancement facilities available by prior arrangement.&nbsp; Please contact the Court office by telephone or email if necessary.</p>",
+      "name": "Loop Hearing"
+    },
+    {
+      "description": "<p>Baby changing facilities are available in the disabled toilets on the ground floor</p>\r\n<p>&nbsp;</p>",
+      "name": "Baby changing facility"
+    },
+    {
+      "description": "<p>This building has level access to the building entrance, and court room.</p>\r\n<p>&nbsp;</p>",
+      "name": "Disabled access"
+    },
+    {
+      "description": "<p>Video conference facilities excluding prison to court video links</p>",
+      "name": "Video facilities"
+    }
+  ],
+  "addresses": [
+    {
+      "type": "Visiting",
+      "address": "Walton Street\n\n\n",
+      "town": "Aylesbury",
+      "postcode": "HP21 7QZ"
+    },
+    {
+      "type": "Postal",
+      "address": "Milton Keynes Magistrates' Court and Family Court Hearing Centre\n301 Silbury Boulevard\nWitan Gate East\n",
+      "town": "Central Milton Keynes",
+      "postcode": "MK9 2AJ"
+    }
+  ],
+  "gbs": null
+}
