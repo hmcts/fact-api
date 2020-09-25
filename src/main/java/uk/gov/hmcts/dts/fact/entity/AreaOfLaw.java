@@ -17,8 +17,4 @@ public class AreaOfLaw {
     private Integer id;
     @JsonValue
     private String name;
-
-    public AreaOfLaw(String name) {
-        this.name = name;
-    }
 }

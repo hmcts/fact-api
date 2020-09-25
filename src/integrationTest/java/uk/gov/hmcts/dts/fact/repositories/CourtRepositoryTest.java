@@ -25,23 +25,23 @@ class CourtRepositoryTest {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        uk.gov.hmcts.dts.fact.model.Court courtModel = mapper.readValue(
+        uk.gov.hmcts.dts.fact.model.Court expected = mapper.readValue(
             Paths.get("src/integrationTest/resources/aylesbury-magistrates-court-and-family-court.json").toFile(),
             uk.gov.hmcts.dts.fact.model.Court.class
         );
 
         Optional<Court> result = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
-        assertThat(result).isNotEmpty();
-        Court court = result.get();
-        assertThat(court.getSlug()).isEqualTo(courtModel.getSlug());
-        //        assertThat(court.getAreasOfLaw()).isEqualTo(courtModel.getAreasOfLaw());
-        //        assertThat(court.getContacts()).isEqualTo(courtModel.getContacts());
-        //        assertThat(court.getAddresses()).isEqualTo(courtModel.getAddresses());
-        //        assertThat(court.getAddresses().get(0).getAddressType().getName()).isNotEqualTo("");
-        //        assertThat(court.getEmails()).isEqualTo(courtModel.getEmails());
-        //        assertThat(court.getCourtTypes()).isEqualTo(courtModel.getCourtTypes());
-        //        assertThat(court.getFacilities()).isEqualTo(courtModel.getFacilities());
-        //        assertThat(court.getOpeningTimes()).isEqualTo(courtModel.getOpeningTimes());
+        assertThat(result).isPresent();
+        uk.gov.hmcts.dts.fact.model.Court court = new uk.gov.hmcts.dts.fact.model.Court(result.get());
+        assertThat(court.getSlug()).isEqualTo(expected.getSlug());
+        assertThat(court.getAreasOfLaw()).isEqualTo(expected.getAreasOfLaw());
+        assertThat(court.getContacts()).isEqualTo(expected.getContacts());
+        assertThat(court.getAddresses()).isEqualTo(expected.getAddresses());
+        assertThat(court.getAddresses().get(0).getAddressType()).isNotEqualTo("");
+        assertThat(court.getEmails()).isEqualTo(expected.getEmails());
+        assertThat(court.getCourtTypes()).isEqualTo(expected.getCourtTypes());
+        assertThat(court.getFacilities()).isEqualTo(expected.getFacilities());
+        assertThat(court.getOpeningTimes()).isEqualTo(expected.getOpeningTimes());
     }
 
     @Test

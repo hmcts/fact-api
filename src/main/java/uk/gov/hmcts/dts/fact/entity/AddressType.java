@@ -21,8 +21,4 @@ public class AddressType {
     @OneToOne(mappedBy = "addressType")
     @JsonIgnore
     private CourtAddress courtAddress;
-
-    public AddressType(final String name) {
-        this.name = name;
-    }
 }
