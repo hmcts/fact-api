@@ -16,13 +16,13 @@ public class AddressType {
     @Id
     @JsonIgnore
     private Integer id;
+    @JsonValue
     private String name;
     @OneToOne(mappedBy = "addressType")
     @JsonIgnore
     private CourtAddress courtAddress;
 
-    @JsonValue
-    public String getName() {
-        return name;
+    public AddressType(final String name) {
+        this.name = name;
     }
 }

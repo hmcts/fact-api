@@ -15,10 +15,10 @@ public class AreaOfLaw {
     @Id
     @JsonIgnore
     private Integer id;
+    @JsonValue
     private String name;
 
-    @JsonValue
-    public String getName() {
-        return name;
+    public AreaOfLaw(String name) {
+        this.name = name;
     }
 }

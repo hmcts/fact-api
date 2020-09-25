@@ -26,19 +26,20 @@ class CourtsControllerTest {
     @MockBean
     private CourtService courtService;
 
-    private final Court court = new Court();
+    private final Court courtEntity = new Court();
 
 
     @Test
     void findCourtBySlug() throws Exception {
-        court.setAddresses(emptyList());
-        court.setAreasOfLaw(emptyList());
-        court.setContacts(emptyList());
-        court.setCourtTypes(emptyList());
-        court.setEmails(emptyList());
-        court.setFacilities(emptyList());
-        court.setOpeningTimes(emptyList());
+        courtEntity.setAddresses(emptyList());
+        courtEntity.setAreasOfLaw(emptyList());
+        courtEntity.setContacts(emptyList());
+        courtEntity.setCourtTypes(emptyList());
+        courtEntity.setEmails(emptyList());
+        courtEntity.setFacilities(emptyList());
+        courtEntity.setOpeningTimes(emptyList());
         final String searchSlug = "some-slug";
+        uk.gov.hmcts.dts.fact.model.Court court = new uk.gov.hmcts.dts.fact.model.Court(courtEntity);
         when(courtService.getCourtBySlug(searchSlug)).thenReturn(court);
         MvcResult response = mockMvc.perform(get(String.format(URL, searchSlug)))
             .andExpect(status().isOk()).andReturn();
