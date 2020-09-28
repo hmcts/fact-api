@@ -8,5 +8,9 @@
     <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     <cve>CVE-2018-1258</cve>
   </suppress>
-
+  <suppress>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-json@2\.3\.4\.RELEASE$
+    </packageUrl>
+    <cve>CVE-2020-7712</cve>
+  </suppress>
 </suppressions>
