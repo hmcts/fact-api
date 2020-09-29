@@ -13,15 +13,11 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs"})
-public class Court {
-    private String name;
-    private String slug;
+public class Court extends CourtReference {
     private String info;
     private Boolean open;
     private String directions;
@@ -48,8 +44,7 @@ public class Court {
     private String gbs;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        this.name = courtEntity.getName();
-        this.slug = courtEntity.getSlug();
+        super(courtEntity.getName(), courtEntity.getSlug());
         this.info = courtEntity.getInfo();
         this.open = courtEntity.getDisplayed();
         this.directions = courtEntity.getDirections();
