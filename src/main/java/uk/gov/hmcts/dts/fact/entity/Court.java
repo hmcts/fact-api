@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ public class Court {
     private static final String COURT_ID = "court_id";
     @Id
     private Integer id;
+    @Getter
     private String name;
     private String slug;
     private String info;
