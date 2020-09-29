@@ -217,6 +217,8 @@ dependencies {
 
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
+  functionalTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+  functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured'
 
   smokeTestImplementation sourceSets.main.runtimeClasspath
 }
