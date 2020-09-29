@@ -1,5 +1,6 @@
 #!groovy
-
+@Library("Infrastructure")
+import uk.gov.hmcts.contino.GradleBuilder
 @Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
@@ -17,4 +18,13 @@ withPipeline(type, product, component) {
   after('test') {
     builder.gradle('integration')
   }
+
+  after('functionalTest:preview') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/**/*'
+  }
+
+  after('functionalTest:aat') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/**/*'
+  }
+
 }
