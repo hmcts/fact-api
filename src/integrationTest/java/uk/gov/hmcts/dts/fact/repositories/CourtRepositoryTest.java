@@ -9,6 +9,9 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,5 +63,30 @@ class CourtRepositoryTest {
     void shouldHandleNull() {
         Optional<Court> court = courtRepository.findBySlug(null);
         assertThat(court).isEmpty();
+    }
+
+    @Test
+    void shouldFindCourtsByQuery() throws IOException {
+        final String query = "Administrative Court";
+        final String nameRegex = "%Administrative Court%";
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        List<uk.gov.hmcts.dts.fact.model.CourtReference> expected = Arrays.asList(mapper.readValue(
+            Paths.get("src/integrationTest/resources/courts.json").toFile(),
+            uk.gov.hmcts.dts.fact.model.CourtReference[].class
+        ));
+
+        List<Court> result = courtRepository.queryBy(query, nameRegex);
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
+        uk.gov.hmcts.dts.fact.model.CourtReference court = new uk.gov.hmcts.dts.fact.model.CourtReference(result.get(0).getName(), result.get(0).getSlug());
+        assertThat(court.getName()).isEqualTo(expected.get(0).getName());
+        assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
+    }
+
+    @Test
+    void shouldNotFindNonExistentCourtByQuery() {
+        List<Court> result = courtRepository.queryBy("This does not exist", "");
+        assertThat(result).isEmpty();
     }
 }

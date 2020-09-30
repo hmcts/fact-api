@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Administrative Court",
+    "slug": "administrative-court"
+  },
+  {
+    "name": "Admiralty and Commercial Court",
+    "slug": "admiralty-and-commercial-court"
+  },
+  {
+    "name": "London Court",
+    "slug": "london-court"
+  }
+]
