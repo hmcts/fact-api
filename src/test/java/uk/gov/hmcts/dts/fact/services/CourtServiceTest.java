@@ -8,8 +8,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
@@ -40,5 +43,16 @@ class CourtServiceTest {
         final Court mock = mock(Court.class);
         when(courtRepository.findBySlug("some-slug")).thenReturn(Optional.of(mock));
         assertThat(courtService.getCourtBySlug("some-slug")).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+    }
+
+    @Test
+    void shouldReturnListOfCourtReferenceObject() {
+        final String query = "London";
+        final String nameRegex = "\\bLondon\\b";
+        final Court mock = mock(Court.class);
+        when(courtRepository.queryBy(query, nameRegex)).thenReturn(Collections.singletonList(mock));
+        List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown("london");
+        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.model.CourtReference.class);
+        assertThat(results.size()).isGreaterThan(0);
     }
 }
