@@ -22,9 +22,9 @@ public class CourtService {
             .orElseThrow(() -> new SlugNotFoundException(slug));
     }
 
-    public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTown(String search) {
+    public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTown(String query) {
         return courtRepository
-            .queryBy(search)
+            .queryBy(query, getCourtNameRegex(query))
             .stream()
             .map(court -> new CourtReference(court.getName(), court.getSlug()))
             .collect(Collectors.toList());
@@ -32,5 +32,13 @@ public class CourtService {
 
     private uk.gov.hmcts.dts.fact.model.Court mapCourt(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         return new uk.gov.hmcts.dts.fact.model.Court(courtEntity);
+    }
+
+    private String getCourtNameRegex(String query) {
+        if (query.split("-|\\s").length > 1) {
+            return "%" + query.toLowerCase() + "%";
+        } else {
+            return "\\b" + query.toLowerCase() + "\\b";
+        }
     }
 }

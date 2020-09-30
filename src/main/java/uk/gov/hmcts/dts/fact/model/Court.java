@@ -13,6 +13,8 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
