@@ -41,8 +41,8 @@ public class CourtsController {
 
     @GetMapping
     @ApiOperation("Find courts by name, address, town or postcode")
-    public ResponseEntity<List<CourtReference>> findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam String search) {
-        return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(search));
+    public ResponseEntity<List<CourtReference>> findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam String q) {
+        return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(q));
     }
 
     @ExceptionHandler(SlugNotFoundException.class)
