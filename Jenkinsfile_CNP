@@ -19,12 +19,7 @@ withPipeline(type, product, component) {
     builder.gradle('integration')
   }
 
-  after('functionalTest:preview') {
+  after('functionalTest') {
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/**/*'
   }
-
-  after('functionalTest:aat') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/**/*'
-  }
-
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.model.Court;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +36,7 @@ public class CourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final uk.gov.hmcts.dts.fact.model.Court court = response.as(uk.gov.hmcts.dts.fact.model.Court.class);
+        final Court court = response.as(Court.class);
         assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
 
     }
