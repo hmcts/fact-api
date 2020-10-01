@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Service
 public class CourtService {
 
+    private static final int MIN_COUNT = 2;
+
     @Autowired
     CourtRepository courtRepository;
 
@@ -35,10 +37,11 @@ public class CourtService {
     }
 
     private String getCourtNameRegex(String query) {
-        if (query.split("-|\\s").length > 1) {
-            return "%" + query.toLowerCase() + "%";
+        String[] wordSplit = query.split("-|\\s");
+        if (wordSplit.length >= MIN_COUNT) {
+            return "%" + query + "%";
         } else {
-            return "\\b" + query.toLowerCase() + "\\b";
+            return "\\b" + query + "\\b";
         }
     }
 }

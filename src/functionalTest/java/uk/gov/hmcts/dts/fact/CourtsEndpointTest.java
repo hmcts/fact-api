@@ -21,6 +21,7 @@ public class CourtsEndpointTest {
 
     private static final String AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT
         = "aylesbury-magistrates-court-and-family-court";
+    private static final String CONTENT_TYPE_VALUE = "application/json";
 
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
@@ -34,7 +35,7 @@ public class CourtsEndpointTest {
     public void shouldRetrieveCourtDetail() {
         final var response = given()
             .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, "application/json")
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
             .get("/courts/" + AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT + ".json")
             .thenReturn();
@@ -52,7 +53,7 @@ public class CourtsEndpointTest {
 
         final var response = given()
             .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, "application/json")
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
             .get("/courts?q=Aberdeen")
             .thenReturn();
@@ -67,7 +68,7 @@ public class CourtsEndpointTest {
     public void shouldNotRetrieveCourtReferenceWithNotExactNameAberdeen() {
         final var response = given()
             .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, "application/json")
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
             .get("/courts?q=Aberdee")
             .thenReturn();
@@ -84,7 +85,7 @@ public class CourtsEndpointTest {
 
         final var response = given()
             .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, "application/json")
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
             .get("/courts?q=Amersham")
             .thenReturn();
@@ -99,7 +100,7 @@ public class CourtsEndpointTest {
     public void shouldNotRetrieveCourtReferenceWithNotExactTownAmersham() {
         final var response = given()
             .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, "application/json")
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
             .get("/courts?q=Amer")
             .thenReturn();
@@ -116,7 +117,7 @@ public class CourtsEndpointTest {
 
         final var response = given()
             .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, "application/json")
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
             .get("/courts?q=Ashford Tribunal")
             .thenReturn();

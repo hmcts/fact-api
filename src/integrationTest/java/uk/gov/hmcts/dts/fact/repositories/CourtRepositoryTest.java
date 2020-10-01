@@ -10,7 +10,6 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,7 +78,8 @@ class CourtRepositoryTest {
 
         List<Court> result = courtRepository.queryBy(query, nameRegex);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
-        uk.gov.hmcts.dts.fact.model.CourtReference court = new uk.gov.hmcts.dts.fact.model.CourtReference(result.get(0).getName(), result.get(0).getSlug());
+        uk.gov.hmcts.dts.fact.model.CourtReference court =
+            new uk.gov.hmcts.dts.fact.model.CourtReference(result.get(0).getName(), result.get(0).getSlug());
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
         assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
     }
