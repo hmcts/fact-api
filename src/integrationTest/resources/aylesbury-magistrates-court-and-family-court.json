@@ -20,7 +20,13 @@
     "Magistrates' Court",
     "Family Court"
   ],
-  "emails": [],
+  "emails": [
+    {
+      "address": "test@test.com",
+      "description": "An email address",
+      "explanation": "You email it."
+    }
+  ],
   "contacts": [
     {
       "number": "01908 451 145",
