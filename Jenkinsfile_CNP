@@ -1,6 +1,6 @@
 #!groovy
 import uk.gov.hmcts.contino.GradleBuilder
-@Library("Infrastructure")
+@Library("Infrastructure@staging-helm-uninstall")
 
 def type = "java"
 def product = "fact"
