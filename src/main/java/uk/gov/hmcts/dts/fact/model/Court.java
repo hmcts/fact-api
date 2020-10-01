@@ -19,7 +19,9 @@ import static java.util.stream.Collectors.toList;
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs"})
-public class Court extends CourtReference {
+public class Court {
+    private String name;
+    private String slug;
     private String info;
     private Boolean open;
     private String directions;
@@ -46,7 +48,8 @@ public class Court extends CourtReference {
     private String gbs;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        super(courtEntity.getName(), courtEntity.getSlug());
+        this.name = courtEntity.getName();
+        this.slug = courtEntity.getSlug();
         this.info = courtEntity.getInfo();
         this.open = courtEntity.getDisplayed();
         this.directions = courtEntity.getDirections();
