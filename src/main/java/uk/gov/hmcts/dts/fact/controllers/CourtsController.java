@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
@@ -41,8 +41,9 @@ public class CourtsController {
 
     @GetMapping
     @ApiOperation("Find courts by name, address, town or postcode")
-    public ResponseEntity<List<CourtReference>> findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam String q) {
-        return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(q));
+    public ResponseEntity<List<CourtReference>>
+        findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
+        return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query));
     }
 
     @ExceptionHandler(SlugNotFoundException.class)
