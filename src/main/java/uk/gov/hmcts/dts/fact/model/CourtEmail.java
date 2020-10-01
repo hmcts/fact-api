@@ -1,8 +1,10 @@
 package uk.gov.hmcts.dts.fact.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class CourtEmail {
     private String address;
     private String description;
