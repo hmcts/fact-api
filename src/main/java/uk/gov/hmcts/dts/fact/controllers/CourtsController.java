@@ -17,6 +17,7 @@ import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -43,6 +44,9 @@ public class CourtsController {
     @ApiOperation("Find courts by name, address, town or postcode")
     public ResponseEntity<List<CourtReference>>
         findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
+        if (query.isEmpty()) {
+            return ok(new ArrayList<CourtReference>());
+        }
         return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query));
     }
 

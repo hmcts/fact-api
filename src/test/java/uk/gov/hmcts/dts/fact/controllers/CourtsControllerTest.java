@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,11 +70,22 @@ class CourtsControllerTest {
         final String s1 = new String(readAllBytes(path));
 
         List<CourtReference> courts = Arrays.asList(mapper.readValue(path.toFile(), CourtReference[].class));
-
         final String query = "london";
 
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
         mockMvc.perform(get(String.format(URL + "?q=" + query)))
             .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
+    }
+
+    @Test
+    void findCourtByEmptyQuery() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        List<CourtReference> courts = new ArrayList<CourtReference>();
+        final String query = "";
+
+        when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
+        mockMvc.perform(get(String.format(URL + "?q=" + query)))
+            .andExpect(status().isOk()).andExpect(content().string("[]"));
     }
 }
