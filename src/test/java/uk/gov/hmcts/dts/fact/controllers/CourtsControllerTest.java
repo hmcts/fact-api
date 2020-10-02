@@ -79,9 +79,7 @@ class CourtsControllerTest {
 
     @Test
     void findCourtByEmptyQuery() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        List<CourtReference> courts = new ArrayList<CourtReference>();
+        List<CourtReference> courts = new ArrayList<>();
         final String query = "";
 
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);

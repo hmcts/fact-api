@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 @Service
 public class CourtService {
 
-    private static final int MIN_COUNT = 2;
-
     @Autowired
     CourtRepository courtRepository;
 
