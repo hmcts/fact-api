@@ -11,9 +11,9 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     Optional<Court> findBySlug(String slug);
 
     @Query("SELECT c FROM Court c INNER JOIN c.addresses ca "
-        + "WHERE LOWER(c.name) LIKE LOWER(:nameRegex) "
+        + "WHERE LOWER(c.name) LIKE LOWER(concat('%', :query, '%')) "
         + "OR LOWER(ca.address) LIKE LOWER(concat('%', :query, '%')) "
-        + "OR REPLACE(LOWER(ca.postcode), ' ', '') LIKE REPLACE(LOWER(concat('%', :query, '%')), ' ', '')"
-        + "OR LOWER(ca.townName) = LOWER(:query)")
-    List<Court> queryBy(String query, String nameRegex);
+        + "OR LOWER(ca.townName) LIKE LOWER(concat('%', :query, '%')) "
+        + "OR REPLACE(LOWER(ca.postcode), ' ', '') LIKE REPLACE(LOWER(concat('%', :query, '%')), ' ', '')")
+    List<Court> queryBy(String query);
 }
