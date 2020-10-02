@@ -26,7 +26,7 @@ public class CourtService {
 
     public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTown(String query) {
         return courtRepository
-            .queryBy(query, getCourtNameRegex(query))
+            .queryBy(query)
             .stream()
             .map(court -> new CourtReference(court.getName(), court.getSlug()))
             .collect(Collectors.toList());
@@ -34,14 +34,5 @@ public class CourtService {
 
     private uk.gov.hmcts.dts.fact.model.Court mapCourt(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         return new uk.gov.hmcts.dts.fact.model.Court(courtEntity);
-    }
-
-    private String getCourtNameRegex(String query) {
-        String[] wordSplit = query.split("-|\\s");
-        if (wordSplit.length >= MIN_COUNT) {
-            return "%" + query + "%";
-        } else {
-            return "\\b" + query + "\\b";
-        }
     }
 }
