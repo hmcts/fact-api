@@ -45,7 +45,7 @@ public class CourtsController {
     public ResponseEntity<List<CourtReference>>
         findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
         if (query.isEmpty()) {
-            return ok(new ArrayList<CourtReference>());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query));
     }
