@@ -67,7 +67,6 @@ class CourtRepositoryTest {
     @Test
     void shouldFindCourtsByQuery() throws IOException {
         final String query = "Administrative Court";
-        final String nameRegex = "%Administrative Court%";
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -76,7 +75,7 @@ class CourtRepositoryTest {
             uk.gov.hmcts.dts.fact.model.CourtReference[].class
         ));
 
-        List<Court> result = courtRepository.queryBy(query, nameRegex);
+        List<Court> result = courtRepository.queryBy(query);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         uk.gov.hmcts.dts.fact.model.CourtReference court =
             new uk.gov.hmcts.dts.fact.model.CourtReference(result.get(0).getName(), result.get(0).getSlug());
@@ -86,7 +85,7 @@ class CourtRepositoryTest {
 
     @Test
     void shouldNotFindNonExistentCourtByQuery() {
-        List<Court> result = courtRepository.queryBy("This does not exist", "");
+        List<Court> result = courtRepository.queryBy("This does not exist");
         assertThat(result).isEmpty();
     }
 }

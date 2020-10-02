@@ -43,6 +43,9 @@ public class CourtsController {
     @ApiOperation("Find courts by name, address, town or postcode")
     public ResponseEntity<List<CourtReference>>
         findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
+        if (query.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query));
     }
 
