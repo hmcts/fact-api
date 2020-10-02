@@ -13,7 +13,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     @Query("SELECT c FROM Court c INNER JOIN c.addresses ca "
         + "WHERE LOWER(c.name) LIKE LOWER(concat('%', :query, '%')) "
         + "OR LOWER(ca.address) LIKE LOWER(concat('%', :query, '%')) "
-        + "OR REPLACE(LOWER(ca.postcode), ' ', '') LIKE REPLACE(LOWER(concat('%', :query, '%')), ' ', '')"
-        + "OR LOWER(ca.townName) = LOWER(:query)")
+        + "OR LOWER(ca.townName) LIKE LOWER(concat('%', :query, '%')) "
+        + "OR REPLACE(LOWER(ca.postcode), ' ', '') LIKE REPLACE(LOWER(concat('%', :query, '%')), ' ', '')")
     List<Court> queryBy(String query);
 }
