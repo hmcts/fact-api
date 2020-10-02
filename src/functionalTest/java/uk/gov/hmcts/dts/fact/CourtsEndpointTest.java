@@ -127,8 +127,6 @@ public class CourtsEndpointTest {
             .get("/courts?q=")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
-        assertThat(courts).isEmpty();
+        assertThat(response.statusCode()).isEqualTo(400);
     }
 }
