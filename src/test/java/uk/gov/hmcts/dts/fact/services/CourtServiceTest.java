@@ -48,9 +48,9 @@ class CourtServiceTest {
     @Test
     void shouldReturnListOfCourtReferenceObject() {
         final String query = "London";
-        final String nameRegex = "\\bLondon\\b";
         final Court mock = mock(Court.class);
-        when(courtRepository.queryBy(query, nameRegex)).thenReturn(Collections.singletonList(mock));
+
+        when(courtRepository.queryBy(query)).thenReturn(Collections.singletonList(mock));
         List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
         assertThat(results.size()).isGreaterThan(0);

@@ -47,15 +47,15 @@ public class CourtsEndpointTest {
     }
 
     @Test
-    public void shouldRetrieveCourtReferenceByQueryAberdeen() {
-        final String name = "Aberdeen Tribunal Hearing Centre";
-        final String slug = "aberdeen-tribunal-hearing-centre";
+    public void shouldRetrieveCourtReferenceByPartialQuery() {
+        final String name = "Oxford Combined Court Centre";
+        final String slug = "oxford-combined-court-centre";
 
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts?q=Aberdeen")
+            .get("/courts?q=Oxford Combine")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -65,66 +65,70 @@ public class CourtsEndpointTest {
     }
 
     @Test
-    public void shouldNotRetrieveCourtReferenceWithNotExactNameAberdeen() {
+    public void shouldRetrieveCourtReferenceByFullQuery() {
+        final String name = "Oxford Combined Court Centre";
+        final String slug = "oxford-combined-court-centre";
+
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts?q=Aberdee")
+            .get("/courts?q=Oxford Combined Court Centre")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
+        assertThat(courts.get(0).getName()).isEqualTo(name);
+        assertThat(courts.get(0).getSlug()).isEqualTo(slug);
+    }
+
+    @Test
+    public void shouldRetrieveCourtReferenceByPartialPostCodeQuery() {
+        final String name = "Skipton Magistrates' Court";
+        final String slug = "skipton-magistrates-court";
+
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get("/courts?q=BD23")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
+        assertThat(courts.get(0).getName()).isEqualTo(name);
+        assertThat(courts.get(0).getSlug()).isEqualTo(slug);
+    }
+
+    @Test
+    public void shouldRetrieveCourtReferenceByFullPostCodeQuery() {
+        final String name = "Skipton Magistrates' Court";
+        final String slug = "skipton-magistrates-court";
+
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get("/courts?q=BD23 1RH")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
+        assertThat(courts.get(0).getName()).isEqualTo(name);
+        assertThat(courts.get(0).getSlug()).isEqualTo(slug);
+    }
+
+    @Test
+    public void shouldRetrieveNoCourtReferenceByEmptyQuery() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get("/courts?q=")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts).isEmpty();
-    }
-
-    @Test
-    public void shouldRetrieveCourtReferenceWitFullTownAmersham() {
-        final String name = "Amersham Law Courts";
-        final String slug = "amersham-law-courts";
-
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get("/courts?q=Amersham")
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
-        assertThat(courts.get(0).getName()).isEqualTo(name);
-        assertThat(courts.get(0).getSlug()).isEqualTo(slug);
-    }
-
-    @Test
-    public void shouldNotRetrieveCourtReferenceWithNotExactTownAmersham() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get("/courts?q=Amer")
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
-        assertThat(courts).isEmpty();
-    }
-
-    @Test
-    public void shouldRetrieveCourtReferenceWitPartialAddressQuery() {
-        final String name = "Ashford Tribunal Hearing Centre";
-        final String slug = "ashford-tribunal-hearing-centre";
-
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get("/courts?q=Ashford Tribunal")
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
-        assertThat(courts.get(0).getName()).isEqualTo(name);
-        assertThat(courts.get(0).getSlug()).isEqualTo(slug);
     }
 }
