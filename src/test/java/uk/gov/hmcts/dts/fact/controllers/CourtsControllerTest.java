@@ -84,6 +84,6 @@ class CourtsControllerTest {
 
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
         mockMvc.perform(get(String.format(URL + "?q=" + query)))
-            .andExpect(status().isOk()).andExpect(content().string("[]"));
+            .andExpect(status().isBadRequest());
     }
 }
