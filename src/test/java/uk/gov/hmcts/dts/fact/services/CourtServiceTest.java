@@ -32,6 +32,9 @@ class CourtServiceTest {
     @MockBean
     CourtRepository courtRepository;
 
+    @MockBean
+    MapitClient mapitClient;
+
     @Test
     void shouldThrowSlugNotFoundException() {
         when(courtRepository.findBySlug(any())).thenReturn(empty());
