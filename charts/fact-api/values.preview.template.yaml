@@ -1,6 +1,9 @@
 java:
   postgresql:
     enabled: true
+  initdbScripts:
+    init.sql: |-
+      ALTER USER javapostgres WITH SUPERUSER;
   environment:
     RUN_DB_MIGRATION_ON_STARTUP: true
     DB_OPTIONS:
