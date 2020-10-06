@@ -10,5 +10,6 @@ java:
         - api-POSTGRES-PASS
         - api-POSTGRES-PORT
         - api-POSTGRES-USER
+        - mapit-key
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
