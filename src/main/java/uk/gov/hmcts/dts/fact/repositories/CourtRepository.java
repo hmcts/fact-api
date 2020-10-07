@@ -21,7 +21,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
 
     @Query(
         value = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
-            + "FROM search_court as c ‘"
+            + "FROM search_court as c "
             + "WHERE c.displayed "
             + "ORDER BY distance, name", nativeQuery = true)
     List<Court2> findNearest(@Param("lat") Double lat, @Param("lon") Double lon);
