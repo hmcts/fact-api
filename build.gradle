@@ -184,6 +184,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.5.RELEASE'
 
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
 
@@ -212,8 +213,8 @@ dependencies {
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
-  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.14.3'
-  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.14.3'
+  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.15.0-rc2'
+  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.15.0-rc2'
 
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
