@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.Court2;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +23,5 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
             + "FROM search_court as c "
             + "WHERE c.displayed "
             + "ORDER BY distance, name", nativeQuery = true)
-    List<Court2> findNearest(@Param("lat") Double lat, @Param("lon") Double lon);
+    List<Court> findNearest(@Param("lat") Double lat, @Param("lon") Double lon);
 }

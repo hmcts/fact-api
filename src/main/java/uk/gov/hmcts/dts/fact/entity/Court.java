@@ -33,6 +33,8 @@ public class Court {
     private Integer number;
     private Integer cciCode;
     private Integer magistrateCode;
+    private Boolean hideAols;
+    private Double distance;
 
     @ManyToMany
     @JoinTable(
