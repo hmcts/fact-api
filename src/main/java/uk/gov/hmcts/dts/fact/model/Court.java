@@ -34,7 +34,6 @@ public class Court {
     @JsonProperty("magistrates_location_code")
     private Integer magistratesLocationCode;
     @JsonProperty("areas_of_law")
-    //    private List<AreaOfLaw> areasOfLaw;
     private List<String> areasOfLaw;
     @JsonProperty("types")
     private List<String> courtTypes;

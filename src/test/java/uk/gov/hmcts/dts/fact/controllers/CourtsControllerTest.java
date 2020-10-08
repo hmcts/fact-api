@@ -34,7 +34,6 @@ class CourtsControllerTest {
     @MockBean
     private CourtService courtService;
 
-    @Deprecated
     @Test
     void findCourtBySlug() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -51,7 +50,6 @@ class CourtsControllerTest {
             .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
     }
 
-    @Deprecated
     @Test
     void findCourtByNonExistentSlug() throws Exception {
 
