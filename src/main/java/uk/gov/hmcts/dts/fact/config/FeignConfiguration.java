@@ -15,13 +15,7 @@ public class FeignConfiguration {
     @Bean
     public RequestInterceptor requestInterceptor() {
 
-        return new RequestInterceptor() {
-
-            @Override
-            public void apply(RequestTemplate template) {
-                template.header("X-Api-Key", key);
-            }
-        };
+        return template -> template.header("X-Api-Key", key);
     }
 
 }
