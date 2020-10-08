@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.config;
 
-import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ class FeignConfigurationTest {
     }
 
     @Test
-    void shouldSupplyRequestInterceptor () {
+    void shouldSupplyRequestInterceptor() {
         final FeignConfiguration feignConfiguration = (FeignConfiguration) (applicationContext.getBean(
             "feignConfiguration"));
         assertThat(feignConfiguration.requestInterceptor() != null);
@@ -30,7 +29,7 @@ class FeignConfigurationTest {
 
 
     @Test
-    void shouldSetRequestHeaderWithMapitKey () {
+    void shouldSetRequestHeaderWithMapitKey() {
         final FeignConfiguration feignConfiguration = (FeignConfiguration) (applicationContext.getBean(
             "feignConfiguration"));
 
