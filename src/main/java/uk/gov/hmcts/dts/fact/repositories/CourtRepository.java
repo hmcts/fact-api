@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.Court2;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +19,6 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
         + "OR REPLACE(LOWER(ca.postcode), ' ', '') LIKE REPLACE(LOWER(concat('%', :query, '%')), ' ', '')")
     List<Court> queryBy(String query);
 
-    @Query(
-        value = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
-            + "FROM search_court as c "
-            + "WHERE c.displayed "
-            + "ORDER BY distance, name", nativeQuery = true)
-    List<Court> findNearest(@Param("lat") Double lat, @Param("lon") Double lon);
+    @Query(nativeQuery = true, name = "Court2.findNearestCourts")
+    List<Court2> findNearest(@Param("lat") Double lat, @Param("lon") Double lon);
 }

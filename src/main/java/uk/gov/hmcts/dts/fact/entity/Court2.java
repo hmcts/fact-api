@@ -5,20 +5,36 @@ import lombok.Getter;
 
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.SqlResultSetMapping;
 
 import static java.util.Comparator.comparing;
 
 @Entity
-@Table(name = "search_court")
+@SqlResultSetMapping(
+    name = "CourtWithDistanceMapping",
+    entities = @EntityResult(
+        entityClass = Court2.class
+    )
+)
+
+@NamedNativeQuery(
+    name = "Court2.findNearestCourts",
+    resultSetMapping = "CourtWithDistanceMapping",
+    query = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
+        + "FROM search_court as c "
+        + "WHERE c.displayed "
+        + "ORDER BY distance, name"
+)
 @Data
 @SuppressWarnings("PMD.TooManyFields")
-public class Court {
+public class Court2 {
     private static final String COURT_ID = "court_id";
     @Id
     private Integer id;
@@ -87,6 +103,8 @@ public class Court {
     private List<CourtAddress> addresses;
 
     private String gbs;
+
+    private Double distance;
 
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));

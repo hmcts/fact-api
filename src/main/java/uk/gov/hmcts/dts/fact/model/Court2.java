@@ -43,7 +43,7 @@ public class Court2 {
     private BigDecimal distance;
 
 
-    public Court2(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    public Court2(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
         this.name = courtEntity.getName();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -61,7 +61,7 @@ public class Court2 {
         this.distance = new BigDecimal(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private String getDxNumber(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    private String getDxNumber(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
         return courtEntity
             .getContacts()
             .stream()
@@ -71,7 +71,7 @@ public class Court2 {
             .orElse(null);
     }
 
-    private CourtAddress2 mapAddress(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    private CourtAddress2 mapAddress(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
         return courtEntity
             .getAddresses()
             .stream()
