@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AreaOfLawTest {
 
     @Test
-    public void testCreation() {
+     void testCreation() {
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
         entity.setName("Name of area of law");
         entity.setExternalLink("external link");

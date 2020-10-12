@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CourtEmailTest {
 
     @Test
-    public void testCreation() {
+    void testCreation() {
         uk.gov.hmcts.dts.fact.entity.CourtEmail entity = new uk.gov.hmcts.dts.fact.entity.CourtEmail();
         entity.setAddress("test@test.com");
         entity.setDescription("An email address");
