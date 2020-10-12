@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 
 import java.math.BigDecimal;
@@ -53,12 +54,11 @@ public class Court2 {
         this.slug = courtEntity.getSlug();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
         this.address = this.mapAddress(courtEntity);
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(
-            toList());
+        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
         this.dxNumber = this.getDxNumber(courtEntity);
-        this.distance = new BigDecimal(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
+        this.distance = BigDecimal.valueOf(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
     }
 
     private String getDxNumber(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
@@ -66,7 +66,7 @@ public class Court2 {
             .getContacts()
             .stream()
             .filter(c -> "DX".equals(c.getName()))
-            .map(c -> c.getNumber())
+            .map(Contact::getNumber)
             .findFirst()
             .orElse(null);
     }
