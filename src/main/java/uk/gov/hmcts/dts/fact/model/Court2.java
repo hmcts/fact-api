@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
-    "areas_of_law", "displayed", "hide_aols", "dx_number", "distance"})
+    "areas_of_law", "displayed", "hide_aols", "dx_number", "distance" })
 public class Court2 {
     private String name;
     private Double lat;
@@ -78,10 +78,13 @@ public class Court2 {
             .filter(a -> "Postal".equals(a.getAddressType().getName()))
             .findFirst()
             .map(CourtAddress2::new)
-            .orElse(new CourtAddress2(courtEntity
-                                          .getAddresses()
-                                          .get(0))
-
+            .orElse(
+                courtEntity
+                    .getAddresses()
+                    .stream()
+                    .findFirst()
+                    .map(CourtAddress2::new)
+                    .orElse(null)
             );
     }
 }

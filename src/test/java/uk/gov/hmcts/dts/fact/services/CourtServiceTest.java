@@ -8,17 +8,21 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.model.Court2;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,9 +57,29 @@ class CourtServiceTest {
         final String query = "London";
         final Court mock = mock(Court.class);
 
-        when(courtRepository.queryBy(query)).thenReturn(Collections.singletonList(mock));
+        when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
         List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
         assertThat(results.size()).isGreaterThan(0);
     }
+
+    @Test
+    void shouldReturnListOfTenCourts() {
+
+        final Coordinates mockCoordinates = mock(Coordinates.class);
+        when(mapitClient.getCoordinates(any())).thenReturn(mockCoordinates);
+
+        final List<uk.gov.hmcts.dts.fact.entity.Court2> courts = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            courts.add(mock(uk.gov.hmcts.dts.fact.entity.Court2.class));
+        }
+
+        when(courtRepository.findNearest(anyDouble(),anyDouble())).thenReturn(courts);
+
+        final String postcode = "OX1 1RZ";
+
+        List<Court2> results = courtService.getNearestCourts(postcode);
+        assertThat(results.size()).isEqualTo(10);
+    }
+
 }

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.entity;
 
-import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import static java.util.Comparator.comparing;
 
 @Entity
 @Table(name = "search_court")
-@Data
+@Getter
 @SuppressWarnings("PMD.TooManyFields")
 public class Court {
     private static final String COURT_ID = "court_id";
