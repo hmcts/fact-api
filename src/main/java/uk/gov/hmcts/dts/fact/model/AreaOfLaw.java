@@ -2,9 +2,10 @@ package uk.gov.hmcts.dts.fact.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-
+@NoArgsConstructor
 public class AreaOfLaw {
     private String name;
     @JsonProperty("external_link")
