@@ -7,8 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.io.FileOutputStream;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,16 +29,4 @@ public class ApplicationTest {
         assertThat(response.getResponse().getContentAsString()).startsWith("Welcome");
     }
 
-    @Test
-    void should_generate_swagger_docs() throws Exception {
-        byte[] specs = mockMvc.perform(get("/v2/api-docs"))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsByteArray();
-
-        FileOutputStream outputStream = new FileOutputStream("/tmp/swagger-specs.json");
-        outputStream.write(specs);
-        outputStream.close();
-    }
 }

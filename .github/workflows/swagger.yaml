@@ -19,7 +19,7 @@ jobs:
         with:
           java-version: 11
       - name: Run Swagger Publisher
-        run: ./gradlew integration --tests uk.gov.hmcts.dts.fact.ApplicationTest
+        run: ./gradlew integration --tests uk.gov.hmcts.dts.fact.config.SwaggerPublisherTest
       - name: Commit to repository
         run: |
           mkdir swagger-staging
