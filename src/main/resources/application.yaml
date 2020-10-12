@@ -39,3 +39,5 @@ spring:
 
 dbMigration:
   runOnStartup: ${RUN_DB_MIGRATION_ON_STARTUP:true}
+
+mapit.key: ${MAPIT_KEY}

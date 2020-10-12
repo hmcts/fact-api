@@ -3,9 +3,10 @@ spring:
     propertiesvolume:
       enabled: true
       prefixed: false
-      paths: /mnt/secrets/fact-api
+      paths: /mnt/secrets/fact
       aliases:
-        fact-api-POSTGRES_HOST: POSTGRES_HOST
-        fact-api-POSTGRES_SSL_MODE: POSTGRES_SSL_MODE
-        fact-api-POSTGRES_DATABASE: POSTGRES_DATABASE
-        fact-api-POSTGRES_USER: POSTGRES_USER
+        api-POSTGRES-HOST: POSTGRES_HOST
+        api-POSTGRES-PASS: POSTGRES_PASSWORD
+        api-POSTGRES-DATABASE: POSTGRES_DATABASE
+        api-POSTGRES-USER: POSTGRES_USER
+        mapit-key: MAPIT_KEY
