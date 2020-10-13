@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -47,7 +48,7 @@ public class Court {
     private List<CourtAddress> addresses;
     private String gbs;
     @JsonProperty("dx_number")
-    private String dxNumber;
+    private List<String> dxNumber;
     @JsonProperty("service_area")
     private String serviceArea;
 
@@ -68,21 +69,23 @@ public class Court {
         this.emails = courtEntity.getEmails().stream().map(CourtEmail::new).collect(toList());
         this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
-        this.facilities = courtEntity.getFacilities().stream().map(Facility::new).collect(toList());
+        this.facilities = this.stripHtml(courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
         this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();
-        this.dxNumber = this.getDxNumber(courtEntity);
+        this.dxNumber = this.getDxNumber(this.contacts);
         this.serviceArea = this.getServiceArea(courtEntity);
     }
 
-    private String getDxNumber(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        return courtEntity
-            .getContacts()
+    private List<String> getDxNumber(List<Contact> contacts) {
+        List<Contact> dx = contacts
             .stream()
             .filter(c -> "DX".equals(c.getName()))
-            .map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
-            .findFirst()
-            .orElse(null);
+            .collect(Collectors.toList());
+        this.contacts.removeAll(dx);
+        return dx
+            .stream()
+            .map(Contact::getNumber)
+            .collect(Collectors.toList());
     }
 
     private String getServiceArea(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
@@ -99,6 +102,13 @@ public class Court {
         } else {
             return null;
         }
+    }
+
+    private List<Facility> stripHtml(List<Facility> facilities) {
+        for( Facility facility : facilities ){
+            facility.setDescription(facility.getDescription().replaceAll("\\<.*?\\>|&nbsp;", ""));
+        }
+        return facilities;
     }
 
 }
