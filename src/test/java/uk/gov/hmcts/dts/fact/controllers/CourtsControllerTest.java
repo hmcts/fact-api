@@ -35,7 +35,7 @@ class CourtsControllerTest {
     private CourtService courtService;
 
     @Test
-    void findCourtBySlug() throws Exception {
+    void findCourtBySlugDeprecated() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         final Path path = Paths.get("src/integrationTest/resources/aylesbury-magistrates-court-and-family-court.json");
@@ -83,5 +83,21 @@ class CourtsControllerTest {
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
         mockMvc.perform(get(String.format(URL + "?q=" + query)))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void findCourtBySlug() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        final Path path = Paths.get("src/integrationTest/resources/aylesbury-magistrates-court-and-family-court.json");
+        final String s1 = new String(readAllBytes(path));
+
+        Court court = mapper.readValue(path.toFile(), Court.class);
+
+        final String searchSlug = "some-slug";
+
+        when(courtService.getCourtBySlug(searchSlug)).thenReturn(court);
+        mockMvc.perform(get(String.format(URL + "/%s", searchSlug)))
+            .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
     }
 }
