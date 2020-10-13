@@ -22,6 +22,7 @@ public class CourtsEndpointTest {
     private static final String AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT
         = "aylesbury-magistrates-court-and-family-court";
     private static final String CONTENT_TYPE_VALUE = "application/json";
+    private static final String DX_NUMBER = "149920 Aylesbury 10";
 
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
@@ -128,5 +129,22 @@ public class CourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(400);
+    }
+
+    @Test
+    public void shouldRetrieveCourtDetailBySlug() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get("/courts/" + AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final Court court = response.as(Court.class);
+        assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
+        assertThat(court.getDxNumber()).isEqualTo(DX_NUMBER);
+        assertThat(court.getServiceArea()).isNull();
+
     }
 }

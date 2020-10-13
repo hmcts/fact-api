@@ -10,11 +10,36 @@
   "county_location_code": null,
   "magistrates_location_code": null,
   "areas_of_law": [
-    "Adoption",
-    "Children",
-    "Crime",
-    "Divorce",
-    "Domestic violence"
+    {
+      "name": "Adoption",
+      "external_link": "https%3A//www.gov.uk/child-adoption",
+      "display_url": null,
+      "external_link_desc": "Information about adopting a child"
+    },
+    {
+      "name": "Children",
+      "external_link": null,
+      "display_url": null,
+      "external_link_desc": null
+    },
+    {
+      "name": "Crime",
+      "external_link": null,
+      "display_url": null,
+      "external_link_desc": null
+    },
+    {
+      "name": "Divorce",
+      "external_link": "https%3A//www.gov.uk/divorce",
+      "display_url": null,
+      "external_link_desc": "Information about getting a divorce"
+    },
+    {
+      "name": "Domestic violence",
+      "external_link": null,
+      "display_url": null,
+      "external_link_desc": null
+    }
   ],
   "types": [
     "Magistrates' Court",
@@ -103,5 +128,7 @@
       "postcode": "MK9 2AJ"
     }
   ],
-  "gbs": null
+  "gbs": null,
+  "dx_number": "149920 Aylesbury 10",
+  "service_area": null
 }
