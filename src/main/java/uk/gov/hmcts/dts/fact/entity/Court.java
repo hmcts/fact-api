@@ -29,6 +29,7 @@ public class Court {
     private String directions;
     private Double lat;
     private Double lon;
+    private String alert;
     private Integer number;
     private Integer cciCode;
     private Integer magistrateCode;
