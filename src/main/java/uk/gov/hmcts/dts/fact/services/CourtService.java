@@ -8,6 +8,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -36,12 +37,24 @@ public class CourtService {
             .collect(toList());
     }
 
-    public List<Court2> getNearestCourts(String postcode) {
+    public List<Court2> getNearestCourtsByPostcode(String postcode) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
 
         return courtRepository
             .findNearest(coordinates.getLat(), coordinates.getLon())
             .stream()
+            .limit(10)
+            .map(Court2::new)
+            .collect(toList());
+    }
+
+    public List<Court2> getNearestCourtsByPostcodeAndAreaOfLaw(String postcode, String areaOfLaw) {
+        Coordinates coordinates = mapitClient.getCoordinates(postcode);
+
+        return courtRepository
+            .findNearest(coordinates.getLat(), coordinates.getLon())
+            .stream()
+            .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
             .limit(10)
             .map(Court2::new)
             .collect(toList());

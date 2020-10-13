@@ -43,4 +43,21 @@ public class SearchEndpointTest {
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(Court2::getDistance));
     }
+
+    @Test
+    public void shouldRetrieve10CourtDetailsByAreaOfLawSortedByDistance() {
+        final String aol = "Adoption";
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get("/search/results.json?postcode=OX1 1RZ&aol=" +  aol)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final List<Court2> courts = response.body().jsonPath().getList(".", Court2.class);
+        assertThat(courts.size()).isEqualTo(10);
+        assertThat(courts).isSortedAccordingTo(Comparator.comparing(Court2::getDistance));
+        assertThat(courts.stream().allMatch(c -> c.getAreasOfLaw().contains(aol)));
+    }
 }

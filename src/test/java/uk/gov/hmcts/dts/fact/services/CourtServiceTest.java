@@ -78,7 +78,7 @@ class CourtServiceTest {
 
         final String postcode = "OX1 1RZ";
 
-        List<Court2> results = courtService.getNearestCourts(postcode);
+        List<Court2> results = courtService.getNearestCourtsByPostcode(postcode);
         assertThat(results.size()).isEqualTo(10);
     }
 
