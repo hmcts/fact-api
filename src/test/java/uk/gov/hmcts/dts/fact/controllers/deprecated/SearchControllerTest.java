@@ -14,12 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SearchControllerTest {
 
     private static final String BASE_URL = "/search/results.json";
-
-    @Autowired
-    private transient MockMvc mockMvc;
-
     @MockBean
     CourtService courtService;
+    @Autowired
+    private transient MockMvc mockMvc;
 
     @Test
     void shouldReturn400ErrorIfNoPostcode() throws Exception {
@@ -44,6 +42,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "?postcode=OX1 1RZ&aol=Crime&spoe=Nearest"))
             .andExpect(status().isNotImplemented());
     }
+
     @Test
     void shouldReturnNotImplementedForSearchByName() throws Exception {
         mockMvc.perform(get(BASE_URL + "?q=name"))
