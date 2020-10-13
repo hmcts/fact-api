@@ -8,7 +8,6 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;

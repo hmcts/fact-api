@@ -40,14 +40,14 @@ public class SearchController {
         @ApiParam("Single Point of Entry") @RequestParam(required = false) Optional<String> spoe,
         @RequestParam(required = false, name = "q") Optional<String> name
     ) {
-        if(postcode.isPresent() && areaOfLaw.isPresent() && spoe.isPresent()){
-            return status (HttpStatus.NOT_IMPLEMENTED).build();
-        } else if (postcode.isPresent() && areaOfLaw.isPresent()){
+        if (postcode.isPresent() && areaOfLaw.isPresent() && spoe.isPresent()) {
+            return status(HttpStatus.NOT_IMPLEMENTED).build();
+        } else if (postcode.isPresent() && areaOfLaw.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
         } else if (postcode.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
         } else if (name.isPresent()) {
-            return status (HttpStatus.NOT_IMPLEMENTED).build();
+            return status(HttpStatus.NOT_IMPLEMENTED).build();
         } else {
             return badRequest().build();
         }
