@@ -33,4 +33,20 @@ class SearchControllerTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    void shouldSearchByPostcodeAndAreaOfLaw() throws Exception {
+        mockMvc.perform(get(BASE_URL + "?postcode=OX1 1RZ&aol=Crime"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnNotImplementedForSearchByPostcodeAndAreaOfLawAndSpoe() throws Exception {
+        mockMvc.perform(get(BASE_URL + "?postcode=OX1 1RZ&aol=Crime&spoe=Nearest"))
+            .andExpect(status().isNotImplemented());
+    }
+    @Test
+    void shouldReturnNotImplementedForSearchByName() throws Exception {
+        mockMvc.perform(get(BASE_URL + "?q=name"))
+            .andExpect(status().isNotImplemented());
+    }
 }
