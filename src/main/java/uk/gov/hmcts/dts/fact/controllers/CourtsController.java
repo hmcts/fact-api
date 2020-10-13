@@ -35,7 +35,7 @@ public class CourtsController {
     @Deprecated
     @GetMapping(path = "/{slug}.json")
     @ApiOperation("Find court details by name")
-    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
+    public ResponseEntity<Court> findCourtByNameDeprecated(@PathVariable String slug) {
         return ok(courtService.getCourtBySlug(slug));
     }
 
@@ -47,6 +47,12 @@ public class CourtsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query));
+    }
+
+    @GetMapping(path = "/{slug}")
+    @ApiOperation("Find court details by name")
+    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
+        return ok(courtService.getCourtBySlug(slug));
     }
 
     @ExceptionHandler(SlugNotFoundException.class)
