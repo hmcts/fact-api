@@ -145,6 +145,7 @@ public class CourtsEndpointTest {
         assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
         assertThat(court.getDxNumber()).isEqualTo(DX_NUMBER);
         assertThat(court.getServiceArea()).isNull();
+        assertThat(court.getAlert()).isNull();
 
     }
 }
