@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court2;
@@ -14,6 +15,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +76,7 @@ class CourtServiceTest {
             courts.add(mock(uk.gov.hmcts.dts.fact.entity.Court2.class));
         }
 
-        when(courtRepository.findNearest(anyDouble(),anyDouble())).thenReturn(courts);
+        when(courtRepository.findNearest(anyDouble(), anyDouble())).thenReturn(courts);
 
         final String postcode = "OX1 1RZ";
 
@@ -82,4 +84,30 @@ class CourtServiceTest {
         assertThat(results.size()).isEqualTo(10);
     }
 
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    void shouldFilterSearchByAreaOfLaw() {
+
+        final Coordinates mockCoordinates = mock(Coordinates.class);
+        when(mapitClient.getCoordinates(any())).thenReturn(mockCoordinates);
+
+        final List<uk.gov.hmcts.dts.fact.entity.Court2> courts = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            final uk.gov.hmcts.dts.fact.entity.Court2 mock = mock(uk.gov.hmcts.dts.fact.entity.Court2.class);
+            final AreaOfLaw areaOfLaw = new AreaOfLaw();
+            if (i % 4 == 0) {
+                areaOfLaw.setName("AreaOfLawName");
+            }
+            List<AreaOfLaw> areasOfLaw = Arrays.asList(areaOfLaw);
+            when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
+            courts.add(mock);
+        }
+
+        when(courtRepository.findNearest(anyDouble(), anyDouble())).thenReturn(courts);
+
+        final String postcode = "OX1 1RZ";
+
+        List<Court2> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, "AreaOfLawName");
+        assertThat(results.size()).isEqualTo(5);
+    }
 }
