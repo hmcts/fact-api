@@ -48,6 +48,14 @@ public class Court {
     )
     private List<CourtType> courtTypes;
 
+    @ManyToOne
+    @JoinTable(
+        name = "search_courtinperson",
+        joinColumns = @JoinColumn(name = COURT_ID),
+        inverseJoinColumns = @JoinColumn(name = "in_person_id")
+    )
+    private InPerson inPerson;
+
     @ManyToMany
     @JoinTable(
         name = "search_courtemail",
@@ -82,9 +90,6 @@ public class Court {
 
     @OneToMany(mappedBy = "court")
     private List<CourtAddress> addresses;
-
-    @OneToOne(mappedBy = "court")
-    private Boolean inPerson;
 
     private String gbs;
 
