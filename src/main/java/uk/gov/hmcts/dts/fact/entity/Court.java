@@ -48,14 +48,6 @@ public class Court {
     )
     private List<CourtType> courtTypes;
 
-    @ManyToOne
-    @JoinTable(
-        name = "search_courtinperson",
-        joinColumns = @JoinColumn(name = COURT_ID),
-        inverseJoinColumns = @JoinColumn(name = "in_person_id")
-    )
-    private InPerson inPerson;
-
     @ManyToMany
     @JoinTable(
         name = "search_courtemail",
@@ -92,6 +84,10 @@ public class Court {
     private List<CourtAddress> addresses;
 
     private String gbs;
+
+    @OneToOne(mappedBy = "courtId")
+    private InPerson inPerson;
+
 
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));

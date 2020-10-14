@@ -79,7 +79,7 @@ public class Court {
         this.gbs = courtEntity.getGbs();
         this.dxNumber = this.getDxNumber(this.contacts);
         this.serviceArea = this.getServiceArea(courtEntity);
-        this.inPerson = courtEntity.getInPerson().getInPerson();
+        this.inPerson = courtEntity.getInPerson() != null ? courtEntity.getInPerson().getInPerson() : null;
     }
 
     private List<String> getDxNumber(List<Contact> contacts) {
