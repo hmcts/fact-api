@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.Court2;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -87,5 +90,12 @@ class CourtRepositoryTest {
     void shouldNotFindNonExistentCourtByQuery() {
         List<Court> result = courtRepository.queryBy("This does not exist");
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    void shouldFindNearest() {
+        List<Court2> result = courtRepository.findNearest(51.8, -1.3);
+        final List<Court2> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
+        assertThat(collect).isSortedAccordingTo(Comparator.comparing(Court2::getDistance));
     }
 }
