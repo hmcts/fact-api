@@ -3,9 +3,11 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -19,4 +21,8 @@ public class AreaOfLaw {
     private String externalLink;
     @Column(name = "external_link_desc")
     private String externalLinkDescription;
+
+    @OneToMany(mappedBy = "areaOfLaw")
+    private List<CourtAreaOfLaw> courtAreaOfLaw;
+
 }

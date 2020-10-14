@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -21,7 +22,6 @@ public class Court {
     private static final String COURT_ID = "court_id";
     @Id
     private Integer id;
-    @Getter
     private String name;
     private String slug;
     private String info;
@@ -34,13 +34,8 @@ public class Court {
     private Integer magistrateCode;
     private Boolean hideAols;
 
-    @ManyToMany
-    @JoinTable(
-        name = "search_courtareaoflaw",
-        joinColumns = @JoinColumn(name = COURT_ID),
-        inverseJoinColumns = @JoinColumn(name = "area_of_law_id")
-    )
-    private List<AreaOfLaw> areasOfLaw;
+    @OneToMany(mappedBy = "court")
+    private List<CourtAreaOfLaw> courtAreaOfLaw;
 
     @ManyToMany
     @JoinTable(
@@ -88,7 +83,10 @@ public class Court {
     private String gbs;
 
     public List<AreaOfLaw> getAreasOfLaw() {
-        areasOfLaw.sort(comparing(AreaOfLaw::getName));
-        return areasOfLaw;
+        return courtAreaOfLaw
+            .stream()
+            .map(c -> c.getAreaOfLaw())
+            .sorted(comparing(AreaOfLaw::getName))
+            .collect(Collectors.toList());
     }
 }
