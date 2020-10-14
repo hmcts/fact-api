@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,7 +12,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "search_courtaddress")
-@Data
+@Getter
+@Setter
 public class CourtAddress {
     @Id
     private Integer id;
