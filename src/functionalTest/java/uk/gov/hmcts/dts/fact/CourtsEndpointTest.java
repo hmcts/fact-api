@@ -1,5 +1,7 @@
 package uk.gov.hmcts.dts.fact;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -142,10 +144,13 @@ public class CourtsEndpointTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         final Court court = response.as(Court.class);
-        assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
-        assertThat(court.getDxNumber()).isEqualTo(DX_NUMBER);
-        assertThat(court.getServiceArea()).isNull();
-        assertThat(court.getAlert()).isNull();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String jsonCourt = mapper.writeValueAsString(court);
+            assertThat(jsonCourt.equals(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
     }
 }
