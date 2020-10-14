@@ -58,4 +58,16 @@ public class CourtService {
             .map(Court2::new)
             .collect(toList());
     }
+
+    public List<Court2> getNearestCourtsByPostcodeAreaOfLawAndSpoe(String postcode, String areaOfLaw, String spoe) {
+        Coordinates coordinates = mapitClient.getCoordinates(postcode);
+        //spoe is either "nearest","start" or "continue", in the db it's a boolean on CourtAreaOfLaw
+        return courtRepository
+            .findNearest(coordinates.getLat(), coordinates.getLon())
+            .stream()
+            .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
+            .limit(10)
+            .map(Court2::new)
+            .collect(toList());
+    }
 }

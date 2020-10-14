@@ -42,6 +42,7 @@ public class SearchController {
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent() && spoe.isPresent()) {
             return status(HttpStatus.NOT_IMPLEMENTED).build();
+//            return ok(courtService.getNearestCourtsByPostcodeAreaOfLawAndSpoe(postcode.get(), areaOfLaw.get(), spoe.get()));
         } else if (postcode.isPresent() && areaOfLaw.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
         } else if (postcode.isPresent()) {
