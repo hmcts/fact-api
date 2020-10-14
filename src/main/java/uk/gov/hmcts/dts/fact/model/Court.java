@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon", "urgent_message",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
-    "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs", "dx_number", "service_area"})
+    "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs", "dx_number", "service_area", "in_person"})
 public class Court {
     private String name;
     private String slug;
