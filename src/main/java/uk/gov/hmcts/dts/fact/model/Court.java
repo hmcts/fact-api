@@ -53,6 +53,8 @@ public class Court {
     private List<String> dxNumber;
     @JsonProperty("service_area")
     private String serviceArea;
+    @JsonProperty("in_person")
+    private boolean inPerson;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
@@ -77,6 +79,7 @@ public class Court {
         this.gbs = courtEntity.getGbs();
         this.dxNumber = this.getDxNumber(this.contacts);
         this.serviceArea = this.getServiceArea(courtEntity);
+        this.inPerson = courtEntity.getInPerson().getInPerson();
     }
 
     private List<String> getDxNumber(List<Contact> contacts) {
