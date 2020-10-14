@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.apache.tomcat.jni.Address;
+import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings("PMD.TooManyFields")
@@ -70,7 +74,7 @@ public class Court {
         this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
         this.facilities = this.stripHtml(courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
-        this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
+        this.addresses = this.refactorAddressType(courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
         this.dxNumber = this.getDxNumber(this.contacts);
         this.serviceArea = this.getServiceArea(courtEntity);
@@ -109,6 +113,19 @@ public class Court {
             facility.setDescription(facility.getDescription().replaceAll("\\<.*?\\>|&nbsp;", ""));
         }
         return facilities;
+    }
+
+    private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
+            for( CourtAddress courtAddress : courtAddresses ) {
+                if (courtAddress.getAddressType().equals("Visit us or write to us")) {
+                    courtAddress.setAddressType("Visit or contact us");
+                } else if (courtAddress.getAddressType().equals("Postal")) {
+                    courtAddress.setAddressType("Write to us");
+                } else if (courtAddress.getAddressType().equals("Visiting")) {
+                    courtAddress.setAddressType("Visit us");
+                }
+            }
+            return courtAddresses;
     }
 
 }
