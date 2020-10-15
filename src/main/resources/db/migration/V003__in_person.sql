@@ -17,6 +17,6 @@ ALTER TABLE ONLY public.search_inperson
 COPY public.search_inperson (id, in_person, court_id) FROM stdin;
 1	t	1479885
 2	t	1479472
-3	f	1479784
+3	f	1479925
 4	t	1479978
 \.
