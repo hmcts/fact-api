@@ -1,6 +1,6 @@
 CREATE TABLE public.search_servicearea (
     id integer PRIMARY KEY NOT NULL,
-    service_area CHARACTER VARYING(250)  NOT NULL,
+    service CHARACTER VARYING(250) NOT NULL,
     court_id integer NOT NULL
 );
 
@@ -11,10 +11,12 @@ CREATE SEQUENCE public.search_servicearea_id_seq
     NO MAXVALUE
     CACHE 1;
 
+ALTER SEQUENCE public.search_servicearea_id_seq OWNED BY public.search_servicearea.id;
+
 ALTER TABLE ONLY public.search_servicearea
     ADD CONSTRAINT fk_search_court_id FOREIGN KEY (court_id) REFERENCES public.search_court(id);
 
-COPY public.search_servicearea (id, service_area, court_id) FROM stdin;
+COPY public.search_servicearea (id, service, court_id) FROM stdin;
 1	divorce	1479885
 2	dicorce	1479472
 3	divorce	1479925
