@@ -38,7 +38,7 @@ public class SearchController {
         @RequestParam Optional<String> postcode,
         @ApiParam("Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
         @ApiParam("Single Point of Entry") @RequestParam(required = false) Optional<String> spoe,
-        @RequestParam(required = false, name = "q") Optional<String> name
+        @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent() && spoe.isPresent()) {
             return status(HttpStatus.NOT_IMPLEMENTED).build();
@@ -46,8 +46,8 @@ public class SearchController {
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
         } else if (postcode.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
-        } else if (name.isPresent()) {
-            return status(HttpStatus.NOT_IMPLEMENTED).build();
+        } else if (query.isPresent()) {
+            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get()));
         } else {
             return badRequest().build();
         }

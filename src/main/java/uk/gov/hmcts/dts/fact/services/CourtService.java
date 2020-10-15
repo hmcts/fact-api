@@ -36,6 +36,14 @@ public class CourtService {
             .collect(toList());
     }
 
+    public List<Court2> getCourtsByNameOrAddressOrPostcodeOrTown(String query) {
+        return courtRepository
+            .queryBy(query)
+            .stream()
+            .map(Court2::new)
+            .collect(toList());
+    }
+
     public List<Court2> getNearestCourtsByPostcode(String postcode) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
 

@@ -44,8 +44,8 @@ class SearchControllerTest {
     }
 
     @Test
-    void shouldReturnNotImplementedForSearchByName() throws Exception {
+    void shouldSearchByNameOrAddress() throws Exception {
         mockMvc.perform(get(BASE_URL + "?q=name"))
-            .andExpect(status().isNotImplemented());
+            .andExpect(status().isOk());
     }
 }

@@ -65,6 +65,18 @@ class CourtServiceTest {
         assertThat(results.size()).isGreaterThan(0);
     }
 
+
+    @Test
+    void shouldReturnListOfCourts() {
+        final String query = "London";
+        final Court mock = mock(Court.class);
+
+        when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
+        List<Court2> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
+        assertThat(results.get(0)).isInstanceOf(Court2.class);
+        assertThat(results.size()).isEqualTo(1);
+    }
+
     @Test
     void shouldReturnListOfTenCourts() {
 
