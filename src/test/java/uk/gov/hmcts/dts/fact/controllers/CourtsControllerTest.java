@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.nio.file.Path;
@@ -41,11 +42,11 @@ class CourtsControllerTest {
         final Path path = Paths.get("src/integrationTest/resources/aylesbury-magistrates-court-and-family-court.json");
         final String s1 = new String(readAllBytes(path));
 
-        Court court = mapper.readValue(path.toFile(), Court.class);
+        OldCourt court = mapper.readValue(path.toFile(), OldCourt.class);
 
         final String searchSlug = "some-slug";
 
-        when(courtService.getCourtBySlug(searchSlug)).thenReturn(court);
+        when(courtService.getCourtBySlugDeprecated(searchSlug)).thenReturn(court);
         mockMvc.perform(get(String.format(URL + "/%s.json", searchSlug)))
             .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
     }

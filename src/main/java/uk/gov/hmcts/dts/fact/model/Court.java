@@ -50,7 +50,7 @@ public class Court {
     private List<OpeningTime> openingTimes;
     @JsonProperty("facilities")
     private List<Facility> facilities;
-    private List<CourtAddress2> addresses;
+    private List<CourtAddress> addresses;
     private String gbs;
     @JsonProperty("dx_number")
     private List<String> dxNumber;
@@ -79,7 +79,7 @@ public class Court {
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
         this.facilities = this.stripHtml(courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
         this.addresses = this.refactorAddressType(
-            courtEntity.getAddresses().stream().map(CourtAddress2::new).collect(toList()));
+            courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
         this.dxNumber = this.getDxNumber(this.contacts);
         this.serviceArea = this.getServiceArea(courtEntity);
@@ -121,8 +121,8 @@ public class Court {
         return facilities;
     }
 
-    private List<CourtAddress2> refactorAddressType(List<CourtAddress2> courtAddresses) {
-        for (CourtAddress2 courtAddress : courtAddresses) {
+    private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
+        for (CourtAddress courtAddress : courtAddresses) {
             if (courtAddress.getAddressType().equals("Visit us or write to us")) {
                 courtAddress.setAddressType("Visit or contact us");
             } else if (courtAddress.getAddressType().equals("Postal")) {
