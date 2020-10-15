@@ -89,6 +89,8 @@ public class Court {
     @OneToOne(mappedBy = "courtId")
     private InPerson inPerson;
 
+    @OneToOne(mappedBy = "courtId")
+    private ServiceArea serviceArea;
 
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));
