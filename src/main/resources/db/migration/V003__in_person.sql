@@ -11,6 +11,8 @@ CREATE SEQUENCE public.search_inperson_id_seq
     NO MAXVALUE
     CACHE 1;
 
+ALTER SEQUENCE public.search_inperson_id_seq OWNED BY public.search_inperson.id;
+
 ALTER TABLE ONLY public.search_inperson
     ADD CONSTRAINT fk_search_court_id FOREIGN KEY (court_id) REFERENCES public.search_court(id);
 
