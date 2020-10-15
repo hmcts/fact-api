@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class ServiceArea {
     @Id
     private Integer id;
-    private String serviceArea;
+    private String service;
     @OneToOne
     @JoinColumn(name = "court_id")
     private Court courtId;

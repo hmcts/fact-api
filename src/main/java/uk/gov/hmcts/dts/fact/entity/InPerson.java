@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class InPerson {
     @Id
     private Integer id;
-    private Boolean inPerson;
+    private Boolean isInPerson;
     @OneToOne
     @JoinColumn(name = "court_id")
     private Court courtId;

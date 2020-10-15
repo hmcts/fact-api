@@ -9,7 +9,6 @@ import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 
 import java.util.List;
-import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 
@@ -82,8 +81,8 @@ public class Court {
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
         this.dxNumber = this.getDxNumber(this.contacts);
-        this.serviceArea = courtEntity.getServiceArea().getServiceArea();
-        this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getInPerson();
+        this.serviceArea = courtEntity.getServiceArea().getService();
+        this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
     }
 
     private List<String> getDxNumber(List<Contact> contacts) {
@@ -97,22 +96,6 @@ public class Court {
             .map(Contact::getNumber)
             .collect(toList());
     }
-
-//    private String getServiceArea(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-//        if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("divorce")) {
-//            return "divorce";
-//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("money")) {
-//            return "money claims";
-//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("single-justice")) {
-//            return "minor crimes";
-//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("crime")) {
-//            return "major crimes";
-//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("probate")) {
-//            return "probate";
-//        } else {
-//            return null;
-//        }
-//    }
 
     private List<Facility> stripHtml(List<Facility> facilities) {
         for (Facility facility : facilities) {
