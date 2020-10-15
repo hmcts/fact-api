@@ -9,8 +9,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
-import uk.gov.hmcts.dts.fact.model.Court2;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt2;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
@@ -48,6 +49,13 @@ class CourtServiceTest {
     }
 
     @Test
+    void shouldReturnOldCourtObject() {
+        final Court mock = mock(Court.class);
+        when(courtRepository.findBySlug("some-slug")).thenReturn(Optional.of(mock));
+        assertThat(courtService.getCourtBySlugDeprecated("some-slug")).isInstanceOf(OldCourt.class);
+    }
+
+    @Test
     void shouldReturnCourtObject() {
         final Court mock = mock(Court.class);
         when(courtRepository.findBySlug("some-slug")).thenReturn(Optional.of(mock));
@@ -80,7 +88,7 @@ class CourtServiceTest {
 
         final String postcode = "OX1 1RZ";
 
-        List<Court2> results = courtService.getNearestCourtsByPostcode(postcode);
+        List<OldCourt2> results = courtService.getNearestCourtsByPostcode(postcode);
         assertThat(results.size()).isEqualTo(10);
     }
 
@@ -107,7 +115,7 @@ class CourtServiceTest {
 
         final String postcode = "OX1 1RZ";
 
-        List<Court2> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, "AreaOfLawName");
+        List<OldCourt2> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, "AreaOfLawName");
         assertThat(results.size()).isEqualTo(5);
     }
 }

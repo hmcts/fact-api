@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +43,7 @@ public class CourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final Court court = response.as(Court.class);
+        final OldCourt court = response.as(OldCourt.class);
         assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
 
     }

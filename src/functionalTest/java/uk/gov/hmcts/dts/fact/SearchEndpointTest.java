@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.Court2;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt2;
 
 import java.util.Comparator;
 import java.util.List;
@@ -39,9 +39,9 @@ public class SearchEndpointTest {
 
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final List<Court2> courts = response.body().jsonPath().getList(".", Court2.class);
+        final List<OldCourt2> courts = response.body().jsonPath().getList(".", OldCourt2.class);
         assertThat(courts.size()).isEqualTo(10);
-        assertThat(courts).isSortedAccordingTo(Comparator.comparing(Court2::getDistance));
+        assertThat(courts).isSortedAccordingTo(Comparator.comparing(OldCourt2::getDistance));
     }
 
     @Test
@@ -55,9 +55,9 @@ public class SearchEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final List<Court2> courts = response.body().jsonPath().getList(".", Court2.class);
+        final List<OldCourt2> courts = response.body().jsonPath().getList(".", OldCourt2.class);
         assertThat(courts.size()).isEqualTo(10);
-        assertThat(courts).isSortedAccordingTo(Comparator.comparing(Court2::getDistance));
+        assertThat(courts).isSortedAccordingTo(Comparator.comparing(OldCourt2::getDistance));
         assertThat(courts.stream().allMatch(c -> c.getAreasOfLaw().contains(aol)));
     }
 }

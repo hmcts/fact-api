@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.Court2;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -30,14 +31,14 @@ class CourtRepositoryTest {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        uk.gov.hmcts.dts.fact.model.Court expected = mapper.readValue(
+        OldCourt expected = mapper.readValue(
             Paths.get("src/integrationTest/resources/aylesbury-magistrates-court-and-family-court.json").toFile(),
-            uk.gov.hmcts.dts.fact.model.Court.class
+            OldCourt.class
         );
 
         Optional<Court> result = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
         assertThat(result).isPresent();
-        uk.gov.hmcts.dts.fact.model.Court court = new uk.gov.hmcts.dts.fact.model.Court(result.get());
+        OldCourt court = new OldCourt(result.get());
         assertThat(court.getSlug()).isEqualTo(expected.getSlug());
         assertThat(court.getAreasOfLaw()).isEqualTo(expected.getAreasOfLaw());
         assertThat(court.getContacts()).isEqualTo(expected.getContacts());
