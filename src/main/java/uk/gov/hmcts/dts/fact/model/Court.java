@@ -9,7 +9,7 @@ import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 
@@ -82,37 +82,37 @@ public class Court {
             courtEntity.getAddresses().stream().map(CourtAddress2::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
         this.dxNumber = this.getDxNumber(this.contacts);
-        this.serviceArea = this.getServiceArea(courtEntity);
-        this.inPerson = courtEntity.getInPerson() != null ? courtEntity.getInPerson().getInPerson() : null;
+        this.serviceArea = courtEntity.getServiceArea().getServiceArea();
+        this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getInPerson();
     }
 
     private List<String> getDxNumber(List<Contact> contacts) {
         List<Contact> dx = contacts
             .stream()
             .filter(c -> "DX".equals(c.getName()))
-            .collect(Collectors.toList());
+            .collect(toList());
         this.contacts.removeAll(dx);
         return dx
             .stream()
             .map(Contact::getNumber)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
-    private String getServiceArea(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        if (courtEntity.getName().toLowerCase().contains("divorce")) {
-            return "divorce";
-        } else if (courtEntity.getName().toLowerCase().contains("money")) {
-            return "money claims";
-        } else if (courtEntity.getName().toLowerCase().contains("single-justice")) {
-            return "minor crimes";
-        } else if (courtEntity.getName().toLowerCase().contains("crime")) {
-            return "major crimes";
-        } else if (courtEntity.getName().toLowerCase().contains("probate")) {
-            return "probate";
-        } else {
-            return null;
-        }
-    }
+//    private String getServiceArea(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+//        if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("divorce")) {
+//            return "divorce";
+//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("money")) {
+//            return "money claims";
+//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("single-justice")) {
+//            return "minor crimes";
+//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("crime")) {
+//            return "major crimes";
+//        } else if (courtEntity.getName().toLowerCase(Locale.ENGLISH).contains("probate")) {
+//            return "probate";
+//        } else {
+//            return null;
+//        }
+//    }
 
     private List<Facility> stripHtml(List<Facility> facilities) {
         for (Facility facility : facilities) {
