@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings("PMD.TooManyFields")
-@JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon", "urgent_message",
+@JsonPropertyOrder({"name", "slug", "info", "open", "directions", "image_file", "lat", "lon", "urgent_message",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs", "dx_number", "service_area", "in_person"})
 public class Court {
@@ -27,6 +27,8 @@ public class Court {
     private String info;
     private Boolean open;
     private String directions;
+    @JsonProperty("image_file")
+    private String imageFile;
     private Double lat;
     private Double lon;
     @JsonProperty("urgent_message")
@@ -54,7 +56,7 @@ public class Court {
     @JsonProperty("service_area")
     private String serviceArea;
     @JsonProperty("in_person")
-    private boolean inPerson;
+    private Boolean inPerson;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
@@ -62,6 +64,7 @@ public class Court {
         this.info = courtEntity.getInfo();
         this.open = courtEntity.getDisplayed();
         this.directions = courtEntity.getDirections();
+        this.imageFile = courtEntity.getImageFile();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
         this.alert = courtEntity.getAlert();

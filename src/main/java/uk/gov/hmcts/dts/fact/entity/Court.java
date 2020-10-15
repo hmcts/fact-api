@@ -23,6 +23,7 @@ public class Court {
     private String info;
     private Boolean displayed;
     private String directions;
+    private String imageFile;
     private Double lat;
     private Double lon;
     //TODO welsh alert
