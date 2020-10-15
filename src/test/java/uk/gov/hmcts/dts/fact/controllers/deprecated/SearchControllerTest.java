@@ -38,12 +38,6 @@ class SearchControllerTest {
     }
 
     @Test
-    void shouldReturnNotImplementedForSearchByPostcodeAndAreaOfLawAndSpoe() throws Exception {
-        mockMvc.perform(get(BASE_URL + "?postcode=OX1 1RZ&aol=Crime&spoe=Nearest"))
-            .andExpect(status().isNotImplemented());
-    }
-
-    @Test
     void shouldSearchByNameOrAddress() throws Exception {
         mockMvc.perform(get(BASE_URL + "?q=name"))
             .andExpect(status().isOk());
