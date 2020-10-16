@@ -90,7 +90,7 @@ class CourtsControllerTest {
     void findCourtBySlug() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        final Path path = Paths.get("src/integrationTest/resources/aylesbury-magistrates-court-and-family-court.json");
+        final Path path = Paths.get("src/integrationTest/resources/birmingham-civil-and-family-justice-centre.json");
         final String s1 = new String(readAllBytes(path));
 
         Court court = mapper.readValue(path.toFile(), Court.class);
