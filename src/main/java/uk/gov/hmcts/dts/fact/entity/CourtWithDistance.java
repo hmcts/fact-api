@@ -19,7 +19,7 @@ import static java.util.Comparator.comparing;
 @SqlResultSetMapping(
     name = "CourtWithDistanceMapping",
     entities = @EntityResult(
-        entityClass = Court2.class
+        entityClass = CourtWithDistance.class
     )
 )
 
@@ -33,7 +33,7 @@ import static java.util.Comparator.comparing;
 )
 @Getter
 @SuppressWarnings("PMD.TooManyFields")
-public class Court2 {
+public class CourtWithDistance {
     private static final String COURT_ID = "court_id";
     @Id
     private Integer id;

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
     "areas_of_law", "displayed", "hide_aols", "dx_number", "distance" })
-public class Court2 {
+public class CourtWithDistance {
     private String name;
     private Double lat;
     private Double lon;
@@ -44,7 +45,7 @@ public class Court2 {
     private BigDecimal distance;
 
 
-    public Court2(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
+    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
         this.name = courtEntity.getName();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -61,7 +62,7 @@ public class Court2 {
         this.distance = BigDecimal.valueOf(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private String getDxNumber(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
+    private String getDxNumber(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
         return courtEntity
             .getContacts()
             .stream()
@@ -71,7 +72,7 @@ public class Court2 {
             .orElse(null);
     }
 
-    private CourtAddress2 mapAddress(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
+    private CourtAddress2 mapAddress(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
         return courtEntity
             .getAddresses()
             .stream()
