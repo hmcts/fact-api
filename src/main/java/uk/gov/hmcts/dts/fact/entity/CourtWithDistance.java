@@ -24,7 +24,7 @@ import static java.util.Comparator.comparing;
 )
 
 @NamedNativeQuery(
-    name = "Court2.findNearestCourts",
+    name = "CourtWithDistance.findNearestCourts",
     resultSetMapping = "CourtWithDistanceMapping",
     query = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
         + "FROM search_court as c "

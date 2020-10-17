@@ -9,8 +9,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
-import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
@@ -63,6 +63,18 @@ class CourtServiceTest {
         List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
         assertThat(results.size()).isGreaterThan(0);
+    }
+
+
+    @Test
+    void shouldReturnListOfCourts() {
+        final String query = "London";
+        final Court mock = mock(Court.class);
+
+        when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
+        List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
+        assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
+        assertThat(results.size()).isEqualTo(1);
     }
 
     @Test

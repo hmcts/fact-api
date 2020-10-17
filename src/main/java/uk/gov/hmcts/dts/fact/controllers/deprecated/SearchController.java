@@ -3,7 +3,6 @@ package uk.gov.hmcts.dts.fact.controllers.deprecated;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,6 @@ import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
-import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @RequestMapping(
@@ -37,17 +35,14 @@ public class SearchController {
     public ResponseEntity<List<CourtWithDistance>> findCourtByPostcode(
         @RequestParam Optional<String> postcode,
         @ApiParam("Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
-        @ApiParam("Single Point of Entry") @RequestParam(required = false) Optional<String> spoe,
-        @RequestParam(required = false, name = "q") Optional<String> name
+        @RequestParam(required = false, name = "q") Optional<String> query
     ) {
-        if (postcode.isPresent() && areaOfLaw.isPresent() && spoe.isPresent()) {
-            return status(HttpStatus.NOT_IMPLEMENTED).build();
-        } else if (postcode.isPresent() && areaOfLaw.isPresent()) {
+        if (postcode.isPresent() && areaOfLaw.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
         } else if (postcode.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
-        } else if (name.isPresent()) {
-            return status(HttpStatus.NOT_IMPLEMENTED).build();
+        } else if (query.isPresent()) {
+            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get()));
         } else {
             return badRequest().build();
         }

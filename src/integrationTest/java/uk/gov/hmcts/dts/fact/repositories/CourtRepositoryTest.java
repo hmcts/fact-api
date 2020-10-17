@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +85,17 @@ class CourtRepositoryTest {
             new uk.gov.hmcts.dts.fact.model.CourtReference(result.get(0).getName(), result.get(0).getSlug());
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
         assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
+    }
+
+    @Test
+    void shouldFindCourtsByNameOrAddress() throws IOException {
+        final String query = "Oxford";
+        List<Court> result = courtRepository.queryBy(query);
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
+        assertThat(result.stream().anyMatch(r -> r.getName().contains(query)));
+        assertThat(result.stream().filter(r -> !r.getName().contains(query)).map(c -> c.getAddresses())
+                       .flatMap(Collection::stream).map(a -> a.getAddress()).anyMatch(a -> a.contains(query)));
+
     }
 
     @Test
