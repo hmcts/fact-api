@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.Court2;
+import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -106,8 +106,8 @@ class CourtRepositoryTest {
 
     @Test
     void shouldFindNearest() {
-        List<Court2> result = courtRepository.findNearest(51.8, -1.3);
-        final List<Court2> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
-        assertThat(collect).isSortedAccordingTo(Comparator.comparing(Court2::getDistance));
+        List<CourtWithDistance> result = courtRepository.findNearest(51.8, -1.3);
+        final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
+        assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
     }
 }

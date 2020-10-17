@@ -3,8 +3,8 @@ package uk.gov.hmcts.dts.fact.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
-import uk.gov.hmcts.dts.fact.model.Court2;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
@@ -36,26 +36,26 @@ public class CourtService {
             .collect(toList());
     }
 
-    public List<Court2> getCourtsByNameOrAddressOrPostcodeOrTown(String query) {
+    public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(String query) {
         return courtRepository
             .queryBy(query)
             .stream()
-            .map(Court2::new)
+            .map(CourtWithDistance::new)
             .collect(toList());
     }
 
-    public List<Court2> getNearestCourtsByPostcode(String postcode) {
+    public List<CourtWithDistance> getNearestCourtsByPostcode(String postcode) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
 
         return courtRepository
             .findNearest(coordinates.getLat(), coordinates.getLon())
             .stream()
             .limit(10)
-            .map(Court2::new)
+            .map(CourtWithDistance::new)
             .collect(toList());
     }
 
-    public List<Court2> getNearestCourtsByPostcodeAndAreaOfLaw(String postcode, String areaOfLaw) {
+    public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(String postcode, String areaOfLaw) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
 
         return courtRepository
@@ -63,7 +63,7 @@ public class CourtService {
             .stream()
             .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
             .limit(10)
-            .map(Court2::new)
+            .map(CourtWithDistance::new)
             .collect(toList());
     }
 }

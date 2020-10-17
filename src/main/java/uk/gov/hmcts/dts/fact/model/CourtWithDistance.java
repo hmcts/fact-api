@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
     "areas_of_law", "displayed", "hide_aols", "dx_number", "distance" })
-public class Court2 {
+public class CourtWithDistance {
     private String name;
     private Double lat;
     private Double lon;
@@ -45,7 +45,7 @@ public class Court2 {
     private BigDecimal distance;
 
 
-    public Court2(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -61,7 +61,7 @@ public class Court2 {
         this.dxNumber = this.getDxNumber(courtEntity.getContacts());
     }
 
-    public Court2(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
+    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
         this.name = courtEntity.getName();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();

@@ -9,8 +9,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
-import uk.gov.hmcts.dts.fact.model.Court2;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
@@ -72,8 +72,8 @@ class CourtServiceTest {
         final Court mock = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
-        List<Court2> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
-        assertThat(results.get(0)).isInstanceOf(Court2.class);
+        List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
+        assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
         assertThat(results.size()).isEqualTo(1);
     }
 
@@ -83,16 +83,16 @@ class CourtServiceTest {
         final Coordinates mockCoordinates = mock(Coordinates.class);
         when(mapitClient.getCoordinates(any())).thenReturn(mockCoordinates);
 
-        final List<uk.gov.hmcts.dts.fact.entity.Court2> courts = new ArrayList<>();
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            courts.add(mock(uk.gov.hmcts.dts.fact.entity.Court2.class));
+            courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
         }
 
         when(courtRepository.findNearest(anyDouble(), anyDouble())).thenReturn(courts);
 
         final String postcode = "OX1 1RZ";
 
-        List<Court2> results = courtService.getNearestCourtsByPostcode(postcode);
+        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode(postcode);
         assertThat(results.size()).isEqualTo(10);
     }
 
@@ -103,9 +103,9 @@ class CourtServiceTest {
         final Coordinates mockCoordinates = mock(Coordinates.class);
         when(mapitClient.getCoordinates(any())).thenReturn(mockCoordinates);
 
-        final List<uk.gov.hmcts.dts.fact.entity.Court2> courts = new ArrayList<>();
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            final uk.gov.hmcts.dts.fact.entity.Court2 mock = mock(uk.gov.hmcts.dts.fact.entity.Court2.class);
+            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
             final AreaOfLaw areaOfLaw = new AreaOfLaw();
             if (i % 4 == 0) {
                 areaOfLaw.setName("AreaOfLawName");
@@ -119,7 +119,7 @@ class CourtServiceTest {
 
         final String postcode = "OX1 1RZ";
 
-        List<Court2> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, "AreaOfLawName");
+        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, "AreaOfLawName");
         assertThat(results.size()).isEqualTo(5);
     }
 }
