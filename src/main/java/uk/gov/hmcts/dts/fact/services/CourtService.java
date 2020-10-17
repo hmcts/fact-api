@@ -3,8 +3,8 @@ package uk.gov.hmcts.dts.fact.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
-import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
@@ -33,6 +33,14 @@ public class CourtService {
             .queryBy(query)
             .stream()
             .map(court -> new CourtReference(court.getName(), court.getSlug()))
+            .collect(toList());
+    }
+
+    public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(String query) {
+        return courtRepository
+            .queryBy(query)
+            .stream()
+            .map(CourtWithDistance::new)
             .collect(toList());
     }
 
