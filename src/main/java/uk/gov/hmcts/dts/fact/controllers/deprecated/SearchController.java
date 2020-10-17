@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.dts.fact.model.Court2;
+import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class SearchController {
     @GetMapping
     @ApiOperation("Find court by postcode, address or name")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
-    public ResponseEntity<List<Court2>> findCourtByPostcode(
+    public ResponseEntity<List<CourtWithDistance>> findCourtByPostcode(
         @RequestParam Optional<String> postcode,
         @ApiParam("Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
         @ApiParam("Single Point of Entry") @RequestParam(required = false) Optional<String> spoe,
