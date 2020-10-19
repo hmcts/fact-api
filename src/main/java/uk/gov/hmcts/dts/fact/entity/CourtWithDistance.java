@@ -19,12 +19,12 @@ import static java.util.Comparator.comparing;
 @SqlResultSetMapping(
     name = "CourtWithDistanceMapping",
     entities = @EntityResult(
-        entityClass = Court2.class
+        entityClass = CourtWithDistance.class
     )
 )
 
 @NamedNativeQuery(
-    name = "Court2.findNearestCourts",
+    name = "CourtWithDistance.findNearestCourts",
     resultSetMapping = "CourtWithDistanceMapping",
     query = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
         + "FROM search_court as c "
@@ -33,7 +33,7 @@ import static java.util.Comparator.comparing;
 )
 @Getter
 @SuppressWarnings("PMD.TooManyFields")
-public class Court2 {
+public class CourtWithDistance {
     private static final String COURT_ID = "court_id";
     @Id
     private Integer id;

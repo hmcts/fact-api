@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.Court2;
+import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +89,17 @@ class CourtRepositoryTest {
     }
 
     @Test
+    void shouldFindCourtsByNameOrAddress() throws IOException {
+        final String query = "Oxford";
+        List<Court> result = courtRepository.queryBy(query);
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
+        assertThat(result.stream().anyMatch(r -> r.getName().contains(query)));
+        assertThat(result.stream().filter(r -> !r.getName().contains(query)).map(c -> c.getAddresses())
+                       .flatMap(Collection::stream).map(a -> a.getAddress()).anyMatch(a -> a.contains(query)));
+
+    }
+
+    @Test
     void shouldNotFindNonExistentCourtByQuery() {
         List<Court> result = courtRepository.queryBy("This does not exist");
         assertThat(result).isEmpty();
@@ -95,8 +107,8 @@ class CourtRepositoryTest {
 
     @Test
     void shouldFindNearest() {
-        List<Court2> result = courtRepository.findNearest(51.8, -1.3);
-        final List<Court2> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
-        assertThat(collect).isSortedAccordingTo(Comparator.comparing(Court2::getDistance));
+        List<CourtWithDistance> result = courtRepository.findNearest(51.8, -1.3);
+        final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
+        assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
     }
 }
