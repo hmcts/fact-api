@@ -15,7 +15,7 @@ import java.util.Collections;
 public class CourtTest {
 
     @Test
-    void testCreationOfServiceArea() {
+    void testCreationOfCourt() {
         uk.gov.hmcts.dts.fact.entity.Court courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
 
         final ServiceArea serviceAreaEntity = new ServiceArea();
@@ -29,7 +29,7 @@ public class CourtTest {
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
-        addressType.setName("Address Type");
+        addressType.setName("Visit us or write to us");
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
@@ -42,7 +42,7 @@ public class CourtTest {
         courtEntity.setEmails(Collections.singletonList(courtEmailEntity));
 
         final Contact contactEntity = new Contact();
-        contactEntity.setName("Contact 1");
+        contactEntity.setName("DX");
         contactEntity.setNumber("1234567");
         contactEntity.setExplanation("Explanation of contact");
         contactEntity.setSortOrder(1);
@@ -84,6 +84,24 @@ public class CourtTest {
 
         Court court = new Court(courtEntity);
         assertEquals(courtEntity.getName(), court.getName());
+        assertEquals(courtEntity.getSlug(), court.getSlug());
+        assertEquals("Info on court", court.getInfo());
+        assertEquals(courtEntity.getDirections(), court.getDirections());
+        assertEquals(courtEntity.getLat(), court.getLat());
+        assertEquals(courtEntity.getLon(), court.getLon());
+        assertEquals(courtEntity.getAlert(), court.getAlert());
+        assertEquals(courtEntity.getCciCode(), court.getCountyLocationCode());
+        assertEquals(courtEntity.getNumber(), court.getCrownLocationCode());
+        assertEquals(courtEntity.getMagistrateCode(), court.getMagistratesLocationCode());
+        assertEquals(courtEntity.getGbs(), court.getGbs());
+        assertEquals(courtEntity.getDisplayed(), court.getOpen());
+        assertEquals(courtEntity.getImageFile(), court.getImageFile());
+
+        assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
+        assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
+        assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumber().get(0));
+        assertEquals("Description of facility", court.getFacilities().get(0).getDescription());
+        assertEquals(courtEntity.getServiceArea().getService(), court.getServiceArea());
 
     }
 
