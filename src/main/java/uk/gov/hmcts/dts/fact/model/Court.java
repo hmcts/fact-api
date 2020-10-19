@@ -106,8 +106,10 @@ public class Court {
     }
 
     private String stripHtmlFromString(String text) {
-
-        return text.replaceAll("\\<.*?\\>|&nbsp;|amp;", "");
+        if (text != null) {
+            return text.replaceAll("\\<.*?>|&nbsp;|amp;", "");
+        }
+        return "";
     }
 
     private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
