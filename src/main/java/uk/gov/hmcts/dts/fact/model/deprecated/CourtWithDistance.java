@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.model.CourtAddress;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
     "areas_of_law", "displayed", "hide_aols", "dx_number", "distance" })
-public class OldCourt2 {
+public class CourtWithDistance {
     private String name;
     private Double lat;
     private Double lon;
@@ -35,7 +35,7 @@ public class OldCourt2 {
     private String slug;
     @JsonProperty("types")
     private List<String> courtTypes;
-    private CourtAddress address;
+    private OldCourtAddress address;
     @JsonProperty("areas_of_law")
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
@@ -46,7 +46,7 @@ public class OldCourt2 {
     private BigDecimal distance;
 
 
-    public OldCourt2(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
+    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -55,17 +55,32 @@ public class OldCourt2 {
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.slug = courtEntity.getSlug();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtEntity);
+        this.address = this.mapAddress(courtEntity.getAddresses());
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
-        this.dxNumber = this.getDxNumber(courtEntity);
+        this.dxNumber = this.getDxNumber(courtEntity.getContacts());
+    }
+
+    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
+        this.name = courtEntity.getName();
+        this.lat = courtEntity.getLat();
+        this.lon = courtEntity.getLon();
+        this.crownLocationCode = courtEntity.getNumber();
+        this.countyLocationCode = courtEntity.getCciCode();
+        this.magistratesLocationCode = courtEntity.getMagistrateCode();
+        this.slug = courtEntity.getSlug();
+        this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
+        this.address = this.mapAddress(courtEntity.getAddresses());
+        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.displayed = courtEntity.getDisplayed();
+        this.hideAols = courtEntity.getHideAols();
+        this.dxNumber = this.getDxNumber(courtEntity.getContacts());
         this.distance = BigDecimal.valueOf(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private String getDxNumber(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
-        return courtEntity
-            .getContacts()
+    private String getDxNumber(final List<Contact> contacts) {
+        return contacts
             .stream()
             .filter(c -> "DX".equals(c.getName()))
             .map(Contact::getNumber)
@@ -73,19 +88,17 @@ public class OldCourt2 {
             .orElse(null);
     }
 
-    private CourtAddress mapAddress(uk.gov.hmcts.dts.fact.entity.Court2 courtEntity) {
-        return courtEntity
-            .getAddresses()
+    private OldCourtAddress mapAddress(List<CourtAddress> courtAddresses) {
+        return courtAddresses
             .stream()
             .filter(a -> "Postal".equals(a.getAddressType().getName()))
             .findFirst()
-            .map(CourtAddress::new)
+            .map(OldCourtAddress::new)
             .orElse(
-                courtEntity
-                    .getAddresses()
+                courtAddresses
                     .stream()
                     .findFirst()
-                    .map(CourtAddress::new)
+                    .map(OldCourtAddress::new)
                     .orElse(null)
             );
     }
