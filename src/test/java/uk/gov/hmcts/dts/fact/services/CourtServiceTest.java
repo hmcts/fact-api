@@ -42,6 +42,8 @@ class CourtServiceTest {
     @MockBean
     MapitClient mapitClient;
 
+    private static final String SOME_SLUG = "some-slug";
+
     @Test
     void shouldThrowSlugNotFoundException() {
         when(courtRepository.findBySlug(any())).thenReturn(empty());
@@ -51,15 +53,15 @@ class CourtServiceTest {
     @Test
     void shouldReturnOldCourtObject() {
         final Court mock = mock(Court.class);
-        when(courtRepository.findBySlug("some-slug")).thenReturn(Optional.of(mock));
-        assertThat(courtService.getCourtBySlugDeprecated("some-slug")).isInstanceOf(OldCourt.class);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
+        assertThat(courtService.getCourtBySlugDeprecated(SOME_SLUG)).isInstanceOf(OldCourt.class);
     }
 
     @Test
     void shouldReturnCourtObject() {
         final Court mock = mock(Court.class);
-        when(courtRepository.findBySlug("some-slug")).thenReturn(Optional.of(mock));
-        assertThat(courtService.getCourtBySlug("some-slug")).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
+        assertThat(courtService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
     }
 
     @Test

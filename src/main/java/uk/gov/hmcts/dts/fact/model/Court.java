@@ -76,7 +76,8 @@ public class Court {
         this.emails = courtEntity.getEmails().stream().map(CourtEmail::new).collect(toList());
         this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
-        this.facilities = this.stripHtmlFromFacilities(courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
+        this.facilities = this.stripHtmlFromFacilities(
+            courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
         this.addresses = this.refactorAddressType(
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
@@ -103,6 +104,7 @@ public class Court {
         }
         return facilities;
     }
+
     private String stripHtmlFromString(String text) {
         return text.replaceAll("\\<.*?\\>|&nbsp;|amp;", "");
     }
