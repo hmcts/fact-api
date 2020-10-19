@@ -106,6 +106,7 @@ public class Court {
     }
 
     private String stripHtmlFromString(String text) {
+
         return text.replaceAll("\\<.*?\\>|&nbsp;|amp;", "");
     }
 

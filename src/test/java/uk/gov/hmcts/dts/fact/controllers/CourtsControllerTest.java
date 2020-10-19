@@ -55,7 +55,7 @@ class CourtsControllerTest {
     void findCourtByNonExistentSlug() throws Exception {
 
         final String searchSlug = "some-slug";
-        when(courtService.getCourtBySlug(searchSlug)).thenThrow(new SlugNotFoundException(searchSlug));
+        when(courtService.getCourtBySlugDeprecated(searchSlug)).thenThrow(new SlugNotFoundException(searchSlug));
 
         mockMvc.perform(get(String.format(URL + "/%s.json", searchSlug)))
             .andExpect(status().is(404)).andReturn();
