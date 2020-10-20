@@ -6,41 +6,15 @@
   "directions": null,
   "lat": 51.8107798286529,
   "lon": -0.808171203854906,
-  "urgent_message": null,
   "crown_location_code": 1129,
   "county_location_code": null,
   "magistrates_location_code": null,
   "areas_of_law": [
-    {
-      "name": "Adoption",
-      "external_link": "https%3A//www.gov.uk/child-adoption",
-      "display_url": null,
-      "external_link_desc": "Information about adopting a child"
-    },
-    {
-      "name": "Children",
-      "external_link": null,
-      "display_url": null,
-      "external_link_desc": null
-    },
-    {
-      "name": "Crime",
-      "external_link": null,
-      "display_url": null,
-      "external_link_desc": null
-    },
-    {
-      "name": "Divorce",
-      "external_link": "https%3A//www.gov.uk/divorce",
-      "display_url": null,
-      "external_link_desc": "Information about getting a divorce"
-    },
-    {
-      "name": "Domestic violence",
-      "external_link": null,
-      "display_url": null,
-      "external_link_desc": null
-    }
+    "Adoption",
+    "Children",
+    "Crime",
+    "Divorce",
+    "Domestic violence"
   ],
   "types": [
     "Magistrates' Court",
