@@ -35,7 +35,7 @@ public class CourtWithDistance {
     private String slug;
     @JsonProperty("types")
     private List<String> courtTypes;
-    private OldCourtAddress address;
+    private uk.gov.hmcts.dts.fact.model.CourtAddress address;
     @JsonProperty("areas_of_law")
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
@@ -88,17 +88,17 @@ public class CourtWithDistance {
             .orElse(null);
     }
 
-    private OldCourtAddress mapAddress(List<CourtAddress> courtAddresses) {
+    private uk.gov.hmcts.dts.fact.model.CourtAddress mapAddress(List<CourtAddress> courtAddresses) {
         return courtAddresses
             .stream()
             .filter(a -> "Postal".equals(a.getAddressType().getName()))
             .findFirst()
-            .map(OldCourtAddress::new)
+            .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
             .orElse(
                 courtAddresses
                     .stream()
                     .findFirst()
-                    .map(OldCourtAddress::new)
+                    .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
                     .orElse(null)
             );
     }
