@@ -73,16 +73,16 @@ public class Court {
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.contacts = Filters.removeDxContacts(courtEntity.getContacts().stream().map(Contact::new).collect(toList()));
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = courtEntity.getEmails().stream().map(CourtEmail::new).collect(toList());
-        this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
         this.facilities = this.stripHtmlFromFacilities(
             courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
         this.addresses = this.refactorAddressType(
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
-        this.dxNumber = Filters.filterDxNumber(this.contacts);
+        this.dxNumber = Filters.extractDxContacts(courtEntity.getContacts().stream().map(Contact::new).collect(toList()));
         this.serviceArea = courtEntity.getServiceArea() == null ? null : courtEntity.getServiceArea().getService();
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
     }
@@ -106,4 +106,5 @@ public class Court {
         }
         return courtAddresses;
     }
+
 }
