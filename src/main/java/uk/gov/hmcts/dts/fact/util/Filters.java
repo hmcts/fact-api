@@ -12,15 +12,21 @@ public final class Filters {
 
     }
 
-    public static List<String> filterDxNumber(List<Contact> contacts) {
+    public static List<String> extractDxContacts(List<Contact> contacts) {
         List<Contact> dx = contacts
             .stream()
             .filter(c -> "DX".equals(c.getName()))
             .collect(toList());
-        contacts.removeAll(dx);
         return dx
             .stream()
             .map(Contact::getNumber)
+            .collect(toList());
+    }
+
+    public static List<Contact> removeDxContacts(List<Contact> contacts) {
+        return contacts
+            .stream()
+            .filter(c -> !"DX".equals(c.getName()))
             .collect(toList());
     }
 
@@ -30,4 +36,5 @@ public final class Filters {
         }
         return "";
     }
+
 }
