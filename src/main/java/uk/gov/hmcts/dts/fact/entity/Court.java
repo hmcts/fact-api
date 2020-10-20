@@ -1,21 +1,17 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import static java.util.Comparator.comparing;
 
 @Entity
 @Table(name = "search_court")
 @Getter
+@Setter
 @SuppressWarnings("PMD.TooManyFields")
 public class Court {
     private static final String COURT_ID = "court_id";
@@ -27,8 +23,11 @@ public class Court {
     private String info;
     private Boolean displayed;
     private String directions;
+    private String imageFile;
     private Double lat;
     private Double lon;
+    //TODO welsh alert
+    private String alert;
     private Integer number;
     private Integer cciCode;
     private Integer magistrateCode;
@@ -86,6 +85,12 @@ public class Court {
     private List<CourtAddress> addresses;
 
     private String gbs;
+
+    @OneToOne(mappedBy = "courtId")
+    private InPerson inPerson;
+
+    @OneToOne(mappedBy = "courtId")
+    private ServiceArea serviceArea;
 
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));

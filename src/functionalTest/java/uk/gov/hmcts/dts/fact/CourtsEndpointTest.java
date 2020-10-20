@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,8 @@ public class CourtsEndpointTest {
 
     private static final String AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT
         = "aylesbury-magistrates-court-and-family-court";
+    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
+        = "birmingham-civil-and-family-justice-centre";
     private static final String CONTENT_TYPE_VALUE = "application/json";
 
     @Value("${TEST_URL:http://localhost:8080}")
@@ -41,7 +44,7 @@ public class CourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final Court court = response.as(Court.class);
+        final OldCourt court = response.as(OldCourt.class);
         assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
 
     }
@@ -128,5 +131,19 @@ public class CourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(400);
+    }
+
+    @Test
+    public void shouldRetrieveCourtDetailBySlug() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get("/courts/" + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final Court court = response.as(Court.class);
+        assertThat(court.getSlug()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
     }
 }

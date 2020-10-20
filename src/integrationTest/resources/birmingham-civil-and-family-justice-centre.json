@@ -1,0 +1,292 @@
+{
+  "name": "Birmingham Civil and Family Justice Centre",
+  "slug": "birmingham-civil-and-family-justice-centre",
+  "info": "",
+  "open": true,
+  "directions": null,
+  "image_file": "birmingham_civil_justice_centre_and_family_courts.jpg",
+  "lat": 52.4816515396297,
+  "lon": -1.89566151163058,
+  "urgent_message": null,
+  "crown_location_code": null,
+  "county_location_code": 127,
+  "magistrates_location_code": null,
+  "areas_of_law": [
+    {
+      "name": "Adoption",
+      "external_link": "https%3A//www.gov.uk/child-adoption",
+      "display_url": null,
+      "external_link_desc": "Information about adopting a child"
+    },
+    {
+      "name": "Bankruptcy",
+      "external_link": "https%3A//www.gov.uk/apply-for-bankruptcy",
+      "display_url": null,
+      "external_link_desc": "Information about applying for bankruptcy"
+    },
+    {
+      "name": "Children",
+      "external_link": null,
+      "display_url": null,
+      "external_link_desc": null
+    },
+    {
+      "name": "Civil partnership",
+      "external_link": "https%3A//www.gov.uk/end-civil-partnership",
+      "display_url": null,
+      "external_link_desc": "Information about ending a civil partnership"
+    },
+    {
+      "name": "Divorce",
+      "external_link": "https%3A//www.gov.uk/divorce",
+      "display_url": null,
+      "external_link_desc": "Information about getting a divorce"
+    },
+    {
+      "name": "Domestic violence",
+      "external_link": null,
+      "display_url": null,
+      "external_link_desc": null
+    },
+    {
+      "name": "Forced marriage and FGM",
+      "external_link": "https%3A//www.gov.uk/apply-forced-marriage-protection-order",
+      "display_url": null,
+      "external_link_desc": "Information about forced marriage protection orders"
+    },
+    {
+      "name": "High Court District Registry",
+      "external_link": null,
+      "display_url": null,
+      "external_link_desc": null
+    },
+    {
+      "name": "Housing possession",
+      "external_link": "https%3A//www.gov.uk/evicting-tenants",
+      "display_url": null,
+      "external_link_desc": "Information about evicting tenants"
+    },
+    {
+      "name": "Immigration",
+      "external_link": "https%3A//www.gov.uk/tribunal/iac",
+      "display_url": null,
+      "external_link_desc": "Information about the Immigration and Asylum Tribunal"
+    },
+    {
+      "name": "Money claims",
+      "external_link": "https%3A//www.gov.uk/make-court-claim-for-money",
+      "display_url": null,
+      "external_link_desc": "Information about making a court claim for money"
+    },
+    {
+      "name": "Social security",
+      "external_link": "https%3A//www.gov.uk/tribunal/sscs",
+      "display_url": null,
+      "external_link_desc": "Information about the Social Security and Child Support Tribunal"
+    }
+  ],
+  "types": [
+    "Family Court",
+    "County Court"
+  ],
+  "emails": [
+    {
+      "address": "bailiffs.birmingham.countycourt@justice.gov.uk",
+      "description": "Bailiffs",
+      "explanation": null
+    },
+    {
+      "address": "birmingham@thepsu.org.uk",
+      "description": "Personal support unit",
+      "explanation": null
+    },
+    {
+      "address": "courtofprotection.birmingham.countycourt@justice.gov.uk",
+      "description": "",
+      "explanation": null
+    },
+    {
+      "address": "utiac.birmingham@justice.gov.uk",
+      "description": "",
+      "explanation": null
+    },
+    {
+      "address": "bpc.birmingham@justice.gov.uk",
+      "description": "Business and Property Courts",
+      "explanation": null
+    },
+    {
+      "address": "qb.birmingham@justice.gov.uk",
+      "description": "Queen's Bench",
+      "explanation": null
+    },
+    {
+      "address": "family.birmingham.countycourt@justice.gov.uk",
+      "description": "Family queries",
+      "explanation": null
+    },
+    {
+      "address": "enquiries.birmingham.countycourt@justice.gov.uk",
+      "description": "Enquiries",
+      "explanation": null
+    },
+    {
+      "address": "hearings.birmingham.countycourt@justice.gov.uk",
+      "description": "Listing",
+      "explanation": null
+    },
+    {
+      "address": "multi-track.birmingham.countycourt@justice.gov.uk",
+      "description": "",
+      "explanation": null
+    },
+    {
+      "address": "fast-track.birmingham.countycourt@justice.gov.uk",
+      "description": "",
+      "explanation": null
+    },
+    {
+      "address": "administrativecourtoffice.birmingham@hmcts.x.gsi.gov.uk",
+      "description": "Admin court",
+      "explanation": null
+    },
+    {
+      "address": "smallclaims.birmingham.countycourt@justice.gov.uk",
+      "description": "Small claims",
+      "explanation": null
+    }
+  ],
+  "contacts": [
+    {
+      "number": "0121  681 4441",
+      "description": "High Court",
+      "explanation": ""
+    },
+    {
+      "number": "0300 123 1142",
+      "description": "Social security and child support",
+      "explanation": null
+    },
+    {
+      "number": "01264 785 057",
+      "description": "Fax",
+      "explanation": "Family fax"
+    },
+    {
+      "number": "0121 250 6764",
+      "description": "Appointments",
+      "explanation": "Civil appointment booking line"
+    },
+    {
+      "number": "01264 785 131",
+      "description": "Fax",
+      "explanation": "High Court fax"
+    },
+    {
+      "number": "0121 681 3010",
+      "description": "Appointments",
+      "explanation": "Emergency  Family appointment bookings"
+    },
+    {
+      "number": "0121 250 6354",
+      "description": "Personal Support Unit",
+      "explanation": "Personal Support Unit Enquiries"
+    },
+    {
+      "number": "0121 250 6777",
+      "description": "Enforcement",
+      "explanation": "Enforcement appointment booking line"
+    },
+    {
+      "number": "0300 123 5577",
+      "description": "County Court",
+      "explanation": "Civil and Family Contact Centre enquiry line"
+    },
+    {
+      "number": "0121 250 6395",
+      "description": "County Court",
+      "explanation": "Court of Protection"
+    }
+  ],
+  "opening_times": [
+    {
+      "description": "Telephone Enquiries from",
+      "hours": "8:30am to 5pm"
+    },
+    {
+      "description": "Court building open",
+      "hours": "Monday to Friday 9am to 5pm"
+    },
+    {
+      "description": "Court counter open",
+      "hours": "By prior appointment only (except High Court and Administrative Court 10am to 4pm)"
+    }
+  ],
+  "facilities": [
+    {
+      "description": "Located on every floor.",
+      "name": "Disabled toilet"
+    },
+    {
+      "description": "Wheelchair access in to the building, lifts to all floors.",
+      "name": "Disabled access"
+    },
+    {
+      "description": "Located 4th floor.",
+      "name": "Prayer / Quiet room"
+    },
+    {
+      "description": "We have a security arch. Please alert the security officer if you have a pacemaker.\r\nFor safety and security, all users and their possessions will be searched by security when they enter the building.",
+      "name": "Security arch"
+    },
+    {
+      "description": "Refreshments are available via vending machine",
+      "name": "Refreshments"
+    },
+    {
+      "description": "The PSU is available on site to provide assistance.",
+      "name": "Witness service"
+    },
+    {
+      "description": "Assistance dogs are welcome.",
+      "name": "Assistance dogs"
+    },
+    {
+      "description": "This court has wireless internet access available.",
+      "name": "Wireless network connection"
+    },
+    {
+      "description": "Located on 1st, 2nd, 3rd, 4th, 5th & 6th floors.\r\n",
+      "name": "Interview room"
+    },
+    {
+      "description": "Court/hearing room video facilities and prison to court video link facilities are available by prior arrangement. Please contact the court by telephone or email to let us know of your requirements.",
+      "name": "Video facilities"
+    },
+    {
+      "description": "The building has hearing enhancement facilities available by prior arrangement. Please contact the Court office by telephone or email if necessary.",
+      "name": "Loop Hearing"
+    },
+    {
+      "description": "Baby changing facilities are available in the disabled toilets on the 2nd floor\r\n",
+      "name": "Baby changing facility"
+    }
+  ],
+  "addresses": [
+    {
+      "address_lines": [
+        "Priory Courts",
+        "33 Bull Street"
+      ],
+      "postcode": "B4 6DS",
+      "town": "Birmingham",
+      "type": "Visit or contact us"
+    }
+  ],
+  "gbs": null,
+  "dx_number": [
+    "701987 Birmingham 7"
+  ],
+  "service_area": "divorce",
+  "in_person": true
+}

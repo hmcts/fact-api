@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.model;
+package uk.gov.hmcts.dts.fact.model.deprecated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -34,7 +35,7 @@ public class CourtWithDistance {
     private String slug;
     @JsonProperty("types")
     private List<String> courtTypes;
-    private CourtAddress2 address;
+    private uk.gov.hmcts.dts.fact.model.CourtAddress address;
     @JsonProperty("areas_of_law")
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
@@ -87,17 +88,17 @@ public class CourtWithDistance {
             .orElse(null);
     }
 
-    private CourtAddress2 mapAddress(List<CourtAddress> courtAddresses) {
+    private uk.gov.hmcts.dts.fact.model.CourtAddress mapAddress(List<CourtAddress> courtAddresses) {
         return courtAddresses
             .stream()
             .filter(a -> "Postal".equals(a.getAddressType().getName()))
             .findFirst()
-            .map(CourtAddress2::new)
+            .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
             .orElse(
                 courtAddresses
                     .stream()
                     .findFirst()
-                    .map(CourtAddress2::new)
+                    .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
                     .orElse(null)
             );
     }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
+import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 
 import java.util.Comparator;
 import java.util.List;
