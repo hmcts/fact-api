@@ -6,7 +6,7 @@ import uk.gov.hmcts.dts.fact.entity.AddressType;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CourtAddress2Test {
+class CourtAddressTest {
 
     @Test
     void testCreation() {
@@ -18,12 +18,12 @@ class CourtAddress2Test {
         entity.setPostcode("A post code");
         entity.setTownName("A town name");
 
-        CourtAddress2 courtAddress2 = new CourtAddress2(entity);
+        CourtAddress courtAddress = new CourtAddress(entity);
 
-        assertEquals(entity.getAddress().lines().collect(toList()), courtAddress2.getAddressLines());
-        assertEquals(entity.getAddressType().getName(), courtAddress2.getAddressType());
-        assertEquals(entity.getPostcode(), courtAddress2.getPostcode());
-        assertEquals(entity.getTownName(), courtAddress2.getTownName());
+        assertEquals(entity.getAddress().lines().collect(toList()), courtAddress.getAddressLines());
+        assertEquals(entity.getAddressType().getName(), courtAddress.getAddressType());
+        assertEquals(entity.getPostcode(), courtAddress.getPostcode());
+        assertEquals(entity.getTownName(), courtAddress.getTownName());
     }
 
 }
