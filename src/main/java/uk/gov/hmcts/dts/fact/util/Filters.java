@@ -13,12 +13,9 @@ public final class Filters {
     }
 
     public static List<String> extractDxContacts(List<Contact> contacts) {
-        List<Contact> dx = contacts
+        return contacts
             .stream()
             .filter(c -> "DX".equals(c.getName()))
-            .collect(toList());
-        return dx
-            .stream()
             .map(Contact::getNumber)
             .collect(toList());
     }
