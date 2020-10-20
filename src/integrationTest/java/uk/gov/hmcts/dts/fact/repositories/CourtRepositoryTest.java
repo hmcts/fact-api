@@ -33,7 +33,7 @@ class CourtRepositoryTest {
         ObjectMapper mapper = new ObjectMapper();
 
         OldCourt expected = mapper.readValue(
-            Paths.get("src/integrationTest/resources/aylesbury-magistrates-court-and-family-court.json").toFile(),
+            Paths.get("src/integrationTest/resources/deprecated/aylesbury-magistrates-court-and-family-court.json").toFile(),
             OldCourt.class
         );
 
