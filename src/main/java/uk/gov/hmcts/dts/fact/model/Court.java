@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.util.Filters;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class Court {
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
         this.slug = courtEntity.getSlug();
-        this.info = stripHtmlFromString(courtEntity.getInfo());
+        this.info = Filters.stripHtmlFromString(courtEntity.getInfo());
         this.open = courtEntity.getDisplayed();
         this.directions = courtEntity.getDirections();
         this.imageFile = courtEntity.getImageFile();
@@ -81,35 +82,16 @@ public class Court {
         this.addresses = this.refactorAddressType(
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
-        this.dxNumber = this.getDxNumber(this.contacts);
+        this.dxNumber = Filters.filterDxNumber(this.contacts);
         this.serviceArea = courtEntity.getServiceArea() == null ? null : courtEntity.getServiceArea().getService();
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
     }
 
-    private List<String> getDxNumber(List<Contact> contacts) {
-        List<Contact> dx = contacts
-            .stream()
-            .filter(c -> "DX".equals(c.getName()))
-            .collect(toList());
-        this.contacts.removeAll(dx);
-        return dx
-            .stream()
-            .map(Contact::getNumber)
-            .collect(toList());
-    }
-
     private List<Facility> stripHtmlFromFacilities(List<Facility> facilities) {
         for (Facility facility : facilities) {
-            facility.setDescription(stripHtmlFromString(facility.getDescription()));
+            facility.setDescription(Filters.stripHtmlFromString(facility.getDescription()));
         }
         return facilities;
-    }
-
-    private String stripHtmlFromString(String text) {
-        if (text != null) {
-            return text.replaceAll("\\<.*?>|&nbsp;|amp;", "");
-        }
-        return "";
     }
 
     private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
