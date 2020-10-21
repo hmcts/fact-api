@@ -79,7 +79,7 @@ public class CourtTest {
         assertEquals("Info on court", court.getInfo());
         assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
-        assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumber().get(0));
+        assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
         assertEquals("Description of facility", court.getFacilities().get(0).getDescription());
         assertEquals(courtEntity.getServiceArea().getService(), court.getServiceArea());
         assertEquals("Info on court", court.getInfo());

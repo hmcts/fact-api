@@ -1,11 +1,13 @@
 package uk.gov.hmcts.dts.fact.util;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.dts.fact.model.Contact;
+import uk.gov.hmcts.dts.fact.entity.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FiltersTest {
@@ -27,9 +29,10 @@ public class FiltersTest {
         List<Contact> contacts = new ArrayList<>();
         contacts.add(contact1);
         contacts.add(contact2);
-        List<String> dxNumber = Filters.extractDxContacts(contacts);
+        List<String> dxNumbers = contacts.stream().filter(Filters.nameIsDX).map(c -> c.getNumber()).collect(toList());
 
-        assertEquals("123", dxNumber.get(0));
+        assertEquals("123", dxNumbers.get(0));
+        assertThat(dxNumbers.size()).isEqualTo(1);
         assertEquals(contacts.get(0), contact1);
         assertEquals(contacts.get(1), contact2);
     }
@@ -50,9 +53,9 @@ public class FiltersTest {
         contacts.add(contact1);
         contacts.add(contact2);
 
-        List<Contact> contactsWithoutDx = Filters.removeDxContacts(contacts);
-
+        List<Contact> contactsWithoutDx = contacts.stream().filter(Filters.nameIsNotDX).collect(toList());
         assertEquals(contactsWithoutDx.get(0).getName(), contact2.getName());
+        assertThat(contactsWithoutDx.size()).isEqualTo(1);
     }
 
     @Test

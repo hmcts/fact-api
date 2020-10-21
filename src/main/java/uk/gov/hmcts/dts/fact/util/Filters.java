@@ -1,30 +1,14 @@
 package uk.gov.hmcts.dts.fact.util;
 
-import uk.gov.hmcts.dts.fact.model.Contact;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.function.Predicate;
 
 public final class Filters {
 
+    public static Predicate<uk.gov.hmcts.dts.fact.entity.Contact> nameIsDX = c -> "DX".equalsIgnoreCase(c.getName());
+    public static Predicate<uk.gov.hmcts.dts.fact.entity.Contact> nameIsNotDX = nameIsDX.negate();
+
     private Filters() {
 
-    }
-
-    public static List<String> extractDxContacts(List<Contact> contacts) {
-        return contacts
-            .stream()
-            .filter(c -> "DX".equals(c.getName()))
-            .map(Contact::getNumber)
-            .collect(toList());
-    }
-
-    public static List<Contact> removeDxContacts(List<Contact> contacts) {
-        return contacts
-            .stream()
-            .filter(c -> !"DX".equals(c.getName()))
-            .collect(toList());
     }
 
     public static String stripHtmlFromString(String text) {

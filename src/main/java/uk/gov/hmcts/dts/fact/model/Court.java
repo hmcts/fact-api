@@ -53,7 +53,7 @@ public class Court {
     private List<CourtAddress> addresses;
     private String gbs;
     @JsonProperty("dx_number")
-    private List<String> dxNumber;
+    private List<String> dxNumbers;
     @JsonProperty("service_area")
     private String serviceArea;
     @JsonProperty("in_person")
@@ -73,7 +73,7 @@ public class Court {
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
-        this.contacts = Filters.removeDxContacts(courtEntity.getContacts().stream().map(Contact::new).collect(toList()));
+        this.contacts = courtEntity.getContacts().stream().filter(Filters.nameIsNotDX).map(Contact::new).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = courtEntity.getEmails().stream().map(CourtEmail::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
@@ -82,7 +82,7 @@ public class Court {
         this.addresses = this.refactorAddressType(
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
-        this.dxNumber = Filters.extractDxContacts(courtEntity.getContacts().stream().map(Contact::new).collect(toList()));
+        this.dxNumbers = courtEntity.getContacts().stream().filter(Filters.nameIsDX).map(c -> c.getNumber()).collect(toList());
         this.serviceArea = courtEntity.getServiceArea() == null ? null : courtEntity.getServiceArea().getService();
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
     }
