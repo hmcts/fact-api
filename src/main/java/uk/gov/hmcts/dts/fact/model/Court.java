@@ -7,11 +7,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
-import uk.gov.hmcts.dts.fact.util.Filters;
 
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static uk.gov.hmcts.dts.fact.util.Utils.nameIsDX;
+import static uk.gov.hmcts.dts.fact.util.Utils.nameIsNotDX;
+import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 
 @Getter
 @Setter
@@ -60,20 +63,20 @@ public class Court {
     private Boolean inPerson;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity, boolean welsh) {
-        this.name = welsh ? courtEntity.getNameCy() : courtEntity.getName();
+        this.name = chooseString(welsh, courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
-        this.info = Filters.stripHtmlFromString(welsh ? courtEntity.getInfoCy() : courtEntity.getInfo());
+        this.info = stripHtmlFromString(chooseString(welsh, courtEntity.getInfoCy(), courtEntity.getInfo()));
         this.open = courtEntity.getDisplayed();
-        this.directions = welsh ? courtEntity.getDirectionsCy() : courtEntity.getDirections();
+        this.directions = chooseString(welsh, courtEntity.getDirectionsCy(), courtEntity.getDirections());
         this.imageFile = courtEntity.getImageFile();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
-        this.alert = welsh ? courtEntity.getAlertCy() : courtEntity.getAlert();
+        this.alert = chooseString(welsh, courtEntity.getAlertCy(), courtEntity.getAlert());
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(aol -> new AreaOfLaw(aol, welsh)).collect(toList());
-        this.contacts = courtEntity.getContacts().stream().filter(Filters.nameIsNotDX)
+        this.contacts = courtEntity.getContacts().stream().filter(nameIsNotDX)
             .map(c -> new Contact(c, welsh)).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = courtEntity.getEmails().stream().map(e -> new Email(e, welsh)).collect(toList());
@@ -83,7 +86,7 @@ public class Court {
         this.addresses = this.refactorAddressType(
             courtEntity.getAddresses().stream().map(a -> new CourtAddress(a, welsh)).collect(toList()));
         this.gbs = courtEntity.getGbs();
-        this.dxNumbers = courtEntity.getContacts().stream().filter(Filters.nameIsDX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
+        this.dxNumbers = courtEntity.getContacts().stream().filter(nameIsDX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
             .collect(toList());
         this.serviceArea = courtEntity.getServiceArea() == null ? null : courtEntity.getServiceArea().getService();
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
@@ -91,23 +94,19 @@ public class Court {
 
     private List<Facility> stripHtmlFromFacilities(List<Facility> facilities) {
         for (Facility facility : facilities) {
-            facility.setDescription(Filters.stripHtmlFromString(facility.getDescription()));
+            facility.setDescription(stripHtmlFromString(facility.getDescription()));
         }
         return facilities;
     }
 
     private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
         for (CourtAddress courtAddress : courtAddresses) {
-            switch (courtAddress.getAddressType()) {
-                case "Visit us or write to us":
-                    courtAddress.setAddressType("Visit or contact us");
-                    break;
-                case "Postal":
-                    courtAddress.setAddressType("Write to us");
-                    break;
-                case "Visiting":
-                    courtAddress.setAddressType("Visit us");
-                    break;
+            if (courtAddress.getAddressType().equals("Visit us or write to us")) {
+                courtAddress.setAddressType("Visit or contact us");
+            } else if (courtAddress.getAddressType().equals("Postal")) {
+                courtAddress.setAddressType("Write to us");
+            } else if (courtAddress.getAddressType().equals("Visiting")) {
+                courtAddress.setAddressType("Visit us");
             }
         }
         return courtAddresses;

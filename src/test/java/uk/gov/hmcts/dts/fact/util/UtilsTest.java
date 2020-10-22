@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FiltersTest {
+public class UtilsTest {
 
     private static final String EXPLANATION_OF_CONTACT = "Explanation of contact";
 
@@ -29,7 +29,7 @@ public class FiltersTest {
         List<Contact> contacts = new ArrayList<>();
         contacts.add(contact1);
         contacts.add(contact2);
-        List<String> dxNumbers = contacts.stream().filter(Filters.nameIsDX).map(c -> c.getNumber()).collect(toList());
+        List<String> dxNumbers = contacts.stream().filter(Utils.nameIsDX).map(Contact::getNumber).collect(toList());
 
         assertEquals("123", dxNumbers.get(0));
         assertThat(dxNumbers.size()).isEqualTo(1);
@@ -53,7 +53,7 @@ public class FiltersTest {
         contacts.add(contact1);
         contacts.add(contact2);
 
-        List<Contact> contactsWithoutDx = contacts.stream().filter(Filters.nameIsNotDX).collect(toList());
+        List<Contact> contactsWithoutDx = contacts.stream().filter(Utils.nameIsNotDX).collect(toList());
         assertEquals(contactsWithoutDx.get(0).getName(), contact2.getName());
         assertThat(contactsWithoutDx.size()).isEqualTo(1);
     }
@@ -61,6 +61,6 @@ public class FiltersTest {
     @Test
     void testHtmlFilter() {
         String text = "<p>Text that needs html stripping</p>";
-        assertEquals("Text that needs html stripping", Filters.stripHtmlFromString(text));
+        assertEquals("Text that needs html stripping", Utils.stripHtmlFromString(text));
     }
 }

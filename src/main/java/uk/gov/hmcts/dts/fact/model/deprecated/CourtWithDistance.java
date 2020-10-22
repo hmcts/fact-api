@@ -9,7 +9,7 @@ import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.util.Filters;
+import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -83,7 +83,7 @@ public class CourtWithDistance {
     private String getDxNumber(final List<Contact> contacts) {
         return contacts
             .stream()
-            .filter(Filters.nameIsDX)
+            .filter(Utils.nameIsDX)
             .map(Contact::getNumber)
             .findFirst()
             .orElse(null);

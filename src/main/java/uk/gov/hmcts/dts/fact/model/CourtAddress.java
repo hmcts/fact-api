@@ -9,6 +9,7 @@ import java.util.List;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
 @Data
 @NoArgsConstructor
@@ -25,8 +26,8 @@ public class CourtAddress {
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress, boolean welsh) {
         this.addressType = courtAddress.getAddressType().getName();
-        this.addressLines = this.getLines(welsh ? courtAddress.getAddressCy() : courtAddress.getAddress());
-        this.townName = welsh ? courtAddress.getTownNameCy() : courtAddress.getTownName();
+        this.addressLines = this.getLines(chooseString(welsh, courtAddress.getAddressCy(), courtAddress.getAddress()));
+        this.townName = chooseString(welsh, courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
     }
 

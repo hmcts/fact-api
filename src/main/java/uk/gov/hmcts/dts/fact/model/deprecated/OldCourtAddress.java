@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+
 @Data
 @NoArgsConstructor
 @JsonPropertyOrder({"type", "address", "town", "postcode"})
@@ -19,8 +21,8 @@ public class OldCourtAddress {
 
     public OldCourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress, boolean welsh) {
         this.addressType = courtAddress.getAddressType().getName();
-        this.address = welsh ? courtAddress.getAddressCy() : courtAddress.getAddress();
-        this.townName = welsh ? courtAddress.getTownNameCy() : courtAddress.getTownName();
+        this.address = chooseString(welsh, courtAddress.getAddressCy(), courtAddress.getAddress());
+        this.townName = chooseString(welsh, courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
     }
 }

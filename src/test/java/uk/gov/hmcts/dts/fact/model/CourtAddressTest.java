@@ -1,14 +1,12 @@
 package uk.gov.hmcts.dts.fact.model;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CourtAddressTest {
 
@@ -37,12 +35,4 @@ class CourtAddressTest {
         assertEquals(entity.getPostcode(), courtAddress.getPostcode());
         assertEquals(welsh ? entity.getTownNameCy() : entity.getTownName(), courtAddress.getTownName());
     }
-
-    @Test
-    void shouldHandleNullAddress() {
-        entity.setAddressCy(null);
-        CourtAddress courtAddress = new CourtAddress(entity, true);
-        assertNull(courtAddress.getAddressLines());
-    }
-
 }
