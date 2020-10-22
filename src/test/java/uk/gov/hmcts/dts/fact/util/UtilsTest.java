@@ -9,10 +9,13 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
 public class UtilsTest {
 
+    protected static final String ENGLISH = "english";
     private static final String EXPLANATION_OF_CONTACT = "Explanation of contact";
+    protected static final String WELSH = "welsh";
 
     @Test
     void testDxExtractContacts() {
@@ -63,4 +66,26 @@ public class UtilsTest {
         String text = "<p>Text that needs html stripping</p>";
         assertEquals("Text that needs html stripping", Utils.stripHtmlFromString(text));
     }
+
+    @Test
+    void shouldReturnEnglish() {
+        assertEquals(ENGLISH, chooseString(false, WELSH, ENGLISH));
+    }
+
+    @Test
+    void shouldReturnEnglishIfWelshNull() {
+        assertEquals(ENGLISH, chooseString(true, null, ENGLISH));
+    }
+
+    @Test
+    void shouldReturnEnglishIfWelshBlank() {
+        assertEquals(ENGLISH, chooseString(true, " ", ENGLISH));
+    }
+
+    @Test
+    void shouldReturnWelsh() {
+        assertEquals(WELSH, chooseString(true, WELSH, ENGLISH));
+    }
+
+
 }
