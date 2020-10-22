@@ -1,7 +1,6 @@
 package uk.gov.hmcts.dts.fact.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
@@ -25,18 +24,16 @@ public class CourtService {
     MapitClient mapitClient;
 
     public OldCourt getCourtBySlugDeprecated(String slug) {
-        boolean welsh = LocaleContextHolder.getLocale().getLanguage().equals("cy");
         return courtRepository
             .findBySlug(slug)
-            .map(c -> new OldCourt(c, welsh))
+            .map(OldCourt::new)
             .orElseThrow(() -> new SlugNotFoundException(slug));
     }
 
     public Court getCourtBySlug(String slug) {
-        boolean welsh = LocaleContextHolder.getLocale().getLanguage().equals("cy");
         return courtRepository
             .findBySlug(slug)
-            .map(c -> new Court(c, welsh))
+            .map(Court::new)
             .orElseThrow(() -> new SlugNotFoundException(slug));
     }
 
@@ -49,36 +46,31 @@ public class CourtService {
     }
 
     public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(String query) {
-        boolean welsh = LocaleContextHolder.getLocale().getLanguage().equals("cy");
         return courtRepository
             .queryBy(query)
             .stream()
-            .map(c -> new CourtWithDistance(c, welsh))
+            .map(CourtWithDistance::new)
             .collect(toList());
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcode(String postcode) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
-        boolean welsh = LocaleContextHolder.getLocale().getLanguage().equals("cy");
-
         return courtRepository
             .findNearest(coordinates.getLat(), coordinates.getLon())
             .stream()
             .limit(10)
-            .map(c -> new CourtWithDistance(c, welsh))
+            .map(CourtWithDistance::new)
             .collect(toList());
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(String postcode, String areaOfLaw) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
-        boolean welsh = LocaleContextHolder.getLocale().getLanguage().equals("cy");
-
         return courtRepository
             .findNearest(coordinates.getLat(), coordinates.getLon())
             .stream()
             .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
             .limit(10)
-            .map(c -> new CourtWithDistance(c, welsh))
+            .map(CourtWithDistance::new)
             .collect(toList());
     }
 }

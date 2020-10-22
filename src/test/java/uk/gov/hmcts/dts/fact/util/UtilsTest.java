@@ -1,10 +1,12 @@
 package uk.gov.hmcts.dts.fact.util;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,22 +71,28 @@ public class UtilsTest {
 
     @Test
     void shouldReturnEnglish() {
-        assertEquals(ENGLISH, chooseString(false, WELSH, ENGLISH));
+        assertEquals(ENGLISH, chooseString(WELSH, ENGLISH));
     }
 
     @Test
     void shouldReturnEnglishIfWelshNull() {
-        assertEquals(ENGLISH, chooseString(true, null, ENGLISH));
+        LocaleContextHolder.setLocale(new Locale("cy"));
+        assertEquals(ENGLISH, chooseString(null, ENGLISH));
+        LocaleContextHolder.resetLocaleContext();
     }
 
     @Test
     void shouldReturnEnglishIfWelshBlank() {
-        assertEquals(ENGLISH, chooseString(true, " ", ENGLISH));
+        LocaleContextHolder.setLocale(new Locale("cy"));
+        assertEquals(ENGLISH, chooseString(" ", ENGLISH));
+        LocaleContextHolder.resetLocaleContext();
     }
 
     @Test
     void shouldReturnWelsh() {
-        assertEquals(WELSH, chooseString(true, WELSH, ENGLISH));
+        LocaleContextHolder.setLocale(new Locale("cy"));
+        assertEquals(WELSH, chooseString(WELSH, ENGLISH));
+        LocaleContextHolder.resetLocaleContext();
     }
 
 

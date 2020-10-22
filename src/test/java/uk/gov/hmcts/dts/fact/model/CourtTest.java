@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.model;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
 import java.util.Collections;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -89,7 +91,12 @@ public class CourtTest {
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void testCreationOfCourt(boolean welsh) {
-        Court court = new Court(courtEntity, welsh);
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
+
+        Court court = new Court(courtEntity);
         assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
         assertEquals(welsh ? "Info on court in Welsh" : "Info on court", court.getInfo());
         assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
@@ -102,6 +109,8 @@ public class CourtTest {
             court.getFacilities().get(0).getDescription()
         );
         assertEquals(courtEntity.getServiceArea().getService(), court.getServiceArea());
+
+        LocaleContextHolder.resetLocaleContext();
     }
 
 }

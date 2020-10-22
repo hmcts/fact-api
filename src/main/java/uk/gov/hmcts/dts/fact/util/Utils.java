@@ -1,5 +1,7 @@
 package uk.gov.hmcts.dts.fact.util;
 
+import org.springframework.context.i18n.LocaleContextHolder;
+
 import java.util.function.Predicate;
 
 public final class Utils {
@@ -18,7 +20,8 @@ public final class Utils {
         return "";
     }
 
-    public static String chooseString(boolean welshPreferred, String welsh, String english) {
+    public static String chooseString(String welsh, String english) {
+        boolean welshPreferred = LocaleContextHolder.getLocale().getLanguage().equals("cy");
         return welshPreferred && null != welsh && !welsh.isBlank() ? welsh : english;
     }
 }

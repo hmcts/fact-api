@@ -41,7 +41,7 @@ class CourtRepositoryTest {
 
         Optional<Court> result = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
         assertThat(result).isPresent();
-        OldCourt court = new OldCourt(result.get(), false);
+        OldCourt court = new OldCourt(result.get());
         assertThat(court.getSlug()).isEqualTo(expected.getSlug());
         assertThat(court.getAreasOfLaw()).isEqualTo(expected.getAreasOfLaw());
         assertThat(court.getContacts()).isEqualTo(expected.getContacts());

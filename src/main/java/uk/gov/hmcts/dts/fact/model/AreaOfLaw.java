@@ -17,10 +17,10 @@ public class AreaOfLaw {
     @JsonProperty("external_link_desc")
     private String externalLinkDescription;
 
-    public AreaOfLaw(uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw, boolean welsh) {
+    public AreaOfLaw(uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw) {
         this.name = areaOfLaw.getName();
-        this.externalLink = chooseString(welsh, areaOfLaw.getExternalLinkCy(), areaOfLaw.getExternalLink());
+        this.externalLink = chooseString(areaOfLaw.getExternalLinkCy(), areaOfLaw.getExternalLink());
         this.externalLinkDescription =
-            chooseString(welsh, areaOfLaw.getExternalLinkDescriptionCy(), areaOfLaw.getExternalLinkDescription());
+            chooseString(areaOfLaw.getExternalLinkDescriptionCy(), areaOfLaw.getExternalLinkDescription());
     }
 }

@@ -11,8 +11,8 @@ public class Facility {
     private String description;
     private String name;
 
-    public Facility(uk.gov.hmcts.dts.fact.entity.Facility facility, boolean welsh) {
-        this.description = chooseString(welsh, facility.getDescriptionCy(), facility.getDescription());
+    public Facility(uk.gov.hmcts.dts.fact.entity.Facility facility) {
+        this.description = chooseString(facility.getDescriptionCy(), facility.getDescription());
         this.name = facility.getName();
     }
 }

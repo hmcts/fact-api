@@ -47,7 +47,7 @@ public class CourtWithDistance {
     private BigDecimal distance;
 
 
-    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.Court courtEntity, boolean welsh) {
+    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -56,14 +56,14 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.slug = courtEntity.getSlug();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtEntity.getAddresses(), welsh);
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(aol -> new AreaOfLaw(aol, welsh)).collect(toList());
+        this.address = this.mapAddress(courtEntity.getAddresses());
+        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
         this.dxNumber = this.getDxNumber(courtEntity.getContacts());
     }
 
-    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity, boolean welsh) {
+    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
         this.name = courtEntity.getName();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -72,8 +72,8 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.slug = courtEntity.getSlug();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtEntity.getAddresses(), welsh);
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(aol -> new AreaOfLaw(aol, welsh)).collect(toList());
+        this.address = this.mapAddress(courtEntity.getAddresses());
+        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
         this.dxNumber = this.getDxNumber(courtEntity.getContacts());
@@ -89,17 +89,17 @@ public class CourtWithDistance {
             .orElse(null);
     }
 
-    private uk.gov.hmcts.dts.fact.model.CourtAddress mapAddress(List<CourtAddress> courtAddresses, boolean welsh) {
+    private uk.gov.hmcts.dts.fact.model.CourtAddress mapAddress(List<CourtAddress> courtAddresses) {
         return courtAddresses
             .stream()
             .filter(a -> "Postal".equals(a.getAddressType().getName()))
             .findFirst()
-            .map(a -> new uk.gov.hmcts.dts.fact.model.CourtAddress(a, welsh))
+            .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
             .orElse(
                 courtAddresses
                     .stream()
                     .findFirst()
-                    .map(a -> new uk.gov.hmcts.dts.fact.model.CourtAddress(a, welsh))
+                    .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
                     .orElse(null)
             );
     }

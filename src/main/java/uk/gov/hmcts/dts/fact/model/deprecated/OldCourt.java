@@ -51,7 +51,7 @@ public class OldCourt {
     private List<OldCourtAddress> addresses;
     private String gbs;
 
-    public OldCourt(uk.gov.hmcts.dts.fact.entity.Court courtEntity, boolean welsh) {
+    public OldCourt(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
         this.slug = courtEntity.getSlug();
         this.info = courtEntity.getInfo();
@@ -65,11 +65,11 @@ public class OldCourt {
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(uk.gov.hmcts.dts.fact.entity.AreaOfLaw::getName)
             .collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
-        this.emails = courtEntity.getEmails().stream().map(e -> new Email(e, welsh)).collect(toList());
-        this.contacts = courtEntity.getContacts().stream().map(c -> new Contact(c, welsh)).collect(toList());
+        this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
+        this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
-        this.facilities = courtEntity.getFacilities().stream().map(f -> new Facility(f, welsh)).collect(toList());
-        this.addresses = courtEntity.getAddresses().stream().map(a -> new OldCourtAddress(a, welsh)).collect(toList());
+        this.facilities = courtEntity.getFacilities().stream().map(Facility::new).collect(toList());
+        this.addresses = courtEntity.getAddresses().stream().map(OldCourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();
     }
 }

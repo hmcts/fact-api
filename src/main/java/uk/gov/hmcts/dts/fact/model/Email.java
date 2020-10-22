@@ -12,9 +12,9 @@ public class Email {
     private String description;
     private String explanation;
 
-    public Email(uk.gov.hmcts.dts.fact.entity.Email email, boolean welsh) {
+    public Email(uk.gov.hmcts.dts.fact.entity.Email email) {
         this.address = email.getAddress();
         this.description = email.getDescription();
-        this.explanation = chooseString(welsh, email.getExplanationCy(), email.getExplanation());
+        this.explanation = chooseString(email.getExplanationCy(), email.getExplanation());
     }
 }

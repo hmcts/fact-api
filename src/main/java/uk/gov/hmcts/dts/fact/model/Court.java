@@ -62,29 +62,29 @@ public class Court {
     @JsonProperty("in_person")
     private Boolean inPerson;
 
-    public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity, boolean welsh) {
-        this.name = chooseString(welsh, courtEntity.getNameCy(), courtEntity.getName());
+    public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
-        this.info = stripHtmlFromString(chooseString(welsh, courtEntity.getInfoCy(), courtEntity.getInfo()));
+        this.info = stripHtmlFromString(chooseString(courtEntity.getInfoCy(), courtEntity.getInfo()));
         this.open = courtEntity.getDisplayed();
-        this.directions = chooseString(welsh, courtEntity.getDirectionsCy(), courtEntity.getDirections());
+        this.directions = chooseString(courtEntity.getDirectionsCy(), courtEntity.getDirections());
         this.imageFile = courtEntity.getImageFile();
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
-        this.alert = chooseString(welsh, courtEntity.getAlertCy(), courtEntity.getAlert());
+        this.alert = chooseString(courtEntity.getAlertCy(), courtEntity.getAlert());
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(aol -> new AreaOfLaw(aol, welsh)).collect(toList());
+        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.contacts = courtEntity.getContacts().stream().filter(nameIsNotDX)
-            .map(c -> new Contact(c, welsh)).collect(toList());
+            .map(Contact::new).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
-        this.emails = courtEntity.getEmails().stream().map(e -> new Email(e, welsh)).collect(toList());
+        this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
         this.facilities = this.stripHtmlFromFacilities(
-            courtEntity.getFacilities().stream().map(f -> new Facility(f, welsh)).collect(toList()));
+            courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
         this.addresses = this.refactorAddressType(
-            courtEntity.getAddresses().stream().map(a -> new CourtAddress(a, welsh)).collect(toList()));
+            courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
         this.dxNumbers = courtEntity.getContacts().stream().filter(nameIsDX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
             .collect(toList());

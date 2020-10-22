@@ -24,10 +24,10 @@ public class CourtAddress {
     private String townName;
     private String postcode;
 
-    public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress, boolean welsh) {
+    public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.addressType = courtAddress.getAddressType().getName();
-        this.addressLines = this.getLines(chooseString(welsh, courtAddress.getAddressCy(), courtAddress.getAddress()));
-        this.townName = chooseString(welsh, courtAddress.getTownNameCy(), courtAddress.getTownName());
+        this.addressLines = this.getLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
+        this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
     }
 
