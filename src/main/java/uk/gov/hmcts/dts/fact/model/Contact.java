@@ -14,9 +14,9 @@ public class Contact {
     private String name;
     private String explanation;
 
-    public Contact(uk.gov.hmcts.dts.fact.entity.Contact contact) {
+    public Contact(uk.gov.hmcts.dts.fact.entity.Contact contact, boolean welsh) {
         this.number = contact.getNumber();
         this.name = contact.getName();
-        this.explanation = contact.getExplanation();
+        this.explanation = welsh ? contact.getExplanationCy() : contact.getExplanation();
     }
 }

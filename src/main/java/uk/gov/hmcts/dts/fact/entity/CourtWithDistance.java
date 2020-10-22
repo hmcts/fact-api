@@ -72,7 +72,7 @@ public class CourtWithDistance {
         joinColumns = @JoinColumn(name = COURT_ID),
         inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    private List<CourtEmail> emails;
+    private List<Email> emails;
 
     @ManyToMany
     @JoinTable(

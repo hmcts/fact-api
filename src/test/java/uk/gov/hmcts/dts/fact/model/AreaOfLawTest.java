@@ -1,23 +1,37 @@
 package uk.gov.hmcts.dts.fact.model;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AreaOfLawTest {
 
-    @Test
-     void testCreation() {
-        uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
+    static uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity;
+
+    @BeforeAll
+    static void setUp() {
+        entity = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
         entity.setName("Name of area of law");
         entity.setExternalLink("external link");
+        entity.setExternalLinkCy("external link in Welsh");
         entity.setExternalLinkDescription("description of external link");
+        entity.setExternalLinkDescriptionCy("description of external link in Welsh");
+    }
 
-        AreaOfLaw areaOfLaw = new AreaOfLaw(entity);
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testCreation(boolean welsh) {
+
+        AreaOfLaw areaOfLaw = new AreaOfLaw(entity, welsh);
 
         assertEquals(entity.getName(), areaOfLaw.getName());
-        assertEquals(entity.getExternalLink(), areaOfLaw.getExternalLink());
-        assertEquals(entity.getExternalLinkDescription(), areaOfLaw.getExternalLinkDescription());
+        assertEquals(welsh ? entity.getExternalLinkCy() : entity.getExternalLink(), areaOfLaw.getExternalLink());
+        assertEquals(
+            welsh ? entity.getExternalLinkDescriptionCy() : entity.getExternalLinkDescription(),
+            areaOfLaw.getExternalLinkDescription()
+        );
     }
 
 }

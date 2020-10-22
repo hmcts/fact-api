@@ -23,18 +23,19 @@ public class CourtAddress {
     private String townName;
     private String postcode;
 
-    public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
+    public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress, boolean welsh) {
         this.addressType = courtAddress.getAddressType().getName();
-        this.addressLines = this.getLines(courtAddress);
-        this.townName = courtAddress.getTownName();
+        this.addressLines = this.getLines(welsh ? courtAddress.getAddressCy() : courtAddress.getAddress());
+        this.townName = welsh ? courtAddress.getTownNameCy() : courtAddress.getTownName();
         this.postcode = courtAddress.getPostcode();
     }
 
-    private List<String> getLines(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
-        return courtAddress
-            .getAddress()
-            .lines()
-            .filter(not(String::isEmpty))
-            .collect(toList());
+    private List<String> getLines(String address) {
+
+        return null == address ? null :
+            address
+                .lines()
+                .filter(not(String::isEmpty))
+                .collect(toList());
     }
 }

@@ -24,6 +24,8 @@ public class CourtAddress {
     @JoinColumn(name = "address_type_id")
     private AddressType addressType;
     private String address;
+    private String addressCy;
     private String townName;
+    private String townNameCy;
     private String postcode;
 }

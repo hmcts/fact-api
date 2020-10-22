@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
+import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
 import java.io.IOException;
@@ -39,7 +41,7 @@ class CourtRepositoryTest {
 
         Optional<Court> result = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
         assertThat(result).isPresent();
-        OldCourt court = new OldCourt(result.get());
+        OldCourt court = new OldCourt(result.get(), false);
         assertThat(court.getSlug()).isEqualTo(expected.getSlug());
         assertThat(court.getAreasOfLaw()).isEqualTo(expected.getAreasOfLaw());
         assertThat(court.getContacts()).isEqualTo(expected.getContacts());
@@ -75,27 +77,27 @@ class CourtRepositoryTest {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        List<uk.gov.hmcts.dts.fact.model.CourtReference> expected = Arrays.asList(mapper.readValue(
+        List<CourtReference> expected = Arrays.asList(mapper.readValue(
             Paths.get("src/integrationTest/resources/courts.json").toFile(),
-            uk.gov.hmcts.dts.fact.model.CourtReference[].class
+            CourtReference[].class
         ));
 
         List<Court> result = courtRepository.queryBy(query);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
-        uk.gov.hmcts.dts.fact.model.CourtReference court =
-            new uk.gov.hmcts.dts.fact.model.CourtReference(result.get(0).getName(), result.get(0).getSlug());
+        CourtReference court =
+            new CourtReference(result.get(0).getName(), result.get(0).getSlug());
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
         assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
     }
 
     @Test
-    void shouldFindCourtsByNameOrAddress() throws IOException {
+    void shouldFindCourtsByNameOrAddress() {
         final String query = "Oxford";
         List<Court> result = courtRepository.queryBy(query);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         assertThat(result.stream().anyMatch(r -> r.getName().contains(query)));
-        assertThat(result.stream().filter(r -> !r.getName().contains(query)).map(c -> c.getAddresses())
-                       .flatMap(Collection::stream).map(a -> a.getAddress()).anyMatch(a -> a.contains(query)));
+        assertThat(result.stream().filter(r -> !r.getName().contains(query)).map(Court::getAddresses)
+                       .flatMap(Collection::stream).map(CourtAddress::getAddress).anyMatch(a -> a.contains(query)));
 
     }
 

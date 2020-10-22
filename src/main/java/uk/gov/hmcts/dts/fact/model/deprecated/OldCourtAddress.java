@@ -17,10 +17,10 @@ public class OldCourtAddress {
     private String townName;
     private String postcode;
 
-    public OldCourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
+    public OldCourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress, boolean welsh) {
         this.addressType = courtAddress.getAddressType().getName();
-        this.address = courtAddress.getAddress();
-        this.townName = courtAddress.getTownName();
+        this.address = welsh ? courtAddress.getAddressCy() : courtAddress.getAddress();
+        this.townName = welsh ? courtAddress.getTownNameCy() : courtAddress.getTownName();
         this.postcode = courtAddress.getPostcode();
     }
 }
