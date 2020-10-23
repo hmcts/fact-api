@@ -9,6 +9,7 @@ import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
-    "areas_of_law", "displayed", "hide_aols", "dx_number", "distance" })
+    "areas_of_law", "displayed", "hide_aols", "dx_number", "distance"})
 public class CourtWithDistance {
     private String name;
     private Double lat;
@@ -82,7 +83,7 @@ public class CourtWithDistance {
     private String getDxNumber(final List<Contact> contacts) {
         return contacts
             .stream()
-            .filter(c -> "DX".equals(c.getName()))
+            .filter(Utils.nameIsDX)
             .map(Contact::getNumber)
             .findFirst()
             .orElse(null);

@@ -1,26 +1,31 @@
 package uk.gov.hmcts.dts.fact.model;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
-import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
 import java.util.Collections;
+import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CourtTest {
+    static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
 
-    @Test
-    void testCreationOfCourt() {
-        uk.gov.hmcts.dts.fact.entity.Court courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
+    @BeforeAll
+    static void setUp() {
+        courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
 
         final ServiceArea serviceAreaEntity = new ServiceArea();
         serviceAreaEntity.setService("Divorce");
@@ -39,11 +44,11 @@ public class CourtTest {
         courtAddress.setTownName("A town name");
         courtEntity.setAddresses(Collections.singletonList(courtAddress));
 
-        final CourtEmail courtEmailEntity = new CourtEmail();
-        courtEmailEntity.setAddress("email address");
-        courtEmailEntity.setDescription("email address description");
-        courtEmailEntity.setExplanation("explanation for email address");
-        courtEntity.setEmails(Collections.singletonList(courtEmailEntity));
+        final Email emailEntity = new Email();
+        emailEntity.setAddress("email address");
+        emailEntity.setDescription("email address description");
+        emailEntity.setExplanation("explanation for email address");
+        courtEntity.setEmails(Collections.singletonList(emailEntity));
 
         final Contact contactEntity = new Contact();
         contactEntity.setName("DX");
@@ -69,21 +74,43 @@ public class CourtTest {
 
         final Facility facilityEntity = new Facility();
         facilityEntity.setDescription("<p>Description of facility</p>");
+        facilityEntity.setDescriptionCy("<p>Description of facility in Welsh</p>");
         facilityEntity.setName("Facility");
         courtEntity.setFacilities(Collections.singletonList(facilityEntity));
 
         courtEntity.setInfo("<p>Info on court</p>");
+        courtEntity.setInfoCy("<p>Info on court in Welsh</p>");
+        courtEntity.setName("Name");
+        courtEntity.setNameCy("Name in Welsh");
+        courtEntity.setDirections("Directions");
+        courtEntity.setDirectionsCy("Directions in Welsh");
+        courtEntity.setAlert("Alert");
+        courtEntity.setAlertCy("Alert in Welsh");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testCreationOfCourt(boolean welsh) {
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
 
         Court court = new Court(courtEntity);
-
-        assertEquals("Info on court", court.getInfo());
+        assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
+        assertEquals(welsh ? "Info on court in Welsh" : "Info on court", court.getInfo());
+        assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
+        assertEquals(welsh ? "Alert in Welsh" : "Alert", court.getAlert());
         assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
-        assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumber().get(0));
-        assertEquals("Description of facility", court.getFacilities().get(0).getDescription());
+        assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
+        assertEquals(
+            welsh ? "Description of facility in Welsh" : "Description of facility",
+            court.getFacilities().get(0).getDescription()
+        );
         assertEquals(courtEntity.getServiceArea().getService(), court.getServiceArea());
-        assertEquals("Info on court", court.getInfo());
 
+        LocaleContextHolder.resetLocaleContext();
     }
 
 }

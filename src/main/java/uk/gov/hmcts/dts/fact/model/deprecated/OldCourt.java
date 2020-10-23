@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
-import uk.gov.hmcts.dts.fact.model.*;
+import uk.gov.hmcts.dts.fact.model.Contact;
+import uk.gov.hmcts.dts.fact.model.Email;
+import uk.gov.hmcts.dts.fact.model.Facility;
+import uk.gov.hmcts.dts.fact.model.OpeningTime;
 
 import java.util.List;
 
@@ -39,7 +42,7 @@ public class OldCourt {
     private List<String> areasOfLaw;
     @JsonProperty("types")
     private List<String> courtTypes;
-    private List<CourtEmail> emails;
+    private List<Email> emails;
     private List<Contact> contacts;
     @JsonProperty("opening_times")
     private List<OpeningTime> openingTimes;
@@ -59,9 +62,10 @@ public class OldCourt {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(uk.gov.hmcts.dts.fact.entity.AreaOfLaw::getName).collect(toList());
+        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(uk.gov.hmcts.dts.fact.entity.AreaOfLaw::getName)
+            .collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
-        this.emails = courtEntity.getEmails().stream().map(CourtEmail::new).collect(toList());
+        this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
         this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
         this.facilities = courtEntity.getFacilities().stream().map(Facility::new).collect(toList());

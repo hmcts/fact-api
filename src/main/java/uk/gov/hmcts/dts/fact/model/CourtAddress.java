@@ -9,6 +9,7 @@ import java.util.List;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
 @Data
 @NoArgsConstructor
@@ -25,16 +26,17 @@ public class CourtAddress {
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.addressType = courtAddress.getAddressType().getName();
-        this.addressLines = this.getLines(courtAddress);
-        this.townName = courtAddress.getTownName();
+        this.addressLines = this.getLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
+        this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
     }
 
-    private List<String> getLines(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
-        return courtAddress
-            .getAddress()
-            .lines()
-            .filter(not(String::isEmpty))
-            .collect(toList());
+    private List<String> getLines(String address) {
+
+        return null == address ? null :
+            address
+                .lines()
+                .filter(not(String::isEmpty))
+                .collect(toList());
     }
 }

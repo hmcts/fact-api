@@ -15,5 +15,6 @@ public class Facility {
     @Id
     private Integer id;
     private String description;
+    private String descriptionCy;
     private String name;
 }
