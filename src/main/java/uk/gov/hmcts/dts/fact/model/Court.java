@@ -11,10 +11,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtType;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
-import static uk.gov.hmcts.dts.fact.util.Utils.nameIsDX;
-import static uk.gov.hmcts.dts.fact.util.Utils.nameIsNotDX;
-import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
+import static uk.gov.hmcts.dts.fact.util.Utils.*;
 
 @Getter
 @Setter
@@ -75,7 +72,8 @@ public class Court {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.areasOfLaw = this.stripUrlencodedFromAreaOfLaw(
+            courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList()));
         this.contacts = courtEntity.getContacts().stream().filter(nameIsNotDX)
             .map(Contact::new).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
@@ -97,6 +95,13 @@ public class Court {
             facility.setDescription(stripHtmlFromString(facility.getDescription()));
         }
         return facilities;
+    }
+
+    private List<AreaOfLaw> stripUrlencodedFromAreaOfLaw(List<AreaOfLaw> areaOfLaws) {
+        for (AreaOfLaw areaOfLaw : areaOfLaws) {
+            areaOfLaw.setExternalLink(stripUrlencodedFromString(areaOfLaw.getExternalLink()));
+        }
+        return areaOfLaws;
     }
 
     private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
