@@ -14,7 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @ExtendWith(SpringExtension.class)
@@ -25,6 +27,12 @@ public class CourtsEndpointTest {
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
         = "birmingham-civil-and-family-justice-centre";
     private static final String CONTENT_TYPE_VALUE = "application/json";
+
+    private static final String COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/";
+    private static final String OLD_COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/%s.json";
+    private static final String COURT_SEARCH_ENDPOINT = "/courts";
+
+    protected static final String CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL = "cardiff-social-security-and-child-support-tribunal";
 
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
@@ -40,7 +48,7 @@ public class CourtsEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts/" + AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT + ".json")
+            .get(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT))
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -58,7 +66,7 @@ public class CourtsEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts?q=Oxford Combine")
+            .get(COURT_SEARCH_ENDPOINT + "?q=Oxford Combine")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -76,7 +84,7 @@ public class CourtsEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts?q=Oxford Combined Court Centre")
+            .get(COURT_SEARCH_ENDPOINT + "?q=Oxford Combined Court Centre")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -94,7 +102,7 @@ public class CourtsEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts?q=BD23")
+            .get(COURT_SEARCH_ENDPOINT + "?q=BD23")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -112,7 +120,7 @@ public class CourtsEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts?q=BD23 1RH")
+            .get(COURT_SEARCH_ENDPOINT + "?q=BD23 1RH")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -122,12 +130,12 @@ public class CourtsEndpointTest {
     }
 
     @Test
-    public void shouldRetrieveNoCourtReferenceByEmptyQuery() {
+    public void shouldReturnBadRequestForEmptyQuery() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts?q=")
+            .get(COURT_SEARCH_ENDPOINT + "?q=")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(400);
@@ -139,11 +147,41 @@ public class CourtsEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts/" + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE)
+            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
         final Court court = response.as(Court.class);
         assertThat(court.getSlug()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
+    }
+
+    @Test
+    public void shouldRetrieveCourtDetailInWelsh() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(ACCEPT_LANGUAGE, "cy")
+            .when()
+            .get(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL))
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final OldCourt court = response.as(OldCourt.class);
+        assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
+    }
+
+    @Test
+    public void shouldRetrieveCourtDetailBySlugInWelsh() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(ACCEPT_LANGUAGE, "cy")
+            .when()
+            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final Court court = response.as(Court.class);
+        assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
     }
 }

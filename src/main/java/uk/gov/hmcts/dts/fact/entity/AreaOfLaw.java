@@ -17,6 +17,9 @@ public class AreaOfLaw {
     private Integer id;
     private String name;
     private String externalLink;
+    private String externalLinkCy;
     @Column(name = "external_link_desc")
     private String externalLinkDescription;
+    @Column(name = "external_link_desc_cy")
+    private String externalLinkDescriptionCy;
 }

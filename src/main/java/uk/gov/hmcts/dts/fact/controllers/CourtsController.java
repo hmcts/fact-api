@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.services.CourtService;
@@ -41,8 +42,7 @@ public class CourtsController {
 
     @GetMapping
     @ApiOperation("Find courts by name, address, town or postcode")
-    public ResponseEntity<List<CourtReference>>
-        findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
+    public ResponseEntity<List<CourtReference>> findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
         if (query.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -51,7 +51,7 @@ public class CourtsController {
 
     @GetMapping(path = "/{slug}")
     @ApiOperation("Find court details by slug")
-    public ResponseEntity<uk.gov.hmcts.dts.fact.model.Court> findCourtByName(@PathVariable String slug) {
+    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(courtService.getCourtBySlug(slug));
     }
 

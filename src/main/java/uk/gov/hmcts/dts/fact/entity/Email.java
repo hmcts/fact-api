@@ -11,10 +11,11 @@ import javax.persistence.Table;
 @Table(name = "search_email")
 @Getter
 @Setter
-public class CourtEmail {
+public class Email {
     @Id
     private Integer id;
     private String address;
     private String description;
     private String explanation;
+    private String explanationCy;
 }

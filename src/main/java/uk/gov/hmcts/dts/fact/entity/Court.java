@@ -4,7 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import static java.util.Comparator.comparing;
 
@@ -19,15 +26,18 @@ public class Court {
     private Integer id;
     @Getter
     private String name;
+    private String nameCy;
     private String slug;
     private String info;
+    private String infoCy;
     private Boolean displayed;
     private String directions;
+    private String directionsCy;
     private String imageFile;
     private Double lat;
     private Double lon;
-    //TODO welsh alert
     private String alert;
+    private String alertCy;
     private Integer number;
     private Integer cciCode;
     private Integer magistrateCode;
@@ -55,7 +65,7 @@ public class Court {
         joinColumns = @JoinColumn(name = COURT_ID),
         inverseJoinColumns = @JoinColumn(name = "email_id")
     )
-    private List<CourtEmail> emails;
+    private List<Email> emails;
 
     @ManyToMany
     @JoinTable(

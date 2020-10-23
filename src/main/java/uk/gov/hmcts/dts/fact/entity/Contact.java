@@ -17,5 +17,6 @@ public class Contact {
     private String number;
     private String name;
     private String explanation;
+    private String explanationCy;
     private Integer sortOrder;
 }

@@ -55,7 +55,6 @@ public class CourtService {
 
     public List<CourtWithDistance> getNearestCourtsByPostcode(String postcode) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
-
         return courtRepository
             .findNearest(coordinates.getLat(), coordinates.getLon())
             .stream()
@@ -66,7 +65,6 @@ public class CourtService {
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(String postcode, String areaOfLaw) {
         Coordinates coordinates = mapitClient.getCoordinates(postcode);
-
         return courtRepository
             .findNearest(coordinates.getLat(), coordinates.getLon())
             .stream()
