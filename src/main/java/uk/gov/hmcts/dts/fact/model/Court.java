@@ -99,7 +99,7 @@ public class Court {
 
     private List<AreaOfLaw> stripUrlencodedFromAreaOfLaw(List<AreaOfLaw> areaOfLaws) {
         for (AreaOfLaw areaOfLaw : areaOfLaws) {
-            areaOfLaw.setExternalLink(stripUrlencodedFromString(areaOfLaw.getExternalLink()));
+            areaOfLaw.setExternalLink(decodeUrlFromString(areaOfLaw.getExternalLink()));
         }
         return areaOfLaws;
     }

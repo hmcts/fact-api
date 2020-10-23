@@ -22,7 +22,7 @@ public final class Utils {
         return "";
     }
 
-    public static String stripUrlencodedFromString(String url) {
+    public static String decodeUrlFromString(String url) {
         if (url != null) {
             return URLDecoder.decode(url, StandardCharsets.UTF_8);
         }
