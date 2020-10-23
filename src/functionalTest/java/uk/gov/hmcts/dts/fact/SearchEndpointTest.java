@@ -13,6 +13,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
@@ -61,7 +62,11 @@ public class SearchEndpointTest {
         final List<CourtWithDistance> courts = response.body().jsonPath().getList(".", CourtWithDistance.class);
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
-        assertThat(courts.stream().allMatch(c -> c.getAreasOfLaw().contains(aol)));
+        assertTrue(courts
+                       .stream()
+                       .allMatch(c -> c.getAreasOfLaw()
+                           .stream()
+                           .anyMatch(a -> a.getName().equals(aol))));
     }
 
     @Test
@@ -100,7 +105,7 @@ public class SearchEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(ACCEPT_LANGUAGE, "cy")
             .when()
-            .get(SEARCH_ENDPOINT + "?q=cardiff") //TODO should be 'caerdydd'
+            .get(SEARCH_ENDPOINT + "?q=caerdydd")
             .thenReturn();
 
         assertThat(welshResponse.statusCode()).isEqualTo(200);
