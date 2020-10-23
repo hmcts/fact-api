@@ -25,6 +25,7 @@ services:
       - LOGBACK_REQUIRE_ALERT_LEVEL=false
       - LOGBACK_REQUIRE_ERROR_CODE=false
       - SPRING_DATASOURCE_URL=jdbc:postgresql://fact-database:5432/fact
+      - MAPIT_KEY=
     ports:
       - $SERVER_PORT:$SERVER_PORT
   fact-database:
