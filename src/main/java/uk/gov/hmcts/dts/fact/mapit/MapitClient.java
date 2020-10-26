@@ -1,9 +1,8 @@
-package uk.gov.hmcts.dts.fact.services;
+package uk.gov.hmcts.dts.fact.mapit;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import uk.gov.hmcts.dts.fact.services.model.Coordinates;
 
 @FeignClient(name = "mappitApi", url = "https://mapit.mysociety.org/")
 public interface MapitClient {
