@@ -60,4 +60,10 @@ public class CourtsController {
     String slugNotFoundHandler(SlugNotFoundException ex) {
         return ex.getMessage();
     }
+
+    @GetMapping(path = "/all")
+    @ApiOperation("Return all courts")
+    public ResponseEntity<List<Court>> getAllCourts() {
+        return ok(courtService.getAllCourts());
+    }
 }
