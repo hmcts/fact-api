@@ -70,6 +70,12 @@ public class UtilsTest {
     }
 
     @Test
+    void testUrlDecoder() {
+        String text = "https%3A//www.gov.uk/test-url";
+        assertEquals("https://www.gov.uk/test-url", Utils.decodeUrlFromString(text));
+    }
+
+    @Test
     void shouldReturnEnglish() {
         assertEquals(ENGLISH, chooseString(WELSH, ENGLISH));
     }

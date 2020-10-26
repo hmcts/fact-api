@@ -60,7 +60,7 @@ public class CourtTest {
         final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
         areaOfLawEntity.setName("Divorce");
         areaOfLawEntity.setExternalLinkDescription("Description of url");
-        areaOfLawEntity.setExternalLink("url");
+        areaOfLawEntity.setExternalLink("http%3A//url");
         courtEntity.setAreasOfLaw(Collections.singletonList(areaOfLawEntity));
 
         final CourtType courtTypeEntity = new CourtType();
@@ -103,6 +103,7 @@ public class CourtTest {
         assertEquals(welsh ? "Alert in Welsh" : "Alert", court.getAlert());
         assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
+        assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
         assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
         assertEquals(
             welsh ? "Description of facility in Welsh" : "Description of facility",

@@ -11,10 +11,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtType;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
-import static uk.gov.hmcts.dts.fact.util.Utils.nameIsDX;
-import static uk.gov.hmcts.dts.fact.util.Utils.nameIsNotDX;
-import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
+import static uk.gov.hmcts.dts.fact.util.Utils.*;
 
 @Getter
 @Setter
@@ -75,14 +72,29 @@ public class Court {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.areasOfLaw = courtEntity
+            .getAreasOfLaw()
+            .stream()
+            .map(areaOfLaw -> {
+                AreaOfLaw areaOfLawObj = new AreaOfLaw(areaOfLaw);
+                areaOfLawObj.setExternalLink(decodeUrlFromString(areaOfLawObj.getExternalLink()));
+                return areaOfLawObj;
+            })
+            .collect(toList());
         this.contacts = courtEntity.getContacts().stream().filter(nameIsNotDX)
             .map(Contact::new).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
-        this.facilities = this.stripHtmlFromFacilities(
-            courtEntity.getFacilities().stream().map(Facility::new).collect(toList()));
+        this.facilities = courtEntity
+            .getFacilities()
+            .stream()
+            .map(facility -> {
+                Facility facilityObj = new Facility(facility);
+                facilityObj.setDescription(stripHtmlFromString(facilityObj.getDescription()));
+                return facilityObj;
+            })
+            .collect(toList());
         this.addresses = this.refactorAddressType(
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
@@ -90,13 +102,6 @@ public class Court {
             .collect(toList());
         this.serviceArea = courtEntity.getServiceArea() == null ? null : courtEntity.getServiceArea().getService();
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
-    }
-
-    private List<Facility> stripHtmlFromFacilities(List<Facility> facilities) {
-        for (Facility facility : facilities) {
-            facility.setDescription(stripHtmlFromString(facility.getDescription()));
-        }
-        return facilities;
     }
 
     private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
