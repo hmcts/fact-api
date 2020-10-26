@@ -4,7 +4,9 @@ import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -16,10 +18,11 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class})
+@SpringBootTest(classes = {OAuthClient.class})
+@SuppressWarnings("PMD.TooManyMethods")
 public class CourtsEndpointTest {
 
     private static final String AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT
@@ -37,9 +40,15 @@ public class CourtsEndpointTest {
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
 
+    @Autowired
+    private OAuthClient authClient;
+
+    private String token;
+
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = testUrl;
+        token = authClient.getToken();
     }
 
     @Test
@@ -184,4 +193,32 @@ public class CourtsEndpointTest {
         final Court court = response.as(Court.class);
         assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
     }
+
+    @Test
+    public void shouldRetrieveAllCourts() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(AUTHORIZATION, "Bearer " + token)
+            .when()
+            .get("/courts/all")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        String slug = response.jsonPath().get("[0].slug");
+        assertThat(slug).isEqualTo("birkenhead-county-court-and-family-court");
+    }
+
+    @Test
+    public void shouldRequireATokenForAllCourts() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get("/courts/all")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(401);
+    }
+
 }
