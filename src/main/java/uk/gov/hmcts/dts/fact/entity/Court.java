@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -42,6 +43,7 @@ public class Court {
     private Integer cciCode;
     private Integer magistrateCode;
     private Boolean hideAols;
+    private Timestamp updatedAt;
 
     @ManyToMany
     @JoinTable(
