@@ -140,7 +140,7 @@ class CourtServiceTest {
 
         when(courtRepository.findAll()).thenReturn(singletonList(mock));
         List<CourtReference> results = courtService.getAllCourts();
-        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+        assertThat(results.get(0)).isInstanceOf(CourtReference.class);
         assertThat(results.size()).isEqualTo(1);
     }
 
