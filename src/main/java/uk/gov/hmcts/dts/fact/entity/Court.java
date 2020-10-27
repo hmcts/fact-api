@@ -99,8 +99,13 @@ public class Court {
     @OneToOne(mappedBy = "courtId")
     private InPerson inPerson;
 
-    @OneToOne(mappedBy = "courtId")
-    private ServiceArea serviceArea;
+    @ManyToMany
+    @JoinTable(
+        name = "search_courtservicearea",
+        joinColumns = @JoinColumn(name = COURT_ID),
+        inverseJoinColumns = @JoinColumn(name = "servicearea_id")
+    )
+    private List<ServiceArea> serviceAreas;
 
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));

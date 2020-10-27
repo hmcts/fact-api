@@ -287,6 +287,8 @@
   "dx_number": [
     "701987 Birmingham 7"
   ],
-  "service_area": "divorce",
+  "service_area": [
+    "divorce"
+  ],
   "in_person": true
 }

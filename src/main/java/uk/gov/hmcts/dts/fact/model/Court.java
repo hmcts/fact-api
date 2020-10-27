@@ -7,11 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static uk.gov.hmcts.dts.fact.util.Utils.*;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
+import static uk.gov.hmcts.dts.fact.util.Utils.nameIsDX;
+import static uk.gov.hmcts.dts.fact.util.Utils.nameIsNotDX;
+import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 
 @Getter
 @Setter
@@ -55,7 +60,7 @@ public class Court {
     @JsonProperty("dx_number")
     private List<String> dxNumbers;
     @JsonProperty("service_area")
-    private String serviceArea;
+    private List<String> serviceAreas;
     @JsonProperty("in_person")
     private Boolean inPerson;
 
@@ -100,7 +105,10 @@ public class Court {
         this.gbs = courtEntity.getGbs();
         this.dxNumbers = courtEntity.getContacts().stream().filter(nameIsDX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
             .collect(toList());
-        this.serviceArea = courtEntity.getServiceArea() == null ? null : courtEntity.getServiceArea().getService();
+        this.serviceAreas = courtEntity.getServiceAreas() == null ? null : courtEntity.getServiceAreas()
+            .stream()
+            .map(ServiceArea::getName)
+            .collect(toList());
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
     }
 

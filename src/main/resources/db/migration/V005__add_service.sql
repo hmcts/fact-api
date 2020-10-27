@@ -1,7 +1,7 @@
 CREATE TABLE public.search_service
 (
-	id          integer                NOT NULL,
-	service     character varying(250) NOT NULL,
+	id          integer PRIMARY KEY    NOT NULL,
+	name        character varying(250) NOT NULL,
 	description character varying(500) NOT NULL
 );
 
@@ -18,7 +18,7 @@ ALTER SEQUENCE public.search_service_id_seq OWNED BY public.search_service.id;
 ALTER TABLE ONLY public.search_service
 	ALTER COLUMN id SET DEFAULT nextval('public.search_service_id_seq'::regclass);
 
-COPY public.search_service (service, description) FROM stdin;
+COPY public.search_service (name, description) FROM stdin;
 Money	Money claims, rent or mortgage disputes, bankruptcy, job disputes related to pay, appealing a tax or benefits decision.
 Probate, divorce or ending civil partnerships	Probate application and disputes, divorce, ending a civil partnership.
 Childcare and parenting	Arrangements for looking after your children if you separate from your partner or making an adoption legal.
