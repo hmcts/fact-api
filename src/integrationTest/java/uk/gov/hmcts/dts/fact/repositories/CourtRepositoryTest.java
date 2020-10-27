@@ -116,18 +116,7 @@ class CourtRepositoryTest {
 
     @Test
     void shouldFindAllCourts() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        List<CourtReference> expected = Arrays.asList(mapper.readValue(
-            Paths.get("src/integrationTest/resources/courts.json").toFile(),
-            CourtReference[].class
-        ));
-
         List<Court> result = courtRepository.findAll();
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
-        CourtReference court =
-            new CourtReference(result.get(0));
-        assertThat(court.getName()).isEqualTo(expected.get(0).getName());
-        assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
     }
 }
