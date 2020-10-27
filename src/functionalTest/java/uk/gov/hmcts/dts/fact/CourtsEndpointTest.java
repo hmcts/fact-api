@@ -18,7 +18,9 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
@@ -43,12 +45,9 @@ public class CourtsEndpointTest {
     @Autowired
     private OAuthClient authClient;
 
-    private String token;
-
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = testUrl;
-        token = authClient.getToken();
     }
 
     @Test
@@ -196,6 +195,7 @@ public class CourtsEndpointTest {
 
     @Test
     public void shouldRetrieveAllCourts() {
+        String token = authClient.getToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
