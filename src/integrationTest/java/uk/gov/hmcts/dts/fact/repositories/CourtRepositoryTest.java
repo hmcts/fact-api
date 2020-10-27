@@ -85,7 +85,7 @@ class CourtRepositoryTest {
         List<Court> result = courtRepository.queryBy(query);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         CourtReference court =
-            new CourtReference(result.get(0).getName(), result.get(0).getSlug());
+            new CourtReference(result.get(0));
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
         assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
     }

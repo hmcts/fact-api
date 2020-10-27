@@ -1,14 +1,17 @@
 [
   {
     "name": "Administrative Court",
-    "slug": "administrative-court"
+    "slug": "administrative-court",
+    "updated_at": "10 Jun 2020"
   },
   {
     "name": "Admiralty and Commercial Court",
-    "slug": "admiralty-and-commercial-court"
+    "slug": "admiralty-and-commercial-court",
+    "updated_at": "10 Jun 2020"
   },
   {
     "name": "London Court",
-    "slug": "london-court"
+    "slug": "london-court",
+    "updated_at": "10 Jun 2020"
   }
 ]

@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 @Getter
 @NoArgsConstructor
 @JsonPropertyOrder({"name", "slug", "updated_at"})
 public class CourtReference {
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM YYYY");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM YYYY", Locale.ENGLISH);
 
     private String name;
     private String slug;
