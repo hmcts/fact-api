@@ -42,7 +42,7 @@ public class CourtService {
         return courtRepository
             .queryBy(query)
             .stream()
-            .map(court -> new CourtReference(court.getName(), court.getSlug()))
+            .map(CourtReference::new)
             .collect(toList());
     }
 
@@ -75,11 +75,11 @@ public class CourtService {
             .collect(toList());
     }
 
-    public List<Court> getAllCourts() {
+    public List<CourtReference> getAllCourts() {
         return courtRepository
             .findAll()
             .stream()
-            .map(Court::new)
+            .map(CourtReference::new)
             .collect(toList());
     }
 }

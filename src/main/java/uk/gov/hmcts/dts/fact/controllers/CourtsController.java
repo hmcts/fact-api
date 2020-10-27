@@ -63,7 +63,7 @@ public class CourtsController {
 
     @GetMapping(path = "/all")
     @ApiOperation("Return all courts")
-    public ResponseEntity<List<Court>> getAllCourts() {
+    public ResponseEntity<List<CourtReference>> getAllCourts() {
         return ok(courtService.getAllCourts());
     }
 }
