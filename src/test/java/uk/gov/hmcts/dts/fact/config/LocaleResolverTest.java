@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.util.Locale;
 
