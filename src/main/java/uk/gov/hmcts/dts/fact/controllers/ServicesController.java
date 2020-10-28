@@ -36,7 +36,7 @@ public class ServicesController {
     }
 
     @GetMapping(path = "/services/{serviceName}")
-    @ApiOperation("Return all services")
+    @ApiOperation("Return a service")
     public ResponseEntity<Service> getServices(@PathVariable String serviceName) {
         return ok(serviceService.getService(serviceName));
     }
