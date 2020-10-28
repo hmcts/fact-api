@@ -20,7 +20,7 @@ import java.util.Locale;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CourtTest {
+class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
 
     @BeforeAll

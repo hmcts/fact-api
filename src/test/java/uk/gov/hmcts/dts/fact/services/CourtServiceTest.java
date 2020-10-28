@@ -71,8 +71,8 @@ class CourtServiceTest {
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
         List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
+        assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
-        assertThat(results.size()).isGreaterThan(0);
     }
 
 
