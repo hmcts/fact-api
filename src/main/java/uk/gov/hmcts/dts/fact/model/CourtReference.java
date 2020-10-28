@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+
 @Getter
 @NoArgsConstructor
 @JsonPropertyOrder({"name", "slug", "updated_at"})
@@ -18,9 +20,9 @@ public class CourtReference {
     private String updatedAt;
 
     public CourtReference(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        this.name = courtEntity.getName();
+        this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
         this.updatedAt = courtEntity.getUpdatedAt() == null
-            ? null : new SimpleDateFormat("dd MMM YYYY", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
+            ? null : new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
     }
 }
