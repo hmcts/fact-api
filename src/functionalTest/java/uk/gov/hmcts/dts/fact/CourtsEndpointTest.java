@@ -45,9 +45,12 @@ public class CourtsEndpointTest {
     @Autowired
     private OAuthClient authClient;
 
+    private String token;
+
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = testUrl;
+        token = authClient.getToken();
     }
 
     @Test
@@ -195,7 +198,6 @@ public class CourtsEndpointTest {
 
     @Test
     public void shouldRetrieveAllCourts() {
-        String token = authClient.getToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
