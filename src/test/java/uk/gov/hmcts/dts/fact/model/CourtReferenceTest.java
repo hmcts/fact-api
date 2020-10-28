@@ -4,12 +4,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -19,12 +24,12 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CourtReferenceTest {
-    static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
+    static Court courtEntity;
     private static Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
     @BeforeAll
     static void setUp() {
-        courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
+        courtEntity = new Court();
 
         final ServiceArea serviceAreaEntity = new ServiceArea();
         serviceAreaEntity.setService("Divorce");
@@ -34,7 +39,7 @@ class CourtReferenceTest {
         inPersonEntity.setIsInPerson(true);
         courtEntity.setInPerson(inPersonEntity);
 
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress = new CourtAddress();
+        final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
         addressType.setName("Visit us or write to us");
@@ -43,20 +48,20 @@ class CourtReferenceTest {
         courtAddress.setTownName("A town name");
         courtEntity.setAddresses(Collections.singletonList(courtAddress));
 
-        final uk.gov.hmcts.dts.fact.entity.Email emailEntity = new Email();
+        final Email emailEntity = new Email();
         emailEntity.setAddress("email address");
         emailEntity.setDescription("email address description");
         emailEntity.setExplanation("explanation for email address");
         courtEntity.setEmails(Collections.singletonList(emailEntity));
 
-        final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact();
+        final Contact contactEntity = new Contact();
         contactEntity.setName("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
         contactEntity.setSortOrder(1);
         courtEntity.setContacts(Collections.singletonList(contactEntity));
 
-        final uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawEntity = new AreaOfLaw();
+        final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
         areaOfLawEntity.setName("Divorce");
         areaOfLawEntity.setExternalLinkDescription("Description of url");
         areaOfLawEntity.setExternalLink("http%3A//url");
@@ -66,12 +71,12 @@ class CourtReferenceTest {
         courtTypeEntity.setName("court type");
         courtEntity.setCourtTypes(Collections.singletonList(courtTypeEntity));
 
-        final uk.gov.hmcts.dts.fact.entity.OpeningTime openingTimeEntity = new OpeningTime();
+        final OpeningTime openingTimeEntity = new OpeningTime();
         openingTimeEntity.setType("opening time type");
         openingTimeEntity.setHours("opening times");
         courtEntity.setOpeningTimes(Collections.singletonList(openingTimeEntity));
 
-        final uk.gov.hmcts.dts.fact.entity.Facility facilityEntity = new Facility();
+        final Facility facilityEntity = new Facility();
         facilityEntity.setDescription("<p>Description of facility</p>");
         facilityEntity.setDescriptionCy("<p>Description of facility in Welsh</p>");
         facilityEntity.setName("Facility");
