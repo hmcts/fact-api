@@ -1,0 +1,118 @@
+[
+  {
+    "name": "Money",
+    "description": "Money claims, rent or mortgage disputes, bankruptcy, job disputes related to pay, appealing a tax or benefits decision.",
+    "serviceAreas": [
+      {
+        "name": "Money claims",
+        "description": "Claims for when you are owed money or responding to money claims against you."
+      },
+      {
+        "name": "Probate",
+        "description": "Settlement and disputes over a deceased person's property, money and possessions, storing a will."
+      },
+      {
+        "name": "Housing",
+        "description": "Tenant evictions and rent or mortgage disputes."
+      },
+      {
+        "name": "Bankruptcy",
+        "description": "Opposing a bankruptcy petition, support for a person at risk of violence order, canceling a bankruptcy."
+      },
+      {
+        "name": "Benefits",
+        "description": "Appealing entitlement to benefits such as Personal Independence Payment (PIP), Employment and Support Allowance (ESA) or Universal Credit."
+      },
+      {
+        "name": "Claims against employers",
+        "description": "Appealing a decision about employment disputes related to pay, unfair dismissal and discrimination."
+      },
+      {
+        "name": "Tax",
+        "description": "Appealing a tax decision."
+      },
+      {
+        "name": "Minor criminal offences",
+        "description": "TV licence fines, speeding or parking fines."
+      }
+    ]
+  },
+  {
+    "name": "Probate, divorce or ending civil partnerships",
+    "description": "Probate application and disputes, divorce, ending a civil partnership.",
+    "serviceAreas": [
+      {
+        "name": "Probate",
+        "description": "Applying for probate, storing a will, settlement and disputes over a deceased person's property, money and possessions"
+      },
+      {
+        "name": "Divorce",
+        "description": "Ending a marriage, getting a legal separation or help with money, property and children during a divorce."
+      },
+      {
+        "name": "Civil partnership",
+        "description": "Ending a civil partnership."
+      },
+      {
+        "name": "Forced marriage",
+        "description": "Being made to marry against your will."
+      }
+    ]
+  },
+  {
+    "name": "Childcare and parenting",
+    "description": "Arrangements for looking after your children if you separate from your partner or making an adoption legal.",
+    "serviceAreas": [
+      {
+        "name": "Childcare arrangements if you separate from your partner",
+        "description": "Making child arrangements if you divorce or separate."
+      },
+      {
+        "name": "Adoption",
+        "description": "Support for a child adoption application."
+      }
+    ]
+  },
+  {
+    "name": "Harm and abuse",
+    "description": "Applying for an injunction against someone who is harassing or abusing you, being made to marry against your will or preventing Female Genital Mutilation (FGM).",
+    "serviceAreas": [
+      {
+        "name": "Domestic abuse",
+        "description": "Support for an injunction if you've been the victim of domestic abuse."
+      },
+      {
+        "name": "Female Genital Mutilation",
+        "description": "Support for legal protection for victims of female genital mutilation."
+      },
+      {
+        "name": "Forced marriage",
+        "description": "Being made to marry against your will."
+      }
+    ]
+  },
+  {
+    "name": "Immigration and asylum",
+    "description": "Seeking asylum, right to live in the UK, and appealing deportation.",
+    "serviceAreas": []
+  },
+  {
+    "name": "Crime",
+    "description": "Minor criminal fines for TV licenses or speeding, major criminal cases at a Crown or Magistrates’ Court.",
+    "serviceAreas": [
+      {
+        "name": "Minor criminal offences",
+        "description": "TV licence fines, speeding or parking fines."
+      },
+      {
+        "name": "Major criminal offences",
+        "description": "Major criminal cases at a Crown or Magistrates’ Court."
+      }
+    ]
+  },
+  {
+    "name": "High Court district registries",
+    "description": "Courts that deal with the most serious and high profile cases in criminal and civil law.",
+    "serviceAreas": []
+  }
+]

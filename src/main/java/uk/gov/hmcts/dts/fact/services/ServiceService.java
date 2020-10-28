@@ -7,7 +7,6 @@ import uk.gov.hmcts.dts.fact.repositories.ServiceRepository;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -36,6 +35,6 @@ public class ServiceService {
             .findByNameIgnoreCase(serviceName)
             .map(uk.gov.hmcts.dts.fact.model.Service::new)
             .map(uk.gov.hmcts.dts.fact.model.Service::getServiceAreas)
-            .orElse(emptyList());
+            .orElseThrow(() -> new NotFoundException(serviceName));
     }
 }

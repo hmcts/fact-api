@@ -24,7 +24,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping(
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
-public class ServiceController {
+public class ServicesController {
 
     @Autowired
     ServiceService serviceService;
@@ -36,7 +36,7 @@ public class ServiceController {
     }
 
     @GetMapping(path = "/services/{serviceName}")
-    @ApiOperation("Return a service")
+    @ApiOperation("Return all services")
     public ResponseEntity<Service> getServices(@PathVariable String serviceName) {
         return ok(serviceService.getService(serviceName));
     }

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ import static java.util.stream.Collectors.toList;
 
 
 @Data
+@NoArgsConstructor
 public class Service {
     private String name;
     private String description;
