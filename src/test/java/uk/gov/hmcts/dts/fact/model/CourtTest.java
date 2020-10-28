@@ -15,9 +15,9 @@ import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
-import java.util.Collections;
 import java.util.Locale;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CourtTest {
@@ -28,8 +28,8 @@ public class CourtTest {
         courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
 
         final ServiceArea serviceAreaEntity = new ServiceArea();
-        serviceAreaEntity.setService("Divorce");
-        courtEntity.setServiceArea(serviceAreaEntity);
+        serviceAreaEntity.setName("Divorce");
+        courtEntity.setServiceAreas(singletonList(serviceAreaEntity));
 
         final InPerson inPersonEntity = new InPerson();
         inPersonEntity.setIsInPerson(true);
@@ -42,41 +42,41 @@ public class CourtTest {
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
-        courtEntity.setAddresses(Collections.singletonList(courtAddress));
+        courtEntity.setAddresses(singletonList(courtAddress));
 
         final Email emailEntity = new Email();
         emailEntity.setAddress("email address");
         emailEntity.setDescription("email address description");
         emailEntity.setExplanation("explanation for email address");
-        courtEntity.setEmails(Collections.singletonList(emailEntity));
+        courtEntity.setEmails(singletonList(emailEntity));
 
         final Contact contactEntity = new Contact();
         contactEntity.setName("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
         contactEntity.setSortOrder(1);
-        courtEntity.setContacts(Collections.singletonList(contactEntity));
+        courtEntity.setContacts(singletonList(contactEntity));
 
         final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
         areaOfLawEntity.setName("Divorce");
         areaOfLawEntity.setExternalLinkDescription("Description of url");
         areaOfLawEntity.setExternalLink("http%3A//url");
-        courtEntity.setAreasOfLaw(Collections.singletonList(areaOfLawEntity));
+        courtEntity.setAreasOfLaw(singletonList(areaOfLawEntity));
 
         final CourtType courtTypeEntity = new CourtType();
         courtTypeEntity.setName("court type");
-        courtEntity.setCourtTypes(Collections.singletonList(courtTypeEntity));
+        courtEntity.setCourtTypes(singletonList(courtTypeEntity));
 
         final OpeningTime openingTimeEntity = new OpeningTime();
         openingTimeEntity.setType("opening time type");
         openingTimeEntity.setHours("opening times");
-        courtEntity.setOpeningTimes(Collections.singletonList(openingTimeEntity));
+        courtEntity.setOpeningTimes(singletonList(openingTimeEntity));
 
         final Facility facilityEntity = new Facility();
         facilityEntity.setDescription("<p>Description of facility</p>");
         facilityEntity.setDescriptionCy("<p>Description of facility in Welsh</p>");
         facilityEntity.setName("Facility");
-        courtEntity.setFacilities(Collections.singletonList(facilityEntity));
+        courtEntity.setFacilities(singletonList(facilityEntity));
 
         courtEntity.setInfo("<p>Info on court</p>");
         courtEntity.setInfoCy("<p>Info on court in Welsh</p>");
@@ -109,7 +109,7 @@ public class CourtTest {
             welsh ? "Description of facility in Welsh" : "Description of facility",
             court.getFacilities().get(0).getDescription()
         );
-        assertEquals(courtEntity.getServiceArea().getService(), court.getServiceArea());
+        assertEquals(courtEntity.getServiceAreas().get(0).getName(), court.getServiceAreas().get(0));
 
         LocaleContextHolder.resetLocaleContext();
     }

@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.Coordinates;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -17,7 +17,6 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +47,7 @@ class CourtServiceTest {
     @Test
     void shouldThrowSlugNotFoundException() {
         when(courtRepository.findBySlug(any())).thenReturn(empty());
-        assertThrows(SlugNotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
+        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
     }
 
     @Test
@@ -121,7 +120,7 @@ class CourtServiceTest {
             if (i % 4 == 0) {
                 areaOfLaw.setName("AreaOfLawName");
             }
-            List<AreaOfLaw> areasOfLaw = Arrays.asList(areaOfLaw);
+            List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
             courts.add(mock);
         }
@@ -130,7 +129,10 @@ class CourtServiceTest {
 
         final String postcode = "OX1 1RZ";
 
-        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, "AreaOfLawName");
+        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+            postcode,
+            "AreaOfLawName"
+        );
         assertThat(results.size()).isEqualTo(5);
     }
 

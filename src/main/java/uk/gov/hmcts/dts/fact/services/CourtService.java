@@ -2,7 +2,7 @@ package uk.gov.hmcts.dts.fact.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.Coordinates;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.model.Court;
@@ -28,14 +28,14 @@ public class CourtService {
         return courtRepository
             .findBySlug(slug)
             .map(OldCourt::new)
-            .orElseThrow(() -> new SlugNotFoundException(slug));
+            .orElseThrow(() -> new NotFoundException(slug));
     }
 
     public Court getCourtBySlug(String slug) {
         return courtRepository
             .findBySlug(slug)
             .map(Court::new)
-            .orElseThrow(() -> new SlugNotFoundException(slug));
+            .orElseThrow(() -> new NotFoundException(slug));
     }
 
     public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTown(String query) {
