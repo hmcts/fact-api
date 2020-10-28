@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ServicesController.class)
 class ServicesControllerTest {
 
-    protected static final String URL = "/services";
-    protected static final String NON_EXISTENT = "nonExistent";
+    private static final String URL = "/services";
+    private static final String NON_EXISTENT = "nonExistent";
 
     @Autowired
     private transient MockMvc mockMvc;

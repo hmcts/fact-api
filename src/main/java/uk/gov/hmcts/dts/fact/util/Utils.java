@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 
 public final class Utils {
 
-    public static Predicate<uk.gov.hmcts.dts.fact.entity.Contact> nameIsDX = c -> "DX".equalsIgnoreCase(c.getName());
-    public static Predicate<uk.gov.hmcts.dts.fact.entity.Contact> nameIsNotDX = nameIsDX.negate();
+    public static final Predicate<uk.gov.hmcts.dts.fact.entity.Contact> NAME_IS_DX = c -> "DX".equalsIgnoreCase(c.getName());
+    public static final Predicate<uk.gov.hmcts.dts.fact.entity.Contact> NAME_IS_NOT_DX = NAME_IS_DX.negate();
 
     private Utils() {
 

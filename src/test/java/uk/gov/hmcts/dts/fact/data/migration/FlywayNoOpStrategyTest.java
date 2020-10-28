@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.reset;
 
 @ExtendWith(MockitoExtension.class)
-public class FlywayNoOpStrategyTest {
+class FlywayNoOpStrategyTest {
 
     @Mock
     private Flyway flyway;
@@ -37,7 +37,7 @@ public class FlywayNoOpStrategyTest {
     }
 
     @Test
-    public void shouldNotThrowExceptionWhenAllMigrationsAreApplied() {
+    void shouldNotThrowExceptionWhenAllMigrationsAreApplied() {
         MigrationInfo[] infos = {info, info};
         given(flyway.info()).willReturn(infoService);
         given(infoService.all()).willReturn(infos);
@@ -48,7 +48,7 @@ public class FlywayNoOpStrategyTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenOneMigrationIsPending() {
+    void shouldThrowExceptionWhenOneMigrationIsPending() {
         MigrationInfo[] infos = {info, info};
         given(flyway.info()).willReturn(infoService);
         given(infoService.all()).willReturn(infos);
@@ -56,8 +56,8 @@ public class FlywayNoOpStrategyTest {
 
         Throwable exception = catchThrowable(() -> strategy.migrate(flyway));
         assertThat(exception)
-                .isInstanceOf(PendingMigrationScriptException.class)
-                .hasMessageStartingWith("Found migration not yet applied");
+            .isInstanceOf(PendingMigrationScriptException.class)
+            .hasMessageStartingWith("Found migration not yet applied");
     }
 }
 

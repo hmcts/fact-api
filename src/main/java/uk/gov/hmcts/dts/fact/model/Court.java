@@ -12,10 +12,10 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
+import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
-import static uk.gov.hmcts.dts.fact.util.Utils.nameIsDX;
-import static uk.gov.hmcts.dts.fact.util.Utils.nameIsNotDX;
 import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 
 @Getter
@@ -86,7 +86,7 @@ public class Court {
                 return areaOfLawObj;
             })
             .collect(toList());
-        this.contacts = courtEntity.getContacts().stream().filter(nameIsNotDX)
+        this.contacts = courtEntity.getContacts().stream().filter(NAME_IS_NOT_DX)
             .map(Contact::new).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
@@ -103,7 +103,7 @@ public class Court {
         this.addresses = this.refactorAddressType(
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
-        this.dxNumbers = courtEntity.getContacts().stream().filter(nameIsDX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
+        this.dxNumbers = courtEntity.getContacts().stream().filter(NAME_IS_DX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
             .collect(toList());
         this.serviceAreas = courtEntity.getServiceAreas() == null ? null : courtEntity.getServiceAreas()
             .stream()

@@ -26,7 +26,8 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = ServiceService.class)
 class ServiceServiceTest {
 
-    protected static final String SERVICE_NAME = "serviceName";
+    private static final String SERVICE_NAME = "serviceName";
+
     @Autowired
     ServiceService serviceService;
 
@@ -35,7 +36,7 @@ class ServiceServiceTest {
 
 
     @Test
-    void shouldThrowSlugNotFoundException() {
+    void shouldThrowNotFoundException() {
         when(serviceRepository.findByNameIgnoreCase(any())).thenReturn(empty());
         assertThrows(NotFoundException.class, () -> serviceService.getService("nonExistent"));
     }
