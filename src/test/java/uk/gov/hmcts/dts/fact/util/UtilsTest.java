@@ -76,6 +76,11 @@ public class UtilsTest {
     }
 
     @Test
+    void shouldReturnEmptyIfUrlNull() {
+        assertEquals("", Utils.decodeUrlFromString(null));
+    }
+
+    @Test
     void shouldReturnEnglish() {
         assertEquals(ENGLISH, chooseString(WELSH, ENGLISH));
     }
