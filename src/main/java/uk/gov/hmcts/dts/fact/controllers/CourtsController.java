@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
@@ -55,9 +55,9 @@ public class CourtsController {
         return ok(courtService.getCourtBySlug(slug));
     }
 
-    @ExceptionHandler(SlugNotFoundException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String slugNotFoundHandler(SlugNotFoundException ex) {
+    String slugNotFoundHandler(NotFoundException ex) {
         return ex.getMessage();
     }
 
