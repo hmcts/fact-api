@@ -83,7 +83,7 @@ public class CourtWithDistance {
     private String getDxNumber(final List<Contact> contacts) {
         return contacts
             .stream()
-            .filter(Utils.nameIsDX)
+            .filter(Utils.NAME_IS_DX)
             .map(Contact::getNumber)
             .findFirst()
             .orElse(null);

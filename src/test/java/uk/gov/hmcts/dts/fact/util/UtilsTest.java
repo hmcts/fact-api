@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
-public class UtilsTest {
+class UtilsTest {
 
     protected static final String ENGLISH = "english";
     private static final String EXPLANATION_OF_CONTACT = "Explanation of contact";
@@ -34,7 +34,7 @@ public class UtilsTest {
         List<Contact> contacts = new ArrayList<>();
         contacts.add(contact1);
         contacts.add(contact2);
-        List<String> dxNumbers = contacts.stream().filter(Utils.nameIsDX).map(Contact::getNumber).collect(toList());
+        List<String> dxNumbers = contacts.stream().filter(Utils.NAME_IS_DX).map(Contact::getNumber).collect(toList());
 
         assertEquals("123", dxNumbers.get(0));
         assertThat(dxNumbers.size()).isEqualTo(1);
@@ -58,7 +58,7 @@ public class UtilsTest {
         contacts.add(contact1);
         contacts.add(contact2);
 
-        List<Contact> contactsWithoutDx = contacts.stream().filter(Utils.nameIsNotDX).collect(toList());
+        List<Contact> contactsWithoutDx = contacts.stream().filter(Utils.NAME_IS_NOT_DX).collect(toList());
         assertEquals(contactsWithoutDx.get(0).getName(), contact2.getName());
         assertThat(contactsWithoutDx.size()).isEqualTo(1);
     }
