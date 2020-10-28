@@ -85,7 +85,7 @@ class CourtRepositoryTest {
         List<Court> result = courtRepository.queryBy(query);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         CourtReference court =
-            new CourtReference(result.get(0).getName(), result.get(0).getSlug());
+            new CourtReference(result.get(0));
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
         assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
     }
@@ -112,5 +112,11 @@ class CourtRepositoryTest {
         List<CourtWithDistance> result = courtRepository.findNearest(51.8, -1.3);
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
+    }
+
+    @Test
+    void shouldFindAllCourts() throws IOException {
+        List<Court> result = courtRepository.findAll();
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
     }
 }
