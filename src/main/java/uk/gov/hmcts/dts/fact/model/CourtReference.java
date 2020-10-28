@@ -12,8 +12,6 @@ import java.util.Locale;
 @NoArgsConstructor
 @JsonPropertyOrder({"name", "slug", "updated_at"})
 public class CourtReference {
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM YYYY", Locale.ENGLISH);
-
     private String name;
     private String slug;
     @JsonProperty("updated_at")
@@ -22,6 +20,7 @@ public class CourtReference {
     public CourtReference(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
         this.slug = courtEntity.getSlug();
-        this.updatedAt = courtEntity.getUpdatedAt() == null ? null : dateFormat.format(courtEntity.getUpdatedAt());
+        this.updatedAt = courtEntity.getUpdatedAt() == null
+            ? null : new SimpleDateFormat("dd MMM YYYY", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
     }
 }
