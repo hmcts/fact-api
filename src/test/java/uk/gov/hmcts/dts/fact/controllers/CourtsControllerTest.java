@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
@@ -41,7 +41,8 @@ class CourtsControllerTest {
     void findCourtBySlugDeprecated() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        final Path path = Paths.get("src/integrationTest/resources/deprecated/aylesbury-magistrates-court-and-family-court.json");
+        final Path path = Paths.get(
+            "src/integrationTest/resources/deprecated/aylesbury-magistrates-court-and-family-court.json");
         final String s1 = new String(readAllBytes(path));
 
         OldCourt court = mapper.readValue(path.toFile(), OldCourt.class);
@@ -57,7 +58,7 @@ class CourtsControllerTest {
     void findCourtByNonExistentSlug() throws Exception {
 
         final String searchSlug = "some-slug";
-        when(courtService.getCourtBySlugDeprecated(searchSlug)).thenThrow(new SlugNotFoundException(searchSlug));
+        when(courtService.getCourtBySlugDeprecated(searchSlug)).thenThrow(new NotFoundException(searchSlug));
 
         mockMvc.perform(get(String.format(URL + "/%s.json", searchSlug)))
             .andExpect(status().is(404)).andReturn();
@@ -74,7 +75,7 @@ class CourtsControllerTest {
         final String query = "london";
 
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
-        mockMvc.perform(get(String.format(URL + "?q=" + query)))
+        mockMvc.perform(get(URL + "?q=" + query))
             .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
     }
 
@@ -84,7 +85,7 @@ class CourtsControllerTest {
         final String query = "";
 
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
-        mockMvc.perform(get(String.format(URL + "?q=" + query)))
+        mockMvc.perform(get(URL + "?q=" + query))
             .andExpect(status().isBadRequest());
     }
 
