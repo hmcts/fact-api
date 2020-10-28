@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ServicesControllerTest {
 
     protected static final String URL = "/services";
+    protected static final String NON_EXISTENT = "nonExistent";
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -59,7 +60,7 @@ class ServicesControllerTest {
 
     @Test
     void shouldReturn404WhenServiceNotFound() throws Exception {
-        when(serviceService.getService(matches("nonExistent"))).thenThrow(new NotFoundException("nonExistent"));
+        when(serviceService.getService(matches(NON_EXISTENT))).thenThrow(new NotFoundException(NON_EXISTENT));
         mockMvc.perform(get(URL + "/nonExistent")).andExpect(status().is(404));
     }
 
@@ -78,7 +79,7 @@ class ServicesControllerTest {
 
     @Test
     void shouldReturn404() throws Exception {
-        when(serviceService.getServiceAreas(matches("nonExistent"))).thenThrow(new NotFoundException("nonExistent"));
+        when(serviceService.getServiceAreas(matches(NON_EXISTENT))).thenThrow(new NotFoundException(NON_EXISTENT));
         mockMvc.perform(get(URL + "/nonExistent/service-areas")).andExpect(status().is(404));
     }
 }
