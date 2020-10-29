@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,10 +9,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "search_facility")
-@Data
+@Getter
+@Setter
 public class Facility {
     @Id
     private Integer id;
     private String description;
+    private String descriptionCy;
     private String name;
 }

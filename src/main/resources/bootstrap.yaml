@@ -10,3 +10,4 @@ spring:
         api-POSTGRES-DATABASE: POSTGRES_DATABASE
         api-POSTGRES-USER: POSTGRES_USER
         mapit-key: MAPIT_KEY
+        AppInsightsInstrumentationKey: APPINSIGHTS_INSTRUMENTATIONKEY

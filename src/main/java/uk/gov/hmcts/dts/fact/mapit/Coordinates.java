@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.services.model;
+package uk.gov.hmcts.dts.fact.mapit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.util.List;
@@ -35,23 +36,34 @@ public class CourtsController {
     @Deprecated
     @GetMapping(path = "/{slug}.json")
     @ApiOperation("Find court details by name")
-    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
-        return ok(courtService.getCourtBySlug(slug));
+    public ResponseEntity<OldCourt> findCourtByNameDeprecated(@PathVariable String slug) {
+        return ok(courtService.getCourtBySlugDeprecated(slug));
     }
 
     @GetMapping
     @ApiOperation("Find courts by name, address, town or postcode")
-    public ResponseEntity<List<CourtReference>>
-        findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
+    public ResponseEntity<List<CourtReference>> findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
         if (query.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query));
     }
 
-    @ExceptionHandler(SlugNotFoundException.class)
+    @GetMapping(path = "/{slug}")
+    @ApiOperation("Find court details by slug")
+    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
+        return ok(courtService.getCourtBySlug(slug));
+    }
+
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String slugNotFoundHandler(SlugNotFoundException ex) {
+    String slugNotFoundHandler(NotFoundException ex) {
         return ex.getMessage();
+    }
+
+    @GetMapping(path = "/all")
+    @ApiOperation("Return all courts")
+    public ResponseEntity<List<CourtReference>> getAllCourts() {
+        return ok(courtService.getAllCourts());
     }
 }

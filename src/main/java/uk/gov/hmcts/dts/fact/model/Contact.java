@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+
 @Data
 @NoArgsConstructor
 @JsonPropertyOrder({"number", "description", "explanation"})
@@ -17,6 +19,6 @@ public class Contact {
     public Contact(uk.gov.hmcts.dts.fact.entity.Contact contact) {
         this.number = contact.getNumber();
         this.name = contact.getName();
-        this.explanation = contact.getExplanation();
+        this.explanation = chooseString(contact.getExplanationCy(), contact.getExplanation());
     }
 }
