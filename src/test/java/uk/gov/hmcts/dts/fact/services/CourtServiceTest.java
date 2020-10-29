@@ -6,19 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.exception.SlugNotFoundException;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.mapit.Coordinates;
+import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
+import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,17 +39,29 @@ class CourtServiceTest {
     @MockBean
     CourtRepository courtRepository;
 
+    @MockBean
+    MapitClient mapitClient;
+
+    private static final String SOME_SLUG = "some-slug";
+
     @Test
     void shouldThrowSlugNotFoundException() {
         when(courtRepository.findBySlug(any())).thenReturn(empty());
-        assertThrows(SlugNotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
+        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
+    }
+
+    @Test
+    void shouldReturnOldCourtObject() {
+        final Court mock = mock(Court.class);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
+        assertThat(courtService.getCourtBySlugDeprecated(SOME_SLUG)).isInstanceOf(OldCourt.class);
     }
 
     @Test
     void shouldReturnCourtObject() {
         final Court mock = mock(Court.class);
-        when(courtRepository.findBySlug("some-slug")).thenReturn(Optional.of(mock));
-        assertThat(courtService.getCourtBySlug("some-slug")).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
+        assertThat(courtService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
     }
 
     @Test
@@ -50,9 +69,81 @@ class CourtServiceTest {
         final String query = "London";
         final Court mock = mock(Court.class);
 
-        when(courtRepository.queryBy(query)).thenReturn(Collections.singletonList(mock));
+        when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
         List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
+        assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
-        assertThat(results.size()).isGreaterThan(0);
     }
+
+
+    @Test
+    void shouldReturnListOfCourts() {
+        final String query = "London";
+        final Court mock = mock(Court.class);
+
+        when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
+        List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
+        assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
+        assertThat(results.size()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldReturnListOfTenCourts() {
+
+        final Coordinates mockCoordinates = mock(Coordinates.class);
+        when(mapitClient.getCoordinates(any())).thenReturn(mockCoordinates);
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+        }
+
+        when(courtRepository.findNearest(anyDouble(), anyDouble())).thenReturn(courts);
+
+        final String postcode = "OX1 1RZ";
+
+        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode(postcode);
+        assertThat(results.size()).isEqualTo(10);
+    }
+
+    @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    void shouldFilterSearchByAreaOfLaw() {
+
+        final Coordinates mockCoordinates = mock(Coordinates.class);
+        when(mapitClient.getCoordinates(any())).thenReturn(mockCoordinates);
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
+            final AreaOfLaw areaOfLaw = new AreaOfLaw();
+            if (i % 4 == 0) {
+                areaOfLaw.setName("AreaOfLawName");
+            }
+            List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
+            when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
+            courts.add(mock);
+        }
+
+        when(courtRepository.findNearest(anyDouble(), anyDouble())).thenReturn(courts);
+
+        final String postcode = "OX1 1RZ";
+
+        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+            postcode,
+            "AreaOfLawName"
+        );
+        assertThat(results.size()).isEqualTo(5);
+    }
+
+    @Test
+    void shouldReturnAll() {
+        final Court mock = mock(Court.class);
+
+        when(courtRepository.findAll()).thenReturn(singletonList(mock));
+        List<CourtReference> results = courtService.getAllCourts();
+        assertThat(results.get(0)).isInstanceOf(CourtReference.class);
+        assertThat(results.size()).isEqualTo(1);
+    }
+
 }

@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.0'
 
 services:
   fact-api:
@@ -10,7 +10,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: hmctspublic.azurecr.io/spring-boot/template
+    image: hmctspublic.azurecr.io/fact/api:latest
     environment:
       # these environment variables are used by java-logging library
       - ROOT_APPENDER
@@ -25,6 +25,7 @@ services:
       - LOGBACK_REQUIRE_ALERT_LEVEL=false
       - LOGBACK_REQUIRE_ERROR_CODE=false
       - SPRING_DATASOURCE_URL=jdbc:postgresql://fact-database:5432/fact
+      - MAPIT_KEY=
     ports:
       - $SERVER_PORT:$SERVER_PORT
   fact-database:
