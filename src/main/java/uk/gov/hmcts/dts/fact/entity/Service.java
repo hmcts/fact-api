@@ -17,7 +17,9 @@ public class Service {
     @Id
     private Integer id;
     private String name;
+    private String nameCy;
     private String description;
+    private String descriptionCy;
     @OneToMany(mappedBy = "service")
     private List<ServiceArea> serviceAreas;
 }
