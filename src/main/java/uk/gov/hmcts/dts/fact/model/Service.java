@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
 
 @Data
@@ -16,8 +17,9 @@ public class Service {
     private List<ServiceArea> serviceAreas;
 
     public Service(uk.gov.hmcts.dts.fact.entity.Service service) {
-        this.name = service.getName();
-        this.description = service.getDescription();
-        this.serviceAreas = service.getServiceAreas().stream().map(ServiceArea::new).collect(toList());
+        this.name = chooseString(service.getNameCy(), service.getName());
+        this.description = chooseString(service.getDescriptionCy(), service.getDescription());
+        this.serviceAreas = service.getServiceAreas() == null ? null : service.getServiceAreas().stream().map(
+            ServiceArea::new).collect(toList());
     }
 }
