@@ -17,7 +17,9 @@ public class ServiceArea {
     @Id
     private Integer id;
     private String name;
+    private String nameCy;
     private String description;
+    private String descriptionCy;
     @ManyToOne
     @JoinColumn(name = "service_id")
     private Service service;
