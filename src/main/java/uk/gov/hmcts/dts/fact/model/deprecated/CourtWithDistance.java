@@ -2,6 +2,8 @@ package uk.gov.hmcts.dts.fact.model.deprecated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
     "areas_of_law", "displayed", "hide_aols", "dx_number", "distance"})
@@ -37,12 +40,9 @@ public class CourtWithDistance {
     @JsonProperty("types")
     private List<String> courtTypes;
     private uk.gov.hmcts.dts.fact.model.CourtAddress address;
-    @JsonProperty("areas_of_law")
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
-    @JsonProperty("hide_aols")
     private Boolean hideAols;
-    @JsonProperty("dx_number")
     private String dxNumber;
     private BigDecimal distance;
 
