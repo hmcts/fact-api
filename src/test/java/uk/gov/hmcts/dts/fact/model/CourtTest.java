@@ -33,6 +33,7 @@ class CourtTest {
 
         final InPerson inPersonEntity = new InPerson();
         inPersonEntity.setIsInPerson(true);
+        inPersonEntity.setAccessScheme(false);
         courtEntity.setInPerson(inPersonEntity);
 
         final CourtAddress courtAddress = new CourtAddress();
@@ -102,6 +103,7 @@ class CourtTest {
         assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
         assertEquals(welsh ? "Alert in Welsh" : "Alert", court.getAlert());
         assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
+        assertEquals(courtEntity.getInPerson().getAccessScheme(), court.getAccessScheme());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
         assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
