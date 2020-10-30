@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
 import java.util.List;
 
+import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
@@ -22,6 +24,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "image_file", "lat", "lon", "urgent_message",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
@@ -33,27 +36,20 @@ public class Court {
     private String info;
     private Boolean open;
     private String directions;
-    @JsonProperty("image_file")
     private String imageFile;
     private Double lat;
     private Double lon;
     @JsonProperty("urgent_message")
     private String alert;
-    @JsonProperty("crown_location_code")
     private Integer crownLocationCode;
-    @JsonProperty("county_location_code")
     private Integer countyLocationCode;
-    @JsonProperty("magistrates_location_code")
     private Integer magistratesLocationCode;
-    @JsonProperty("areas_of_law")
     private List<AreaOfLaw> areasOfLaw;
     @JsonProperty("types")
     private List<String> courtTypes;
     private List<Email> emails;
     private List<Contact> contacts;
-    @JsonProperty("opening_times")
     private List<OpeningTime> openingTimes;
-    @JsonProperty("facilities")
     private List<Facility> facilities;
     private List<CourtAddress> addresses;
     private String gbs;
@@ -61,8 +57,8 @@ public class Court {
     private List<String> dxNumbers;
     @JsonProperty("service_area")
     private List<String> serviceAreas;
-    @JsonProperty("in_person")
     private Boolean inPerson;
+    private Boolean accessScheme;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
@@ -110,6 +106,7 @@ public class Court {
             .map(ServiceArea::getName)
             .collect(toList());
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
+        this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
     }
 
     private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {

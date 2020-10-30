@@ -2,6 +2,8 @@ package uk.gov.hmcts.dts.fact.model.deprecated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
@@ -32,21 +35,15 @@ public class OldCourt {
     private String directions;
     private Double lat;
     private Double lon;
-    @JsonProperty("crown_location_code")
     private Integer crownLocationCode;
-    @JsonProperty("county_location_code")
     private Integer countyLocationCode;
-    @JsonProperty("magistrates_location_code")
     private Integer magistratesLocationCode;
-    @JsonProperty("areas_of_law")
     private List<String> areasOfLaw;
     @JsonProperty("types")
     private List<String> courtTypes;
     private List<Email> emails;
     private List<Contact> contacts;
-    @JsonProperty("opening_times")
     private List<OpeningTime> openingTimes;
-    @JsonProperty("facilities")
     private List<Facility> facilities;
     private List<OldCourtAddress> addresses;
     private String gbs;
