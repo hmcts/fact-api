@@ -14,7 +14,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests(a -> a
-                .antMatchers(HttpMethod.GET, "/courts/all").authenticated()
+                .antMatchers(HttpMethod.GET, "/admin/courts").authenticated()
             )
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
     }
