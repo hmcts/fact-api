@@ -23,7 +23,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.*;
 @NoArgsConstructor
 @JsonNaming(SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
-@JsonPropertyOrder({"name", "name_cy", "slug", "info", "info_cy", "open", "directions", "direction_cy", "image_file", "lat", "lon",
+@JsonPropertyOrder({"name", "name_cy", "slug", "info", "info_cy", "open", "directions", "directions_cy", "image_file", "lat", "lon",
     "urgent_message", "urgent_message_cy", "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs", "dx_number", "service_area",
     "in_person"})
@@ -37,7 +37,7 @@ public class AdminCourt {
     private String infoCy;
     private Boolean open;
     private String directions;
-    @JsonProperty("direction_cy")
+    @JsonProperty("directions_cy")
     private String directionsCy;
     private String imageFile;
     private Double lat;
