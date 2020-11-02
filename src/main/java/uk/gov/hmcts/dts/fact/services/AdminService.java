@@ -40,8 +40,8 @@ public class AdminService {
         return courtRepository.findBySlug(slug).get();
     }
 
-    public AdminCourt save(Court updatedCourt) {
-        Court court = courtRepository.save(updatedCourt);
-        return new AdminCourt(court);
+    public AdminCourt save(Court court) {
+        Court updatedCourt = courtRepository.save(court);
+        return new AdminCourt(updatedCourt);
     }
 }
