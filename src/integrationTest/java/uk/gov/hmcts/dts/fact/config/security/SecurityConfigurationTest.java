@@ -6,8 +6,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @WebMvcTest()
