@@ -5,13 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import uk.gov.hmcts.dts.fact.config.security.Role;
+import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -32,6 +28,8 @@ public class CourtsController {
 
     @Autowired
     CourtService courtService;
+    @Autowired
+    RolesProvider rolesProvider;
 
     @Deprecated
     @GetMapping(path = "/{slug}.json")
@@ -63,6 +61,7 @@ public class CourtsController {
 
     @GetMapping(path = "/all")
     @ApiOperation("Return all courts")
+    @Role("fact-admin")
     public ResponseEntity<List<CourtReference>> getAllCourts() {
         return ok(courtService.getAllCourts());
     }
