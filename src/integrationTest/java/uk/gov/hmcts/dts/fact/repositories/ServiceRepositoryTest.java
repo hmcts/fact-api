@@ -30,29 +30,30 @@ class ServiceRepositoryTest {
             Service.class
         );
 
-        Optional<uk.gov.hmcts.dts.fact.entity.Service> result = serviceRepository.findByNameIgnoreCase("Money");
+        Optional<uk.gov.hmcts.dts.fact.entity.Service> result = serviceRepository.findBySlugIgnoreCase(
+            "childcare-and-parenting");
         assertThat(result).isPresent();
-        Service moneyService = new Service(result.get());
-        assertThat(moneyService.getName()).isEqualTo(expected.getName());
-        assertThat(moneyService.getDescription()).isEqualTo(expected.getDescription());
-        assertThat(moneyService.getServiceAreas()).isEqualTo(expected.getServiceAreas());
+        Service service = new Service(result.get());
+        assertThat(service.getName()).isEqualTo(expected.getName());
+        assertThat(service.getDescription()).isEqualTo(expected.getDescription());
+        assertThat(service.getServiceAreas()).isEqualTo(expected.getServiceAreas());
     }
 
     @Test
     void shouldNotFindNonExistentCourt() {
-        Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findByNameIgnoreCase("nonExistent");
+        Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findBySlugIgnoreCase("nonExistent");
         assertThat(service).isEmpty();
     }
 
     @Test
     void shouldHandleEmptyString() {
-        Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findByNameIgnoreCase("");
+        Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findBySlugIgnoreCase("");
         assertThat(service).isEmpty();
     }
 
     @Test
     void shouldHandleNull() {
-        Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findByNameIgnoreCase(null);
+        Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findBySlugIgnoreCase(null);
         assertThat(service).isEmpty();
     }
 
