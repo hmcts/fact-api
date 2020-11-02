@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.AdminCourt;
+import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
 import java.util.List;
@@ -39,12 +40,17 @@ public class AdminCourtsController {
         return ok(adminService.getCourtBySlug(slug));
     }
 
-    @PutMapping(path = "/{slug}")
+    @PutMapping(path = "/{slug}/general")
     @ApiOperation("Update court")
-    public ResponseEntity<AdminCourt> updateGeneralCourtBySlug(@PathVariable String slug, @RequestBody AdminCourt newCourt) {
+    public ResponseEntity<AdminCourt> updateGeneralCourtBySlug(@PathVariable String slug, @RequestBody CourtGeneral updatedCourt) {
         Court court = adminService.getCourtEntityBySlug(slug);
-        court.setAlert(newCourt.getAlert());
-        court.setAlertCy(newCourt.getAlertCy());
+        court.setName(updatedCourt.getName());
+        court.setNameCy(updatedCourt.getNameCy());
+        court.setInfo(updatedCourt.getInfo());
+        court.setInfoCy(updatedCourt.getInfoCy());
+        court.setDisplayed(updatedCourt.getOpen());
+        court.setAlert(updatedCourt.getAlert());
+        court.setAlertCy(updatedCourt.getAlertCy());
         return ok(adminService.save(court));
     }
 
