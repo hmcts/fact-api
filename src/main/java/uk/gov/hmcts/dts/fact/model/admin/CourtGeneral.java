@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static uk.gov.hmcts.dts.fact.util.Utils.*;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,4 +26,14 @@ public class CourtGeneral {
     private String alert;
     @JsonProperty("urgent_message_cy")
     private String alertCy;
+
+    public CourtGeneral(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        this.name = courtEntity.getName();
+        this.nameCy = courtEntity.getNameCy();
+        this.info = stripHtmlFromString(courtEntity.getInfo());
+        this.infoCy = stripHtmlFromString(courtEntity.getInfoCy());
+        this.open = courtEntity.getDisplayed();
+        this.alert = courtEntity.getAlert();
+        this.alertCy = courtEntity.getAlertCy();
+    }
 }

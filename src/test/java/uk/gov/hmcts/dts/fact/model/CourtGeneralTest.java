@@ -14,12 +14,13 @@ import uk.gov.hmcts.dts.fact.entity.Facility;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
-import uk.gov.hmcts.dts.fact.model.admin.AdminCourt;
+import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AdminCourtTest {
+public class CourtGeneralTest {
     static Court courtEntity;
 
     @BeforeAll
@@ -86,23 +87,20 @@ public class AdminCourtTest {
         courtEntity.setDirectionsCy("Directions in Welsh");
         courtEntity.setAlert("Alert");
         courtEntity.setAlertCy("Alert in Welsh");
+        courtEntity.setDisplayed(true);
     }
 
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void testCreationOfAdminCourt(boolean welsh) {
-        AdminCourt court = new AdminCourt(courtEntity);
+        CourtGeneral court = new CourtGeneral(courtEntity);
 
         assertEquals("Name", court.getName());
         assertEquals("Name in Welsh", court.getNameCy());
         assertEquals("Info on court", court.getInfo());
         assertEquals("Info on court in Welsh", court.getInfoCy());
-        assertEquals("Directions", court.getDirections());
-        assertEquals("Directions in Welsh", court.getDirectionsCy());
         assertEquals("Alert", court.getAlert());
         assertEquals("Alert in Welsh", court.getAlertCy());
-        assertEquals(courtEntity.getServiceAreas().get(0).getName(), court.getServiceAreas().get(0));
-        assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
-        assertEquals(courtEntity.getInPerson().getAccessScheme(), court.getAccessScheme());
+        assertTrue(court.getOpen());
     }
 }

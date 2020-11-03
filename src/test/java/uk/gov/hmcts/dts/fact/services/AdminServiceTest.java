@@ -8,7 +8,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.admin.AdminCourt;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
@@ -42,10 +41,10 @@ public class AdminServiceTest {
     }
 
     @Test
-    void shouldReturnAdminCourtObject() {
+    void shouldReturnCourtGeneralObject() {
         final Court mock = mock(Court.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
-        assertThat(adminService.getCourtBySlug(SOME_SLUG)).isInstanceOf(AdminCourt.class);
+        assertThat(adminService.getCourtGeneralBySlug(SOME_SLUG)).isInstanceOf(CourtGeneral.class);
     }
 
     @Test
@@ -61,6 +60,6 @@ public class AdminServiceTest {
         final CourtGeneral courtGeneral = mock(CourtGeneral.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
         when(courtRepository.save(mock)).thenReturn(mock);
-        assertThat(adminService.saveGeneral(SOME_SLUG, courtGeneral)).isInstanceOf(AdminCourt.class);
+        assertThat(adminService.saveGeneral(SOME_SLUG, courtGeneral)).isInstanceOf(CourtGeneral.class);
     }
 }
