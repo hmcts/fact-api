@@ -16,6 +16,14 @@ public class RoleAspect {
     @Autowired
     private RolesProvider rolesProvider;
 
+    public RoleAspect() {
+        // stop pmd complaining
+    }
+
+    public RoleAspect(RolesProvider rolesProvider) {
+        this.rolesProvider = rolesProvider;
+    }
+
     @Around("@annotation(annotation)")
     public Object ensureRole(ProceedingJoinPoint joinPoint, Role annotation) throws Throwable {
         String role = annotation.value();
