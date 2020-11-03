@@ -25,7 +25,6 @@ public class Court {
     private static final String COURT_ID = "court_id";
     @Id
     private Integer id;
-    @Getter
     private String name;
     private String nameCy;
     private String slug;

@@ -135,15 +135,4 @@ class CourtServiceTest {
         );
         assertThat(results.size()).isEqualTo(5);
     }
-
-    @Test
-    void shouldReturnAll() {
-        final Court mock = mock(Court.class);
-
-        when(courtRepository.findAll()).thenReturn(singletonList(mock));
-        List<CourtReference> results = courtService.getAllCourts();
-        assertThat(results.get(0)).isInstanceOf(CourtReference.class);
-        assertThat(results.size()).isEqualTo(1);
-    }
-
 }

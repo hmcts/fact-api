@@ -74,12 +74,4 @@ public class CourtService {
             .map(CourtWithDistance::new)
             .collect(toList());
     }
-
-    public List<CourtReference> getAllCourts() {
-        return courtRepository
-            .findAll()
-            .stream()
-            .map(CourtReference::new)
-            .collect(toList());
-    }
 }
