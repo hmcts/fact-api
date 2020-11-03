@@ -78,7 +78,7 @@ class CourtRepositoryTest {
         ObjectMapper mapper = new ObjectMapper();
 
         List<CourtReference> expected = Arrays.asList(mapper.readValue(
-            Paths.get("src/integrationTest/resources/courts.json").toFile(),
+            Paths.get("src/test/resources/courts.json").toFile(),
             CourtReference[].class
         ));
 
