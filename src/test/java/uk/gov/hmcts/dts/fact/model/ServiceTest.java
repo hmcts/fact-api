@@ -20,6 +20,7 @@ class ServiceTest {
         entity.setNameCy("Name in Welsh");
         entity.setDescription("Description");
         entity.setDescriptionCy("Description in Welsh");
+        entity.setSlug("slug");
 
     }
 
@@ -33,6 +34,7 @@ class ServiceTest {
         Service service = new Service(entity);
         assertEquals(welsh ? entity.getNameCy() : entity.getName(), service.getName());
         assertEquals(welsh ? entity.getDescriptionCy() : entity.getDescription(), service.getDescription());
+        assertEquals(entity.getSlug(), service.getSlug());
 
         LocaleContextHolder.resetLocaleContext();
     }

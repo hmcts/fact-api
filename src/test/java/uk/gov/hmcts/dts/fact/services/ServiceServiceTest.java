@@ -37,14 +37,14 @@ class ServiceServiceTest {
 
     @Test
     void shouldThrowNotFoundException() {
-        when(serviceRepository.findByNameIgnoreCase(any())).thenReturn(empty());
+        when(serviceRepository.findBySlugIgnoreCase(any())).thenReturn(empty());
         assertThrows(NotFoundException.class, () -> serviceService.getService("nonExistent"));
     }
 
     @Test
     void shouldReturnServiceObject() {
         final Service mock = mock(Service.class);
-        when(serviceRepository.findByNameIgnoreCase(SERVICE_NAME)).thenReturn(Optional.of(mock));
+        when(serviceRepository.findBySlugIgnoreCase(SERVICE_NAME)).thenReturn(Optional.of(mock));
         assertThat(serviceService.getService(SERVICE_NAME)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Service.class);
     }
 
@@ -63,7 +63,7 @@ class ServiceServiceTest {
         final Service serviceMock = mock(Service.class);
         ServiceArea serviceAreaMock = mock(ServiceArea.class);
         List<ServiceArea> servicesAreas = singletonList(serviceAreaMock);
-        when(serviceRepository.findByNameIgnoreCase(SERVICE_NAME)).thenReturn(Optional.of(serviceMock));
+        when(serviceRepository.findBySlugIgnoreCase(SERVICE_NAME)).thenReturn(Optional.of(serviceMock));
         when(serviceMock.getServiceAreas()).thenReturn(servicesAreas);
         final List<uk.gov.hmcts.dts.fact.model.ServiceArea> allServices = serviceService.getServiceAreas(SERVICE_NAME);
         assertThat(allServices.size()).isEqualTo(1);

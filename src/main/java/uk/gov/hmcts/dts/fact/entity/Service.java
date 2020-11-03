@@ -20,6 +20,7 @@ public class Service {
     private String nameCy;
     private String description;
     private String descriptionCy;
+    private String slug;
     @OneToMany(mappedBy = "service")
     private List<ServiceArea> serviceAreas;
 }
