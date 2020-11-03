@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.admin.AdminCourt;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
@@ -30,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 class AdminCourtsControllerTest {
 
-    protected static final String URL = "/admin/courts";
+    protected static final String URL = "/courts";
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -56,15 +55,15 @@ class AdminCourtsControllerTest {
     void findCourtBySlug() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        final Path path = Paths.get("src/test/resources/full-birmingham-civil-and-family-justice-centre.json");
+        final Path path = Paths.get("src/test/resources/birmingham-civil-and-family-justice-centre-general.json");
         final String s1 = new String(readAllBytes(path));
 
-        AdminCourt court = mapper.readValue(path.toFile(), AdminCourt.class);
+        CourtGeneral court = mapper.readValue(path.toFile(), CourtGeneral.class);
 
         final String searchSlug = "some-slug";
 
-        when(adminService.getCourtBySlug(searchSlug)).thenReturn(court);
-        mockMvc.perform(get(String.format(URL + "/%s", searchSlug)))
+        when(adminService.getCourtGeneralBySlug(searchSlug)).thenReturn(court);
+        mockMvc.perform(get(String.format(URL + "/%s/general", searchSlug)))
             .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
     }
 
@@ -91,7 +90,7 @@ class AdminCourtsControllerTest {
         court.setDisplayed(courtGeneral.getOpen());
         court.setAlert(courtGeneral.getAlert());
         court.setAlertCy(courtGeneral.getAlertCy());
-        when(adminService.saveGeneral(any(), any())).thenReturn(new AdminCourt(court));
+        when(adminService.saveGeneral(any(), any())).thenReturn(new CourtGeneral(court));
 
         final String searchSlug = "some-slug";
         String json = mapper.writeValueAsString(courtGeneral);

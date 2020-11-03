@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.admin.AdminCourt;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
@@ -19,7 +18,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping(
-    path = "/admin/courts",
+    path = "/courts",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
 public class AdminCourtsController {
@@ -33,15 +32,15 @@ public class AdminCourtsController {
         return ok(adminService.getAllCourts());
     }
 
-    @GetMapping(path = "/{slug}")
+    @GetMapping(path = "/{slug}/general")
     @ApiOperation("Find court details by slug")
-    public ResponseEntity<AdminCourt> findCourtByName(@PathVariable String slug) {
-        return ok(adminService.getCourtBySlug(slug));
+    public ResponseEntity<CourtGeneral> findCourtGeneralByName(@PathVariable String slug) {
+        return ok(adminService.getCourtGeneralBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/general")
     @ApiOperation("Update court")
-    public ResponseEntity<AdminCourt> updateGeneralCourtBySlug(@PathVariable String slug, @RequestBody CourtGeneral updatedCourt) {
+    public ResponseEntity<CourtGeneral> updateGeneralCourtBySlug(@PathVariable String slug, @RequestBody CourtGeneral updatedCourt) {
         return ok(adminService.saveGeneral(slug, updatedCourt));
     }
 
