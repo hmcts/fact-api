@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.nio.file.Files.readAllBytes;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -73,10 +74,6 @@ class AdminCourtsControllerTest {
         final Path courtEntityPath = Paths.get("src/test/resources/full-birmingham-civil-and-family-justice-centre-entity.json");
         Court court = mapper.readValue(courtEntityPath.toFile(), Court.class);
 
-        final String searchSlug = "some-slug";
-
-        when(adminService.getCourtEntityBySlug(searchSlug)).thenReturn(court);
-
         CourtGeneral courtGeneral = new CourtGeneral(
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre",
@@ -94,9 +91,11 @@ class AdminCourtsControllerTest {
         court.setDisplayed(courtGeneral.getOpen());
         court.setAlert(courtGeneral.getAlert());
         court.setAlertCy(courtGeneral.getAlertCy());
-        when(adminService.save(court)).thenReturn(new AdminCourt(court));
+        when(adminService.saveGeneral(any(), any())).thenReturn(new AdminCourt(court));
 
+        final String searchSlug = "some-slug";
         String json = mapper.writeValueAsString(courtGeneral);
+
         mockMvc.perform(put(String.format(URL + "/%s/general", searchSlug))
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON)

@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.AdminCourt;
@@ -43,15 +42,7 @@ public class AdminCourtsController {
     @PutMapping(path = "/{slug}/general")
     @ApiOperation("Update court")
     public ResponseEntity<AdminCourt> updateGeneralCourtBySlug(@PathVariable String slug, @RequestBody CourtGeneral updatedCourt) {
-        Court court = adminService.getCourtEntityBySlug(slug);
-        court.setName(updatedCourt.getName());
-        court.setNameCy(updatedCourt.getNameCy());
-        court.setInfo(updatedCourt.getInfo());
-        court.setInfoCy(updatedCourt.getInfoCy());
-        court.setDisplayed(updatedCourt.getOpen());
-        court.setAlert(updatedCourt.getAlert());
-        court.setAlertCy(updatedCourt.getAlertCy());
-        return ok(adminService.save(court));
+        return ok(adminService.saveGeneral(slug, updatedCourt));
     }
 
     @ExceptionHandler(NotFoundException.class)

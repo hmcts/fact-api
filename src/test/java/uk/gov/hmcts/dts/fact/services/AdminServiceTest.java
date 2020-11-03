@@ -9,6 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.AdminCourt;
+import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
@@ -57,7 +58,9 @@ public class AdminServiceTest {
     @Test
     void shouldSaveCourt() {
         final Court mock = mock(Court.class);
+        final CourtGeneral courtGeneral = mock(CourtGeneral.class);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
         when(courtRepository.save(mock)).thenReturn(mock);
-        assertThat(adminService.save(mock)).isInstanceOf(AdminCourt.class);
+        assertThat(adminService.saveGeneral(SOME_SLUG, courtGeneral)).isInstanceOf(AdminCourt.class);
     }
 }
