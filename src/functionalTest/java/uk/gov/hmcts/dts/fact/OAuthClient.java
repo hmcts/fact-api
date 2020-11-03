@@ -41,7 +41,7 @@ public class OAuthClient {
             .post("/oauth2/token" + "?code=" + code + "&client_secret=" + clientSecret + "&client_id=" + clientId + "&redirect_uri=" + redirectUri + "&grant_type=authorization_code")
             .body()
             .jsonPath()
-            .get("access_token");
+            .get("id_token");
 
         if (token == null) {
             throw new AuthException(
