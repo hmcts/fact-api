@@ -68,7 +68,7 @@ class CourtsControllerTest {
     void findCourtByQuery() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        final Path path = Paths.get("src/integrationTest/resources/courts.json");
+        final Path path = Paths.get("src/test/resources/courts.json");
         final String s1 = new String(readAllBytes(path));
 
         List<CourtReference> courts = Arrays.asList(mapper.readValue(path.toFile(), CourtReference[].class));
@@ -102,20 +102,6 @@ class CourtsControllerTest {
 
         when(courtService.getCourtBySlug(searchSlug)).thenReturn(court);
         mockMvc.perform(get(String.format(URL + "/%s", searchSlug)))
-            .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
-    }
-
-    @Test
-    void findAllCourts() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        final Path path = Paths.get("src/integrationTest/resources/courts.json");
-        final String s1 = new String(readAllBytes(path));
-
-        List<CourtReference> courts = Arrays.asList(mapper.readValue(path.toFile(), CourtReference[].class));
-
-        when(courtService.getAllCourts()).thenReturn(courts);
-        mockMvc.perform(get(String.format(URL + "/all")))
             .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
     }
 }
