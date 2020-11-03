@@ -34,7 +34,7 @@ public class AdminService {
     }
 
     public Court getCourtEntityBySlug(String slug) {
-        return courtRepository.findBySlug(slug).get();
+        return courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
     }
 
     public CourtGeneral saveGeneral(String slug, CourtGeneral courtGeneral) {
