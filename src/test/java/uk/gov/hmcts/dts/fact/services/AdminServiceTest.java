@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
 public class AdminServiceTest {
+    static final Court COURT = new Court();
+    static CourtGeneral courtGeneral = new CourtGeneral();
 
     @Autowired
     AdminService adminService;
@@ -34,6 +37,27 @@ public class AdminServiceTest {
     RolesProvider rolesProvider;
 
     private static final String SOME_SLUG = "some-slug";
+
+    @BeforeEach
+    void setUp() {
+        COURT.setName("some-name");
+        COURT.setNameCy("some-name-cy");
+        COURT.setInfo("some-info");
+        COURT.setInfoCy("some-info-cy");
+        COURT.setAlert("some-urgent-message");
+        COURT.setAlertCy("some-urgent-message-cy");
+        COURT.setDisplayed(true);
+
+        courtGeneral = new CourtGeneral(
+            "Birmingham Civil and Family Justice Centre",
+            "Birmingham Civil and Family Justice Centre",
+            "Birmingham Civil and Family Justice Centre Info",
+            "Birmingham Civil and Family Justice Centre Info",
+            true,
+            "Birmingham Civil and Family Justice Centre Alert",
+            "Birmingham Civil and Family Justice Centre Alert"
+        );
+    }
 
     @Test
     void shouldReturnAllCourts() {
@@ -60,28 +84,9 @@ public class AdminServiceTest {
 
     @Test
     void shouldSaveCourtAsAdmin() {
-        final Court court = new Court();
-        court.setName("some-name");
-        court.setNameCy("some-name");
-        court.setInfo("some-name");
-        court.setInfoCy("some-name");
-        court.setAlert("some-name");
-        court.setAlertCy("some-name");
-        court.setDisplayed(true);
-
-        final CourtGeneral courtGeneral = new CourtGeneral(
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre Info",
-            "Birmingham Civil and Family Justice Centre Info",
-            true,
-            "Birmingham Civil and Family Justice Centre Alert",
-            "Birmingham Civil and Family Justice Centre Alert"
-        );
-
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(COURT));
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
-        when(courtRepository.save(court)).thenReturn(court);
+        when(courtRepository.save(COURT)).thenReturn(COURT);
         CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
         assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
         assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
@@ -91,28 +96,9 @@ public class AdminServiceTest {
 
     @Test
     void shouldSaveCourtAsSuperAdmin() {
-        final Court court = new Court();
-        court.setName("some-name");
-        court.setNameCy("some-name");
-        court.setInfo("some-name");
-        court.setInfoCy("some-name");
-        court.setAlert("some-name");
-        court.setAlertCy("some-name");
-        court.setDisplayed(true);
-
-        final CourtGeneral courtGeneral = new CourtGeneral(
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre Info",
-            "Birmingham Civil and Family Justice Centre Info",
-            true,
-            "Birmingham Civil and Family Justice Centre Alert",
-            "Birmingham Civil and Family Justice Centre Alert"
-        );
-
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(COURT));
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
-        when(courtRepository.save(court)).thenReturn(court);
+        when(courtRepository.save(COURT)).thenReturn(COURT);
         CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
         assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
         assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());

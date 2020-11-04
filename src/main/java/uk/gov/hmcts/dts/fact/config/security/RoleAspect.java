@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import static org.springframework.http.ResponseEntity.status;
 @Aspect
 @Component
 public class RoleAspect {
+
+    private List<String> roles = new ArrayList<>();
 
     @Autowired
     private RolesProvider rolesProvider;
@@ -29,7 +32,7 @@ public class RoleAspect {
 
     @Around("@annotation(annotation)")
     public Object ensureRole(ProceedingJoinPoint joinPoint, Role annotation) throws Throwable {
-        List<String> roles = Arrays.asList(annotation.value());
+        roles = Arrays.asList(annotation.value());
 
         if (rolesProvider.getRoles().stream().anyMatch(role -> roles.contains(role))) {
             return joinPoint.proceed();
