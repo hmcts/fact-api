@@ -2,6 +2,7 @@
   {
     "name": "Money",
     "description": "Money claims, rent or mortgage disputes, bankruptcy, job disputes related to pay, appealing a tax or benefits decision.",
+    "slug": "money",
     "serviceAreas": [
       {
         "name": "Money claims",
@@ -40,6 +41,7 @@
   {
     "name": "Probate, divorce or ending civil partnerships",
     "description": "Probate application and disputes, divorce, ending a civil partnership.",
+    "slug": "probate-divorce-or-ending-civil-partnerships",
     "serviceAreas": [
       {
         "name": "Probate",
@@ -62,6 +64,7 @@
   {
     "name": "Childcare and parenting",
     "description": "Arrangements for looking after your children if you separate from your partner or making an adoption legal.",
+    "slug": "childcare-and-parenting",
     "serviceAreas": [
       {
         "name": "Childcare arrangements if you separate from your partner",
@@ -76,6 +79,7 @@
   {
     "name": "Harm and abuse",
     "description": "Applying for an injunction against someone who is harassing or abusing you, being made to marry against your will or preventing Female Genital Mutilation (FGM).",
+    "slug": "harm-and-abuse",
     "serviceAreas": [
       {
         "name": "Domestic abuse",
@@ -94,11 +98,13 @@
   {
     "name": "Immigration and asylum",
     "description": "Seeking asylum, right to live in the UK, and appealing deportation.",
+    "slug": "immigration-and-asylum",
     "serviceAreas": []
   },
   {
     "name": "Crime",
     "description": "Minor criminal fines for TV licenses or speeding, major criminal cases at a Crown or Magistrates’ Court.",
+    "slug": "crime",
     "serviceAreas": [
       {
         "name": "Minor criminal offences",
@@ -113,6 +119,7 @@
   {
     "name": "High Court district registries",
     "description": "Courts that deal with the most serious and high profile cases in criminal and civil law.",
+    "slug": "high-court-district-registries",
     "serviceAreas": []
   }
 ]

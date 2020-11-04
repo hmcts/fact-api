@@ -67,7 +67,7 @@ class ServicesControllerTest {
     @Test
     void shouldGetServiceAreas() throws Exception {
 
-        final Path path = Paths.get("src/integrationTest/resources/service-areas.json");
+        final Path path = Paths.get("src/test/resources/service-areas.json");
         List<ServiceArea> serviceAreas = asList(new ObjectMapper().readValue(path.toFile(), ServiceArea[].class));
 
         final String expected = new String(readAllBytes(path));

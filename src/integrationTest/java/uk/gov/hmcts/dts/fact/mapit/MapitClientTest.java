@@ -1,10 +1,8 @@
-package uk.gov.hmcts.dts.fact.services;
+package uk.gov.hmcts.dts.fact.mapit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.dts.fact.mapit.Coordinates;
-import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
