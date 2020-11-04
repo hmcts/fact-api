@@ -210,17 +210,4 @@ public class CourtsEndpointTest {
         String slug = response.jsonPath().get("[0].slug");
         assertThat(slug).isEqualTo("birkenhead-county-court-and-family-court");
     }
-
-    @Test
-    public void shouldRequireATokenForAllCourts() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get("/courts/all")
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(401);
-    }
-
 }
