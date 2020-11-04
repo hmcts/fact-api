@@ -19,7 +19,7 @@ import static org.springframework.http.HttpHeaders.*;
 @SpringBootTest(classes = {OAuthClient.class})
 public class AdminCourtsEndpointTest {
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
-        = "birmingham-civil-and-family-justice-centre";
+        = "Birmingham Civil and Family Justice Centre";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG
         = "birmingham-civil-and-family-justice-centre";
     private static final String CONTENT_TYPE_VALUE = "application/json";
