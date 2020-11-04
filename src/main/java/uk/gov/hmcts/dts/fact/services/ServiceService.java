@@ -23,18 +23,18 @@ public class ServiceService {
             .collect(toList());
     }
 
-    public uk.gov.hmcts.dts.fact.model.Service getService(String serviceName) {
+    public uk.gov.hmcts.dts.fact.model.Service getService(String slug) {
         return serviceRepository
-            .findByNameIgnoreCase(serviceName)
+            .findBySlugIgnoreCase(slug)
             .map(uk.gov.hmcts.dts.fact.model.Service::new)
-            .orElseThrow(() -> new NotFoundException(serviceName));
+            .orElseThrow(() -> new NotFoundException(slug));
     }
 
-    public List<uk.gov.hmcts.dts.fact.model.ServiceArea> getServiceAreas(String serviceName) {
+    public List<uk.gov.hmcts.dts.fact.model.ServiceArea> getServiceAreas(String serviceSlug) {
         return serviceRepository
-            .findByNameIgnoreCase(serviceName)
+            .findBySlugIgnoreCase(serviceSlug)
             .map(uk.gov.hmcts.dts.fact.model.Service::new)
             .map(uk.gov.hmcts.dts.fact.model.Service::getServiceAreas)
-            .orElseThrow(() -> new NotFoundException(serviceName));
+            .orElseThrow(() -> new NotFoundException(serviceSlug));
     }
 }

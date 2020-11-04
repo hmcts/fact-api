@@ -35,16 +35,16 @@ public class ServicesController {
         return ok(serviceService.getAllServices());
     }
 
-    @GetMapping(path = "/services/{serviceName}")
+    @GetMapping(path = "/services/{slug}")
     @ApiOperation("Return a service")
-    public ResponseEntity<Service> getServices(@PathVariable String serviceName) {
-        return ok(serviceService.getService(serviceName));
+    public ResponseEntity<Service> getService(@PathVariable String slug) {
+        return ok(serviceService.getService(slug));
     }
 
-    @GetMapping(path = "/services/{serviceName}/service-areas")
+    @GetMapping(path = "/services/{serviceSlug}/service-areas")
     @ApiOperation("Return all service areas for a service")
-    public ResponseEntity<List<ServiceArea>> getServiceAreas(@PathVariable String serviceName) {
-        return ok(serviceService.getServiceAreas(serviceName));
+    public ResponseEntity<List<ServiceArea>> getServiceAreas(@PathVariable String serviceSlug) {
+        return ok(serviceService.getServiceAreas(serviceSlug));
     }
 
     @ExceptionHandler(NotFoundException.class)

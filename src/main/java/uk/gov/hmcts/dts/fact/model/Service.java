@@ -14,11 +14,13 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 public class Service {
     private String name;
     private String description;
+    private String slug;
     private List<ServiceArea> serviceAreas;
 
     public Service(uk.gov.hmcts.dts.fact.entity.Service service) {
         this.name = chooseString(service.getNameCy(), service.getName());
         this.description = chooseString(service.getDescriptionCy(), service.getDescription());
+        this.slug = service.getSlug();
         this.serviceAreas = service.getServiceAreas() == null ? null : service.getServiceAreas().stream().map(
             ServiceArea::new).collect(toList());
     }
