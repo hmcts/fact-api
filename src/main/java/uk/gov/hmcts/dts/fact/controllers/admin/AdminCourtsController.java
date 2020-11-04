@@ -29,7 +29,7 @@ public class AdminCourtsController {
 
     @GetMapping(path = "/all")
     @ApiOperation("Return all courts")
-    @Role("fact-admin")
+    @Role({"fact-admin", "fact-super-admin"})
     public ResponseEntity<List<CourtReference>> getAllCourts() {
         return ok(adminService.getAllCourts());
     }
