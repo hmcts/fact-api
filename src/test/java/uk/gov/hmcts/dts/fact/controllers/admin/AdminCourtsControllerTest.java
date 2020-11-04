@@ -83,11 +83,8 @@ class AdminCourtsControllerTest {
             "Birmingham Civil and Family Justice Centre Alert"
         );
 
-        court.setName(courtGeneral.getName());
-        court.setNameCy(courtGeneral.getNameCy());
         court.setInfo(courtGeneral.getInfo());
         court.setInfoCy(courtGeneral.getInfoCy());
-        court.setDisplayed(courtGeneral.getOpen());
         court.setAlert(courtGeneral.getAlert());
         court.setAlertCy(courtGeneral.getAlertCy());
         when(adminService.saveGeneral(any(), any())).thenReturn(new CourtGeneral(court));
@@ -100,13 +97,10 @@ class AdminCourtsControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value(courtGeneral.getName()))
-            .andExpect(jsonPath("$.name_cy").value(courtGeneral.getNameCy()))
-            .andExpect(jsonPath("$.info").value(courtGeneral.getInfo()))
-            .andExpect(jsonPath("$.info_cy").value(courtGeneral.getInfoCy()))
             .andExpect(jsonPath("$.urgent_message").value(courtGeneral.getAlert()))
             .andExpect(jsonPath("$.urgent_message_cy").value(courtGeneral.getAlertCy()))
-            .andExpect(jsonPath("$.open").value(courtGeneral.getOpen()))
+            .andExpect(jsonPath("$.info").value(courtGeneral.getInfo()))
+            .andExpect(jsonPath("$.info_cy").value(courtGeneral.getInfoCy()))
             .andReturn();
 
     }

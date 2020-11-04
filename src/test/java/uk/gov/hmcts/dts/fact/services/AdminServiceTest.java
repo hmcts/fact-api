@@ -1,11 +1,13 @@
 package uk.gov.hmcts.dts.fact.services;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
@@ -22,6 +24,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
 public class AdminServiceTest {
+    static final Court COURT = new Court();
+    static CourtGeneral courtGeneral = new CourtGeneral();
 
     @Autowired
     AdminService adminService;
@@ -29,7 +33,31 @@ public class AdminServiceTest {
     @MockBean
     CourtRepository courtRepository;
 
+    @MockBean
+    RolesProvider rolesProvider;
+
     private static final String SOME_SLUG = "some-slug";
+
+    @BeforeEach
+    void setUp() {
+        COURT.setName("some-name");
+        COURT.setNameCy("some-name-cy");
+        COURT.setInfo("some-info");
+        COURT.setInfoCy("some-info-cy");
+        COURT.setAlert("some-urgent-message");
+        COURT.setAlertCy("some-urgent-message-cy");
+        COURT.setDisplayed(true);
+
+        courtGeneral = new CourtGeneral(
+            "Birmingham Civil and Family Justice Centre",
+            "Birmingham Civil and Family Justice Centre",
+            "Birmingham Civil and Family Justice Centre Info",
+            "Birmingham Civil and Family Justice Centre Info",
+            true,
+            "Birmingham Civil and Family Justice Centre Alert",
+            "Birmingham Civil and Family Justice Centre Alert"
+        );
+    }
 
     @Test
     void shouldReturnAllCourts() {
@@ -55,11 +83,26 @@ public class AdminServiceTest {
     }
 
     @Test
-    void shouldSaveCourt() {
-        final Court mock = mock(Court.class);
-        final CourtGeneral courtGeneral = mock(CourtGeneral.class);
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
-        when(courtRepository.save(mock)).thenReturn(mock);
-        assertThat(adminService.saveGeneral(SOME_SLUG, courtGeneral)).isInstanceOf(CourtGeneral.class);
+    void shouldSaveCourtAsAdmin() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(COURT));
+        when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
+        when(courtRepository.save(COURT)).thenReturn(COURT);
+        CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
+        assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
+        assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
+        assertThat(courtResults.getInfo()).isNotEqualTo(courtGeneral.getInfo());
+        assertThat(courtResults.getInfoCy()).isNotEqualTo(courtGeneral.getInfoCy());
+    }
+
+    @Test
+    void shouldSaveCourtAsSuperAdmin() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(COURT));
+        when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
+        when(courtRepository.save(COURT)).thenReturn(COURT);
+        CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
+        assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
+        assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
+        assertThat(courtResults.getInfo()).isEqualTo(courtGeneral.getInfo());
+        assertThat(courtResults.getInfoCy()).isEqualTo(courtGeneral.getInfoCy());
     }
 }

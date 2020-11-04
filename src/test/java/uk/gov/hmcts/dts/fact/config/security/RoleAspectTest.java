@@ -29,7 +29,7 @@ class RoleAspectTest {
         ProceedingJoinPoint join = mock(ProceedingJoinPoint.class);
         Role role = mock(Role.class);
 
-        when(role.value()).thenReturn("fact-admin");
+        when(role.value()).thenReturn(new String[]{"fact-admin"});
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
 
 
