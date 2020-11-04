@@ -32,6 +32,7 @@ class RoleAspectTest {
         when(role.value()).thenReturn("fact-admin");
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
 
+
         roleAspect.ensureRole(join, role);
         verify(join, atLeastOnce()).proceed();
     }
