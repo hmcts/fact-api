@@ -210,4 +210,20 @@ public class CourtsEndpointTest {
         String slug = response.jsonPath().get("[0].slug");
         assertThat(slug).isEqualTo("birkenhead-county-court-and-family-court");
     }
+
+    @Test
+    public void shouldNotRetrieveClosedCourts() {
+        final String slug = "aylesbury-crown-court";
+
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(COURT_SEARCH_ENDPOINT + "?q=aylesbury")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
+        assertThat(courts.get(0).getSlug()).isEqualTo(slug);
+    }
 }
