@@ -16,6 +16,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests(a -> a
                 .antMatchers(HttpMethod.GET, "/courts/all").authenticated()
+                .antMatchers(HttpMethod.GET, "/courts/{slug}/*").authenticated()
+                .antMatchers(HttpMethod.PUT, "/courts/{slug}").authenticated()
             )
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
     }

@@ -146,4 +146,29 @@ public class AdminCourtsEndpointTest {
         assertThat(court.getInfo()).isEqualTo(courtGeneral.getInfo());
         assertThat(court.getInfoCy()).isEqualTo(courtGeneral.getInfoCy());
     }
+
+    @Test
+    public void shouldNotUpdateCourtAsNoTokenProvided() throws Exception {
+        CourtGeneral courtGeneral = new CourtGeneral(
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            "Admin Info",
+            "Welsh Admin Info",
+            true,
+            "Admin Alert",
+            "Welsh Admin Alert"
+        );
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(courtGeneral);
+
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .body(json)
+            .when()
+            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(401);
+    }
 }
