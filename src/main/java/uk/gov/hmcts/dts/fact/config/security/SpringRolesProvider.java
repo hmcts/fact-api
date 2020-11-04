@@ -12,13 +12,16 @@ import static java.util.Collections.emptyList;
 
 public class SpringRolesProvider implements RolesProvider {
 
+    private static final String ROLES = "roles";
+
     @Override
     public List<String> getRoles() {
         return Optional
             .of(SecurityContextHolder.getContext())
             .map(SecurityContext::getAuthentication)
             .map(Authentication::getCredentials)
-            .map(credentials -> ((Jwt) credentials).getClaimAsStringList("roles"))
+            .map(obj -> (Jwt) obj)
+            .map(jwt -> jwt.getClaimAsStringList(ROLES))
             .orElse(emptyList());
     }
 
