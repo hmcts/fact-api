@@ -80,15 +80,15 @@ public class AdminCourtsEndpointTest {
     }
 
     @Test
-    public void shouldUpdateCourtGeneralBySlug() throws Exception {
+    public void shouldUpdateCourtGeneralBySlugAsAdmin() throws Exception {
         CourtGeneral courtGeneral = new CourtGeneral(
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre Info",
-            "Birmingham Civil and Family Justice Centre Info",
+            "Birmingham Civil and Family Justice Centre Admin Info",
+            "Birmingham Civil and Family Justice Centre Admin Info",
             true,
-            "Birmingham Civil and Family Justice Centre Alert",
-            "Birmingham Civil and Family Justice Centre Alert"
+            "Birmingham Civil and Family Justice Centre Admin Alert",
+            "Birmingham Civil and Family Justice Centre Admin Alert"
         );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -105,12 +105,42 @@ public class AdminCourtsEndpointTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         final CourtGeneral court = response.as(CourtGeneral.class);
-        assertThat(court.getName()).isEqualTo(courtGeneral.getName());
-        assertThat(court.getNameCy()).isEqualTo(courtGeneral.getNameCy());
-        assertThat(court.getInfo()).isEqualTo(courtGeneral.getInfo());
-        assertThat(court.getInfoCy()).isEqualTo(courtGeneral.getInfoCy());
         assertThat(court.getAlert()).isEqualTo(courtGeneral.getAlert());
         assertThat(court.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
-        assertThat(court.getOpen()).isEqualTo(courtGeneral.getOpen());
+        assertThat(court.getInfo()).isNotEqualTo(courtGeneral.getInfo());
+        assertThat(court.getInfoCy()).isNotEqualTo(courtGeneral.getInfoCy());
+    }
+
+    @Test
+    public void shouldUpdateCourtGeneralBySlugAsSuperAdmin() throws Exception {
+        CourtGeneral courtGeneral = new CourtGeneral(
+            "Birmingham Civil and Family Justice Centre",
+            "Birmingham Civil and Family Justice Centre",
+            "Birmingham Civil and Family Justice Centre Super Admin Info",
+            "Birmingham Civil and Family Justice Centre Super Admin Info",
+            true,
+            "Birmingham Civil and Family Justice Centre Super Admin Alert",
+            "Birmingham Civil and Family Justice Centre Super Admin Alert"
+        );
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(courtGeneral);
+
+        token = authClient.getSuperAdminToken();
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(AUTHORIZATION, "Bearer " + token)
+            .body(json)
+            .when()
+            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE + "/general")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final CourtGeneral court = response.as(CourtGeneral.class);
+        assertThat(court.getAlert()).isEqualTo(courtGeneral.getAlert());
+        assertThat(court.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
+        assertThat(court.getInfo()).isEqualTo(courtGeneral.getInfo());
+        assertThat(court.getInfoCy()).isEqualTo(courtGeneral.getInfoCy());
     }
 }
