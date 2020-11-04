@@ -88,10 +88,10 @@ public class AdminCourtsEndpointTest {
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             "Admin Info",
-            "Admin Info",
+            "Welsh Admin Info",
             true,
             "Admin Alert",
-            "Admin Alert"
+            "Welsh Admin Alert"
         );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -120,10 +120,10 @@ public class AdminCourtsEndpointTest {
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             "Super Admin Info",
-            "Super Admin Info",
+            "Super Welsh Admin Info",
             true,
             "Super Admin Alert",
-            "Super Admin Alert"
+            "Super Welsh Admin Alert"
         );
 
         ObjectMapper mapper = new ObjectMapper();
