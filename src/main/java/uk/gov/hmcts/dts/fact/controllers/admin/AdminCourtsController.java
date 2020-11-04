@@ -29,19 +29,21 @@ public class AdminCourtsController {
 
     @GetMapping(path = "/all")
     @ApiOperation("Return all courts")
-    @Role("fact-admin")
+    @Role({"fact-admin", "fact-super-admin"})
     public ResponseEntity<List<CourtReference>> getAllCourts() {
         return ok(adminService.getAllCourts());
     }
 
     @GetMapping(path = "/{slug}/general")
     @ApiOperation("Find court details by slug")
+    @Role({"fact-admin", "fact-super-admin"})
     public ResponseEntity<CourtGeneral> findCourtGeneralByName(@PathVariable String slug) {
         return ok(adminService.getCourtGeneralBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/general")
     @ApiOperation("Update court")
+    @Role({"fact-admin", "fact-super-admin"})
     public ResponseEntity<CourtGeneral> updateGeneralCourtBySlug(@PathVariable String slug, @RequestBody CourtGeneral updatedCourt) {
         return ok(adminService.saveGeneral(slug, updatedCourt));
     }
