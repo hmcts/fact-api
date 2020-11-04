@@ -14,7 +14,7 @@ class RoleAspectTest {
         RolesProvider rolesProvider = mock(RolesProvider.class);
         Role role = mock(Role.class);
 
-        when(role.value()).thenReturn("fact-admin");
+        when(role.value()).thenReturn(new String[]{"fact-admin"});
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
 
         RoleAspect roleAspect = new RoleAspect(rolesProvider);
