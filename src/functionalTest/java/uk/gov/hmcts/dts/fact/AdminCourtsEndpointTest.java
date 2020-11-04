@@ -20,8 +20,11 @@ import static org.springframework.http.HttpHeaders.*;
 public class AdminCourtsEndpointTest {
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
         = "birmingham-civil-and-family-justice-centre";
+    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG
+        = "birmingham-civil-and-family-justice-centre";
     private static final String CONTENT_TYPE_VALUE = "application/json";
     private static final String COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/";
+    private static final String BEARER = "Bearer ";
 
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
@@ -42,7 +45,7 @@ public class AdminCourtsEndpointTest {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, "Bearer " + token)
+            .header(AUTHORIZATION, BEARER + token)
             .when()
             .get("/courts/all")
             .thenReturn();
@@ -69,26 +72,26 @@ public class AdminCourtsEndpointTest {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, "Bearer " + token)
+            .header(AUTHORIZATION, BEARER + token)
             .when()
-            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE + "/general")
+            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
         final CourtGeneral court = response.as(CourtGeneral.class);
-        assertThat(court.getName()).isEqualTo("Birmingham Civil and Family Justice Centre");
+        assertThat(court.getName()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
     }
 
     @Test
     public void shouldUpdateCourtGeneralBySlugAsAdmin() throws Exception {
         CourtGeneral courtGeneral = new CourtGeneral(
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre Admin Info",
-            "Birmingham Civil and Family Justice Centre Admin Info",
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            "Admin Info",
+            "Admin Info",
             true,
-            "Birmingham Civil and Family Justice Centre Admin Alert",
-            "Birmingham Civil and Family Justice Centre Admin Alert"
+            "Admin Alert",
+            "Admin Alert"
         );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -97,10 +100,10 @@ public class AdminCourtsEndpointTest {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, "Bearer " + token)
+            .header(AUTHORIZATION, BEARER + token)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE + "/general")
+            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -114,13 +117,13 @@ public class AdminCourtsEndpointTest {
     @Test
     public void shouldUpdateCourtGeneralBySlugAsSuperAdmin() throws Exception {
         CourtGeneral courtGeneral = new CourtGeneral(
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre",
-            "Birmingham Civil and Family Justice Centre Super Admin Info",
-            "Birmingham Civil and Family Justice Centre Super Admin Info",
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            "Super Admin Info",
+            "Super Admin Info",
             true,
-            "Birmingham Civil and Family Justice Centre Super Admin Alert",
-            "Birmingham Civil and Family Justice Centre Super Admin Alert"
+            "Super Admin Alert",
+            "Super Admin Alert"
         );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -130,10 +133,10 @@ public class AdminCourtsEndpointTest {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, "Bearer " + token)
+            .header(AUTHORIZATION, BEARER + token)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE + "/general")
+            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
