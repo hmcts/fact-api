@@ -24,6 +24,7 @@ public class AdminCourtsEndpointTest {
         = "birmingham-civil-and-family-justice-centre";
     private static final String CONTENT_TYPE_VALUE = "application/json";
     private static final String COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/";
+    private static final String COURT_GENERAL_ENDPOINT = "/general";
     private static final String BEARER = "Bearer ";
 
     @Value("${TEST_URL:http://localhost:8080}")
@@ -74,7 +75,7 @@ public class AdminCourtsEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + token)
             .when()
-            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
+            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -103,7 +104,7 @@ public class AdminCourtsEndpointTest {
             .header(AUTHORIZATION, BEARER + token)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
+            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -136,7 +137,7 @@ public class AdminCourtsEndpointTest {
             .header(AUTHORIZATION, BEARER + token)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
+            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
@@ -166,7 +167,7 @@ public class AdminCourtsEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + "/general")
+            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(401);
