@@ -13,7 +13,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     Optional<Court> findBySlug(String slug);
 
     @Query(nativeQuery = true,
-        value = "SELECT * FROM search_court c INNER JOIN search_courtaddress ca ON ca.court_id = c.id "
+        value = "SELECT * FROM search_court c INNER JOIN search_courtaddress ca ON ca.court_id = c.id AND ca.address_type_id != 5881 "
         + "WHERE displayed = true AND ("
         + "  CAST (c.cci_code AS text) ILIKE concat('%', :query, '%') "
         + "  OR CAST (c.number AS text) ILIKE concat('%', :query, '%') "
