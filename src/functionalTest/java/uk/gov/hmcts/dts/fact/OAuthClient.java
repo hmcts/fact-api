@@ -28,9 +28,11 @@ public class OAuthClient {
     @Value("${OAUTH_USER_PASSWORD:Pa55word11}")
     private String password;
 
-    @Value("${OAUTH_USER:hmcts.super.fact@gmail.com}")
+    @Value("${OAUTH_SUPER_USER:hmcts.super.fact@gmail.com}")
     private String superUser;
 
+    @Value("${OAUTH_WRONG_ROLE_USER:hmcts.wrong.fact@gmail.com}")
+    private String wrongRoleUser;
 
     public String getToken() {
         return generateClientToken(username, password);
@@ -38,6 +40,10 @@ public class OAuthClient {
 
     public String getSuperAdminToken() {
         return generateClientToken(superUser, password);
+    }
+
+    public String getNobodyToken() {
+        return generateClientToken(wrongRoleUser, password);
     }
 
     public String generateClientToken(String userName, String password) {
