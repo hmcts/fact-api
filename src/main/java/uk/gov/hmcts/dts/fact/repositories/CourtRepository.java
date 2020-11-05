@@ -41,4 +41,12 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
 
     @Query(nativeQuery = true, name = "CourtWithDistance.findNearestCourts")
     List<CourtWithDistance> findNearest(@Param("lat") Double lat, @Param("lon") Double lon);
+
+    @Query(nativeQuery = true,
+        value = "SELECT search_court.*, search_serviceareacourt.catchment_type "
+            + "FROM search_serviceareacourt "
+            + "INNER JOIN search_court ON search_court.id = search_serviceareacourt.court_id "
+            + "INNER JOIN search_servicearea ON search_servicearea.id = search_serviceareacourt.servicearea_id "
+            + "WHERE search_servicearea.name = :serviceAreaName AND search_serviceareacourt.catchment_type = :catchmentType")
+    List<Court> courtsBy(String serviceAreaName, String catchmentType);
 }

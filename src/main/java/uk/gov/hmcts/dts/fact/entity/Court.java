@@ -102,7 +102,7 @@ public class Court {
 
     @ManyToMany
     @JoinTable(
-        name = "search_courtservicearea",
+        name = "search_serviceareacourt",
         joinColumns = @JoinColumn(name = COURT_ID),
         inverseJoinColumns = @JoinColumn(name = "servicearea_id")
     )
