@@ -8,6 +8,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+
+import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.*;
 
@@ -32,5 +35,14 @@ class RoleAspectTest {
 
         roleAspect.ensureRole(join, role);
         verify(join, atLeastOnce()).proceed();
+    }
+
+    @Test
+    public void testInvalidRole() throws Throwable {
+        when(role.value()).thenReturn(new String[]{"fact-admin"});
+        when(rolesProvider.getRoles()).thenReturn(new ArrayList<>());
+
+        roleAspect.ensureRole(join, role);
+        verify(join, never()).proceed();
     }
 }
