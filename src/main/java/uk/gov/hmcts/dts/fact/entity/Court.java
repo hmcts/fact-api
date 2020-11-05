@@ -108,6 +108,9 @@ public class Court {
     )
     private List<ServiceArea> serviceAreas;
 
+    @OneToMany(mappedBy = "court")
+    private List<ServiceAreaCourt> ServiceAreaCourts;
+
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));
         return areasOfLaw;
