@@ -37,7 +37,7 @@ public class RoleAspect {
         if (rolesProvider.getRoles().stream().anyMatch(role -> roles.contains(role))) {
             return joinPoint.proceed();
         } else {
-            return status(HttpStatus.FORBIDDEN).body("Missing required roles: " + roles);
+            return status(HttpStatus.FORBIDDEN).build();
         }
     }
 
