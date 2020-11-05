@@ -35,7 +35,8 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
         + "    THEN 1 ELSE 0 END DESC, "
         + "  CASE WHEN COALESCE(c.name, '') ILIKE concat('%', :query, '%') OR COALESCE(c.name_cy, '') ILIKE concat('%', :query, '%') THEN 1 ELSE 0 END DESC, "
         + "  CASE WHEN COALESCE(ca.town_name, '') ILIKE concat('%', :query, '%') OR COALESCE(ca.town_name_cy, '') ILIKE concat('%', :query, '%') THEN 1 ELSE 0 END DESC, "
-        + "  CASE WHEN COALESCE(ca.address, '') ILIKE concat('%', :query, '%') OR COALESCE(ca.address_cy, '') ILIKE concat('%', :query, '%') THEN 1 ELSE 0 END DESC")
+        + "  CASE WHEN COALESCE(ca.address, '') ILIKE concat('%', :query, '%') OR COALESCE(ca.address_cy, '') ILIKE concat('%', :query, '%') THEN 1 ELSE 0 END DESC, "
+        + "  name")
     List<Court> queryBy(String query);
 
     @Query(nativeQuery = true, name = "CourtWithDistance.findNearestCourts")

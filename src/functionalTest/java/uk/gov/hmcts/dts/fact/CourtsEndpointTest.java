@@ -226,4 +226,18 @@ public class CourtsEndpointTest {
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
     }
+
+    @Test
+    public void shouldNotReturnDuplicatesForCourtsWithMultipleAddresses() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(COURT_SEARCH_ENDPOINT + "?q=Darlington Magistrates' Court and Family Court")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
+        assertThat(courts.size()).isEqualTo(1);
+    }
 }

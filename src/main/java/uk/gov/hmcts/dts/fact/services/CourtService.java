@@ -42,6 +42,7 @@ public class CourtService {
         return courtRepository
             .queryBy(query)
             .stream()
+            .distinct()
             .map(CourtReference::new)
             .collect(toList());
     }
@@ -50,6 +51,7 @@ public class CourtService {
         return courtRepository
             .queryBy(query)
             .stream()
+            .distinct()
             .map(CourtWithDistance::new)
             .collect(toList());
     }
