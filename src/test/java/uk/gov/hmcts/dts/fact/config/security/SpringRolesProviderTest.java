@@ -44,12 +44,6 @@ class SpringRolesProviderTest {
     }
 
     @Test
-    void shouldGetRoles() {
-        List<String> roles = springRolesProvider.getRoles();
-        assertThat(roles).isSameAs(roles);
-    }
-
-    @Test
     void shouldRetunEmptyListWhenAuthenticationNull() {
         when(securityContext.getAuthentication()).thenReturn(null);
         List<String> roles = springRolesProvider.getRoles();
