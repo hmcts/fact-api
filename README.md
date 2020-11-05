@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/hmcts/fact-api.svg?branch=master)](https://travis-ci.org/hmcts/fact-api)
 
+API for the find a court or tribunal service.
+
 ## Building and deploying the application
 
 ### Building the application
