@@ -4,7 +4,6 @@ import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -19,7 +18,6 @@ import static io.restassured.RestAssured.given;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @ExtendWith({SpringExtension.class})
@@ -42,15 +40,9 @@ public class CourtsEndpointTest {
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
 
-    @Autowired
-    private OAuthClient authClient;
-
-    private String token;
-
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = testUrl;
-        token = authClient.getToken();
     }
 
     @Test
@@ -194,21 +186,6 @@ public class CourtsEndpointTest {
         assertThat(response.statusCode()).isEqualTo(200);
         final Court court = response.as(Court.class);
         assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
-    }
-
-    @Test
-    public void shouldRetrieveAllCourts() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, "Bearer " + token)
-            .when()
-            .get("/courts/all")
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(200);
-        String slug = response.jsonPath().get("[0].slug");
-        assertThat(slug).isEqualTo("birkenhead-county-court-and-family-court");
     }
 
     @Test
