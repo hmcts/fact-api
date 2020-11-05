@@ -106,8 +106,8 @@ public class CourtsEndpointTest {
 
     @Test
     public void shouldRetrieveCourtReferenceByPartialPostCodeQuery() {
-        final String name = "Skipton Magistrates' Court";
-        final String slug = "skipton-magistrates-court";
+        final String name = "Skipton County Court and Family Court";
+        final String slug = "skipton-county-court-and-family-court";
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -124,8 +124,8 @@ public class CourtsEndpointTest {
 
     @Test
     public void shouldRetrieveCourtReferenceByFullPostCodeQuery() {
-        final String name = "Skipton Magistrates' Court";
-        final String slug = "skipton-magistrates-court";
+        final String name = "Skipton County Court and Family Court";
+        final String slug = "skipton-county-court-and-family-court";
 
         final var response = given()
             .relaxedHTTPSValidation()
