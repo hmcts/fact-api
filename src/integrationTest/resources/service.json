@@ -7,14 +7,14 @@
       "name": "Childcare arrangements if you separate from your partner",
       "description": "Making child arrangements if you divorce or separate.",
       "slug": "childcare-arrangements",
-      "serviceareaType": null,
+      "serviceAreaType": null,
       "serviceAreaCourts": []
     },
     {
       "name": "Adoption",
       "description": "Support for a child adoption application.",
       "slug": "adoption",
-      "serviceareaType": null,
+      "serviceAreaType": null,
       "serviceAreaCourts": []
     }
   ]

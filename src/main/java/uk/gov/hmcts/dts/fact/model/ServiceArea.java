@@ -15,14 +15,14 @@ public class ServiceArea {
     private String name;
     private String description;
     private String slug;
-    private String serviceareaType;
+    private String serviceAreaType;
     private List<ServiceAreaCourt> serviceAreaCourts;
 
     public ServiceArea(uk.gov.hmcts.dts.fact.entity.ServiceArea serviceArea) {
         this.name = chooseString(serviceArea.getNameCy(), serviceArea.getName());
         this.description = chooseString(serviceArea.getDescriptionCy(), serviceArea.getDescription());
         this.slug = serviceArea.getSlug();
-        this.serviceareaType = serviceArea.getServiceareaType();
+        this.serviceAreaType = serviceArea.getServiceAreaType();
         this.serviceAreaCourts = serviceArea.getServiceAreaCourts() == null ? null : serviceArea.getServiceAreaCourts().stream().map(
             ServiceAreaCourt::new).collect(toList());
     }

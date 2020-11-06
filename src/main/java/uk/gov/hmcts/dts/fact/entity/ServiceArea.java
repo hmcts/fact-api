@@ -18,7 +18,7 @@ public class ServiceArea {
     private String description;
     private String descriptionCy;
     private String slug;
-    private String serviceareaType;
+    private String serviceAreaType;
 
     @OneToMany(mappedBy = "servicearea")
     private List<ServiceAreaCourt> serviceAreaCourts;
