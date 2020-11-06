@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ServiceAreasController.class)
-public class ServiceAreasControllerTest {
+class ServiceAreasControllerTest {
 
     private static final String URL = "/service-areas";
     private static final String NON_EXISTENT = "nonExistent";

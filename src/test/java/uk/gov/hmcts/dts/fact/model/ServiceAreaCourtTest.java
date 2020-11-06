@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ServiceAreaCourtTest {
+class ServiceAreaCourtTest {
 
     static uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt entity;
 

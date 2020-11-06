@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ServiceAreaService.class)
-public class ServiceAreaServiceTest {
+class ServiceAreaServiceTest {
 
     @Autowired
     private ServiceAreaService serviceAreaService;
