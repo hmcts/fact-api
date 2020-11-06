@@ -5,11 +5,13 @@
   "serviceAreas": [
     {
       "name": "Childcare arrangements if you separate from your partner",
-      "description": "Making child arrangements if you divorce or separate."
+      "description": "Making child arrangements if you divorce or separate.",
+      "serviceAreaCourts": []
     },
     {
       "name": "Adoption",
-      "description": "Support for a child adoption application."
+      "description": "Support for a child adoption application.",
+      "serviceAreaCourts": []
     }
   ]
 }

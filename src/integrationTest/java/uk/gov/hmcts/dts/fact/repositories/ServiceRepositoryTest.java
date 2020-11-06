@@ -21,7 +21,7 @@ class ServiceRepositoryTest {
     private ServiceRepository serviceRepository;
 
     @Test
-    void shouldFindExistingCourt() throws IOException {
+    void shouldFindExistingService() throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -41,7 +41,7 @@ class ServiceRepositoryTest {
     }
 
     @Test
-    void shouldNotFindNonExistentCourt() {
+    void shouldNotFindNonExistentService() {
         Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findBySlugIgnoreCase("nonExistent");
         assertThat(service).isEmpty();
     }
@@ -57,5 +57,4 @@ class ServiceRepositoryTest {
         Optional<uk.gov.hmcts.dts.fact.entity.Service> service = serviceRepository.findBySlugIgnoreCase(null);
         assertThat(service).isEmpty();
     }
-
 }

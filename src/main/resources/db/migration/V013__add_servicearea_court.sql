@@ -1,5 +1,3 @@
-DROP TABLE public.search_courtservicearea;
-
 CREATE TABLE public.search_serviceareacourt
 (
     id             integer PRIMARY KEY    NOT NULL,
@@ -29,18 +27,3 @@ ALTER TABLE ONLY public.search_serviceareacourt
 
 ALTER TABLE ONLY public.search_serviceareacourt
 	ADD CONSTRAINT con_catchment_type CHECK (catchment_type IN ('national', 'regional'));
-
-COPY public.search_servicearea (name, description, service_id) FROM stdin;
-Immigration	Seeking asylum, right to live in the UK, and appealing deportation.	5
-\.
-
-COPY public.search_serviceareacourt (id, servicearea_id, court_id, catchment_type) FROM stdin;
-1	1	1479943	national
-2	2	1479430	national
-3	5	1479426	national
-4	10	1479448	national
-5	11	1479448	national
-6	18	1479978	national
-7	19	1479831	national
-8	20	1479450	national
-\.

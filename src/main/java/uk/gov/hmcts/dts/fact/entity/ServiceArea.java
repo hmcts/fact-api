@@ -4,12 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_servicearea")
@@ -22,9 +17,8 @@ public class ServiceArea {
     private String nameCy;
     private String description;
     private String descriptionCy;
-    @ManyToOne
-    @JoinColumn(name = "service_id")
-    private Service service;
+    private String slug;
+    private String serviceareaType;
 
     @OneToMany(mappedBy = "servicearea")
     private List<ServiceAreaCourt> serviceAreaCourts;

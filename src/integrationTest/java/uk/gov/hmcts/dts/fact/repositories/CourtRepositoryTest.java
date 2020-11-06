@@ -119,18 +119,4 @@ class CourtRepositoryTest {
         final List<Court> result = courtRepository.findAll();
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
     }
-
-    @Test
-    void shouldFindCourtsByServiceAreaName() {
-
-        final String serviceAreaName = "Money claims";
-        final String catchmentType = "national";
-
-        final List<Court> result = courtRepository.courtsBy(serviceAreaName, catchmentType);
-
-        assertThat(result.size()).isEqualTo(1);
-        final CourtReference courtReference = new CourtReference(result.get(0));
-        assertThat(courtReference.getName()).isEqualTo("County Court Money Claims Centre (CCMCC)");
-        assertThat(courtReference.getSlug()).isEqualTo("county-court-money-claims-centre-ccmcc");
-    }
 }
