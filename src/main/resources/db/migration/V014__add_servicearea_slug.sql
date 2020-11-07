@@ -2,8 +2,8 @@ TRUNCATE TABLE public.search_servicearea CASCADE;
 ALTER SEQUENCE public.search_servicearea_id_seq RESTART;
 
 ALTER TABLE public.search_servicearea
-    ADD COLUMN slug character varying(255) UNIQUE NOT NULL,
-    ADD COLUMN servicearea_type character varying(250);
+    ADD COLUMN slug              character varying(255) UNIQUE NOT NULL,
+    ADD COLUMN service_area_type character varying(250);
 
 ALTER TABLE public.search_servicearea
     DROP service_id;
