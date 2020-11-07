@@ -1,59 +1,68 @@
 CREATE TABLE public.search_serviceservicearea
 (
-    id             integer PRIMARY KEY    NOT NULL,
-    service_id     integer                NOT NULL,
-    servicearea_id integer                NOT NULL
+	id             integer PRIMARY KEY NOT NULL,
+	service_id     integer             NOT NULL,
+	servicearea_id integer             NOT NULL
 );
 
 CREATE SEQUENCE public.search_serviceservicearea_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	START WITH 1
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
 
 ALTER SEQUENCE public.search_serviceservicearea_id_seq OWNED BY public.search_serviceservicearea.id;
 
 ALTER TABLE ONLY public.search_serviceservicearea
-    ALTER COLUMN id SET DEFAULT nextval('public.search_serviceservicearea'::regclass);
+	ALTER COLUMN id SET DEFAULT nextval('public.search_serviceservicearea_id_seq'::regclass);
 
 ALTER TABLE ONLY public.search_serviceservicearea
-    ADD CONSTRAINT fk_search_service_id FOREIGN KEY (service_id) REFERENCES public.search_service (id);
+	ADD CONSTRAINT fk_search_service_id FOREIGN KEY (service_id) REFERENCES public.search_service (id);
 
 ALTER TABLE ONLY public.search_serviceservicearea
-    ADD CONSTRAINT fk_search_servicearea_id FOREIGN KEY (servicearea_id) REFERENCES public.search_servicearea (id);
+	ADD CONSTRAINT fk_search_servicearea_id FOREIGN KEY (servicearea_id) REFERENCES public.search_servicearea (id);
 
-COPY public.search_serviceservicearea (id, service_id, servicearea_id) FROM stdin;
-1	1	1
-2	1	2
-3	1	3
-4	1	4
-5	1	5
-6	1	6
-7	1	7
-8	1	8
-9	2	2
-10	2	9
-11	2	10
-12	2	15
-13	3	11
-14	3	12
-15	4	13
-16	4	14
-17	4	15
-18	6	8
-19	6	16
-20	5	17
-21	7	18
+COPY public.search_serviceservicearea (service_id, servicearea_id) FROM stdin;
+1	1
+1	2
+1	3
+1	4
+1	5
+1	6
+1	7
+1	8
+2	2
+2	9
+2	10
+2	15
+3	11
+3	12
+4	13
+4	14
+4	15
+6	8
+6	16
+5	17
+7	18
 \.
 
-COPY public.search_serviceareacourt (id, servicearea_id, court_id, catchment_type) FROM stdin;
-1	1	1479943	national
-2	2	1479430	national
-3	5	1479426	national
-4	9	1479448	national
-5	10	1479448	national
-6	8	1479978	national
-7	16	1479831	national
-8	17	1479450	national
+COPY public.search_serviceareacourt (servicearea_id, court_id, catchment_type) FROM stdin;
+12	1479373	local
+4	1479373	local
+5	1479627	local
+11	1479373	local
+10	1479978	local
+6	1479429	local
+16	1479367	local
+8	1479373	local
+9	1479373	local
+13	1479373	local
+15	1479373	local
+14	1479373	local
+3	1479373	local
+18	1479373	local
+17	1479444	local
+1	1479373	local
+2	1479651	regional
 \.
