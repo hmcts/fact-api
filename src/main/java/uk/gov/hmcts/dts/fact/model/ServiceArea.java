@@ -16,12 +16,16 @@ public class ServiceArea {
     private String description;
     private String slug;
     private String serviceAreaType;
+    private String onlineUrl;
+    private String onlineText;
     private List<ServiceAreaCourt> serviceAreaCourts;
 
     public ServiceArea(uk.gov.hmcts.dts.fact.entity.ServiceArea serviceArea) {
         this.name = chooseString(serviceArea.getNameCy(), serviceArea.getName());
         this.description = chooseString(serviceArea.getDescriptionCy(), serviceArea.getDescription());
         this.slug = serviceArea.getSlug();
+        this.onlineUrl = serviceArea.getOnlineUrl();
+        this.onlineText = chooseString(serviceArea.getOnlineTextCy(), serviceArea.getOnlineText());
         this.serviceAreaType = serviceArea.getServiceAreaType();
         this.serviceAreaCourts = serviceArea.getServiceAreaCourts() == null ? null : serviceArea.getServiceAreaCourts().stream().map(
             ServiceAreaCourt::new).collect(toList());
