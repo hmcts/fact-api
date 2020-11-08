@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "search_servicearea")
@@ -19,7 +22,9 @@ public class ServiceArea {
     private String descriptionCy;
     private String slug;
     private String serviceAreaType;
-
+    private String onlineUrl;
+    private String onlineText;
+    private String onlineTextCy;
     @OneToMany(mappedBy = "servicearea")
     private List<ServiceAreaCourt> serviceAreaCourts;
 }
