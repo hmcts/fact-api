@@ -102,11 +102,14 @@ public class Court {
 
     @ManyToMany
     @JoinTable(
-        name = "search_courtservicearea",
+        name = "search_serviceareacourt",
         joinColumns = @JoinColumn(name = COURT_ID),
         inverseJoinColumns = @JoinColumn(name = "servicearea_id")
     )
     private List<ServiceArea> serviceAreas;
+
+    @OneToMany(mappedBy = "court")
+    private List<ServiceAreaCourt> serviceAreaCourts;
 
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));
