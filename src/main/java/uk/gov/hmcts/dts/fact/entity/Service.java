@@ -4,16 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_service")
 @Getter
 @Setter
 public class Service {
+    private static final String SERVICE_ID = "service_id";
     @Id
     private Integer id;
     private String name;
@@ -21,6 +19,12 @@ public class Service {
     private String description;
     private String descriptionCy;
     private String slug;
-    @OneToMany(mappedBy = "service")
+
+    @ManyToMany
+    @JoinTable(
+        name = "search_serviceservicearea",
+        joinColumns = @JoinColumn(name = SERVICE_ID),
+        inverseJoinColumns = @JoinColumn(name = "servicearea_id")
+    )
     private List<ServiceArea> serviceAreas;
 }
