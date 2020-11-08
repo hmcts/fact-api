@@ -18,6 +18,9 @@ public class ServiceArea {
     private String description;
     private String descriptionCy;
     private String slug;
+    private String onlineUrl;
+    private String onlineText;
+    private String onlineTextCy;
     private String serviceAreaType;
 
     @OneToMany(mappedBy = "servicearea")
