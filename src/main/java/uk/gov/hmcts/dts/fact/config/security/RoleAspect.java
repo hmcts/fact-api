@@ -4,20 +4,17 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.ResponseEntity.status;
 
 @Aspect
 @Component
 public class RoleAspect {
-
-    private List<String> roles = new ArrayList<>();
 
     @Autowired
     private RolesProvider rolesProvider;
@@ -32,12 +29,12 @@ public class RoleAspect {
 
     @Around("@annotation(annotation)")
     public Object ensureRole(ProceedingJoinPoint joinPoint, Role annotation) throws Throwable {
-        roles = Arrays.asList(annotation.value());
+        List<String> roles = asList(annotation.value());
 
-        if (rolesProvider.getRoles().stream().anyMatch(role -> roles.contains(role))) {
+        if (rolesProvider.getRoles().stream().anyMatch(roles::contains)) {
             return joinPoint.proceed();
         } else {
-            return status(HttpStatus.FORBIDDEN).build();
+            return status(FORBIDDEN).build();
         }
     }
 

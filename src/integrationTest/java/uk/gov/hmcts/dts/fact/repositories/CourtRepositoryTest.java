@@ -26,22 +26,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 class CourtRepositoryTest {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @Autowired
     private CourtRepository courtRepository;
 
     @Test
     void shouldFindExistingCourt() throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        OldCourt expected = mapper.readValue(
+        final OldCourt expected = OBJECT_MAPPER.readValue(
             Paths.get("src/integrationTest/resources/deprecated/aylesbury-magistrates-court-and-family-court.json").toFile(),
             OldCourt.class
         );
 
-        Optional<Court> result = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
+        final Optional<Court> result = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
         assertThat(result).isPresent();
-        OldCourt court = new OldCourt(result.get());
+        final OldCourt court = new OldCourt(result.get());
         assertThat(court.getSlug()).isEqualTo(expected.getSlug());
         assertThat(court.getAreasOfLaw()).isEqualTo(expected.getAreasOfLaw());
         assertThat(court.getContacts()).isEqualTo(expected.getContacts());
@@ -55,19 +55,19 @@ class CourtRepositoryTest {
 
     @Test
     void shouldNotFindNonExistentCourt() {
-        Optional<Court> court = courtRepository.findBySlug("non-existent-slug");
+        final Optional<Court> court = courtRepository.findBySlug("non-existent-slug");
         assertThat(court).isEmpty();
     }
 
     @Test
     void shouldHandleEmptyString() {
-        Optional<Court> court = courtRepository.findBySlug("");
+        final Optional<Court> court = courtRepository.findBySlug("");
         assertThat(court).isEmpty();
     }
 
     @Test
     void shouldHandleNull() {
-        Optional<Court> court = courtRepository.findBySlug(null);
+        final Optional<Court> court = courtRepository.findBySlug(null);
         assertThat(court).isEmpty();
     }
 
@@ -75,17 +75,14 @@ class CourtRepositoryTest {
     void shouldFindCourtsByQuery() throws IOException {
         final String query = "Administrative Court";
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        List<CourtReference> expected = Arrays.asList(mapper.readValue(
+        final List<CourtReference> expected = Arrays.asList(OBJECT_MAPPER.readValue(
             Paths.get("src/test/resources/courts.json").toFile(),
             CourtReference[].class
         ));
 
-        List<Court> result = courtRepository.queryBy(query);
+        final List<Court> result = courtRepository.queryBy(query);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
-        CourtReference court =
-            new CourtReference(result.get(0));
+        final CourtReference court = new CourtReference(result.get(0));
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
         assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
     }
@@ -93,30 +90,33 @@ class CourtRepositoryTest {
     @Test
     void shouldFindCourtsByNameOrAddress() {
         final String query = "Oxford";
-        List<Court> result = courtRepository.queryBy(query);
+        final List<Court> result = courtRepository.queryBy(query);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         assertThat(result.stream().anyMatch(r -> r.getName().contains(query)));
-        assertThat(result.stream().filter(r -> !r.getName().contains(query)).map(Court::getAddresses)
-                       .flatMap(Collection::stream).map(CourtAddress::getAddress).anyMatch(a -> a.contains(query)));
-
+        assertThat(result.stream()
+                       .filter(r -> !r.getName().contains(query))
+                       .map(Court::getAddresses)
+                       .flatMap(Collection::stream)
+                       .map(CourtAddress::getAddress)
+                       .anyMatch(a -> a.contains(query)));
     }
 
     @Test
     void shouldNotFindNonExistentCourtByQuery() {
-        List<Court> result = courtRepository.queryBy("This does not exist");
+        final List<Court> result = courtRepository.queryBy("This does not exist");
         assertThat(result).isEmpty();
     }
 
     @Test
     void shouldFindNearest() {
-        List<CourtWithDistance> result = courtRepository.findNearest(51.8, -1.3);
+        final List<CourtWithDistance> result = courtRepository.findNearest(51.8, -1.3);
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
     }
 
     @Test
-    void shouldFindAllCourts() throws IOException {
-        List<Court> result = courtRepository.findAll();
+    void shouldFindAllCourts() {
+        final List<Court> result = courtRepository.findAll();
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
     }
 }
