@@ -8,14 +8,26 @@
       "description": "Making child arrangements if you divorce or separate.",
       "slug": "childcare-arrangements",
       "serviceAreaType": null,
-      "serviceAreaCourts": []
+      "serviceAreaCourts": [
+        {
+          "slug": "reading-county-court-and-family-court",
+          "catchmentType": "local",
+          "courtName": "Reading County Court and Family Court"
+        }
+      ]
     },
     {
       "name": "Adoption",
       "description": "Support for a child adoption application.",
       "slug": "adoption",
       "serviceAreaType": null,
-      "serviceAreaCourts": []
+      "serviceAreaCourts": [
+        {
+          "slug": "reading-county-court-and-family-court",
+          "catchmentType": "local",
+          "courtName": "Reading County Court and Family Court"
+        }
+      ]
     }
   ]
 }
