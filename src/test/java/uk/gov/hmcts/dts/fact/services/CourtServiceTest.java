@@ -33,16 +33,16 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = CourtService.class)
 class CourtServiceTest {
 
-    @Autowired
-    CourtService courtService;
-
-    @MockBean
-    CourtRepository courtRepository;
-
-    @MockBean
-    MapitClient mapitClient;
-
     private static final String SOME_SLUG = "some-slug";
+
+    @Autowired
+    private CourtService courtService;
+
+    @MockBean
+    private CourtRepository courtRepository;
+
+    @MockBean
+    private MapitClient mapitClient;
 
     @Test
     void shouldThrowSlugNotFoundException() {
@@ -70,11 +70,10 @@ class CourtServiceTest {
         final Court mock = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
-        List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
+        final List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
     }
-
 
     @Test
     void shouldReturnListOfCourts() {
@@ -82,7 +81,7 @@ class CourtServiceTest {
         final Court mock = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(mock));
-        List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
+        final List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
         assertThat(results.size()).isEqualTo(1);
     }
@@ -102,7 +101,7 @@ class CourtServiceTest {
 
         final String postcode = "OX1 1RZ";
 
-        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode(postcode);
+        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode(postcode);
         assertThat(results.size()).isEqualTo(10);
     }
 
@@ -120,7 +119,7 @@ class CourtServiceTest {
             if (i % 4 == 0) {
                 areaOfLaw.setName("AreaOfLawName");
             }
-            List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
+            final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
             courts.add(mock);
         }
@@ -129,7 +128,7 @@ class CourtServiceTest {
 
         final String postcode = "OX1 1RZ";
 
-        List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
             postcode,
             "AreaOfLawName"
         );

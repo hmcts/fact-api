@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
@@ -28,8 +29,11 @@ class ServiceAreaServiceTest {
     @Test
     void shouldReturnServiceAreaObject() {
         final String serviceAreaSlug = "money";
-        final ServiceArea mock = mock(ServiceArea.class);
-        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(mock));
+        final ServiceArea serviceArea = mock(ServiceArea.class);
+        final AreaOfLaw areaOfLaw = mock(AreaOfLaw.class);
+
+        when(serviceArea.getAreaOfLaw()).thenReturn(areaOfLaw);
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
 
         assertThat(serviceAreaService.getServiceArea(serviceAreaSlug)).isInstanceOf(uk.gov.hmcts.dts.fact.model.ServiceArea.class);
     }
