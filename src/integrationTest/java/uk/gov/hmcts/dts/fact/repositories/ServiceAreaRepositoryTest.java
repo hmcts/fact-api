@@ -27,14 +27,11 @@ public class ServiceAreaRepositoryTest {
 
         assertThat(result).isPresent();
         final ServiceArea serviceArea = new ServiceArea(result.get());
-        assertThat(serviceArea.getServiceAreaCourts().size()).isEqualTo(2);
+        assertThat(serviceArea.getServiceAreaCourts().size()).isEqualTo(1);
         final List<ServiceAreaCourt> catchmentTypes = serviceArea.getServiceAreaCourts();
-        assertThat(catchmentTypes.get(0).getCatchmentType()).isEqualTo("local");
-        assertThat(catchmentTypes.get(0).getSlug()).isEqualTo("reading-county-court-and-family-court");
-        assertThat(catchmentTypes.get(0).getCourtName()).isEqualTo("Reading County Court and Family Court");
-        assertThat(catchmentTypes.get(1).getCatchmentType()).isEqualTo("national");
-        assertThat(catchmentTypes.get(1).getSlug()).isEqualTo("county-court-money-claims-centre-ccmcc");
-        assertThat(catchmentTypes.get(1).getCourtName()).isEqualTo("County Court Money Claims Centre (CCMCC)");
+        assertThat(catchmentTypes.get(0).getCatchmentType()).isEqualTo("national");
+        assertThat(catchmentTypes.get(0).getSlug()).isEqualTo("county-court-money-claims-centre-ccmcc");
+        assertThat(catchmentTypes.get(0).getCourtName()).isEqualTo("County Court Money Claims Centre (CCMCC)");
     }
 
     @Test
