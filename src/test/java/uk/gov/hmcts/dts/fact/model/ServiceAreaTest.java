@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 
@@ -34,8 +35,11 @@ class ServiceAreaTest {
         final Court court = new Court();
         court.setName("court");
         serviceAreaCourt.setCourt(court);
-
         entity.setServiceAreaCourts(singletonList(serviceAreaCourt));
+
+        final AreaOfLaw areaOfLaw = new AreaOfLaw();
+        areaOfLaw.setName("area of law");
+        entity.setAreaOfLaw(areaOfLaw);
     }
 
     @ParameterizedTest
@@ -56,6 +60,7 @@ class ServiceAreaTest {
         );
         assertEquals(entity.getOnlineUrl(), service.getOnlineUrl());
         assertEquals(welsh ? entity.getOnlineTextCy() : entity.getOnlineText(), service.getOnlineText());
+        assertEquals(entity.getAreaOfLaw().getName(), service.getAreaOfLawName());
 
         LocaleContextHolder.resetLocaleContext();
     }

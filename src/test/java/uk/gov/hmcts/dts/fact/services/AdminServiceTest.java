@@ -24,19 +24,19 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
 public class AdminServiceTest {
-    static final Court COURT = new Court();
-    static CourtGeneral courtGeneral = new CourtGeneral();
+
+    private static final Court COURT = new Court();
+    private static final String SOME_SLUG = "some-slug";
+    private static CourtGeneral courtGeneral = new CourtGeneral();
 
     @Autowired
-    AdminService adminService;
+    private AdminService adminService;
 
     @MockBean
-    CourtRepository courtRepository;
+    private CourtRepository courtRepository;
 
     @MockBean
-    RolesProvider rolesProvider;
-
-    private static final String SOME_SLUG = "some-slug";
+    private RolesProvider rolesProvider;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +63,7 @@ public class AdminServiceTest {
     void shouldReturnAllCourts() {
         final Court mock = mock(Court.class);
         when(courtRepository.findAll()).thenReturn(singletonList(mock));
-        List<CourtReference> results = adminService.getAllCourts();
+        final List<CourtReference> results = adminService.getAllCourts();
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
     }
@@ -87,7 +87,7 @@ public class AdminServiceTest {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(COURT));
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
         when(courtRepository.save(COURT)).thenReturn(COURT);
-        CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
+        final CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
         assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
         assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
         assertThat(courtResults.getInfo()).isNotEqualTo(courtGeneral.getInfo());
@@ -99,7 +99,7 @@ public class AdminServiceTest {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(COURT));
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
         when(courtRepository.save(COURT)).thenReturn(COURT);
-        CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
+        final CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
         assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
         assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
         assertThat(courtResults.getInfo()).isEqualTo(courtGeneral.getInfo());
