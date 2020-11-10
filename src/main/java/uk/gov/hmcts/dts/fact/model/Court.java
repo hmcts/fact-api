@@ -105,7 +105,7 @@ public class Court {
             .stream()
             .map(ServiceArea::getName)
             .collect(toList());
-        this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
+        this.inPerson = courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
     }
 
