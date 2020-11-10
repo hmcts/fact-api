@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.model;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,7 +19,7 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import java.util.Locale;
 
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
@@ -114,6 +115,14 @@ class CourtTest {
         assertEquals(courtEntity.getServiceAreas().get(0).getName(), court.getServiceAreas().get(0));
 
         LocaleContextHolder.resetLocaleContext();
+    }
+
+    @Test
+    void testNoInPersonData() {
+        courtEntity.setInPerson(null);
+        Court court = new Court(courtEntity);
+        assertTrue(court.getInPerson());
+        assertNull(court.getAccessScheme());
     }
 
 }
