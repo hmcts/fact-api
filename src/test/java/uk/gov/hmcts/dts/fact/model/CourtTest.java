@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.model;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -96,14 +97,14 @@ class CourtTest {
             Locale locale = new Locale("cy");
             LocaleContextHolder.setLocale(locale);
         }
-        courtEntity.setInPerson(null);
+
         Court court = new Court(courtEntity);
         assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
         assertEquals(welsh ? "Info on court in Welsh" : "Info on court", court.getInfo());
         assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
         assertEquals(welsh ? "Alert in Welsh" : "Alert", court.getAlert());
-        assertTrue(court.getInPerson());
-        assertNull(court.getAccessScheme());
+        assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
+        assertEquals(courtEntity.getInPerson().getAccessScheme(), court.getAccessScheme());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
         assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
@@ -114,6 +115,14 @@ class CourtTest {
         assertEquals(courtEntity.getServiceAreas().get(0).getName(), court.getServiceAreas().get(0));
 
         LocaleContextHolder.resetLocaleContext();
+    }
+
+    @Test
+    void testNoInPersonData() {
+        courtEntity.setInPerson(null);
+        Court court = new Court(courtEntity);
+        assertTrue(court.getInPerson());
+        assertNull(court.getAccessScheme());
     }
 
 }
