@@ -19,6 +19,7 @@ public class ServiceArea {
     private String onlineUrl;
     private String onlineText;
     private String areaOfLawName;
+    private String applicationType;
     private List<ServiceAreaCourt> serviceAreaCourts;
 
     public ServiceArea(uk.gov.hmcts.dts.fact.entity.ServiceArea serviceArea) {
@@ -29,6 +30,7 @@ public class ServiceArea {
         this.onlineText = chooseString(serviceArea.getOnlineTextCy(), serviceArea.getOnlineText());
         this.serviceAreaType = serviceArea.getServiceAreaType();
         this.areaOfLawName = serviceArea.getAreaOfLaw().getName();
+        this.applicationType = serviceArea.getApplicationType();
         this.serviceAreaCourts = serviceArea.getServiceAreaCourts() == null ? null : serviceArea.getServiceAreaCourts().stream().map(
             ServiceAreaCourt::new).collect(toList());
     }

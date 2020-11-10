@@ -22,6 +22,7 @@ public class ServiceArea {
     private String onlineText;
     private String onlineTextCy;
     private String serviceAreaType;
+    private String applicationType;
 
     @OneToMany(mappedBy = "servicearea")
     private List<ServiceAreaCourt> serviceAreaCourts;
