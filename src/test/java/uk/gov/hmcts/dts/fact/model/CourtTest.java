@@ -18,7 +18,7 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import java.util.Locale;
 
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
@@ -102,8 +102,8 @@ class CourtTest {
         assertEquals(welsh ? "Info on court in Welsh" : "Info on court", court.getInfo());
         assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
         assertEquals(welsh ? "Alert in Welsh" : "Alert", court.getAlert());
-        assertEquals(true, court.getInPerson());
-        assertEquals(null, court.getAccessScheme());
+        assertTrue(court.getInPerson());
+        assertNull(court.getAccessScheme());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
         assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
