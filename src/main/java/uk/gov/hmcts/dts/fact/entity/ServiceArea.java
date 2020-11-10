@@ -25,4 +25,8 @@ public class ServiceArea {
 
     @OneToMany(mappedBy = "servicearea")
     private List<ServiceAreaCourt> serviceAreaCourts;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "area_of_law_id")
+    private AreaOfLaw areaOfLaw;
 }
