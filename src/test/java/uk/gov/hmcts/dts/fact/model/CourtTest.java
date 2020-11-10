@@ -96,14 +96,14 @@ class CourtTest {
             Locale locale = new Locale("cy");
             LocaleContextHolder.setLocale(locale);
         }
-
+        courtEntity.setInPerson(null);
         Court court = new Court(courtEntity);
         assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
         assertEquals(welsh ? "Info on court in Welsh" : "Info on court", court.getInfo());
         assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
         assertEquals(welsh ? "Alert in Welsh" : "Alert", court.getAlert());
-        assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
-        assertEquals(courtEntity.getInPerson().getAccessScheme(), court.getAccessScheme());
+        assertEquals(true, court.getInPerson());
+        assertEquals(null, court.getAccessScheme());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
         assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
