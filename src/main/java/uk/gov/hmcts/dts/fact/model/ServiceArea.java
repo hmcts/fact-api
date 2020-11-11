@@ -21,7 +21,6 @@ public class ServiceArea {
     private String areaOfLawName;
     private List<ServiceAreaCourt> serviceAreaCourts;
     private String text;
-    private String textCy;
 
     public ServiceArea(uk.gov.hmcts.dts.fact.entity.ServiceArea serviceArea) {
         this.name = chooseString(serviceArea.getNameCy(), serviceArea.getName());
@@ -29,7 +28,7 @@ public class ServiceArea {
         this.slug = serviceArea.getSlug();
         this.onlineUrl = serviceArea.getOnlineUrl();
         this.onlineText = chooseString(serviceArea.getOnlineTextCy(), serviceArea.getOnlineText());
-        this.serviceAreaType = serviceArea.getServiceAreaType();
+        this.serviceAreaType = serviceArea.getType();
         this.areaOfLawName = serviceArea.getAreaOfLaw().getName();
         this.serviceAreaCourts = serviceArea.getServiceAreaCourts() == null ? null : serviceArea.getServiceAreaCourts().stream().map(
             ServiceAreaCourt::new).collect(toList());
