@@ -25,7 +25,7 @@ class ServiceAreaTest {
         entity.setDescription("Description");
         entity.setDescriptionCy("Description in Welsh");
         entity.setSlug("slug");
-        entity.setServiceAreaType("type");
+        entity.setType("type");
         entity.setOnlineUrl("Online url");
         entity.setOnlineText("Online text");
         entity.setOnlineTextCy("Welsh online text");
@@ -55,7 +55,7 @@ class ServiceAreaTest {
         assertEquals(welsh ? entity.getNameCy() : entity.getName(), service.getName());
         assertEquals(welsh ? entity.getDescriptionCy() : entity.getDescription(), service.getDescription());
         assertEquals(entity.getSlug(), service.getSlug());
-        assertEquals(entity.getServiceAreaType(), service.getServiceAreaType());
+        assertEquals(entity.getType(), service.getServiceAreaType());
         assertEquals(
             entity.getServiceAreaCourts().get(0).getCatchmentType(),
             service.getServiceAreaCourts().get(0).getCatchmentType()
