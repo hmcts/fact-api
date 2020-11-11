@@ -13,4 +13,8 @@ public class Coordinates {
     Double lat;
     @JsonProperty("wgs84_lon")
     Double lon;
+
+    public boolean isPresent() {
+        return null != getLat() && null != getLon();
+    }
 }

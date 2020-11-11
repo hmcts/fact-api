@@ -50,3 +50,7 @@ mapit.key: ${MAPIT_KEY:}
 azure:
   application-insights:
     instrumentation-key: ${APPINSIGHTS_INSTRUMENTATIONKEY:00000000-0000-0000-0000-000000000000}
+
+feign:
+  hystrix:
+    enabled: true

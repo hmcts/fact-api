@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "mappitApi", url = "https://mapit.mysociety.org/")
+@FeignClient(name = "mappitApi", url = "https://mapit.mysociety.org/", fallbackFactory = MapitFallbackClientFactory.class)
 public interface MapitClient {
 
     @GetMapping("/postcode/{postcode}")
