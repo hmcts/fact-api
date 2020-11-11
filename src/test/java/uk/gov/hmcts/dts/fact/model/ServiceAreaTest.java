@@ -28,7 +28,9 @@ class ServiceAreaTest {
         entity.setServiceAreaType("type");
         entity.setOnlineUrl("Online url");
         entity.setOnlineText("Online text");
-        entity.setOnlineTextCy("Welsh nline text");
+        entity.setOnlineTextCy("Welsh online text");
+        entity.setText("Some text");
+        entity.setTextCy("Some Welsh text");
 
         final ServiceAreaCourt serviceAreaCourt = new ServiceAreaCourt();
         serviceAreaCourt.setCatchmentType("national");
@@ -61,6 +63,7 @@ class ServiceAreaTest {
         assertEquals(entity.getOnlineUrl(), service.getOnlineUrl());
         assertEquals(welsh ? entity.getOnlineTextCy() : entity.getOnlineText(), service.getOnlineText());
         assertEquals(entity.getAreaOfLaw().getName(), service.getAreaOfLawName());
+        assertEquals(welsh ? entity.getTextCy() : entity.getText(), service.getText());
 
         LocaleContextHolder.resetLocaleContext();
     }

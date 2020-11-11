@@ -19,3 +19,7 @@ WHERE slug = 'major-criminal-offences';
 UPDATE public.search_servicearea
 SET text = 'We manage your money claims applications at our central service centre.'
 WHERE slug = 'money-claims';
+
+UPDATE public.search_servicearea
+SET text = 'We manage your probate applications at our central service centre.'
+WHERE slug = 'probate';
