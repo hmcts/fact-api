@@ -28,7 +28,7 @@ public class ServiceArea {
         this.slug = serviceArea.getSlug();
         this.onlineUrl = serviceArea.getOnlineUrl();
         this.onlineText = chooseString(serviceArea.getOnlineTextCy(), serviceArea.getOnlineText());
-        this.serviceAreaType = serviceArea.getServiceAreaType();
+        this.serviceAreaType = serviceArea.getType();
         this.areaOfLawName = serviceArea.getAreaOfLaw().getName();
         this.serviceAreaCourts = serviceArea.getServiceAreaCourts() == null ? null : serviceArea.getServiceAreaCourts().stream().map(
             ServiceAreaCourt::new).collect(toList());
