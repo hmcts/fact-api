@@ -27,7 +27,7 @@ public class ServiceArea {
     private String onlineUrl;
     private String onlineText;
     private String onlineTextCy;
-    private String serviceAreaType;
+    private String type;
     private String text;
     private String textCy;
 
