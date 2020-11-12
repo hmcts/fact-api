@@ -75,4 +75,9 @@
       <property name="violationSuppressRegex" value="^Found 'UR'-anomaly.*"/>
     </properties>
   </rule>
+  <rule ref="category/java/design.xml/TooManyMethods">
+    <properties>
+      <property name="maxmethods" value="12" />
+    </properties>
+  </rule>
 </ruleset>

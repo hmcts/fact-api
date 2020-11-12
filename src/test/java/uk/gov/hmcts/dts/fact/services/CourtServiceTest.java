@@ -35,6 +35,7 @@ import static org.mockito.Mockito.when;
 class CourtServiceTest {
 
     private static final String SOME_SLUG = "some-slug";
+    private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
 
     @Autowired
     private CourtService courtService;
@@ -137,7 +138,7 @@ class CourtServiceTest {
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
             "OX2 1RZ",
-            "AreaOfLawName"
+            AREA_OF_LAW_NAME
         );
         assertThat(results.size()).isEqualTo(5);
     }
@@ -149,13 +150,14 @@ class CourtServiceTest {
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
             "JE2 4BA",
-            "AreaOfLawName"
+            AREA_OF_LAW_NAME
         );
 
         assertThat(results.isEmpty()).isTrue();
         verifyNoInteractions(courtRepository);
     }
 
+    @Test
     void shouldFilterSearchByAreaOfLawWithPostcode() {
         final Coordinates coordinates = mock(Coordinates.class);
         when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
@@ -176,7 +178,7 @@ class CourtServiceTest {
 
         final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
             "OX2 1RZ",
-            "AreaOfLawName"
+            AREA_OF_LAW_NAME
         );
         assertThat(results.size()).isEqualTo(5);
         assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
@@ -188,7 +190,7 @@ class CourtServiceTest {
 
         final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
             "JE2 4BA",
-            "AreaOfLawName"
+            AREA_OF_LAW_NAME
         );
 
         assertThat(results.isEmpty()).isTrue();
