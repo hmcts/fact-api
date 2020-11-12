@@ -68,4 +68,26 @@ class ServiceAreaTest {
         LocaleContextHolder.resetLocaleContext();
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testCreationNoCourts(boolean welsh) {
+        entity.setServiceAreaCourts(null);
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
+        final ServiceArea service = new ServiceArea(entity);
+        assertEquals(welsh ? entity.getNameCy() : entity.getName(), service.getName());
+        assertEquals(welsh ? entity.getDescriptionCy() : entity.getDescription(), service.getDescription());
+        assertEquals(entity.getSlug(), service.getSlug());
+        assertEquals(entity.getType(), service.getServiceAreaType());
+        assertEquals(entity.getServiceAreaCourts(), service.getServiceAreaCourts());
+        assertEquals(entity.getOnlineUrl(), service.getOnlineUrl());
+        assertEquals(welsh ? entity.getOnlineTextCy() : entity.getOnlineText(), service.getOnlineText());
+        assertEquals(entity.getAreaOfLaw().getName(), service.getAreaOfLawName());
+        assertEquals(welsh ? entity.getTextCy() : entity.getText(), service.getText());
+
+        LocaleContextHolder.resetLocaleContext();
+    }
+
 }
