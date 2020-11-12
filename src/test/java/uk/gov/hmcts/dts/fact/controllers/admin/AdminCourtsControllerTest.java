@@ -74,6 +74,7 @@ class AdminCourtsControllerTest {
         Court court = mapper.readValue(courtEntityPath.toFile(), Court.class);
 
         CourtGeneral courtGeneral = new CourtGeneral(
+            "slug",
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre Info",

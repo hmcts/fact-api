@@ -115,6 +115,7 @@ public class AdminCourtsEndpointTest {
     @Test
     public void shouldUpdateCourtGeneralBySlugAsAdmin() throws Exception {
         CourtGeneral courtGeneral = new CourtGeneral(
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             "Admin Info",
@@ -147,6 +148,7 @@ public class AdminCourtsEndpointTest {
     @Test
     public void shouldBeForbiddenToUpdateCourtGeneralBySlug() throws Exception {
         CourtGeneral courtGeneral = new CourtGeneral(
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             "Admin Info",
@@ -175,6 +177,7 @@ public class AdminCourtsEndpointTest {
     @Test
     public void shouldUpdateCourtGeneralBySlugAsSuperAdmin() throws Exception {
         CourtGeneral courtGeneral = new CourtGeneral(
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             "Super Admin Info",
@@ -208,6 +211,7 @@ public class AdminCourtsEndpointTest {
     @Test
     public void shouldNotUpdateCourtAsNoTokenProvided() throws Exception {
         CourtGeneral courtGeneral = new CourtGeneral(
+            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             "Admin Info",
