@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -76,4 +77,15 @@ public class CourtService {
             .orElse(emptyList());
     }
 
+    public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeAndAreaOfLawSearch(final String postcode, final String areaOfLaw) {
+        return mapitService.getCoordinates(postcode)
+            .map(value -> courtRepository
+                .findNearest(value.getLat(), value.getLon())
+                .stream()
+                .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
+                .limit(10)
+                .map(CourtReferenceWithDistance::new)
+                .collect(toList()))
+            .orElse(emptyList());
+    }
 }

@@ -39,10 +39,13 @@ public class CourtWithDistance {
     private Integer id;
     @Getter
     private String name;
+    private String nameCy;
     private String slug;
     private String info;
+    private String infoCy;
     private Boolean displayed;
     private String directions;
+    private String directionsCy;
     private Double lat;
     private Double lon;
     private Integer number;
