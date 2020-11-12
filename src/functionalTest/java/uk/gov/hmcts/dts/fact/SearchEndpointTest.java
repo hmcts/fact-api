@@ -130,7 +130,7 @@ public class SearchEndpointTest {
 
     @Test
     public void shouldRetrieve10CourtReferenceByAreaOfLawSortedByDistance() {
-        final String aol = "Tax";
+        final String aol = "Employment";
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
