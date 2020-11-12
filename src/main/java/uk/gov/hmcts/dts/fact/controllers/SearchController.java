@@ -56,6 +56,10 @@ public class SearchController {
         @RequestParam Optional<String> postcode,
         @ApiParam("Area of Law") @RequestParam(name = "aol") Optional<String> areaOfLaw
     ) {
-        return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(postcode.get(), areaOfLaw.get()));
+        if (postcode.isPresent() && areaOfLaw.isPresent()) {
+            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(postcode.get(), areaOfLaw.get()));
+        } else {
+            return badRequest().build();
+        }
     }
 }
