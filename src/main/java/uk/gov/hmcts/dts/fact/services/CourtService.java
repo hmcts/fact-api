@@ -9,6 +9,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class CourtService {
 
     @Autowired
     private CourtRepository courtRepository;
+
+    @Autowired
+    private CourtWithDistanceRepository courtWithDistanceRepository;
 
     @Autowired
     private MapitService mapitService;
@@ -56,10 +60,9 @@ public class CourtService {
 
     public List<CourtWithDistance> getNearestCourtsByPostcode(final String postcode) {
         return mapitService.getCoordinates(postcode)
-            .map(value -> courtRepository
-                .findNearest(value.getLat(), value.getLon())
+            .map(value -> courtWithDistanceRepository
+                .findNearestTen(value.getLat(), value.getLon())
                 .stream()
-                .limit(10)
                 .map(CourtWithDistance::new)
                 .collect(toList()))
             .orElse(emptyList());
@@ -67,11 +70,9 @@ public class CourtService {
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
         return mapitService.getCoordinates(postcode)
-            .map(value -> courtRepository
-                .findNearest(value.getLat(), value.getLon())
+            .map(value -> courtWithDistanceRepository
+                .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw)
                 .stream()
-                .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
-                .limit(10)
                 .map(CourtWithDistance::new)
                 .collect(toList()))
             .orElse(emptyList());
@@ -79,11 +80,9 @@ public class CourtService {
 
     public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeAndAreaOfLawSearch(final String postcode, final String areaOfLaw) {
         return mapitService.getCoordinates(postcode)
-            .map(value -> courtRepository
-                .findNearest(value.getLat(), value.getLon())
+            .map(value -> courtWithDistanceRepository
+                .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw)
                 .stream()
-                .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
-                .limit(10)
                 .map(CourtReferenceWithDistance::new)
                 .collect(toList()))
             .orElse(emptyList());

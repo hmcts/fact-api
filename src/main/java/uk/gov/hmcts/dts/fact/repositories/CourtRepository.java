@@ -2,9 +2,7 @@ package uk.gov.hmcts.dts.fact.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +36,4 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
         + "  CASE WHEN COALESCE(ca.address, '') ILIKE concat('%', :query, '%') OR COALESCE(ca.address_cy, '') ILIKE concat('%', :query, '%') THEN 1 ELSE 0 END DESC, "
         + "  name")
     List<Court> queryBy(String query);
-
-    @Query(nativeQuery = true, name = "CourtWithDistance.findNearestCourts")
-    List<CourtWithDistance> findNearest(@Param("lat") Double lat, @Param("lon") Double lon);
 }
