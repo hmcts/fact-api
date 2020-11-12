@@ -18,8 +18,8 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     @Query(nativeQuery = true,
         value = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
             + "FROM search_court as c "
-            + "INNER JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
-            + "INNER JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
+            + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
+            + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
             + "WHERE c.displayed AND UPPER(aol.name) = UPPER(:aol) "
             + "ORDER BY distance, c.name limit 10")
     List<CourtWithDistance> findNearestTenByAreaOfLaw(@Param("lat") Double lat, @Param("lon") Double lon, String aol);
