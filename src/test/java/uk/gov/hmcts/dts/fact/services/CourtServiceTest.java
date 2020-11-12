@@ -158,6 +158,7 @@ class CourtServiceTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     void shouldFilterSearchByAreaOfLawWithPostcode() {
         final Coordinates coordinates = mock(Coordinates.class);
         when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
