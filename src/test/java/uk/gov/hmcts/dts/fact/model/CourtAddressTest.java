@@ -45,4 +45,20 @@ class CourtAddressTest {
 
         LocaleContextHolder.resetLocaleContext();
     }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testNullAddressCreation(boolean welsh) {
+        entity.setAddress(null);
+        entity.setAddressCy(null);
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
+
+        CourtAddress courtAddress = new CourtAddress(entity);
+        assertEquals(courtAddress.getAddressLines(), null);
+
+        LocaleContextHolder.resetLocaleContext();
+    }
 }
