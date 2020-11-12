@@ -14,7 +14,7 @@ public class Coordinates {
     @JsonProperty("wgs84_lon")
     Double lon;
 
-    public boolean isPresent() {
+    public boolean hasLatAndLonValues() {
         return null != getLat() && null != getLon();
     }
 }

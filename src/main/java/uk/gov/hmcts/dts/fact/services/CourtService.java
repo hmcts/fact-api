@@ -3,8 +3,6 @@ package uk.gov.hmcts.dts.fact.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.mapit.Coordinates;
-import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
@@ -23,7 +21,7 @@ public class CourtService {
     private CourtRepository courtRepository;
 
     @Autowired
-    private MapitClient mapitClient;
+    private MapitService mapitService;
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
         return courtRepository
@@ -56,34 +54,26 @@ public class CourtService {
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcode(final String postcode) {
-        final Coordinates coordinates = mapitClient.getCoordinates(postcode);
-
-        if (coordinates.isPresent()) {
-            return courtRepository
-                .findNearest(coordinates.getLat(), coordinates.getLon())
+        return mapitService.getCoordinates(postcode)
+            .map(value -> courtRepository
+                .findNearest(value.getLat(), value.getLon())
                 .stream()
                 .limit(10)
                 .map(CourtWithDistance::new)
-                .collect(toList());
-        }
-
-        return emptyList();
+                .collect(toList()))
+            .orElse(emptyList());
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
-        final Coordinates coordinates = mapitClient.getCoordinates(postcode);
-
-        if (coordinates.isPresent()) {
-            return courtRepository
-                .findNearest(coordinates.getLat(), coordinates.getLon())
+        return mapitService.getCoordinates(postcode)
+            .map(value -> courtRepository
+                .findNearest(value.getLat(), value.getLon())
                 .stream()
                 .filter(c -> c.getAreasOfLaw().stream().anyMatch(a -> areaOfLaw.equalsIgnoreCase(a.getName())))
                 .limit(10)
                 .map(CourtWithDistance::new)
-                .collect(toList());
-        }
-
-        return emptyList();
+                .collect(toList()))
+            .orElse(emptyList());
     }
 
 }
