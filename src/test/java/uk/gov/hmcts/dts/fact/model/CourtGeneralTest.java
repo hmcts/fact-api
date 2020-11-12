@@ -88,6 +88,7 @@ public class CourtGeneralTest {
         courtEntity.setAlert("Alert");
         courtEntity.setAlertCy("Alert in Welsh");
         courtEntity.setDisplayed(true);
+        courtEntity.setSlug("slug");
     }
 
     @ParameterizedTest
@@ -95,6 +96,7 @@ public class CourtGeneralTest {
     void testCreationOfAdminCourt(boolean welsh) {
         CourtGeneral court = new CourtGeneral(courtEntity);
 
+        assertEquals("slug", court.getSlug());
         assertEquals("Name", court.getName());
         assertEquals("Name in Welsh", court.getNameCy());
         assertEquals("Info on court", court.getInfo());

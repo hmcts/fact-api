@@ -15,6 +15,8 @@ import static uk.gov.hmcts.dts.fact.util.Utils.*;
 @NoArgsConstructor
 @JsonPropertyOrder({"name", "name_cy", "info", "info_cy", "open", "urgent_message", "urgent_message_cy"})
 public class CourtGeneral {
+
+    private String slug;
     private String name;
     @JsonProperty("name_cy")
     private String nameCy;
@@ -28,6 +30,7 @@ public class CourtGeneral {
     private String alertCy;
 
     public CourtGeneral(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        this.slug = courtEntity.getSlug();
         this.name = courtEntity.getName();
         this.nameCy = courtEntity.getNameCy();
         this.info = stripHtmlFromString(courtEntity.getInfo());
