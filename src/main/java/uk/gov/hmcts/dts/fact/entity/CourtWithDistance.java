@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import javax.persistence.Entity;
@@ -32,6 +33,7 @@ import static java.util.Comparator.comparing;
         + "ORDER BY distance, name"
 )
 @Getter
+@Setter
 @SuppressWarnings("PMD.TooManyFields")
 public class CourtWithDistance {
     private static final String COURT_ID = "court_id";

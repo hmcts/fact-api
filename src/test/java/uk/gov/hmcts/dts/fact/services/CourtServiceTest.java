@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.Coordinates;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -147,6 +148,45 @@ class CourtServiceTest {
         when(mapitService.getCoordinates(any())).thenReturn(empty());
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+            "JE2 4BA",
+            "AreaOfLawName"
+        );
+
+        assertThat(results.isEmpty()).isTrue();
+        verifyNoInteractions(courtRepository);
+    }
+
+    void shouldFilterSearchByAreaOfLawWithPostcode() {
+        final Coordinates coordinates = mock(Coordinates.class);
+        when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
+            final AreaOfLaw areaOfLaw = new AreaOfLaw();
+            if (i % 4 == 0) {
+                areaOfLaw.setName("AreaOfLawName");
+            }
+            final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
+            when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
+            courts.add(mock);
+        }
+
+        when(courtRepository.findNearest(anyDouble(), anyDouble())).thenReturn(courts);
+
+        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
+            "OX2 1RZ",
+            "AreaOfLawName"
+        );
+        assertThat(results.size()).isEqualTo(5);
+        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+    }
+
+    @Test
+    void shouldReturnEmptyListForFilterSearchByAreaOfLawWithPostcodeIfNoCoordinates() {
+        when(mapitService.getCoordinates(any())).thenReturn(empty());
+
+        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
             "JE2 4BA",
             "AreaOfLawName"
         );
