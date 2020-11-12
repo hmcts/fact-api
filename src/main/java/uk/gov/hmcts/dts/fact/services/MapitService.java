@@ -28,7 +28,7 @@ public class MapitService {
                     return Optional.of(coordinates);
                 }
             } catch (final FeignException ex) {
-                logger.error("HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
+                logger.warn("HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
             }
         }
 

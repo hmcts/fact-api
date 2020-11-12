@@ -40,8 +40,9 @@ class MapitServiceTest {
 
         final Optional<Coordinates> result = mapitService.getCoordinates(postcode);
 
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result).isEqualTo(Optional.of(coordinates));
+        assertThat(result)
+            .isPresent()
+            .isEqualTo(Optional.of(coordinates));
     }
 
     @Test
@@ -52,7 +53,7 @@ class MapitServiceTest {
 
         final Optional<Coordinates> result = mapitService.getCoordinates(postcode);
 
-        assertThat(result.isPresent()).isFalse();
+        assertThat(result).isNotPresent();
     }
 
     @Test
@@ -66,15 +67,15 @@ class MapitServiceTest {
 
         final Optional<Coordinates> result = mapitService.getCoordinates(postcode);
 
-        assertThat(result.isPresent()).isFalse();
-        verify(logger).error("HTTP Status: {} Message: {}", 400, "message", feignException);
+        assertThat(result).isNotPresent();
+        verify(logger).warn("HTTP Status: {} Message: {}", 400, "message", feignException);
     }
 
     @Test
     void shouldReturnOptionalEmptyIfBlankPostcode() {
         final Optional<Coordinates> result = mapitService.getCoordinates("");
 
-        assertThat(result.isPresent()).isFalse();
+        assertThat(result).isNotPresent();
         verifyNoInteractions(mapitClient);
     }
 }
