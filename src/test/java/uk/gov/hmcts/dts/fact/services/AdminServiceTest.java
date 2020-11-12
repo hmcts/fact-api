@@ -40,6 +40,7 @@ public class AdminServiceTest {
 
     @BeforeEach
     void setUp() {
+        COURT.setSlug("slug");
         COURT.setName("some-name");
         COURT.setNameCy("some-name-cy");
         COURT.setInfo("some-info");
@@ -49,6 +50,7 @@ public class AdminServiceTest {
         COURT.setDisplayed(true);
 
         courtGeneral = new CourtGeneral(
+            "slug",
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre Info",
