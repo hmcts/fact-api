@@ -1,5 +1,17 @@
 {
   "name": "Adoption",
   "description": "Support for a child adoption application.",
-  "serviceAreaCourts": []
+  "slug": "adoption",
+  "serviceAreaType": "family",
+  "onlineUrl": "",
+  "onlineText": null,
+  "areaOfLawName": "Adoption",
+  "serviceAreaCourts": [
+    {
+      "slug": "reading-county-court-and-family-court",
+      "catchmentType": "local",
+      "courtName": "Reading County Court and Family Court"
+    }
+  ],
+  "text": null
 }
