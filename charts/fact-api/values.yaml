@@ -3,6 +3,10 @@ java:
   image: 'hmctspublic.azurecr.io/fact/fact-api:latest'
   ingressHost: fact-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fact
+  cpuLimits: 2000m
+  cpuRequests: 1500m
+  memoryRequests: 512Mi
+  memoryLimits: 2Gi
   autoscaling:        # Default is false
     enabled: true
     maxReplicas: 5    # Required setting
