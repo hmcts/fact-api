@@ -18,6 +18,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
 @Getter
 @AllArgsConstructor
@@ -48,7 +49,7 @@ public class CourtWithDistance {
 
 
     public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        this.name = courtEntity.getName();
+        this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
         this.crownLocationCode = courtEntity.getNumber();
@@ -64,7 +65,7 @@ public class CourtWithDistance {
     }
 
     public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
-        this.name = courtEntity.getName();
+        this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
         this.crownLocationCode = courtEntity.getNumber();
