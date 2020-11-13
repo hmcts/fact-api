@@ -14,6 +14,8 @@ import static java.util.Optional.ofNullable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MapitData {
+    private static final String COUNCIL = "council";
+    private static final String COUNTY = "county";
     @JsonProperty("wgs84_lat")
     Double lat;
     @JsonProperty("wgs84_lon")
@@ -28,18 +30,14 @@ public class MapitData {
     }
 
     Optional<String> getLocalAuthority() {
-
         return getCouncilNumberFromObject()
-            .map(string -> areas.get(string))
-            .map(area -> area.get("name"))
-            .map(JsonNode::asText);
+            .flatMap(this::getCouncilNameFromAreas);
     }
-
 
     private Optional<String> getCouncilNumberFromObject() {
         return ofNullable(shortcuts)
-            .map(s -> s.get("council"))
-            .map(c -> c.get("county"))
+            .map(s -> s.get(COUNCIL))
+            .map(c -> c.get(COUNTY))
             .map(JsonNode::asText)
             .or(this::getCouncilNumberFromValue);
     }
@@ -47,7 +45,14 @@ public class MapitData {
 
     private Optional<String> getCouncilNumberFromValue() {
         return ofNullable(shortcuts)
-            .map(s -> s.get("council"))
+            .map(s -> s.get(COUNCIL))
+            .map(JsonNode::asText);
+    }
+
+    private Optional<String> getCouncilNameFromAreas(String area) {
+        return ofNullable(areas)
+            .map(string -> areas.get(area))
+            .map(a -> a.get("name"))
             .map(JsonNode::asText);
     }
 }
