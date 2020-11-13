@@ -31,7 +31,7 @@ public class CourtService {
     private MapitService mapitService;
 
     @Autowired
-    ServiceAreaService serviceAreaService;
+    private ServiceAreaService serviceAreaService;
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
         return courtRepository

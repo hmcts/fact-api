@@ -36,7 +36,7 @@ public class CourtWithDistanceRepositoryTest {
 
     @Test
     void shouldFindNearestTenByAreaOfLawAndPostcode() {
-        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLawAndPostcode(51.8, -1.3, "Money claims", "NW62HH");
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(51.8, -1.3, "Money claims", "NW62HH");
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
         assertThat(result.get(0).getAreasOfLaw().stream().anyMatch("Money claims"::equals));
