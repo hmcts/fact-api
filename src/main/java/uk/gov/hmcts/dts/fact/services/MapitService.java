@@ -4,8 +4,8 @@ import feign.FeignException;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.dts.fact.mapit.Coordinates;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
+import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
 import java.util.Optional;
 
@@ -18,14 +18,14 @@ public class MapitService {
     @Autowired
     private MapitClient mapitClient;
 
-    public Optional<Coordinates> getCoordinates(final String postcode) {
+    public Optional<MapitData> getCoordinates(final String postcode) {
 
         if (!postcode.isBlank()) {
             try {
-                final Coordinates coordinates = mapitClient.getCoordinates(postcode);
+                final MapitData mapitData = mapitClient.getMapitData(postcode);
 
-                if (coordinates.hasLatAndLonValues()) {
-                    return Optional.of(coordinates);
+                if (mapitData.hasLatAndLonValues()) {
+                    return Optional.of(mapitData);
                 }
             } catch (final FeignException ex) {
                 logger.warn("HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);

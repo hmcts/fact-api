@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface MapitClient {
 
     @GetMapping("/postcode/{postcode}")
-    Coordinates getCoordinates(@PathVariable("postcode") String postcode);
+    MapitData getMapitData(@PathVariable("postcode") String postcode);
 }
 
