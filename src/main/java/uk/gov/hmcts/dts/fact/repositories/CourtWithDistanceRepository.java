@@ -25,4 +25,17 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "ORDER BY distance, c.name "
             + "LIMIT 10")
     List<CourtWithDistance> findNearestTenByAreaOfLaw(@Param("lat") Double lat, @Param("lon") Double lon, String aol);
+
+    @Query(nativeQuery = true,
+        value = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
+            + "FROM search_court as c "
+            + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
+            + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
+            + "LEFT JOIN search_courtpostcode cp ON cp.court_id = c.id "
+            + "WHERE c.displayed "
+            + "AND UPPER(aol.name) = UPPER(:aol) "
+            + "AND UPPER(REPLACE(cp.postcode, ' ', '')) = UPPER(REPLACE(:postcode, ' ', '')) "
+            + "ORDER BY distance, c.name "
+            + "LIMIT 10")
+    List<CourtWithDistance> findNearestTenByAreaOfLawAndPostcode(@Param("lat") Double lat, @Param("lon") Double lon, String aol, String postcode);
 }
