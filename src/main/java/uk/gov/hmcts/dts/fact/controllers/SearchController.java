@@ -50,14 +50,14 @@ public class SearchController {
     }
 
     @GetMapping(path = "/results")
-    @ApiOperation("Find courts by postcode and area of law")
+    @ApiOperation("Find courts by postcode and Service Area")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcodeAndAreaOfLaw(
         @RequestParam Optional<String> postcode,
-        @ApiParam("Area of Law") @RequestParam(name = "aol") Optional<String> areaOfLaw
+        @ApiParam("Service Area") @RequestParam(name = "serviceArea") Optional<String> serviceArea
     ) {
-        if (postcode.isPresent() && areaOfLaw.isPresent()) {
-            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(postcode.get(), areaOfLaw.get()));
+        if (postcode.isPresent() && serviceArea.isPresent()) {
+            return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceArea.get()));
         } else {
             return badRequest().build();
         }

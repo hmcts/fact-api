@@ -6,6 +6,8 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.model.ServiceArea;
+import uk.gov.hmcts.dts.fact.model.ServiceAreaType;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -27,6 +29,9 @@ public class CourtService {
 
     @Autowired
     private MapitService mapitService;
+
+    @Autowired
+    ServiceAreaService serviceAreaService;
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
         return courtRepository
@@ -86,5 +91,30 @@ public class CourtService {
                 .map(CourtReferenceWithDistance::new)
                 .collect(toList()))
             .orElse(emptyList());
+    }
+
+    public List<CourtReferenceWithDistance> getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(final String postcode, final String areaOfLaw) {
+        return mapitService.getCoordinates(postcode)
+            .map(value -> courtWithDistanceRepository
+                .findNearestTenByAreaOfLawAndCourtPostcode(value.getLat(), value.getLon(), areaOfLaw, postcode)
+                .stream()
+                .map(CourtReferenceWithDistance::new)
+                .collect(toList()))
+            .orElse(emptyList());
+    }
+
+    public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
+        List<CourtReferenceWithDistance> courts = emptyList();
+        ServiceArea serviceArea = serviceAreaService.getServiceArea(serviceAreaSlug);
+        if (serviceArea.getServiceAreaType().equalsIgnoreCase(ServiceAreaType.FAMILY.toString())) {
+            //TODO
+        } else if (serviceArea.getServiceAreaType().equalsIgnoreCase(ServiceAreaType.CIVIL.toString())) {
+            courts = getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(postcode, serviceArea.getAreaOfLawName());
+        }
+
+        if (courts.isEmpty()) {
+            courts = getNearestCourtsByPostcodeAndAreaOfLawSearch(postcode, serviceArea.getAreaOfLawName());
+        }
+        return courts;
     }
 }
