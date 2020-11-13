@@ -92,6 +92,9 @@ public class CourtWithDistance {
 
     private Double distance;
 
+    @OneToMany(mappedBy = "court")
+    private List<CourtPostcode> postcodes;
+
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));
         return areasOfLaw;
