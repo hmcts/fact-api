@@ -9,7 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.mapit.Coordinates;
+import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
@@ -25,7 +25,9 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -94,8 +96,8 @@ class CourtServiceTest {
     @Test
     void shouldReturnListOfTenCourts() {
 
-        final Coordinates coordinates = mock(Coordinates.class);
-        when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitService.getCoordinates(any())).thenReturn(Optional.of(mapitData));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -122,8 +124,8 @@ class CourtServiceTest {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     void shouldFilterSearchByAreaOfLaw() {
 
-        final Coordinates coordinates = mock(Coordinates.class);
-        when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitService.getCoordinates(any())).thenReturn(Optional.of(mapitData));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -136,7 +138,8 @@ class CourtServiceTest {
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
             courts.add(mock);
         }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(courts);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(
+            courts);
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
             "OX2 1RZ",
@@ -163,7 +166,7 @@ class CourtServiceTest {
     @Test
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     void shouldFilterSearchByAreaOfLawWithPostcode() {
-        final Coordinates coordinates = mock(Coordinates.class);
+        final MapitData coordinates = mock(MapitData.class);
         when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
@@ -177,7 +180,8 @@ class CourtServiceTest {
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
             courts.add(mock);
         }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(courts);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(
+            courts);
 
         final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
             "OX2 1RZ",

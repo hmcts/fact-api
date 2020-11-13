@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.mapit.Coordinates;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
+import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
 import java.util.Optional;
 
@@ -35,23 +35,23 @@ class MapitServiceTest {
     @Test
     void shouldReturnOptionalOfCoordinatesForValidPostcode() {
         final String postcode = "OX1 1RZ";
-        final Coordinates coordinates = new Coordinates(51.7, -1.2);
-        when(mapitClient.getCoordinates(postcode)).thenReturn(coordinates);
+        final MapitData mapitData = new MapitData(51.7, -1.2, null, null);
+        when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
 
-        final Optional<Coordinates> result = mapitService.getCoordinates(postcode);
+        final Optional<MapitData> result = mapitService.getCoordinates(postcode);
 
         assertThat(result)
             .isPresent()
-            .isEqualTo(Optional.of(coordinates));
+            .isEqualTo(Optional.of(mapitData));
     }
 
     @Test
     void shouldReturnOptionalEmptyForUnsupportedPostcode() {
         final String postcode = "JE3 4BA";
-        final Coordinates coordinates = new Coordinates(null, null);
-        when(mapitClient.getCoordinates(postcode)).thenReturn(coordinates);
+        final MapitData mapitData = new MapitData(null, null, null, null);
+        when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
 
-        final Optional<Coordinates> result = mapitService.getCoordinates(postcode);
+        final Optional<MapitData> result = mapitService.getCoordinates(postcode);
 
         assertThat(result).isNotPresent();
     }
@@ -61,11 +61,11 @@ class MapitServiceTest {
         final String postcode = "OX1";
         final FeignException feignException = mock(FeignException.class);
 
-        when(mapitClient.getCoordinates(postcode)).thenThrow(feignException);
+        when(mapitClient.getMapitData(postcode)).thenThrow(feignException);
         when(feignException.status()).thenReturn(400);
         when(feignException.getMessage()).thenReturn("message");
 
-        final Optional<Coordinates> result = mapitService.getCoordinates(postcode);
+        final Optional<MapitData> result = mapitService.getCoordinates(postcode);
 
         assertThat(result).isNotPresent();
         verify(logger).warn("HTTP Status: {} Message: {}", 400, "message", feignException);
@@ -73,7 +73,7 @@ class MapitServiceTest {
 
     @Test
     void shouldReturnOptionalEmptyIfBlankPostcode() {
-        final Optional<Coordinates> result = mapitService.getCoordinates("");
+        final Optional<MapitData> result = mapitService.getCoordinates("");
 
         assertThat(result).isNotPresent();
         verifyNoInteractions(mapitClient);
