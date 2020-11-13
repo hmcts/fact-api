@@ -8,27 +8,33 @@ import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 import java.util.List;
 
 public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDistance, Integer> {
-    @Query(nativeQuery = true,
-        value = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
-            + "FROM search_court as c "
-            + "WHERE c.displayed "
-            + "ORDER BY distance, name "
-            + "LIMIT 10")
-    List<CourtWithDistance> findNearestTen(@Param("lat") Double lat, @Param("lon") Double lon);
+    String SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance";
+    String FROM_SEARCH_COURT_AS_C = "FROM search_court as c ";
+    String LIMIT_10 = "LIMIT 10";
+    String LAT = "lat";
+    String LON = "lon";
 
     @Query(nativeQuery = true,
-        value = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
-            + "FROM search_court as c "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+            + FROM_SEARCH_COURT_AS_C
+            + "WHERE c.displayed "
+            + "ORDER BY distance, name "
+            + LIMIT_10)
+    List<CourtWithDistance> findNearestTen(@Param(LAT) Double lat, @Param(LON) Double lon);
+
+    @Query(nativeQuery = true,
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+            + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
             + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
             + "WHERE c.displayed AND UPPER(aol.name) = UPPER(:aol) "
             + "ORDER BY distance, c.name "
-            + "LIMIT 10")
-    List<CourtWithDistance> findNearestTenByAreaOfLaw(@Param("lat") Double lat, @Param("lon") Double lon, String aol);
+            + LIMIT_10)
+    List<CourtWithDistance> findNearestTenByAreaOfLaw(@Param(LAT) Double lat, @Param(LON) Double lon, String aol);
 
     @Query(nativeQuery = true,
-        value = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
-            + "FROM search_court as c "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+            + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
             + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
             + "LEFT JOIN search_courtpostcode cp ON cp.court_id = c.id "
@@ -36,6 +42,20 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "AND UPPER(aol.name) = UPPER(:aol) "
             + "AND UPPER(REPLACE(cp.postcode, ' ', '')) = UPPER(REPLACE(:postcode, ' ', '')) "
             + "ORDER BY distance, c.name "
-            + "LIMIT 10")
-    List<CourtWithDistance> findNearestTenByAreaOfLawAndPostcode(@Param("lat") Double lat, @Param("lon") Double lon, String aol, String postcode);
+            + LIMIT_10)
+    List<CourtWithDistance> findNearestTenByAreaOfLawAndPostcode(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String postcode);
+
+
+    @Query(nativeQuery = true,
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+            + FROM_SEARCH_COURT_AS_C
+            + "JOIN search_courtlocalauthorityareaoflaw claaol ON claaol.court_id = c.id "
+            + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
+            + "JOIN search_areaoflaw aol ON aol.id = claaol.area_of_law_id "
+            + "WHERE c.displayed "
+            + "AND UPPER(aol.name) = UPPER(:aol) "
+            + "AND UPPER(la.name) = UPPER(:localAuthority) "
+            + "ORDER BY distance, c.name "
+            + LIMIT_10)
+    List<CourtWithDistance> findNearestTenByAreaOfLawAndLocalAuthority(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String localAuthority);
 }
