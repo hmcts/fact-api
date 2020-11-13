@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.controllers.deprecated;
+package uk.gov.hmcts.dts.fact.controllers;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
@@ -20,7 +21,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping(
-    path = "/search/results.json",
+    path = "/search",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
 public class SearchController {
@@ -29,7 +30,7 @@ public class SearchController {
     CourtService courtService;
 
     @Deprecated
-    @GetMapping
+    @GetMapping(path = "/results.json")
     @ApiOperation("Find court by postcode, address or name")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public ResponseEntity<List<CourtWithDistance>> findCourtByPostcode(
@@ -43,6 +44,20 @@ public class SearchController {
             return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
         } else if (query.isPresent()) {
             return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get()));
+        } else {
+            return badRequest().build();
+        }
+    }
+
+    @GetMapping(path = "/results")
+    @ApiOperation("Find courts by postcode and area of law")
+    @SuppressWarnings("PMD.UseObjectForClearerAPI")
+    public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcodeAndAreaOfLaw(
+        @RequestParam Optional<String> postcode,
+        @ApiParam("Area of Law") @RequestParam(name = "aol") Optional<String> areaOfLaw
+    ) {
+        if (postcode.isPresent() && areaOfLaw.isPresent()) {
+            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(postcode.get(), areaOfLaw.get()));
         } else {
             return badRequest().build();
         }

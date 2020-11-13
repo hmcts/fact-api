@@ -1,37 +1,21 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.EntityResult;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SqlResultSetMapping;
 
 import static java.util.Comparator.comparing;
 
 @Entity
-@SqlResultSetMapping(
-    name = "CourtWithDistanceMapping",
-    entities = @EntityResult(
-        entityClass = CourtWithDistance.class
-    )
-)
-
-@NamedNativeQuery(
-    name = "CourtWithDistance.findNearestCourts",
-    resultSetMapping = "CourtWithDistanceMapping",
-    query = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance "
-        + "FROM search_court as c "
-        + "WHERE c.displayed "
-        + "ORDER BY distance, name"
-)
 @Getter
+@Setter
 @SuppressWarnings("PMD.TooManyFields")
 public class CourtWithDistance {
     private static final String COURT_ID = "court_id";
@@ -39,10 +23,13 @@ public class CourtWithDistance {
     private Integer id;
     @Getter
     private String name;
+    private String nameCy;
     private String slug;
     private String info;
+    private String infoCy;
     private Boolean displayed;
     private String directions;
+    private String directionsCy;
     private Double lat;
     private Double lon;
     private Integer number;

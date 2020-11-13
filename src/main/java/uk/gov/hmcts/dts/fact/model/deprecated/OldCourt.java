@@ -17,6 +17,7 @@ import uk.gov.hmcts.dts.fact.model.OpeningTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
 @Getter
 @Setter
@@ -49,11 +50,11 @@ public class OldCourt {
     private String gbs;
 
     public OldCourt(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        this.name = courtEntity.getName();
+        this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
-        this.info = courtEntity.getInfo();
+        this.info = chooseString(courtEntity.getInfoCy(), courtEntity.getInfo());
         this.open = courtEntity.getDisplayed();
-        this.directions = courtEntity.getDirections();
+        this.directions = chooseString(courtEntity.getDirectionsCy(), courtEntity.getDirections());
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
         this.crownLocationCode = courtEntity.getNumber();
