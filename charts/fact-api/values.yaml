@@ -3,6 +3,10 @@ java:
   image: 'hmctspublic.azurecr.io/fact/fact-api:latest'
   ingressHost: fact-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fact
+  autoscaling:        # Default is false
+    enabled: true
+    maxReplicas: 5    # Required setting
+    targetCPUUtilizationPercentage: 80 # Default is 80% target CPU utilization
   keyVaults:
     fact:
       resourceGroup: fact
