@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 
 import java.util.Comparator;
@@ -31,14 +32,35 @@ public class CourtWithDistanceRepositoryTest {
         final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLaw(51.8, -1.3, "Tax");
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
-        assertThat(result.get(0).getAreasOfLaw().stream().anyMatch("Tax"::equals));
+        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Tax"::equals));
     }
 
     @Test
     void shouldFindNearestTenByAreaOfLawAndPostcode() {
-        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLawAndPostcode(51.8, -1.3, "Money claims", "NW62HH");
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLawAndPostcode(
+            51.8,
+            -1.3,
+            "Money claims",
+            "NW62HH"
+        );
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
-        assertThat(result.get(0).getAreasOfLaw().stream().anyMatch("Money claims"::equals));
+        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Money claims"::equals));
+    }
+
+
+    @Test
+    void shouldFindNearestTenByAreaOfLawAndLocalAuthority() {
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(
+            50.84,
+            -0.25,
+            "Adoption",
+            "Brighton and Hove City Council"
+        );
+
+        assertThat(result).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Adoption"::equals));
+        assertThat(result.get(1).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Adoption"::equals));
     }
 }
