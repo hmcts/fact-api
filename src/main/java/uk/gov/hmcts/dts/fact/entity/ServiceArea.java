@@ -30,6 +30,7 @@ public class ServiceArea {
     private String type;
     private String text;
     private String textCy;
+    private String catchmentMethod;
 
     @OneToMany(mappedBy = "servicearea")
     private List<ServiceAreaCourt> serviceAreaCourts;
