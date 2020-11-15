@@ -130,7 +130,7 @@ public class SearchEndpointTest {
 
     @Test
     public void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSortedByDistance() {
-        final String serviceArea = "Employment";
+        final String serviceArea = "claims-against-employers";
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -139,14 +139,17 @@ public class SearchEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReferenceWithDistance> courts = response.body().jsonPath().getList(".", CourtReferenceWithDistance.class);
+        final List<CourtReferenceWithDistance> courts = response.body().jsonPath().getList(
+            ".",
+            CourtReferenceWithDistance.class
+        );
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtReferenceWithDistance::getDistance));
     }
 
     @Test
     public void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSupportWelsh() {
-        final String serviceArea = "Employment";
+        final String serviceArea = "claims-against-employers";
         final var englishResponse = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)

@@ -52,12 +52,12 @@ public class SearchController {
     @GetMapping(path = "/results")
     @ApiOperation("Find courts by postcode and Service Area")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
-    public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcodeAndAreaOfLaw(
+    public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
-        @ApiParam("Service Area") @RequestParam(name = "serviceArea") Optional<String> serviceArea
+        @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug
     ) {
-        if (postcode.isPresent() && serviceArea.isPresent()) {
-            return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceArea.get()));
+        if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
+            return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get()));
         } else {
             return badRequest().build();
         }
