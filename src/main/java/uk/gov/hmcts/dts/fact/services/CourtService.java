@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
@@ -93,45 +94,31 @@ public class CourtService {
             .orElse(emptyList());
     }
 
-    public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeAndAreaOfLawSearch(final String postcode, final String areaOfLaw) {
-        return mapitService.getCoordinates(postcode)
-            .map(value -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw)
-                .stream()
-                .map(CourtReferenceWithDistance::new)
-                .collect(toList()))
-            .orElse(emptyList());
+    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestTenCourtsByPostcodeAndAreaOfLawSearch(final Double lat, final Double lon, final String areaOfLaw) {
+        return courtWithDistanceRepository
+            .findNearestTenByAreaOfLaw(lat, lon, areaOfLaw);
     }
 
-    public List<CourtReferenceWithDistance> getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(final String postcode, final String areaOfLaw) {
-        return mapitService.getCoordinates(postcode)
-            .map(value -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLawAndCourtPostcode(value.getLat(), value.getLon(), areaOfLaw, postcode)
-                .stream()
-                .map(CourtReferenceWithDistance::new)
-                .collect(toList()))
-            .orElse(emptyList());
+    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestTenCourtsByCourtPostcodeAndAreaOfLawSearch(final Double lat, final Double lon, final String postcode, final String areaOfLaw) {
+        return courtWithDistanceRepository
+            .findNearestTenByAreaOfLawAndCourtPostcode(lat, lon, areaOfLaw, postcode);
     }
 
-    public List<CourtReferenceWithDistance> findNearestTenByAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw) {
-        return mapitService.getCoordinates(postcode)
-            .map(value -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLawAndLocalAuthority(value.getLat(), value.getLon(), areaOfLaw, postcode)
-                .stream()
-                .map(CourtReferenceWithDistance::new)
-                .collect(toList()))
-            .orElse(emptyList());
+    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestTenCourtsByAreaOfLawAndLocalAuthority(final Double lat, final Double lon, final String postcode, final String areaOfLaw) {
+        return courtWithDistanceRepository
+            .findNearestTenByAreaOfLawAndLocalAuthority(lat, lon, areaOfLaw, postcode);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
-        List<CourtReferenceWithDistance> courts = emptyList();
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
-        if (serviceAreaOptional.isEmpty()) {
-            return courts;
+        final Optional<MapitData> coordinatesOptional = mapitService.getCoordinates(postcode);
+        if (serviceAreaOptional.isEmpty() || coordinatesOptional.isEmpty()) {
+            return emptyList();
         }
-
+        List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = emptyList();
         ServiceArea serviceArea = serviceAreaOptional.get();
+        final MapitData coordinates = coordinatesOptional.get();
         if (serviceArea.getType().equalsIgnoreCase(FAMILY.toString())
             && LOCAL_AUTHORITY.equals(serviceArea.getCatchmentMethod())
             && serviceArea
@@ -139,15 +126,16 @@ public class CourtService {
             .stream()
             .noneMatch(c -> REGIONAL.equals(c.getCatchmentType()))
         ) {
-
-            // no regional service centres
-            courts = findNearestTenByAreaOfLawAndLocalAuthority(postcode, serviceArea.getAreaOfLaw().getName());
+            courts = getNearestTenCourtsByAreaOfLawAndLocalAuthority(coordinates.getLat(), coordinates.getLon(), postcode, serviceArea.getAreaOfLaw().getName());
         } else if (serviceArea.getType().equalsIgnoreCase(CIVIL.toString())) {
-            courts = getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(postcode, serviceArea.getAreaOfLaw().getName());
+            courts = getNearestTenCourtsByCourtPostcodeAndAreaOfLawSearch(coordinates.getLat(), coordinates.getLon(), postcode, serviceArea.getAreaOfLaw().getName());
         }
         if (courts.isEmpty()) {
-            courts = getNearestCourtsByPostcodeAndAreaOfLawSearch(postcode, serviceArea.getAreaOfLaw().getName());
+            courts = getNearestTenCourtsByPostcodeAndAreaOfLawSearch(coordinates.getLat(), coordinates.getLon(), serviceArea.getAreaOfLaw().getName());
         }
-        return courts;
+        return courts
+            .stream()
+            .map(CourtReferenceWithDistance::new)
+            .collect(toList());
     }
 }
