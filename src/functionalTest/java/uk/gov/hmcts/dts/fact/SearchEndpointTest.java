@@ -129,29 +129,32 @@ public class SearchEndpointTest {
     }
 
     @Test
-    public void shouldRetrieve10CourtReferenceByAreaOfLawSortedByDistance() {
-        final String aol = "Employment";
+    public void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSortedByDistance() {
+        final String serviceArea = "claims-against-employers";
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get(SEARCH_ENDPOINT + "results?postcode=OX1 1RZ&aol=" + aol)
+            .get(SEARCH_ENDPOINT + "results?postcode=OX1 1RZ&serviceArea=" + serviceArea)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReferenceWithDistance> courts = response.body().jsonPath().getList(".", CourtReferenceWithDistance.class);
+        final List<CourtReferenceWithDistance> courts = response.body().jsonPath().getList(
+            ".",
+            CourtReferenceWithDistance.class
+        );
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtReferenceWithDistance::getDistance));
     }
 
     @Test
-    public void shouldRetrieve10CourtReferenceByAreaOfLawSupportWelsh() {
-        final String aol = "Employment";
+    public void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSupportWelsh() {
+        final String serviceArea = "claims-against-employers";
         final var englishResponse = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&aol=" + aol)
+            .get(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&serviceArea=" + serviceArea)
             .thenReturn();
 
         assertThat(englishResponse.statusCode()).isEqualTo(200);
@@ -164,7 +167,7 @@ public class SearchEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(ACCEPT_LANGUAGE, "cy")
             .when()
-            .get(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&aol=" + aol)
+            .get(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&serviceArea=" + serviceArea)
             .thenReturn();
 
         assertThat(welshResponse.statusCode()).isEqualTo(200);
