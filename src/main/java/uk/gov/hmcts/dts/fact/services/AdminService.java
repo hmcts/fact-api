@@ -16,11 +16,15 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class AdminService {
 
-    @Autowired
-    CourtRepository courtRepository;
+    private final CourtRepository courtRepository;
+
+    private final RolesProvider rolesProvider;
 
     @Autowired
-    private RolesProvider rolesProvider;
+    public AdminService(final CourtRepository courtRepository, final RolesProvider rolesProvider) {
+        this.courtRepository = courtRepository;
+        this.rolesProvider = rolesProvider;
+    }
 
     public List<CourtReference> getAllCourts() {
         return courtRepository

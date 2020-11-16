@@ -12,11 +12,15 @@ import java.util.Optional;
 @Service
 public class MapitService {
 
-    @Autowired
-    private Logger logger;
+    private final Logger logger;
+
+    private final MapitClient mapitClient;
 
     @Autowired
-    private MapitClient mapitClient;
+    public MapitService(final Logger logger, final MapitClient mapitClient) {
+        this.logger = logger;
+        this.mapitClient = mapitClient;
+    }
 
     public Optional<MapitData> getCoordinates(final String postcode) {
 

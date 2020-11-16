@@ -12,8 +12,12 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class ServiceService {
 
+    private final ServiceRepository serviceRepository;
+
     @Autowired
-    ServiceRepository serviceRepository;
+    public ServiceService(final ServiceRepository serviceRepository) {
+        this.serviceRepository = serviceRepository;
+    }
 
     public List<uk.gov.hmcts.dts.fact.model.Service> getAllServices() {
         return serviceRepository
