@@ -26,8 +26,12 @@ import static org.springframework.http.ResponseEntity.ok;
 )
 public class SearchController {
 
+    private final CourtService courtService;
+
     @Autowired
-    CourtService courtService;
+    public SearchController(final CourtService courtService) {
+        this.courtService = courtService;
+    }
 
     @Deprecated
     @GetMapping(path = "/results.json")
