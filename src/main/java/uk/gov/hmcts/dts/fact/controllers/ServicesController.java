@@ -26,8 +26,12 @@ import static org.springframework.http.ResponseEntity.ok;
 )
 public class ServicesController {
 
+    private final ServiceService serviceService;
+
     @Autowired
-    ServiceService serviceService;
+    public ServicesController(final ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
 
     @GetMapping(path = "/services")
     @ApiOperation("Return all services")

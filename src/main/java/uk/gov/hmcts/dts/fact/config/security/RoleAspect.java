@@ -16,14 +16,10 @@ import static org.springframework.http.ResponseEntity.status;
 @Component
 public class RoleAspect {
 
+    private final RolesProvider rolesProvider;
+
     @Autowired
-    private RolesProvider rolesProvider;
-
-    public RoleAspect() {
-        // stop pmd complaining
-    }
-
-    public RoleAspect(RolesProvider rolesProvider) {
+    public RoleAspect(final RolesProvider rolesProvider) {
         this.rolesProvider = rolesProvider;
     }
 

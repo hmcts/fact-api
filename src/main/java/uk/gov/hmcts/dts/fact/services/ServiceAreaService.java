@@ -9,8 +9,12 @@ import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 @Service
 public class ServiceAreaService {
 
+    private final ServiceAreaRepository serviceAreaRepository;
+
     @Autowired
-    ServiceAreaRepository serviceAreaRepository;
+    public ServiceAreaService(final ServiceAreaRepository serviceAreaRepository) {
+        this.serviceAreaRepository = serviceAreaRepository;
+    }
 
     public ServiceArea getServiceArea(final String slug) {
         return serviceAreaRepository
