@@ -38,7 +38,7 @@ class MapitServiceTest {
         final MapitData mapitData = new MapitData(51.7, -1.2, null, null);
         when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
 
-        final Optional<MapitData> result = mapitService.getCoordinates(postcode);
+        final Optional<MapitData> result = mapitService.getMapitData(postcode);
 
         assertThat(result)
             .isPresent()
@@ -51,7 +51,7 @@ class MapitServiceTest {
         final MapitData mapitData = new MapitData(null, null, null, null);
         when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
 
-        final Optional<MapitData> result = mapitService.getCoordinates(postcode);
+        final Optional<MapitData> result = mapitService.getMapitData(postcode);
 
         assertThat(result).isNotPresent();
     }
@@ -65,7 +65,7 @@ class MapitServiceTest {
         when(feignException.status()).thenReturn(400);
         when(feignException.getMessage()).thenReturn("message");
 
-        final Optional<MapitData> result = mapitService.getCoordinates(postcode);
+        final Optional<MapitData> result = mapitService.getMapitData(postcode);
 
         assertThat(result).isNotPresent();
         verify(logger).warn("HTTP Status: {} Message: {}", 400, "message", feignException);
@@ -73,7 +73,7 @@ class MapitServiceTest {
 
     @Test
     void shouldReturnOptionalEmptyIfBlankPostcode() {
-        final Optional<MapitData> result = mapitService.getCoordinates("");
+        final Optional<MapitData> result = mapitService.getMapitData("");
 
         assertThat(result).isNotPresent();
         verifyNoInteractions(mapitClient);

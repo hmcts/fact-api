@@ -29,7 +29,7 @@ public class MapitData {
         return null != getLat() && null != getLon();
     }
 
-    Optional<String> getLocalAuthority() {
+    public Optional<String> getLocalAuthority() {
         return getCouncilNumberFromObject()
             .flatMap(this::getCouncilNameFromAreas);
     }
