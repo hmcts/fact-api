@@ -111,11 +111,11 @@ public class CourtService {
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
-        List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = emptyList();
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
         if (serviceAreaOptional.isEmpty() || mapitService.getCoordinates(postcode).isEmpty()) {
             return emptyList();
         }
+        List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = emptyList();
         final MapitData coordinates = mapitService.getCoordinates(postcode).get();
         ServiceArea serviceArea = serviceAreaOptional.get();
         if (serviceArea.getType().equalsIgnoreCase(FAMILY.toString())
