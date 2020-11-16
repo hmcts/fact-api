@@ -24,20 +24,24 @@ import static uk.gov.hmcts.dts.fact.model.ServiceAreaType.FAMILY;
 @Service
 public class CourtService {
 
-    public static final String LOCAL_AUTHORITY = "local-authority";
-    public static final String REGIONAL = "regional";
-    @Autowired
-    private CourtRepository courtRepository;
+    private static final String LOCAL_AUTHORITY = "local-authority";
+    private static final String REGIONAL = "regional";
+
+    private final MapitService mapitService;
+    private final CourtRepository courtRepository;
+    private final CourtWithDistanceRepository courtWithDistanceRepository;
+    private final ServiceAreaRepository serviceAreaRepository;
 
     @Autowired
-    private CourtWithDistanceRepository courtWithDistanceRepository;
-
-    @Autowired
-    private MapitService mapitService;
-
-    @Autowired
-    ServiceAreaRepository serviceAreaRepository;
-
+    public CourtService(final MapitService mapitService,
+                        final CourtRepository courtRepository,
+                        final CourtWithDistanceRepository courtWithDistanceRepository,
+                        final ServiceAreaRepository serviceAreaRepository) {
+        this.mapitService = mapitService;
+        this.courtWithDistanceRepository = courtWithDistanceRepository;
+        this.courtRepository = courtRepository;
+        this.serviceAreaRepository = serviceAreaRepository;
+    }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
         return courtRepository
@@ -123,7 +127,7 @@ public class CourtService {
     public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
         List<CourtReferenceWithDistance> courts = emptyList();
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
-        if (!serviceAreaOptional.isPresent()) {
+        if (serviceAreaOptional.isEmpty()) {
             return courts;
         }
 
