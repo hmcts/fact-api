@@ -119,19 +119,20 @@ public class CourtService {
         List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = emptyList();
         ServiceArea serviceArea = serviceAreaOptional.get();
         final MapitData mapitData = mapitDataOptional.get();
+        final Optional<String> localAuthority = mapitData.getLocalAuthority();
         if (FAMILY.toString().equalsIgnoreCase(serviceArea.getType())
             && LOCAL_AUTHORITY.equals(serviceArea.getCatchmentMethod())
             && serviceArea
             .getServiceAreaCourts()
             .stream()
             .noneMatch(c -> REGIONAL.equals(c.getCatchmentType()))
-            && mapitData.getLocalAuthority().isPresent()
+            && localAuthority.isPresent()
         ) {
             courts = getNearestTenCourtsByAreaOfLawAndLocalAuthority(
                 mapitData.getLat(),
                 mapitData.getLon(),
                 serviceArea.getAreaOfLaw().getName(),
-                mapitData.getLocalAuthority().get()
+                localAuthority.get()
             );
         } else if (serviceArea.getType().equalsIgnoreCase(CIVIL.toString())) {
             courts = getNearestTenCourtsByCourtPostcodeAndAreaOfLawSearch(
