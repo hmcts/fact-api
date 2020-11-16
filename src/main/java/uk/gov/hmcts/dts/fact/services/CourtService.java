@@ -94,17 +94,17 @@ public class CourtService {
             .orElse(emptyList());
     }
 
-    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawSearch(final Double lat, final Double lon, final String areaOfLaw) {
+    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestTenCourtsByPostcodeAndAreaOfLawSearch(final Double lat, final Double lon, final String areaOfLaw) {
         return courtWithDistanceRepository
             .findNearestTenByAreaOfLaw(lat, lon, areaOfLaw);
     }
 
-    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(final Double lat, final Double lon, final String postcode, final String areaOfLaw) {
+    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestTenCourtsByCourtPostcodeAndAreaOfLawSearch(final Double lat, final Double lon, final String postcode, final String areaOfLaw) {
         return courtWithDistanceRepository
             .findNearestTenByAreaOfLawAndCourtPostcode(lat, lon, areaOfLaw, postcode);
     }
 
-    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> findNearestTenByAreaOfLawAndLocalAuthority(final Double lat, final Double lon, final String postcode, final String areaOfLaw) {
+    public List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getNearestTenCourtsByAreaOfLawAndLocalAuthority(final Double lat, final Double lon, final String postcode, final String areaOfLaw) {
         return courtWithDistanceRepository
             .findNearestTenByAreaOfLawAndLocalAuthority(lat, lon, areaOfLaw, postcode);
     }
@@ -125,12 +125,12 @@ public class CourtService {
             .stream()
             .noneMatch(c -> REGIONAL.equals(c.getCatchmentType()))
         ) {
-            courts = findNearestTenByAreaOfLawAndLocalAuthority(coordinates.getLat(), coordinates.getLon(), postcode, serviceArea.getAreaOfLaw().getName());
+            courts = getNearestTenCourtsByAreaOfLawAndLocalAuthority(coordinates.getLat(), coordinates.getLon(), postcode, serviceArea.getAreaOfLaw().getName());
         } else if (serviceArea.getType().equalsIgnoreCase(CIVIL.toString())) {
-            courts = getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(coordinates.getLat(), coordinates.getLon(), postcode, serviceArea.getAreaOfLaw().getName());
+            courts = getNearestTenCourtsByCourtPostcodeAndAreaOfLawSearch(coordinates.getLat(), coordinates.getLon(), postcode, serviceArea.getAreaOfLaw().getName());
         }
         if (courts.isEmpty()) {
-            courts = getNearestCourtsByPostcodeAndAreaOfLawSearch(coordinates.getLat(), coordinates.getLon(), serviceArea.getAreaOfLaw().getName());
+            courts = getNearestTenCourtsByPostcodeAndAreaOfLawSearch(coordinates.getLat(), coordinates.getLon(), serviceArea.getAreaOfLaw().getName());
         }
         return courts
             .stream()
