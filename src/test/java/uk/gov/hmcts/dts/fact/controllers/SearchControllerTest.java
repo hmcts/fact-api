@@ -44,13 +44,13 @@ class SearchControllerTest {
     }
 
     @Test
-    void shouldSearchCourtsByPostcodeAndAreaOfLaw() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&aol=Crime"))
+    void shouldSearchCourtsByPostcodeAndServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime"))
             .andExpect(status().isOk());
     }
 
     @Test
-    void shouldReturn400ErrorIfNoPostcodeOrAreaOfLaw() throws Exception {
+    void shouldReturn400ErrorIfNoPostcodeOrServiceArea() throws Exception {
         mockMvc.perform(get(BASE_URL + "/results"))
             .andExpect(status().isBadRequest());
     }
