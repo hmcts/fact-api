@@ -17,7 +17,7 @@ public class CourtReferenceWithDistance {
     private String slug;
     private BigDecimal distance;
 
-    public CourtReferenceWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
+    public CourtReferenceWithDistance(final uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
         this.distance = BigDecimal.valueOf(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);

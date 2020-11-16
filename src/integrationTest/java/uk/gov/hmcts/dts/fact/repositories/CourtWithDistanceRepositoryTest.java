@@ -58,4 +58,17 @@ public class CourtWithDistanceRepositoryTest {
         assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Adoption"::equals));
         assertThat(result.get(1).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Adoption"::equals));
     }
+
+    @Test
+    void shouldFindNearestRegionalByAreaOfLawAndLocalAuthority() {
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestRegionalByAreaOfLawAndLocalAuthority(
+            50.84,
+            -0.25,
+            "Divorce",
+            "Suffolk County Council"
+        );
+
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Divorce"::equals));
+    }
 }
