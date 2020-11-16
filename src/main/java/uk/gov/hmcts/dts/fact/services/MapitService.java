@@ -22,7 +22,7 @@ public class MapitService {
         this.mapitClient = mapitClient;
     }
 
-    public Optional<MapitData> getCoordinates(final String postcode) {
+    public Optional<MapitData> getMapitData(final String postcode) {
 
         if (!postcode.isBlank()) {
             try {
