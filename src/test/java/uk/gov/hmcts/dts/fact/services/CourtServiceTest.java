@@ -190,20 +190,22 @@ class CourtServiceTest {
         when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(
             courts);
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
-            "OX2 1RZ",
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
+            1.1,
+            1.1,
             AREA_OF_LAW_NAME
         );
         assertThat(results.size()).isEqualTo(10);
-        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
     }
 
     @Test
     void shouldReturnEmptyListForFilterSearchByAreaOfLawWithPostcodeIfNoCoordinates() {
         when(mapitService.getCoordinates(any())).thenReturn(empty());
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
-            JE_2_4_BA,
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawSearch(
+            1.1,
+            1.1,
             AREA_OF_LAW_NAME
         );
 
@@ -236,19 +238,23 @@ class CourtServiceTest {
         )).thenReturn(
             courts);
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(
+            1.1,
+            1.1,
             "OX2 1RZ",
             AREA_OF_LAW_NAME
         );
         assertThat(results.size()).isEqualTo(10);
-        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
     }
 
     @Test
     void shouldReturnEmptyListForFilterSearchByAreaOfLawAndCourtPostcodeIfNoCoordinates() {
         when(mapitService.getCoordinates(any())).thenReturn(empty());
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestCourtsByCourtPostcodeAndAreaOfLawSearch(
+            1.1,
+            1.1,
             JE_2_4_BA,
             AREA_OF_LAW_NAME
         );
