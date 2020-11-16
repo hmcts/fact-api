@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CourtService.class)
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops"})
 class CourtServiceTest {
 
     private static final String SOME_SLUG = "some-slug";
@@ -128,7 +128,6 @@ class CourtServiceTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     void shouldFilterSearchByAreaOfLaw() {
 
         final MapitData mapitData = mock(MapitData.class);
@@ -171,7 +170,6 @@ class CourtServiceTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     void shouldFilterSearchByAreaOfLawWithPostcode() {
         final MapitData coordinates = mock(MapitData.class);
         when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
@@ -181,7 +179,7 @@ class CourtServiceTest {
             final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
             final AreaOfLaw areaOfLaw = new AreaOfLaw();
             if (i % 4 == 0) {
-                areaOfLaw.setName("AreaOfLawName");
+                areaOfLaw.setName(AREA_OF_LAW_NAME);
             }
             final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
@@ -214,7 +212,6 @@ class CourtServiceTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     void shouldFilterSearchByAreaOfLawAndCourtPostcode() {
         final MapitData coordinates = mock(MapitData.class);
         when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
@@ -224,7 +221,7 @@ class CourtServiceTest {
             final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
             final AreaOfLaw areaOfLaw = new AreaOfLaw();
             if (i % 4 == 0) {
-                areaOfLaw.setName("AreaOfLawName");
+                areaOfLaw.setName(AREA_OF_LAW_NAME);
             }
             final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
@@ -264,7 +261,6 @@ class CourtServiceTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     void shouldFilterSearchByAreaOfLawAndLocalAuthority() {
         final MapitData coordinates = mock(MapitData.class);
         when(mapitService.getCoordinates(any())).thenReturn(Optional.of(coordinates));
@@ -274,7 +270,7 @@ class CourtServiceTest {
             final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
             final AreaOfLaw areaOfLaw = new AreaOfLaw();
             if (i % 4 == 0) {
-                areaOfLaw.setName("AreaOfLawName");
+                areaOfLaw.setName(AREA_OF_LAW_NAME);
             }
             final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
