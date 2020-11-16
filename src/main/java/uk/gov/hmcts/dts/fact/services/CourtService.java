@@ -112,12 +112,13 @@ public class CourtService {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
-        if (serviceAreaOptional.isEmpty() || mapitService.getCoordinates(postcode).isEmpty()) {
+        final Optional<MapitData> coordinatesOptional = mapitService.getCoordinates(postcode);
+        if (serviceAreaOptional.isEmpty() || coordinatesOptional.isEmpty()) {
             return emptyList();
         }
         List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = emptyList();
-        final MapitData coordinates = mapitService.getCoordinates(postcode).get();
         ServiceArea serviceArea = serviceAreaOptional.get();
+        final MapitData coordinates = coordinatesOptional.get();
         if (serviceArea.getType().equalsIgnoreCase(FAMILY.toString())
             && LOCAL_AUTHORITY.equals(serviceArea.getCatchmentMethod())
             && serviceArea
