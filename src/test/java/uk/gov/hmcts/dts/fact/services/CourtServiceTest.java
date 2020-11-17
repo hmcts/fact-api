@@ -18,6 +18,9 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
+import uk.gov.hmcts.dts.fact.services.search.NearestCourtsByPostcodeAndAreaOfLawSearch;
+import uk.gov.hmcts.dts.fact.services.search.PostcodeSearchForServiceAreaFactory;
+import uk.gov.hmcts.dts.fact.services.search.Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,19 +34,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CourtService.class)
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops"})
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops", "PMD.ExcessiveImports"})
 class CourtServiceTest {
 
     private static final String SOME_SLUG = "some-slug";
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     public static final String JE2_4BA = "JE2 4BA";
+    private static final String MONEY_CLAIMS = "Money claims";
 
     @Autowired
     private CourtService courtService;
@@ -59,6 +62,12 @@ class CourtServiceTest {
 
     @MockBean
     private ServiceAreaRepository serviceAreaRepository;
+
+    @MockBean
+    private PostcodeSearchForServiceAreaFactory postcodeSearchForServiceAreaFactory;
+
+    @MockBean
+    private NearestCourtsByPostcodeAndAreaOfLawSearch nearestCourtsByPostcodeAndAreaOfLawSearch;
 
     @Test
     void shouldThrowSlugNotFoundException() {
@@ -172,168 +181,25 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldFilterSearchByAreaOfLawWithPostcode() {
-        final MapitData coordinates = mock(MapitData.class);
-        when(mapitService.getMapitData(any())).thenReturn(Optional.of(coordinates));
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
-            final AreaOfLaw areaOfLaw = new AreaOfLaw();
-            if (i % 4 == 0) {
-                areaOfLaw.setName(AREA_OF_LAW_NAME);
-            }
-            final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
-            when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
-            courts.add(mock);
-        }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(
-            courts);
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestTenCourtsByPostcodeAndAreaOfLawSearch(
-            1.1,
-            1.1,
-            AREA_OF_LAW_NAME
-        );
-        assertThat(results.size()).isEqualTo(10);
-        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
-    }
-
-    @Test
-    void shouldReturnEmptyListForFilterSearchByAreaOfLawWithPostcodeIfNoCoordinates() {
-        when(mapitService.getMapitData(any())).thenReturn(empty());
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestTenCourtsByPostcodeAndAreaOfLawSearch(
-            1.1,
-            1.1,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results.isEmpty()).isTrue();
-        verifyNoInteractions(courtRepository);
-    }
-
-    @Test
-    void shouldFilterSearchByAreaOfLawAndCourtPostcode() {
-        final MapitData coordinates = mock(MapitData.class);
-        when(mapitService.getMapitData(any())).thenReturn(Optional.of(coordinates));
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
-            final AreaOfLaw areaOfLaw = new AreaOfLaw();
-            if (i % 4 == 0) {
-                areaOfLaw.setName(AREA_OF_LAW_NAME);
-            }
-            final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
-            when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
-            courts.add(mock);
-        }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(
-            anyDouble(),
-            anyDouble(),
-            anyString(),
-            anyString()
-        )).thenReturn(
-            courts);
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestTenCourtsByCourtPostcodeAndAreaOfLawSearch(
-            1.1,
-            1.1,
-            "OX2 1RZ",
-            AREA_OF_LAW_NAME
-        );
-        assertThat(results.size()).isEqualTo(10);
-        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
-    }
-
-    @Test
-    void shouldReturnEmptyListForFilterSearchByAreaOfLawAndCourtPostcodeIfNoCoordinates() {
-        when(mapitService.getMapitData(any())).thenReturn(empty());
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestTenCourtsByCourtPostcodeAndAreaOfLawSearch(
-            1.1,
-            1.1,
-            JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results.isEmpty()).isTrue();
-        verifyNoInteractions(courtRepository);
-    }
-
-    @Test
-    void shouldFilterSearchByAreaOfLawAndLocalAuthority() {
-        final MapitData coordinates = mock(MapitData.class);
-        when(mapitService.getMapitData(any())).thenReturn(Optional.of(coordinates));
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
-            final AreaOfLaw areaOfLaw = new AreaOfLaw();
-            if (i % 4 == 0) {
-                areaOfLaw.setName(AREA_OF_LAW_NAME);
-            }
-            final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
-            when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
-            courts.add(mock);
-        }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(
-            anyDouble(),
-            anyDouble(),
-            anyString(),
-            anyString()
-        )).thenReturn(
-            courts);
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestTenCourtsByAreaOfLawAndLocalAuthority(
-            1.1,
-            1.1,
-            "OX2 1RZ",
-            AREA_OF_LAW_NAME
-        );
-        assertThat(results.size()).isEqualTo(10);
-        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
-    }
-
-    @Test
-    void shouldReturnEmptyListForFilterSearchByAreaOfLawAndLocalAuthorityIfNoCoordinates() {
-        when(mapitService.getMapitData(any())).thenReturn(empty());
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> results = courtService.getNearestTenCourtsByAreaOfLawAndLocalAuthority(
-            1.1,
-            1.1,
-            JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results.isEmpty()).isTrue();
-        verifyNoInteractions(courtRepository);
-    }
-
-    @Test
     void shouldReturnListForNearestCourtsByPostcodeSearchCivil() {
         final ServiceArea serviceArea = new ServiceArea();
         serviceArea.setType("Civil");
         AreaOfLaw aol = new AreaOfLaw();
-        aol.setName("Money claims");
+        aol.setName(MONEY_CLAIMS);
         serviceArea.setAreaOfLaw(aol);
         when(serviceAreaRepository.findBySlugIgnoreCase(anyString())).thenReturn(Optional.of(serviceArea));
 
-        final MapitData coordinates = mock(MapitData.class);
-        when(mapitService.getMapitData(any())).thenReturn(Optional.of(coordinates));
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
 
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
-        courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
-        courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+        final List<CourtReferenceWithDistance> courts = new ArrayList<>();
+        courts.add(mock(CourtReferenceWithDistance.class));
+        courts.add(mock(CourtReferenceWithDistance.class));
 
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(
-            anyDouble(),
-            anyDouble(),
-            anyString(),
-            anyString()
-        )).thenReturn(
-            courts);
+        final Search search = mock(Search.class);
+
+        when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
+        when(search.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(courts);
 
         final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
@@ -350,7 +216,7 @@ class CourtServiceTest {
         serviceArea.setType("family");
         serviceArea.setCatchmentMethod("local-authority");
         serviceArea.setServiceAreaCourts(emptyList());
-        AreaOfLaw aol = new AreaOfLaw();
+        final AreaOfLaw aol = new AreaOfLaw();
         aol.setName("Adoption");
         serviceArea.setAreaOfLaw(aol);
         when(serviceAreaRepository.findBySlugIgnoreCase(anyString())).thenReturn(Optional.of(serviceArea));
@@ -359,17 +225,14 @@ class CourtServiceTest {
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
         when(mapitData.getLocalAuthority()).thenReturn(Optional.of("localAuthority"));
 
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
-        courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
-        courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+        final List<CourtReferenceWithDistance> courts = new ArrayList<>();
+        courts.add(mock(CourtReferenceWithDistance.class));
+        courts.add(mock(CourtReferenceWithDistance.class));
 
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(
-            anyDouble(),
-            anyDouble(),
-            eq("Adoption"),
-            eq("localAuthority")
-        )).thenReturn(
-            courts);
+        final Search search = mock(Search.class);
+
+        when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
+        when(search.search(mapitData, JE2_4BA, "Adoption")).thenReturn(courts);
 
         final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
@@ -381,23 +244,26 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnListForNearestCourtsByPostcodeSearch() {
+    void shouldReturnListForNearestCourtsByPostcodeSearchIfSearchIsEmpty() {
         final ServiceArea serviceArea = new ServiceArea();
         serviceArea.setType("Civil");
-        AreaOfLaw aol = new AreaOfLaw();
-        aol.setName("Money claims");
+        final AreaOfLaw aol = new AreaOfLaw();
+        aol.setName(MONEY_CLAIMS);
         serviceArea.setAreaOfLaw(aol);
         when(serviceAreaRepository.findBySlugIgnoreCase(anyString())).thenReturn(Optional.of(serviceArea));
 
-        final MapitData coordinates = mock(MapitData.class);
-        when(mapitService.getMapitData(any())).thenReturn(Optional.of(coordinates));
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
 
-        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
-        courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
-        courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+        final List<CourtReferenceWithDistance> courts = new ArrayList<>();
+        courts.add(mock(CourtReferenceWithDistance.class));
+        courts.add(mock(CourtReferenceWithDistance.class));
 
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(
-            courts);
+        final Search search = mock(Search.class);
+
+        when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
+        when(search.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(emptyList());
+        when(nearestCourtsByPostcodeAndAreaOfLawSearch.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(courts);
 
         final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
@@ -409,14 +275,11 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnEmptyListForNearestCourtsByPostcodeSearch() {
-        final ServiceArea serviceArea = new ServiceArea();
-        serviceArea.setType("other");
-        AreaOfLaw aol = new AreaOfLaw();
-        aol.setName("Tax");
-        serviceArea.setAreaOfLaw(aol);
-        when(serviceAreaRepository.findBySlugIgnoreCase(anyString())).thenReturn(Optional.of(serviceArea));
+    void shouldReturnEmptyListNoMapitdata() {
 
+        final String serviceAreaSlug = "tax";
+
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(mock(ServiceArea.class)));
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
         final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
@@ -425,6 +288,23 @@ class CourtServiceTest {
         );
 
         assertThat(results.isEmpty()).isTrue();
-        verifyNoInteractions(courtRepository);
+        verifyNoInteractions(postcodeSearchForServiceAreaFactory);
+    }
+
+    @Test
+    void shouldReturnEmptyListNoServiceArea() {
+
+        final String serviceAreaSlug = "tax";
+
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
+        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mock(MapitData.class)));
+
+        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
+            JE2_4BA,
+            serviceAreaSlug
+        );
+
+        assertThat(results.isEmpty()).isTrue();
+        verifyNoInteractions(postcodeSearchForServiceAreaFactory);
     }
 }
