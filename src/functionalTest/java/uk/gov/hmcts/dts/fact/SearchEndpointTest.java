@@ -190,10 +190,9 @@ public class SearchEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReferenceWithDistance> courts = response.body().jsonPath().getList(
-            ".",
-            CourtReferenceWithDistance.class
-        );
-        assertThat(courts.size()).isEqualTo(1);
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(1);
     }
 }
