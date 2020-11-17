@@ -48,7 +48,7 @@ public class CourtWithDistance {
     private BigDecimal distance;
 
 
-    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    public CourtWithDistance(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -64,21 +64,21 @@ public class CourtWithDistance {
         this.dxNumber = this.getDxNumber(courtEntity.getContacts());
     }
 
-    public CourtWithDistance(uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
-        this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
-        this.lat = courtEntity.getLat();
-        this.lon = courtEntity.getLon();
-        this.crownLocationCode = courtEntity.getNumber();
-        this.countyLocationCode = courtEntity.getCciCode();
-        this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.slug = courtEntity.getSlug();
-        this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtEntity.getAddresses());
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
-        this.displayed = courtEntity.getDisplayed();
-        this.hideAols = courtEntity.getHideAols();
-        this.dxNumber = this.getDxNumber(courtEntity.getContacts());
-        this.distance = BigDecimal.valueOf(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
+    public CourtWithDistance(final uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtWithDistanceEntity) {
+        this.name = chooseString(courtWithDistanceEntity.getNameCy(), courtWithDistanceEntity.getName());
+        this.lat = courtWithDistanceEntity.getLat();
+        this.lon = courtWithDistanceEntity.getLon();
+        this.crownLocationCode = courtWithDistanceEntity.getNumber();
+        this.countyLocationCode = courtWithDistanceEntity.getCciCode();
+        this.magistratesLocationCode = courtWithDistanceEntity.getMagistrateCode();
+        this.slug = courtWithDistanceEntity.getSlug();
+        this.courtTypes = courtWithDistanceEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
+        this.address = this.mapAddress(courtWithDistanceEntity.getAddresses());
+        this.areasOfLaw = courtWithDistanceEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.displayed = courtWithDistanceEntity.getDisplayed();
+        this.hideAols = courtWithDistanceEntity.getHideAols();
+        this.dxNumber = this.getDxNumber(courtWithDistanceEntity.getContacts());
+        this.distance = BigDecimal.valueOf(courtWithDistanceEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
     }
 
     private String getDxNumber(final List<Contact> contacts) {

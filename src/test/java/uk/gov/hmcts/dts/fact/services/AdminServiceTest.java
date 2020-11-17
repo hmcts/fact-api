@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
-public class AdminServiceTest {
+class AdminServiceTest {
 
     private static final Court COURT = new Court();
     private static final String SOME_SLUG = "some-slug";
