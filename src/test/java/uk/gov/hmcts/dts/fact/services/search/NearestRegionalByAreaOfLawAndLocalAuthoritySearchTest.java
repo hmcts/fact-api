@@ -12,8 +12,10 @@ import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -40,6 +42,7 @@ class NearestRegionalByAreaOfLawAndLocalAuthoritySearchTest {
 
         final List<CourtWithDistance> courts = singletonList(mock(CourtWithDistance.class));
 
+        when(mapitData.getLocalAuthority()).thenReturn(Optional.of("Suffolk County Council"));
         when(courtWithDistanceRepository.findNearestRegionalByAreaOfLawAndLocalAuthority(anyDouble(), anyDouble(), anyString(), anyString()))
             .thenReturn(courts);
 
@@ -53,7 +56,10 @@ class NearestRegionalByAreaOfLawAndLocalAuthoritySearchTest {
     }
 
     @Test
-    void shouldReturnEmptyListForFilterSearchByAreaOfLawWithPostcodeIfNoCoordinates() {
+    void shouldReturnEmptyListIfNoCoordinates() {
+
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitData.getLocalAuthority()).thenReturn(Optional.of("Suffolk County Council"));
 
         final List<CourtReferenceWithDistance> results = nearestRegionalByAreaOfLawAndLocalAuthoritySearch.search(
             mock(MapitData.class),
@@ -62,5 +68,20 @@ class NearestRegionalByAreaOfLawAndLocalAuthoritySearchTest {
         );
 
         assertThat(results.isEmpty()).isTrue();
+    }
+
+    @Test
+    void shouldReturnEmptyListIfNoLocalAuthority() {
+
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitData.getLocalAuthority()).thenReturn(empty());
+
+        final List<CourtReferenceWithDistance> results = nearestRegionalByAreaOfLawAndLocalAuthoritySearch.search(
+            mapitData,
+            JE2_4BA,
+            AREA_OF_LAW_NAME
+        );
+
+        assertThat(results).isEmpty();
     }
 }
