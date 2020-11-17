@@ -33,6 +33,11 @@ public class SearchController {
         this.courtService = courtService;
     }
 
+    /**
+     * Find court by postcode.
+     * 
+     * @deprecated Use {@link #findCourtsByPostcodeAndServiceArea}, path = /results}
+     */
     @Deprecated
     @GetMapping(path = "/results.json")
     @ApiOperation("Find court by postcode, address or name")

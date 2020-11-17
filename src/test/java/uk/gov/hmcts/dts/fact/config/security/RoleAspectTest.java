@@ -28,7 +28,7 @@ class RoleAspectTest {
     RoleAspect roleAspect;
 
     @Test
-    public void testValidRole() throws Throwable {
+    void testValidRole() throws Throwable {
         when(role.value()).thenReturn(new String[]{"fact-admin"});
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
 
@@ -37,7 +37,7 @@ class RoleAspectTest {
     }
 
     @Test
-    public void testInvalidRole() throws Throwable {
+    void testInvalidRole() throws Throwable {
         when(role.value()).thenReturn(new String[]{"fact-admin"});
         when(rolesProvider.getRoles()).thenReturn(new ArrayList<>());
 
