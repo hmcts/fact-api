@@ -37,6 +37,11 @@ public class CourtsController {
         this.courtService = courtService;
     }
 
+    /**
+     * Find court by name.
+     * 
+     * @deprecated Use {@link #findCourtByName}, path = /{slug}}
+     */
     @Deprecated
     @GetMapping(path = "/{slug}.json")
     @ApiOperation("Find court details by name")

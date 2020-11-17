@@ -89,7 +89,7 @@ class MapitDataTest {
         when(areas.get(matches("name"))).thenReturn(result);
         final MapitData mapitData = new MapitData(null, null, shortcuts, areas);
         assertThat(mapitData.getLocalAuthority()).isPresent();
-        assertThat(mapitData.getLocalAuthority().get()).isEqualTo(COUNCIL_12345);
+        assertThat(mapitData.getLocalAuthority()).contains(COUNCIL_12345);
     }
 
     @Test
@@ -106,6 +106,6 @@ class MapitDataTest {
         when(areas.get(matches("name"))).thenReturn(result);
         final MapitData mapitData = new MapitData(null, null, shortcuts, areas);
         assertThat(mapitData.getLocalAuthority()).isPresent();
-        assertThat(mapitData.getLocalAuthority().get()).isEqualTo(COUNCIL_12345);
+        assertThat(mapitData.getLocalAuthority()).contains(COUNCIL_12345);
     }
 }
