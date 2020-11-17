@@ -8,6 +8,7 @@ import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -96,25 +97,31 @@ public class CourtService {
             .orElse(emptyList());
     }
 
-    public List<CourtReferenceWithDistance> getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
 
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
-        
+
         if (serviceAreaOptional.isEmpty() || optionalMapitData.isEmpty()) {
-            return emptyList();
+            return new ServiceAreaWithCourtReferencesWithDistance(serviceAreaSlug);
         }
-        
+
         final ServiceArea serviceArea = serviceAreaOptional.get();
 
-        final List<CourtReferenceWithDistance> courts = postcodeSearchForServiceAreaFactory
+        List<CourtReferenceWithDistance> courts = postcodeSearchForServiceAreaFactory
             .getSearchFor(serviceArea, optionalMapitData.get())
             .search(optionalMapitData.get(), postcode, serviceArea.getAreaOfLaw().getName());
 
         if (courts.isEmpty()) {
-            return nearestCourtsByPostcodeAndAreaOfLawSearch.search(optionalMapitData.get(), postcode, serviceArea.getAreaOfLaw().getName());
+            courts = nearestCourtsByPostcodeAndAreaOfLawSearch.search(
+                optionalMapitData.get(),
+                postcode,
+                serviceArea.getAreaOfLaw().getName()
+            );
+
         }
 
-        return courts;
+        return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, courts);
+
     }
 }
