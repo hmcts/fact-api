@@ -63,7 +63,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
-            + "FROM search_court as c "
+            + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtlocalauthorityareaoflaw claaol ON claaol.court_id = c.id "
             + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
             + "JOIN search_areaoflaw aol ON aol.id = claaol.area_of_law_id "

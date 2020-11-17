@@ -20,6 +20,10 @@ public class CourtReferenceWithDistance {
     public CourtReferenceWithDistance(final uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
-        this.distance = BigDecimal.valueOf(courtEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
+
+        final Double distance = courtEntity.getDistance();
+        if (null != distance) {
+            this.distance = BigDecimal.valueOf(distance).setScale(2, RoundingMode.HALF_UP);
+        }
     }
 }

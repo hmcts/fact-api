@@ -64,10 +64,10 @@ public class SearchEndpointTest {
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
         assertTrue(courts
-                       .stream()
-                       .allMatch(c -> c.getAreasOfLaw()
-                           .stream()
-                           .anyMatch(a -> a.getName().equals(aol))));
+            .stream()
+            .allMatch(c -> c.getAreasOfLaw()
+                .stream()
+                .anyMatch(a -> a.getName().equals(aol))));
     }
 
     @Test
@@ -175,5 +175,23 @@ public class SearchEndpointTest {
             .getList(".", CourtReferenceWithDistance.class
             );
         assertThat(welshCourts.get(0).getName()).isEqualTo("Caerdydd  - Llys Ynadon");
+    }
+
+    @Test
+    public void shouldRetrieveRegionalCourtReferenceByPostcodeAndServiceArea() {
+        final String serviceArea = "divorce";
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(SEARCH_ENDPOINT + "results?postcode=IP1 2AG&serviceArea=" + serviceArea)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final List<CourtReferenceWithDistance> courts = response.body().jsonPath().getList(
+            ".",
+            CourtReferenceWithDistance.class
+        );
+        assertThat(courts.size()).isEqualTo(1);
     }
 }
