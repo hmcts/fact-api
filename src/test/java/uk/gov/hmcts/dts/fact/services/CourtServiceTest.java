@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -43,10 +44,12 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops", "PMD.ExcessiveImports"})
 class CourtServiceTest {
 
+    public static final String ADOPTION = "adoption";
     private static final String SOME_SLUG = "some-slug";
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     public static final String JE2_4BA = "JE2 4BA";
     private static final String MONEY_CLAIMS = "Money claims";
+    public static final String BENEFITS = "benefits";
 
     @Autowired
     private CourtService courtService;
@@ -184,6 +187,7 @@ class CourtServiceTest {
     void shouldReturnListForNearestCourtsByPostcodeSearchCivil() {
         final ServiceArea serviceArea = new ServiceArea();
         serviceArea.setType("Civil");
+        serviceArea.setSlug(BENEFITS);
         AreaOfLaw aol = new AreaOfLaw();
         aol.setName(MONEY_CLAIMS);
         serviceArea.setAreaOfLaw(aol);
@@ -201,19 +205,21 @@ class CourtServiceTest {
         when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
         when(search.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(courts);
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
-            "benefits"
+            BENEFITS
         );
 
-        assertThat(results.size()).isEqualTo(2);
-        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+        assertThat(results.getSlug()).isEqualTo(BENEFITS);
+        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
     @Test
     void shouldReturnListForNearestCourtsByPostcodeSearchFamily() {
         final ServiceArea serviceArea = new ServiceArea();
         serviceArea.setType("family");
+        serviceArea.setSlug(ADOPTION);
         serviceArea.setCatchmentMethod("local-authority");
         serviceArea.setServiceAreaCourts(emptyList());
         final AreaOfLaw aol = new AreaOfLaw();
@@ -234,18 +240,20 @@ class CourtServiceTest {
         when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
         when(search.search(mapitData, JE2_4BA, "Adoption")).thenReturn(courts);
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
-            "adoption"
-        );
+            ADOPTION
 
-        assertThat(results.size()).isEqualTo(2);
-        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+        );
+        assertThat(results.getSlug()).isEqualTo(ADOPTION);
+        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
     @Test
     void shouldReturnListForNearestCourtsByPostcodeSearchIfSearchIsEmpty() {
         final ServiceArea serviceArea = new ServiceArea();
+        serviceArea.setSlug("benefits");
         serviceArea.setType("Civil");
         final AreaOfLaw aol = new AreaOfLaw();
         aol.setName(MONEY_CLAIMS);
@@ -265,13 +273,14 @@ class CourtServiceTest {
         when(search.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(emptyList());
         when(nearestCourtsByPostcodeAndAreaOfLawSearch.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(courts);
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
-            "benefits"
+            BENEFITS
         );
 
-        assertThat(results.size()).isEqualTo(2);
-        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+        assertThat(results.getSlug()).isEqualTo(BENEFITS);
+        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
     @Test
@@ -282,12 +291,13 @@ class CourtServiceTest {
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(mock(ServiceArea.class)));
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             "tax"
         );
 
-        assertThat(results.isEmpty()).isTrue();
+        assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
+        assertThat(results.getCourts()).isNull();
         verifyNoInteractions(postcodeSearchForServiceAreaFactory);
     }
 
@@ -299,12 +309,13 @@ class CourtServiceTest {
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mock(MapitData.class)));
 
-        final List<CourtReferenceWithDistance> results = courtService.getNearestCourtsByPostcodeSearch(
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             serviceAreaSlug
         );
 
-        assertThat(results.isEmpty()).isTrue();
+        assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
+        assertThat(results.getCourts()).isNull();
         verifyNoInteractions(postcodeSearchForServiceAreaFactory);
     }
 }

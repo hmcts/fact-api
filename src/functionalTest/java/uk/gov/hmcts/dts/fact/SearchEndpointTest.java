@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 
 import java.util.Comparator;
@@ -139,12 +140,12 @@ public class SearchEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(200);
-        final List<CourtReferenceWithDistance> courts = response.body().jsonPath().getList(
-            ".",
-            CourtReferenceWithDistance.class
-        );
-        assertThat(courts.size()).isEqualTo(10);
-        assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtReferenceWithDistance::getDistance));
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(10);
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts()).isSortedAccordingTo(Comparator.comparing(
+            CourtReferenceWithDistance::getDistance));
     }
 
     @Test
@@ -158,9 +159,10 @@ public class SearchEndpointTest {
             .thenReturn();
 
         assertThat(englishResponse.statusCode()).isEqualTo(200);
-        final List<CourtReferenceWithDistance> englishCourts = englishResponse.body().jsonPath()
-            .getList(".", CourtReferenceWithDistance.class);
-        assertThat(englishCourts.get(0).getName()).isEqualTo("Cardiff  Magistrates' Court");
+        final ServiceAreaWithCourtReferencesWithDistance englishSrviceAreaCourtReferencesWithDistance =
+            englishResponse.as(ServiceAreaWithCourtReferencesWithDistance.class);
+        assertThat(englishSrviceAreaCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
+            "Cardiff  Magistrates' Court");
 
         final var welshResponse = given()
             .relaxedHTTPSValidation()
@@ -171,9 +173,9 @@ public class SearchEndpointTest {
             .thenReturn();
 
         assertThat(welshResponse.statusCode()).isEqualTo(200);
-        final List<CourtReferenceWithDistance> welshCourts = welshResponse.body().jsonPath()
-            .getList(".", CourtReferenceWithDistance.class
-            );
-        assertThat(welshCourts.get(0).getName()).isEqualTo("Caerdydd  - Llys Ynadon");
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            welshResponse.as(ServiceAreaWithCourtReferencesWithDistance.class);
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
+            "Caerdydd  - Llys Ynadon");
     }
 }
