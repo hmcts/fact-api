@@ -8,6 +8,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.model.ServiceAreaType.CIVIL;
@@ -36,10 +37,12 @@ public class PostcodeSearchForServiceAreaRunner {
 
         if (FAMILY.isEqualTo(type)) {
 
+            final Optional<String> localAuthorityOptional = mapitData.getLocalAuthority();
+            
             if (LOCAL_AUTHORITY.equals(serviceArea.getCatchmentMethod())
-                && mapitData.getLocalAuthority().isPresent()) {
+                && localAuthorityOptional.isPresent()) {
 
-                final String localAuthority = mapitData.getLocalAuthority().get();
+                final String localAuthority = localAuthorityOptional.get();
 
                 if (isRegional(serviceArea)) {
 
