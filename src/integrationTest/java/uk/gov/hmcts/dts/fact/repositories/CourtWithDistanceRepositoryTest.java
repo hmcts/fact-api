@@ -17,6 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class CourtWithDistanceRepositoryTest {
 
+    private static final String AREA_OF_LAW = "Divorce";
+    private static final double LON = -0.25;
+    private static final double LAT = 50.84;
+    
     @Autowired
     private CourtWithDistanceRepository courtWithDistanceRepository;
 
@@ -47,8 +51,8 @@ public class CourtWithDistanceRepositoryTest {
     @Test
     void shouldFindNearestTenByAreaOfLawAndLocalAuthority() {
         final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(
-            50.84,
-            -0.25,
+            LAT,
+            LON,
             "Adoption",
             "Brighton and Hove City Council"
         );
@@ -62,25 +66,25 @@ public class CourtWithDistanceRepositoryTest {
     @Test
     void shouldFindNearestRegionalByAreaOfLawAndLocalAuthority() {
         final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestRegionalByAreaOfLawAndLocalAuthority(
-            50.84,
-            -0.25,
-            "Divorce",
+            LAT,
+            LON,
+            AREA_OF_LAW,
             "Suffolk County Council"
         );
 
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Divorce"::equals));
+        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch(AREA_OF_LAW::equals));
     }
-    
+
     @Test
     void shouldFindNearestRegionalByAreaOfLaw() {
         final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestRegionalByAreaOfLaw(
-            50.84,
-            -0.25,
-            "Divorce"
+            LAT,
+            LON,
+            AREA_OF_LAW
         );
 
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Divorce"::equals));
+        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch(AREA_OF_LAW::equals));
     }
 }

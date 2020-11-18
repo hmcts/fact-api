@@ -1,12 +1,15 @@
 package uk.gov.hmcts.dts.fact.services.search;
 
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.model.ServiceAreaType.CIVIL;
 import static uk.gov.hmcts.dts.fact.model.ServiceAreaType.FAMILY;
 
@@ -16,22 +19,10 @@ public class PostcodeSearchForServiceAreaRunner {
     private static final String LOCAL_AUTHORITY = "local-authority";
     private static final String REGIONAL = "regional";
 
-    private final NearestRegionalByAreaOfLawAndLocalAuthoritySearch nearestRegionalByAreaOfLawAndLocalAuthoritySearch;
-    private final NearestTenByAreaOfLawAndLocalAuthoritySearch nearestTenByAreaOfLawAndLocalAuthoritySearch;
-    private final NearestCourtsByCourtPostcodeAndAreaOfLawSearch nearestCourtsByCourtPostcodeAndAreaOfLawSearch;
-    private final NearestCourtsByPostcodeAndAreaOfLawSearch nearestCourtsByPostcodeAndAreaOfLawSearch;
-    private final NearestRegionalByAreaOfLawSearch nearestRegionalByAreaOfLawSearch;
+    private final CourtWithDistanceRepository courtWithDistanceRepository;
 
-    public PostcodeSearchForServiceAreaRunner(final NearestRegionalByAreaOfLawAndLocalAuthoritySearch nearestRegionalByAreaOfLawAndLocalAuthoritySearch,
-                                              final NearestTenByAreaOfLawAndLocalAuthoritySearch nearestTenByAreaOfLawAndLocalAuthoritySearch,
-                                              final NearestCourtsByCourtPostcodeAndAreaOfLawSearch nearestCourtsByCourtPostcodeAndAreaOfLawSearch,
-                                              final NearestCourtsByPostcodeAndAreaOfLawSearch nearestCourtsByPostcodeAndAreaOfLawSearch,
-                                              final NearestRegionalByAreaOfLawSearch nearestRegionalByAreaOfLawSearch) {
-        this.nearestRegionalByAreaOfLawAndLocalAuthoritySearch = nearestRegionalByAreaOfLawAndLocalAuthoritySearch;
-        this.nearestTenByAreaOfLawAndLocalAuthoritySearch = nearestTenByAreaOfLawAndLocalAuthoritySearch;
-        this.nearestCourtsByCourtPostcodeAndAreaOfLawSearch = nearestCourtsByCourtPostcodeAndAreaOfLawSearch;
-        this.nearestCourtsByPostcodeAndAreaOfLawSearch = nearestCourtsByPostcodeAndAreaOfLawSearch;
-        this.nearestRegionalByAreaOfLawSearch = nearestRegionalByAreaOfLawSearch;
+    public PostcodeSearchForServiceAreaRunner(CourtWithDistanceRepository courtWithDistanceRepository) {
+        this.courtWithDistanceRepository = courtWithDistanceRepository;
     }
 
     public List<CourtReferenceWithDistance> getSearchFor(final ServiceArea serviceArea,
@@ -39,36 +30,41 @@ public class PostcodeSearchForServiceAreaRunner {
                                                          final MapitData mapitData) {
 
         final String type = serviceArea.getType();
+        final String areaOfLaw = serviceArea.getAreaOfLaw().getName();
+        final Double lat = mapitData.getLat();
+        final Double lon = mapitData.getLon();
 
         if (FAMILY.isEqualTo(type)) {
 
             if (LOCAL_AUTHORITY.equals(serviceArea.getCatchmentMethod())
                 && mapitData.getLocalAuthority().isPresent()) {
 
+                final String localAuthority = mapitData.getLocalAuthority().get();
+
                 if (isRegional(serviceArea)) {
 
-                    final List<CourtReferenceWithDistance> courts = nearestRegionalByAreaOfLawAndLocalAuthoritySearch
-                        .search(mapitData, postcode, serviceArea.getAreaOfLaw().getName());
+                    final List<CourtWithDistance> courtsWithDistance = courtWithDistanceRepository
+                        .findNearestRegionalByAreaOfLawAndLocalAuthority(lat, lon, areaOfLaw, localAuthority);
 
-                    return fallbackProximityRegionalSearchIfEmpty(courts, serviceArea, postcode, mapitData);
+                    return fallbackProximityRegionalSearchIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
                 } else {
 
-                    final List<CourtReferenceWithDistance> courts = nearestTenByAreaOfLawAndLocalAuthoritySearch
-                        .search(mapitData, postcode, serviceArea.getAreaOfLaw().getName());
+                    final List<CourtWithDistance> courtsWithDistance = courtWithDistanceRepository
+                        .findNearestTenByAreaOfLawAndLocalAuthority(lat, lon, areaOfLaw, localAuthority);
 
-                    return fallbackProximitySearchIfEmpty(courts, serviceArea, postcode, mapitData);
+                    return fallbackProximitySearchIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
                 }
             }
 
         } else if (CIVIL.isEqualTo(type)) {
-            final List<CourtReferenceWithDistance> courts = nearestCourtsByCourtPostcodeAndAreaOfLawSearch
-                .search(mapitData, postcode, serviceArea.getAreaOfLaw().getName());
 
-            return fallbackProximitySearchIfEmpty(courts, serviceArea, postcode, mapitData);
+            final List<CourtWithDistance> courtsWithDistance = courtWithDistanceRepository
+                .findNearestTenByAreaOfLawAndCourtPostcode(lat, lon, areaOfLaw, postcode);
+
+            return fallbackProximitySearchIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
         }
 
-        return nearestCourtsByPostcodeAndAreaOfLawSearch
-            .search(mapitData, postcode, serviceArea.getAreaOfLaw().getName());
+        return convert(courtWithDistanceRepository.findNearestTenByAreaOfLaw(lat, lon, areaOfLaw));
     }
 
     private boolean isRegional(final ServiceArea serviceArea) {
@@ -76,27 +72,31 @@ public class PostcodeSearchForServiceAreaRunner {
             .anyMatch(serviceAreaCourt -> REGIONAL.equals(serviceAreaCourt.getCatchmentType()));
     }
 
-    private List<CourtReferenceWithDistance> fallbackProximityRegionalSearchIfEmpty(final List<CourtReferenceWithDistance> courts,
-                                                                                    final ServiceArea serviceArea,
-                                                                                    final String postcode,
+    private List<CourtReferenceWithDistance> fallbackProximityRegionalSearchIfEmpty(final List<CourtWithDistance> courts,
+                                                                                    final String areaOfLaw,
                                                                                     final MapitData mapitData) {
         if (courts.isEmpty()) {
-            return nearestRegionalByAreaOfLawSearch
-                .search(mapitData, postcode, serviceArea.getAreaOfLaw().getName());
+            return convert(courtWithDistanceRepository
+                .findNearestRegionalByAreaOfLaw(mapitData.getLat(), mapitData.getLon(), areaOfLaw));
         }
 
-        return courts;
+        return convert(courts);
     }
 
-    private List<CourtReferenceWithDistance> fallbackProximitySearchIfEmpty(final List<CourtReferenceWithDistance> courts,
-                                                                            final ServiceArea serviceArea,
-                                                                            final String postcode,
+    private List<CourtReferenceWithDistance> fallbackProximitySearchIfEmpty(final List<CourtWithDistance> courts,
+                                                                            final String areaOfLaw,
                                                                             final MapitData mapitData) {
         if (courts.isEmpty()) {
-            return nearestCourtsByPostcodeAndAreaOfLawSearch
-                .search(mapitData, postcode, serviceArea.getAreaOfLaw().getName());
+            return convert(courtWithDistanceRepository
+                .findNearestTenByAreaOfLaw(mapitData.getLat(), mapitData.getLon(), areaOfLaw));
         }
 
-        return courts;
+        return convert(courts);
+    }
+
+    private List<CourtReferenceWithDistance> convert(final List<CourtWithDistance> courtsWithDistance) {
+        return courtsWithDistance.stream()
+            .map(CourtReferenceWithDistance::new)
+            .collect(toList());
     }
 }
