@@ -42,7 +42,7 @@ public class CourtsController {
      * 
      * @deprecated Use {@link #findCourtByName}, path = /{slug}}
      */
-    @Deprecated
+    @Deprecated(since = "1.0", forRemoval = true)
     @GetMapping(path = "/{slug}.json")
     @ApiOperation("Find court details by name")
     public ResponseEntity<OldCourt> findCourtByNameDeprecated(@PathVariable String slug) {
