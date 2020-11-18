@@ -195,4 +195,25 @@ public class SearchEndpointTest {
 
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(1);
     }
+
+    @Test
+    public void shouldRetrieveCourtReferenceByCourtPostcodeAndServiceAreaSortedByDistance() {
+        final String serviceArea = "money-claims";
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(SEARCH_ENDPOINT + "results?postcode=W1U 6PU&serviceArea=" + serviceArea)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(1);
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
+            "Central London County Court");
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts()).isSortedAccordingTo(Comparator.comparing(
+            CourtReferenceWithDistance::getDistance));
+    }
 }
