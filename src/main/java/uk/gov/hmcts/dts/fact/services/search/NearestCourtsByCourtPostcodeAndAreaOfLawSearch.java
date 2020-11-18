@@ -24,8 +24,8 @@ public class NearestCourtsByCourtPostcodeAndAreaOfLawSearch implements Search {
             .findNearestTenByAreaOfLawAndCourtPostcode(
                 mapitData.getLat(),
                 mapitData.getLon(),
-                postcode,
-                areaOfLaw)
+                areaOfLaw,
+                postcode)
             .stream()
             .map(CourtReferenceWithDistance::new)
             .collect(toList());
