@@ -14,8 +14,7 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
-import uk.gov.hmcts.dts.fact.services.search.NearestCourtsByPostcodeAndAreaOfLawSearch;
-import uk.gov.hmcts.dts.fact.services.search.PostcodeSearchForServiceAreaFactory;
+import uk.gov.hmcts.dts.fact.services.search.PostcodeSearchForServiceAreaRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,21 +29,19 @@ public class CourtService {
     private final CourtRepository courtRepository;
     private final CourtWithDistanceRepository courtWithDistanceRepository;
     private final ServiceAreaRepository serviceAreaRepository;
-    private final PostcodeSearchForServiceAreaFactory postcodeSearchForServiceAreaFactory;
-    private final NearestCourtsByPostcodeAndAreaOfLawSearch nearestCourtsByPostcodeAndAreaOfLawSearch;
+    private final PostcodeSearchForServiceAreaRunner postcodeSearchForServiceAreaRunner;
 
     @Autowired
     public CourtService(final MapitService mapitService,
                         final CourtRepository courtRepository,
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
-                        final PostcodeSearchForServiceAreaFactory postcodeSearchForServiceAreaFactory, NearestCourtsByPostcodeAndAreaOfLawSearch nearestCourtsByPostcodeAndAreaOfLawSearch) {
+                        final PostcodeSearchForServiceAreaRunner postcodeSearchForServiceAreaRunner) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
         this.courtRepository = courtRepository;
         this.serviceAreaRepository = serviceAreaRepository;
-        this.postcodeSearchForServiceAreaFactory = postcodeSearchForServiceAreaFactory;
-        this.nearestCourtsByPostcodeAndAreaOfLawSearch = nearestCourtsByPostcodeAndAreaOfLawSearch;
+        this.postcodeSearchForServiceAreaRunner = postcodeSearchForServiceAreaRunner;
     }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
@@ -108,18 +105,8 @@ public class CourtService {
 
         final ServiceArea serviceArea = serviceAreaOptional.get();
 
-        List<CourtReferenceWithDistance> courts = postcodeSearchForServiceAreaFactory
-            .getSearchFor(serviceArea, optionalMapitData.get())
-            .search(optionalMapitData.get(), postcode, serviceArea.getAreaOfLaw().getName());
-
-        if (courts.isEmpty()) {
-            courts = nearestCourtsByPostcodeAndAreaOfLawSearch.search(
-                optionalMapitData.get(),
-                postcode,
-                serviceArea.getAreaOfLaw().getName()
-            );
-
-        }
+        final List<CourtReferenceWithDistance> courts = postcodeSearchForServiceAreaRunner
+            .getSearchFor(serviceArea, postcode, optionalMapitData.get());
 
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, courts);
 

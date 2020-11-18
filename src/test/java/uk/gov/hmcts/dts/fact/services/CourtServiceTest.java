@@ -19,15 +19,13 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
-import uk.gov.hmcts.dts.fact.services.search.NearestCourtsByPostcodeAndAreaOfLawSearch;
-import uk.gov.hmcts.dts.fact.services.search.PostcodeSearchForServiceAreaFactory;
-import uk.gov.hmcts.dts.fact.services.search.Search;
+import uk.gov.hmcts.dts.fact.services.search.PostcodeSearchForServiceAreaRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,12 +42,10 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.AvoidInstantiatingObjectsInLoops", "PMD.ExcessiveImports"})
 class CourtServiceTest {
 
-    public static final String ADOPTION = "adoption";
     private static final String SOME_SLUG = "some-slug";
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
-    public static final String JE2_4BA = "JE2 4BA";
-    private static final String MONEY_CLAIMS = "Money claims";
-    public static final String BENEFITS = "benefits";
+    private static final String JE2_4BA = "JE2 4BA";
+    private static final String TAX = "tax";
 
     @Autowired
     private CourtService courtService;
@@ -67,10 +63,7 @@ class CourtServiceTest {
     private ServiceAreaRepository serviceAreaRepository;
 
     @MockBean
-    private PostcodeSearchForServiceAreaFactory postcodeSearchForServiceAreaFactory;
-
-    @MockBean
-    private NearestCourtsByPostcodeAndAreaOfLawSearch nearestCourtsByPostcodeAndAreaOfLawSearch;
+    private PostcodeSearchForServiceAreaRunner postcodeSearchForServiceAreaRunner;
 
     @Test
     void shouldThrowSlugNotFoundException() {
@@ -184,127 +177,52 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnListForNearestCourtsByPostcodeSearchCivil() {
-        final ServiceArea serviceArea = new ServiceArea();
-        serviceArea.setType("Civil");
-        serviceArea.setSlug(BENEFITS);
-        AreaOfLaw aol = new AreaOfLaw();
-        aol.setName(MONEY_CLAIMS);
-        serviceArea.setAreaOfLaw(aol);
-        when(serviceAreaRepository.findBySlugIgnoreCase(anyString())).thenReturn(Optional.of(serviceArea));
+    void shouldReturnListForNearestCourtsByPostcodeSearch() {
 
+        final String serviceAreaSlug = TAX;
+        final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
+        final List<CourtReferenceWithDistance> courts = asList(
+            mock(CourtReferenceWithDistance.class),
+            mock(CourtReferenceWithDistance.class));
+
+        when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-
-        final List<CourtReferenceWithDistance> courts = new ArrayList<>();
-        courts.add(mock(CourtReferenceWithDistance.class));
-        courts.add(mock(CourtReferenceWithDistance.class));
-
-        final Search search = mock(Search.class);
-
-        when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
-        when(search.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(courts);
+        when(postcodeSearchForServiceAreaRunner.getSearchFor(serviceArea, JE2_4BA, mapitData)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
-            BENEFITS
+            serviceAreaSlug
         );
 
-        assertThat(results.getSlug()).isEqualTo(BENEFITS);
+        assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
         assertThat(results.getCourts().size()).isEqualTo(2);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
     @Test
-    void shouldReturnListForNearestCourtsByPostcodeSearchFamily() {
-        final ServiceArea serviceArea = new ServiceArea();
-        serviceArea.setType("family");
-        serviceArea.setSlug(ADOPTION);
-        serviceArea.setCatchmentMethod("local-authority");
-        serviceArea.setServiceAreaCourts(emptyList());
-        final AreaOfLaw aol = new AreaOfLaw();
-        aol.setName("Adoption");
-        serviceArea.setAreaOfLaw(aol);
-        when(serviceAreaRepository.findBySlugIgnoreCase(anyString())).thenReturn(Optional.of(serviceArea));
+    void shouldReturnEmptyListIfNoMapitdata() {
 
-        final MapitData mapitData = mock(MapitData.class);
-        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-        when(mapitData.getLocalAuthority()).thenReturn(Optional.of("localAuthority"));
-
-        final List<CourtReferenceWithDistance> courts = new ArrayList<>();
-        courts.add(mock(CourtReferenceWithDistance.class));
-        courts.add(mock(CourtReferenceWithDistance.class));
-
-        final Search search = mock(Search.class);
-
-        when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
-        when(search.search(mapitData, JE2_4BA, "Adoption")).thenReturn(courts);
-
-        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
-            JE2_4BA,
-            ADOPTION
-
-        );
-        assertThat(results.getSlug()).isEqualTo(ADOPTION);
-        assertThat(results.getCourts().size()).isEqualTo(2);
-        assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
-    }
-
-    @Test
-    void shouldReturnListForNearestCourtsByPostcodeSearchIfSearchIsEmpty() {
-        final ServiceArea serviceArea = new ServiceArea();
-        serviceArea.setSlug("benefits");
-        serviceArea.setType("Civil");
-        final AreaOfLaw aol = new AreaOfLaw();
-        aol.setName(MONEY_CLAIMS);
-        serviceArea.setAreaOfLaw(aol);
-        when(serviceAreaRepository.findBySlugIgnoreCase(anyString())).thenReturn(Optional.of(serviceArea));
-
-        final MapitData mapitData = mock(MapitData.class);
-        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-
-        final List<CourtReferenceWithDistance> courts = new ArrayList<>();
-        courts.add(mock(CourtReferenceWithDistance.class));
-        courts.add(mock(CourtReferenceWithDistance.class));
-
-        final Search search = mock(Search.class);
-
-        when(postcodeSearchForServiceAreaFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
-        when(search.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(emptyList());
-        when(nearestCourtsByPostcodeAndAreaOfLawSearch.search(mapitData, JE2_4BA, MONEY_CLAIMS)).thenReturn(courts);
-
-        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
-            JE2_4BA,
-            BENEFITS
-        );
-
-        assertThat(results.getSlug()).isEqualTo(BENEFITS);
-        assertThat(results.getCourts().size()).isEqualTo(2);
-        assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
-    }
-
-    @Test
-    void shouldReturnEmptyListNoMapitdata() {
-
-        final String serviceAreaSlug = "tax";
+        final String serviceAreaSlug = TAX;
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(mock(ServiceArea.class)));
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
-            "tax"
+            TAX
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
         assertThat(results.getCourts()).isNull();
-        verifyNoInteractions(postcodeSearchForServiceAreaFactory);
+        verifyNoInteractions(postcodeSearchForServiceAreaRunner);
     }
 
     @Test
-    void shouldReturnEmptyListNoServiceArea() {
+    void shouldReturnEmptyListIfNoServiceArea() {
 
-        final String serviceAreaSlug = "tax";
+        final String serviceAreaSlug = TAX;
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mock(MapitData.class)));
@@ -316,6 +234,6 @@ class CourtServiceTest {
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
         assertThat(results.getCourts()).isNull();
-        verifyNoInteractions(postcodeSearchForServiceAreaFactory);
+        verifyNoInteractions(postcodeSearchForServiceAreaRunner);
     }
 }

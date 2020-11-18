@@ -71,4 +71,16 @@ public class CourtWithDistanceRepositoryTest {
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Divorce"::equals));
     }
+    
+    @Test
+    void shouldFindNearestRegionalByAreaOfLaw() {
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestRegionalByAreaOfLaw(
+            50.84,
+            -0.25,
+            "Divorce"
+        );
+
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Divorce"::equals));
+    }
 }

@@ -23,14 +23,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = NearestRegionalByAreaOfLawAndLocalAuthoritySearch.class)
-class NearestRegionalByAreaOfLawAndLocalAuthoritySearchTest {
+@ContextConfiguration(classes = NearestRegionalByAreaOfLawSearch.class)
+class NearestRegionalByAreaOfLawSearchTest {
 
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     private static final String JE2_4BA = "JE2 4BA";
 
     @Autowired
-    private NearestRegionalByAreaOfLawAndLocalAuthoritySearch nearestRegionalByAreaOfLawAndLocalAuthoritySearch;
+    private NearestRegionalByAreaOfLawSearch nearestRegionalByAreaOfLawSearch;
 
     @MockBean
     private CourtWithDistanceRepository courtWithDistanceRepository;
@@ -42,11 +42,10 @@ class NearestRegionalByAreaOfLawAndLocalAuthoritySearchTest {
 
         final List<CourtWithDistance> courts = singletonList(mock(CourtWithDistance.class));
 
-        when(mapitData.getLocalAuthority()).thenReturn(Optional.of("Suffolk County Council"));
-        when(courtWithDistanceRepository.findNearestRegionalByAreaOfLawAndLocalAuthority(anyDouble(), anyDouble(), anyString(), anyString()))
+        when(courtWithDistanceRepository.findNearestRegionalByAreaOfLaw(anyDouble(), anyDouble(), anyString()))
             .thenReturn(courts);
 
-        final List<CourtReferenceWithDistance> results = nearestRegionalByAreaOfLawAndLocalAuthoritySearch.search(
+        final List<CourtReferenceWithDistance> results = nearestRegionalByAreaOfLawSearch.search(
             mapitData,
             "OX2 1RZ",
             AREA_OF_LAW_NAME
@@ -56,27 +55,12 @@ class NearestRegionalByAreaOfLawAndLocalAuthoritySearchTest {
     }
 
     @Test
-    void shouldReturnEmptyListIfNoCoordinates() {
-
-        final MapitData mapitData = mock(MapitData.class);
-        when(mapitData.getLocalAuthority()).thenReturn(Optional.of("Suffolk County Council"));
-
-        final List<CourtReferenceWithDistance> results = nearestRegionalByAreaOfLawAndLocalAuthoritySearch.search(
-            mock(MapitData.class),
-            JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results.isEmpty()).isTrue();
-    }
-
-    @Test
     void shouldReturnEmptyListIfNoLocalAuthority() {
 
         final MapitData mapitData = mock(MapitData.class);
         when(mapitData.getLocalAuthority()).thenReturn(empty());
 
-        final List<CourtReferenceWithDistance> results = nearestRegionalByAreaOfLawAndLocalAuthoritySearch.search(
+        final List<CourtReferenceWithDistance> results = nearestRegionalByAreaOfLawSearch.search(
             mapitData,
             JE2_4BA,
             AREA_OF_LAW_NAME

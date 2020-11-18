@@ -58,16 +58,4 @@ class NearestCourtsByCourtPostcodeAndAreaOfLawSearchTest {
         assertThat(results.size()).isEqualTo(3);
         assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
-
-    @Test
-    void shouldReturnEmptyListForFilterSearchByAreaOfLawAndCourtPostcodeIfNoCoordinates() {
-
-        final List<CourtReferenceWithDistance> results = nearestCourtsByCourtPostcodeAndAreaOfLawSearch.search(
-            mock(MapitData.class),
-            JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results.isEmpty()).isTrue();
-    }
 }

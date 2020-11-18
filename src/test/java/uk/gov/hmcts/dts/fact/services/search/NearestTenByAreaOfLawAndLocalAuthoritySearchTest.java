@@ -59,21 +59,6 @@ class NearestTenByAreaOfLawAndLocalAuthoritySearchTest {
     }
 
     @Test
-    void shouldReturnEmptyListIfNoCoordinates() {
-
-        final MapitData mapitData = mock(MapitData.class);
-        when(mapitData.getLocalAuthority()).thenReturn(Optional.of("Suffolk County Council"));
-
-        final List<CourtReferenceWithDistance> results = nearestTenByAreaOfLawAndLocalAuthoritySearch.search(
-            mapitData,
-            JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results).isEmpty();
-    }
-
-    @Test
     void shouldReturnEmptyList() {
 
         final MapitData mapitData = mock(MapitData.class);
