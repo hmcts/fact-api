@@ -35,7 +35,7 @@ class CourtReferenceWithDistanceTest {
         final CourtReferenceWithDistance court = new CourtReferenceWithDistance(courtEntity);
         assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
         assertEquals("name-slug", court.getSlug());
-        assertEquals("2.20", court.getDistance().toString());
+        assertEquals("2.2", court.getDistance().toString());
 
         LocaleContextHolder.resetLocaleContext();
     }
