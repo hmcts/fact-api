@@ -16,6 +16,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     String LIMIT_1 = "LIMIT 1";
     String LAT = "lat";
     String LON = "lon";
+    String AND_UPPER_AOL_NAME_UPPER_AOL = "AND UPPER(aol.name) = UPPER(:aol) ";
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
@@ -42,7 +43,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
             + "JOIN search_courtpostcode cp ON cp.court_id = c.id "
             + WHERE_C_DISPLAYED
-            + "AND UPPER(aol.name) = UPPER(:aol) "
+            + AND_UPPER_AOL_NAME_UPPER_AOL
             + "AND UPPER(REPLACE(cp.postcode, ' ', '')) = UPPER(REPLACE(:postcode, ' ', '')) "
             + ORDER_BY_DISTANCE_C_NAME
             + LIMIT_10)
@@ -55,7 +56,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
             + "JOIN search_areaoflaw aol ON aol.id = claaol.area_of_law_id "
             + WHERE_C_DISPLAYED
-            + "AND UPPER(aol.name) = UPPER(:aol) "
+            + AND_UPPER_AOL_NAME_UPPER_AOL
             + "AND UPPER(la.name) = UPPER(:localAuthority) "
             + ORDER_BY_DISTANCE_C_NAME
             + LIMIT_10)
@@ -69,10 +70,24 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "JOIN search_areaoflaw aol ON aol.id = claaol.area_of_law_id "
             + "JOIN search_serviceareacourt sac ON sac.court_id = c.id "
             + WHERE_C_DISPLAYED
-            + "AND UPPER(aol.name) = UPPER(:aol) "
+            + AND_UPPER_AOL_NAME_UPPER_AOL
             + "AND UPPER(la.name) = UPPER(:localAuthority) "
             + "AND sac.catchment_type = 'regional' "
             + ORDER_BY_DISTANCE_C_NAME
             + LIMIT_1)
     List<CourtWithDistance> findNearestRegionalByAreaOfLawAndLocalAuthority(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String localAuthority);
+    
+    @Query(nativeQuery = true,
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+            + FROM_SEARCH_COURT_AS_C
+            + "JOIN search_courtlocalauthorityareaoflaw claaol ON claaol.court_id = c.id "
+            + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
+            + "JOIN search_areaoflaw aol ON aol.id = claaol.area_of_law_id "
+            + "JOIN search_serviceareacourt sac ON sac.court_id = c.id "
+            + WHERE_C_DISPLAYED
+            + AND_UPPER_AOL_NAME_UPPER_AOL
+            + "AND sac.catchment_type = 'regional' "
+            + ORDER_BY_DISTANCE_C_NAME
+            + LIMIT_1)
+    List<CourtWithDistance> findNearestRegionalByAreaOfLaw(@Param(LAT) Double lat, @Param(LON) Double lon, String aol);
 }
