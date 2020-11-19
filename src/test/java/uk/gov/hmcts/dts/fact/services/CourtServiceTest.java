@@ -19,7 +19,8 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
-import uk.gov.hmcts.dts.fact.services.search.PostcodeSearchForServiceAreaRunner;
+import uk.gov.hmcts.dts.fact.services.search.Search;
+import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ class CourtServiceTest {
     private ServiceAreaRepository serviceAreaRepository;
 
     @MockBean
-    private PostcodeSearchForServiceAreaRunner postcodeSearchForServiceAreaRunner;
+    private ServiceAreaSearchFactory serviceAreaSearchFactory;
 
     @Test
     void shouldThrowSlugNotFoundException() {
@@ -182,14 +183,17 @@ class CourtServiceTest {
         final String serviceAreaSlug = TAX;
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
-        final List<CourtReferenceWithDistance> courts = asList(
-            mock(CourtReferenceWithDistance.class),
-            mock(CourtReferenceWithDistance.class));
+        final Search search = mock(Search.class);
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
 
         when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-        when(postcodeSearchForServiceAreaRunner.getSearchFor(serviceArea, JE2_4BA, mapitData)).thenReturn(courts);
+        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
+        when(search.searchWith(serviceArea, mapitData, JE2_4BA)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
@@ -216,7 +220,7 @@ class CourtServiceTest {
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
         assertThat(results.getCourts()).isNull();
-        verifyNoInteractions(postcodeSearchForServiceAreaRunner);
+        verifyNoInteractions(serviceAreaSearchFactory);
     }
 
     @Test
@@ -234,6 +238,6 @@ class CourtServiceTest {
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
         assertThat(results.getCourts()).isNull();
-        verifyNoInteractions(postcodeSearchForServiceAreaRunner);
+        verifyNoInteractions(serviceAreaSearchFactory);
     }
 }

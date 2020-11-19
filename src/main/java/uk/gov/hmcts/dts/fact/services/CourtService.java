@@ -14,7 +14,7 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
-import uk.gov.hmcts.dts.fact.services.search.PostcodeSearchForServiceAreaRunner;
+import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,19 +29,19 @@ public class CourtService {
     private final CourtRepository courtRepository;
     private final CourtWithDistanceRepository courtWithDistanceRepository;
     private final ServiceAreaRepository serviceAreaRepository;
-    private final PostcodeSearchForServiceAreaRunner postcodeSearchForServiceAreaRunner;
+    private final ServiceAreaSearchFactory serviceAreaSearchFactory;
 
     @Autowired
     public CourtService(final MapitService mapitService,
                         final CourtRepository courtRepository,
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
-                        final PostcodeSearchForServiceAreaRunner postcodeSearchForServiceAreaRunner) {
+                        final ServiceAreaSearchFactory serviceAreaSearchFactory) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
         this.courtRepository = courtRepository;
         this.serviceAreaRepository = serviceAreaRepository;
-        this.postcodeSearchForServiceAreaRunner = postcodeSearchForServiceAreaRunner;
+        this.serviceAreaSearchFactory = serviceAreaSearchFactory;
     }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
@@ -104,11 +104,18 @@ public class CourtService {
         }
 
         final ServiceArea serviceArea = serviceAreaOptional.get();
+        final MapitData mapitData = optionalMapitData.get();
 
-        final List<CourtReferenceWithDistance> courts = postcodeSearchForServiceAreaRunner
-            .getSearchFor(serviceArea, postcode, optionalMapitData.get());
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = serviceAreaSearchFactory
+            .getSearchFor(serviceArea, mapitData)
+            .searchWith(serviceArea, mapitData, postcode);
 
-        return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, courts);
+        return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
+    }
 
+    private List<CourtReferenceWithDistance> convert(final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courtsWithDistance) {
+        return courtsWithDistance.stream()
+            .map(CourtReferenceWithDistance::new)
+            .collect(toList());
     }
 }
