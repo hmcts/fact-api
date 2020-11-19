@@ -23,6 +23,6 @@ public class CourtReferenceWithDistance {
         this.slug = courtEntity.getSlug();
 
         ofNullable(courtEntity.getDistance())
-            .ifPresent(value -> this.distance = BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP));
+            .ifPresent(value -> this.distance = BigDecimal.valueOf(value).setScale(1, RoundingMode.HALF_UP));
     }
 }
