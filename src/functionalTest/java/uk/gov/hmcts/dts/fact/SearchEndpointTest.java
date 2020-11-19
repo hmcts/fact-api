@@ -197,6 +197,23 @@ public class SearchEndpointTest {
     }
 
     @Test
+    public void shouldRetrieveClosestRegionalCourt() {
+        final String serviceArea = "divorce";
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(SEARCH_ENDPOINT + "results?postcode=TR11 2PH&serviceArea=" + serviceArea)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(1);
+    }
+
+    @Test
     public void shouldRetrieveCourtReferenceByCourtPostcodeAndServiceAreaSortedByDistance() {
         final String serviceArea = "money-claims";
         final var response = given()

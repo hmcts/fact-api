@@ -17,6 +17,9 @@ import javax.persistence.Table;
 @Getter
 @Setter
 public class ServiceArea {
+
+    private static final String REGIONAL = "regional";
+
     @Id
     private Integer id;
     private String name;
@@ -38,4 +41,9 @@ public class ServiceArea {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "area_of_law_id")
     private AreaOfLaw areaOfLaw;
+
+    public boolean isRegional() {
+        return this.serviceAreaCourts.stream()
+            .anyMatch(serviceAreaCourt -> REGIONAL.equals(serviceAreaCourt.getCatchmentType()));
+    }
 }
