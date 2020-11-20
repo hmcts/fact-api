@@ -31,3 +31,11 @@ WHERE id = 9;
 UPDATE public.search_serviceareacourt
 SET court_id = 1480138
 WHERE id = 10;
+
+UPDATE public.search_servicearea
+SET area_of_law_id = 34247
+WHERE id = 8;
+
+ALTER TABLE ONLY public.search_servicearea
+    ADD CONSTRAINT fk_search_areaoflaw_id FOREIGN KEY (area_of_law_id) REFERENCES public.search_areaoflaw (id);
+
