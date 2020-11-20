@@ -4,14 +4,10 @@ java:
   ingressHost: fact-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fact
   devcpuRequests: 100m
-  cpuLimits: 500m
-  cpuRequests: 200m
+  cpuLimits: 1
+  cpuRequests: 250m
   memoryRequests:   256Mi
   memoryLimits: 2Gi
-  autoscaling:        # Default is false
-    enabled: true
-    maxReplicas: 5    # Required setting
-    targetCPUUtilizationPercentage: 80 # Default is 80% target CPU utilization
   keyVaults:
     fact:
       resourceGroup: fact
