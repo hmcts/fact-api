@@ -25,7 +25,7 @@ SET court_id = 1480138
 WHERE id = 8;
 
 UPDATE public.search_serviceareacourt
-SET court_id = 1480142
+SET court_id = 1480141
 WHERE id = 9;
 
 UPDATE public.search_serviceareacourt
