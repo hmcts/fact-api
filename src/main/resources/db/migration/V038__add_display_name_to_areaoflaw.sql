@@ -25,7 +25,7 @@ SET display_name = 'High Court cases – serious or high profile criminal or civ
 WHERE name = 'High Court District Registry';
 
 UPDATE public.search_areaoflaw
-SET display_name_cy = 'High Court cases – serious or high profile criminal or civil law cases'
+SET display_name_cy = 'Achosion yn yr Uchel Lys – achosion cyfraith droseddol neu gyfraith sifil difrifol neu sy’n cael cryn amlwgrwydd'
 WHERE name = 'High Court District Registry';
 
 UPDATE public.search_areaoflaw
