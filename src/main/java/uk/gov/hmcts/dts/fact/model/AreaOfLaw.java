@@ -16,11 +16,14 @@ public class AreaOfLaw {
     private String displayUrl;
     @JsonProperty("external_link_desc")
     private String externalLinkDescription;
+    @JsonProperty("display_name")
+    private String displayName;
 
     public AreaOfLaw(uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw) {
         this.name = areaOfLaw.getName();
         this.externalLink = chooseString(areaOfLaw.getExternalLinkCy(), areaOfLaw.getExternalLink());
         this.externalLinkDescription =
             chooseString(areaOfLaw.getExternalLinkDescriptionCy(), areaOfLaw.getExternalLinkDescription());
+        this.displayName = chooseString(areaOfLaw.getDisplayNameCy(), areaOfLaw.getDisplayName());
     }
 }

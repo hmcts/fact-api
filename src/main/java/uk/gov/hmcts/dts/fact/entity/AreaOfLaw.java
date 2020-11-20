@@ -3,10 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_areaoflaw")
@@ -22,4 +19,8 @@ public class AreaOfLaw {
     private String externalLinkDescription;
     @Column(name = "external_link_desc_cy")
     private String externalLinkDescriptionCy;
+    @Column(name = "display_name")
+    private String displayName;
+    @Column(name = "display_name_cy")
+    private String displayNameCy;
 }
