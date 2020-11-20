@@ -5,7 +5,7 @@ java:
   aadIdentityName: fact
   devcpuRequests: 100m
   cpuLimits: 500m
-  cpuRequests: 100m
+  cpuRequests: 200m
   memoryRequests:   256Mi
   memoryLimits: 2Gi
   autoscaling:        # Default is false
