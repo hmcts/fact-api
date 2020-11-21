@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.controllers.admin.AdminCourtsController.FACT_SUPER_ADMIN;
 
 @Service
 public class AdminService {
@@ -53,7 +54,7 @@ public class AdminService {
         Court court = getCourtEntityBySlug(slug);
         court.setAlert(courtGeneral.getAlert());
         court.setAlertCy(courtGeneral.getAlertCy());
-        if (rolesProvider.getRoles().contains("fact-super-admin")) {
+        if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
             court.setInfo(courtGeneral.getInfo());
             court.setInfoCy(courtGeneral.getInfoCy());
         }
@@ -93,7 +94,7 @@ public class AdminService {
         // opening times
         // addresses
 
-        if (rolesProvider.getRoles().contains("fact-super-admin")) {
+        if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
             overwriteIfSet(update, "info", court::setInfo);
             overwriteIfSet(update, "infoCy", court::setInfoCy);
         }
