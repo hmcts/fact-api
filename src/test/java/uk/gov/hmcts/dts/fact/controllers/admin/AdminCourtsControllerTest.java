@@ -1,6 +1,8 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +23,7 @@ import java.util.List;
 import static java.nio.file.Files.readAllBytes;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdminCourtsController.class)
@@ -105,4 +106,33 @@ class AdminCourtsControllerTest {
             .andReturn();
 
     }
+
+    @Test
+    @SuppressWarnings("PMD")
+    void updateCourtBySlug() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        final Path courtEntityPath = Paths.get("src/test/resources/full-birmingham-civil-and-family-justice-centre-entity.json");
+        Court court = mapper.readValue(courtEntityPath.toFile(), Court.class);
+
+        ObjectNode updateRequest = JsonNodeFactory.instance.objectNode();
+        updateRequest.put("slug", "new-slug");
+
+        court.setSlug(updateRequest.get("slug").asText());
+
+        when(adminService.save(any(), any())).thenReturn(new uk.gov.hmcts.dts.fact.model.Court(court));
+
+        final String searchSlug = "some-slug";
+        String json = mapper.writeValueAsString(updateRequest);
+
+        mockMvc.perform(patch(String.format(URL + "/%s", searchSlug))
+                            .content(json)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.slug").value(court.getSlug()))
+            .andExpect(jsonPath("$.info").value(court.getInfo()))
+            .andReturn();
+
+    }
+
 }
