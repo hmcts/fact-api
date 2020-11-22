@@ -15,10 +15,14 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
 public class AdminCourtsEndpointTest {
+
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
         = "Birmingham Civil and Family Justice Centre";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG
@@ -27,6 +31,7 @@ public class AdminCourtsEndpointTest {
     private static final String COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/";
     private static final String COURT_GENERAL_ENDPOINT = "/general";
     private static final String BEARER = "Bearer ";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Value("${TEST_URL:http://localhost:8080}")
     private String testUrl;
@@ -34,12 +39,14 @@ public class AdminCourtsEndpointTest {
     @Autowired
     private OAuthClient authClient;
 
-    private String token;
+    private String authenticatedToken;
+    private String forbiddenToken;
 
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = testUrl;
-        token = authClient.getToken();
+        authenticatedToken = authClient.getToken();
+        forbiddenToken = authClient.getNobodyToken();
     }
 
     @Test
@@ -47,12 +54,12 @@ public class AdminCourtsEndpointTest {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
             .get("/courts/all")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         String slug = response.jsonPath().get("[0].slug");
         assertThat(slug).isEqualTo("greenwich-magistrates-court");
     }
@@ -66,21 +73,20 @@ public class AdminCourtsEndpointTest {
             .get("/courts/all")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(401);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForAllCourts() {
-        token = authClient.getNobodyToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
             .get("/courts/all")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(403);
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
@@ -88,33 +94,32 @@ public class AdminCourtsEndpointTest {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
             .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final CourtGeneral court = response.as(CourtGeneral.class);
         assertThat(court.getName()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
     }
 
     @Test
     public void shouldBeForbiddenFromGettingCourtGeneralBySlug() {
-        token = authClient.getNobodyToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
             .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(403);
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
     public void shouldUpdateCourtGeneralBySlugAsAdmin() throws Exception {
-        CourtGeneral courtGeneral = new CourtGeneral(
+        final CourtGeneral courtGeneral = new CourtGeneral(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -125,19 +130,18 @@ public class AdminCourtsEndpointTest {
             "Welsh Admin Alert"
         );
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
 
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + authenticatedToken)
             .body(json)
             .when()
             .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final CourtGeneral court = response.as(CourtGeneral.class);
         assertThat(court.getAlert()).isEqualTo(courtGeneral.getAlert());
         assertThat(court.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
@@ -147,7 +151,7 @@ public class AdminCourtsEndpointTest {
 
     @Test
     public void shouldBeForbiddenToUpdateCourtGeneralBySlug() throws Exception {
-        CourtGeneral courtGeneral = new CourtGeneral(
+        final CourtGeneral courtGeneral = new CourtGeneral(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -158,25 +162,23 @@ public class AdminCourtsEndpointTest {
             "Welsh Admin Alert"
         );
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
 
-        token = authClient.getNobodyToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + forbiddenToken)
             .body(json)
             .when()
             .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(403);
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
     public void shouldUpdateCourtGeneralBySlugAsSuperAdmin() throws Exception {
-        CourtGeneral courtGeneral = new CourtGeneral(
+        final CourtGeneral courtGeneral = new CourtGeneral(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -187,20 +189,19 @@ public class AdminCourtsEndpointTest {
             "Super Welsh Admin Alert"
         );
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
 
-        token = authClient.getSuperAdminToken();
+        final String superAdminToken = authClient.getSuperAdminToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + superAdminToken)
             .body(json)
             .when()
             .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final CourtGeneral court = response.as(CourtGeneral.class);
         assertThat(court.getAlert()).isEqualTo(courtGeneral.getAlert());
         assertThat(court.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
@@ -210,7 +211,7 @@ public class AdminCourtsEndpointTest {
 
     @Test
     public void shouldNotUpdateCourtAsNoTokenProvided() throws Exception {
-        CourtGeneral courtGeneral = new CourtGeneral(
+        final CourtGeneral courtGeneral = new CourtGeneral(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -220,8 +221,7 @@ public class AdminCourtsEndpointTest {
             "Admin Alert",
             "Welsh Admin Alert"
         );
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -231,6 +231,6 @@ public class AdminCourtsEndpointTest {
             .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(401);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 }

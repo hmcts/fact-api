@@ -29,7 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 class CourtsControllerTest {
 
-    protected static final String URL = "/courts";
+    private static final String URL = "/courts";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -38,70 +39,75 @@ class CourtsControllerTest {
     private CourtService courtService;
 
     @Test
-    void findCourtBySlugDeprecated() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+    void shouldFindCourtBySlugDeprecated() throws Exception {
 
         final Path path = Paths.get(
             "src/integrationTest/resources/deprecated/aylesbury-magistrates-court-and-family-court.json");
-        final String s1 = new String(readAllBytes(path));
+        final String expectJson = new String(readAllBytes(path));
 
-        OldCourt court = mapper.readValue(path.toFile(), OldCourt.class);
+        final OldCourt court = OBJECT_MAPPER.readValue(path.toFile(), OldCourt.class);
 
         final String searchSlug = "some-slug";
 
         when(courtService.getCourtBySlugDeprecated(searchSlug)).thenReturn(court);
         mockMvc.perform(get(String.format(URL + "/%s.json", searchSlug)))
-            .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectJson))
+            .andReturn();
     }
 
     @Test
-    void findCourtByNonExistentSlug() throws Exception {
+    void shouldRespondWithNotFoundForFindCourtByNonExistentSlug() throws Exception {
 
         final String searchSlug = "some-slug";
         when(courtService.getCourtBySlugDeprecated(searchSlug)).thenThrow(new NotFoundException(searchSlug));
 
         mockMvc.perform(get(String.format(URL + "/%s.json", searchSlug)))
-            .andExpect(status().is(404)).andReturn();
+            .andExpect(status().isNotFound())
+            .andReturn();
     }
 
     @Test
-    void findCourtByQuery() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+    void shouldFindCourtByQuery() throws Exception {
 
         final Path path = Paths.get("src/test/resources/courts.json");
-        final String s1 = new String(readAllBytes(path));
+        final String expectedJson = new String(readAllBytes(path));
 
-        List<CourtReference> courts = Arrays.asList(mapper.readValue(path.toFile(), CourtReference[].class));
+        final List<CourtReference> courts = Arrays.asList(OBJECT_MAPPER.readValue(path.toFile(), CourtReference[].class));
         final String query = "london";
 
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
         mockMvc.perform(get(URL + "?q=" + query))
-            .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedJson))
+            .andReturn();
     }
 
     @Test
-    void findCourtByEmptyQuery() throws Exception {
-        List<CourtReference> courts = new ArrayList<>();
+    void shouldRespondWithBadRequestForFindCourtByEmptyQuery() throws Exception {
+
+        final List<CourtReference> courts = new ArrayList<>();
         final String query = "";
 
         when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
+
         mockMvc.perform(get(URL + "?q=" + query))
             .andExpect(status().isBadRequest());
     }
 
     @Test
-    void findCourtBySlug() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+    void shouldFindCourtBySlug() throws Exception {
 
         final Path path = Paths.get("src/integrationTest/resources/birmingham-civil-and-family-justice-centre.json");
-        final String s1 = new String(readAllBytes(path));
-
-        Court court = mapper.readValue(path.toFile(), Court.class);
-
+        final String expectedJson = new String(readAllBytes(path));
+        final Court court = OBJECT_MAPPER.readValue(path.toFile(), Court.class);
         final String searchSlug = "some-slug";
 
         when(courtService.getCourtBySlug(searchSlug)).thenReturn(court);
+
         mockMvc.perform(get(String.format(URL + "/%s", searchSlug)))
-            .andExpect(status().isOk()).andExpect(content().json(s1)).andReturn();
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedJson))
+            .andReturn();
     }
 }

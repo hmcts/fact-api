@@ -19,6 +19,8 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
@@ -54,7 +56,7 @@ public class CourtsEndpointTest {
             .get(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT))
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final OldCourt court = response.as(OldCourt.class);
         assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
 
@@ -72,7 +74,7 @@ public class CourtsEndpointTest {
             .get(COURT_SEARCH_ENDPOINT + "?q=Oxford Combine")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -90,7 +92,7 @@ public class CourtsEndpointTest {
             .get(COURT_SEARCH_ENDPOINT + "?q=Oxford Combined Court Centre")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -108,7 +110,7 @@ public class CourtsEndpointTest {
             .get(COURT_SEARCH_ENDPOINT + "?q=BD23")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -126,7 +128,7 @@ public class CourtsEndpointTest {
             .get(COURT_SEARCH_ENDPOINT + "?q=BD23 1RH")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -141,7 +143,7 @@ public class CourtsEndpointTest {
             .get(COURT_SEARCH_ENDPOINT + "?q=")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(400);
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
@@ -153,7 +155,7 @@ public class CourtsEndpointTest {
             .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final Court court = response.as(Court.class);
         assertThat(court.getSlug()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
     }
@@ -168,7 +170,7 @@ public class CourtsEndpointTest {
             .get(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL))
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final OldCourt court = response.as(OldCourt.class);
         assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
     }
@@ -183,7 +185,7 @@ public class CourtsEndpointTest {
             .get(COURT_DETAIL_BY_SLUG_ENDPOINT + CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final Court court = response.as(Court.class);
         assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
     }
@@ -199,7 +201,7 @@ public class CourtsEndpointTest {
             .get(COURT_SEARCH_ENDPOINT + "?q=aylesbury")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
     }
@@ -213,7 +215,7 @@ public class CourtsEndpointTest {
             .get(COURT_SEARCH_ENDPOINT + "?q=Darlington Magistrates' Court and Family Court")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.size()).isEqualTo(1);
     }
