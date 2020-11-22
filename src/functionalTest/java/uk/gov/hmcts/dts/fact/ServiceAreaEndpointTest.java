@@ -12,6 +12,7 @@ import uk.gov.hmcts.dts.fact.model.ServiceArea;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
@@ -36,7 +37,7 @@ public class ServiceAreaEndpointTest {
             .get("/service-areas/money-claims")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final ServiceArea serviceArea = response.getBody().as(ServiceArea.class);
         assertThat(serviceArea.getName()).isEqualTo("Money claims");
     }

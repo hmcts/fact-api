@@ -7,34 +7,47 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LocaleResolverTest {
+class LocaleResolverTest {
+
+    public static final String SERVER_NAME = "www.example.com";
+    public static final String ACCEPT_LANGUAGE = "Accept-Language";
 
     @Test
-    void testResolveLocaleForEnglish() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("www.example.com");
-        request.addHeader("Accept-Language", "en");
+    void shouldResolveLocaleForEnglish() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName(SERVER_NAME);
+        request.addHeader(ACCEPT_LANGUAGE, "en");
 
-        LocaleResolver lr = new LocaleResolver();
+        final LocaleResolver lr = new LocaleResolver();
         assertEquals("en", lr.resolveLocale(request).toString());
     }
 
     @Test
-    void testResolveLocaleForWelsh() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("www.example.com");
-        request.addHeader("Accept-Language", "cy");
+    void shouldResolveLocaleForWelsh() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName(SERVER_NAME);
+        request.addHeader(ACCEPT_LANGUAGE, "cy");
 
-        LocaleResolver lr = new LocaleResolver();
+        final LocaleResolver lr = new LocaleResolver();
         assertEquals("cy", lr.resolveLocale(request).toString());
     }
 
     @Test
-    void testResolveLocaleForEmpty() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServerName("www.example.com");
+    void shouldResolveLocaleForNull() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName(SERVER_NAME);
 
-        LocaleResolver lr = new LocaleResolver();
+        final LocaleResolver lr = new LocaleResolver();
+        assertEquals(Locale.getDefault(), lr.resolveLocale(request));
+    }
+    
+    @Test
+    void shouldResolveLocaleForEmpty() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setServerName(SERVER_NAME);
+        request.addHeader(ACCEPT_LANGUAGE, "");
+
+        final LocaleResolver lr = new LocaleResolver();
         assertEquals(Locale.getDefault(), lr.resolveLocale(request));
     }
 }

@@ -28,6 +28,7 @@ class ServicesControllerTest {
 
     private static final String URL = "/services";
     private static final String NON_EXISTENT = "nonExistent";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -39,29 +40,34 @@ class ServicesControllerTest {
     void shouldGetServices() throws Exception {
 
         final Path path = Paths.get("src/integrationTest/resources/services.json");
-        List<Service> services = asList(new ObjectMapper().readValue(path.toFile(), Service[].class));
+        final List<Service> services = asList(new ObjectMapper().readValue(path.toFile(), Service[].class));
         final String expected = new String(readAllBytes(path));
 
         when(serviceService.getAllServices()).thenReturn(services);
-        mockMvc.perform(get(URL)).andExpect(status().isOk()).andExpect(content().json(expected));
+        mockMvc.perform(get(URL))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expected));
     }
 
     @Test
     void shouldGetAService() throws Exception {
 
         final Path path = Paths.get("src/integrationTest/resources/service.json");
-        Service service = new ObjectMapper().readValue(path.toFile(), Service.class);
+        final Service service = OBJECT_MAPPER.readValue(path.toFile(), Service.class);
 
         final String expected = new String(readAllBytes(path));
 
         when(serviceService.getService(matches("money"))).thenReturn(service);
-        mockMvc.perform(get(URL + "/money")).andExpect(status().isOk()).andExpect(content().json(expected));
+        mockMvc.perform(get(URL + "/money"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expected));
     }
 
     @Test
-    void shouldReturn404WhenServiceNotFound() throws Exception {
+    void shouldReturnNotFoundWhenServiceNotFound() throws Exception {
         when(serviceService.getService(matches(NON_EXISTENT))).thenThrow(new NotFoundException(NON_EXISTENT));
-        mockMvc.perform(get(URL + "/nonExistent")).andExpect(status().is(404));
+        mockMvc.perform(get(URL + "/nonExistent"))
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -73,13 +79,15 @@ class ServicesControllerTest {
         final String expected = new String(readAllBytes(path));
 
         when(serviceService.getServiceAreas(matches("money"))).thenReturn(serviceAreas);
-        mockMvc.perform(get(URL + "/money/service-areas")).andExpect(status().isOk()).andExpect(content().json(expected));
+        mockMvc.perform(get(URL + "/money/service-areas"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expected));
     }
 
-
     @Test
-    void shouldReturn404() throws Exception {
+    void shouldReturnNotFound() throws Exception {
         when(serviceService.getServiceAreas(matches(NON_EXISTENT))).thenThrow(new NotFoundException(NON_EXISTENT));
-        mockMvc.perform(get(URL + "/nonExistent/service-areas")).andExpect(status().is(404));
+        mockMvc.perform(get(URL + "/nonExistent/service-areas"))
+            .andExpect(status().isNotFound());
     }
 }
