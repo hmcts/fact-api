@@ -16,6 +16,7 @@ import static io.restassured.RestAssured.given;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
@@ -41,12 +42,11 @@ public class ServiceEndpointTest {
             .get("/services")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<Service> services = asList(response.getBody().as(Service[].class));
         assertThat(services.size()).isGreaterThan(0);
     }
-
-
+    
     @Test
     public void shouldRetrieveService() {
         final var response = given()
@@ -56,9 +56,11 @@ public class ServiceEndpointTest {
             .get("/services/money")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final Service service = response.getBody().as(Service.class);
+        assertThat(service.getSlug()).isEqualTo("money");
         assertThat(service.getName()).isEqualTo("Money");
+        assertThat(service.getServiceAreas().size()).isGreaterThan(0);
     }
 
     @Test
@@ -70,7 +72,7 @@ public class ServiceEndpointTest {
             .get("/services/money/service-areas")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<ServiceArea> serviceAreas = asList(response.getBody().as(ServiceArea[].class));
         assertThat(serviceAreas.size()).isGreaterThan(0);
     }
