@@ -62,7 +62,7 @@ public class ServiceEndpointTest {
     }
 
     @Test
-    public void shouldRetrieveServiceAreas() {
+    public void shouldRetrieveServiceAreasSortedbySortOrder() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -73,5 +73,14 @@ public class ServiceEndpointTest {
         assertThat(response.statusCode()).isEqualTo(200);
         final List<ServiceArea> serviceAreas = asList(response.getBody().as(ServiceArea[].class));
         assertThat(serviceAreas.size()).isGreaterThan(0);
+        assertThat(serviceAreas.size()).isGreaterThan(0);
+        assertThat(serviceAreas.get(0).getName()).isEqualTo("Money claims");
+        assertThat(serviceAreas.get(1).getName()).isEqualTo("Probate");
+        assertThat(serviceAreas.get(2).getName()).isEqualTo("Housing");
+        assertThat(serviceAreas.get(3).getName()).isEqualTo("Bankruptcy");
+        assertThat(serviceAreas.get(4).getName()).isEqualTo("Benefits");
+        assertThat(serviceAreas.get(5).getName()).isEqualTo("Claims against employers");
+        assertThat(serviceAreas.get(6).getName()).isEqualTo("Tax");
+        assertThat(serviceAreas.get(7).getName()).isEqualTo("Minor criminal offences");
     }
 }
