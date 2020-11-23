@@ -5,7 +5,7 @@ ALTER TABLE public.search_areaoflaw
 	ADD COLUMN display_name_cy CHARACTER VARYING(500);
 
 UPDATE public.search_areaoflaw
-SET display_name = ' Domestic abuse'
+SET display_name = 'Domestic abuse'
 WHERE name = 'Domestic violence';
 
 UPDATE public.search_areaoflaw
