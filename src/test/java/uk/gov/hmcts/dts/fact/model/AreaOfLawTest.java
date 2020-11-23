@@ -23,6 +23,7 @@ class AreaOfLawTest {
         entity.setExternalLinkDescriptionCy("description of external link in Welsh");
         entity.setDisplayName("display name in english");
         entity.setDisplayNameCy("display name in welsh");
+        entity.setDisplayExternalLink("display external link");
     }
 
     @ParameterizedTest
@@ -45,6 +46,7 @@ class AreaOfLawTest {
             welsh ? entity.getDisplayNameCy() : entity.getDisplayName(),
             areaOfLaw.getDisplayName()
         );
+        assertEquals(entity.getDisplayExternalLink(), areaOfLaw.getDisplayExternalLink());
 
         LocaleContextHolder.resetLocaleContext();
     }

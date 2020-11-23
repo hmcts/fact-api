@@ -7,7 +7,7 @@ WHERE name = 'Adoption';
 
 UPDATE public.search_areaoflaw
 SET display_external_link = 'https://www.gov.uk/bankruptcy'
-WHERE name = 'Bankruptsy';
+WHERE name = 'Bankruptcy';
 
 UPDATE public.search_areaoflaw
 SET display_external_link = 'https://www.gov.uk/employment-tribunals'
