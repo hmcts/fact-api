@@ -18,6 +18,8 @@ public class AreaOfLaw {
     private String externalLinkDescription;
     @JsonProperty("display_name")
     private String displayName;
+    @JsonProperty("display_external_link")
+    private String displayExternalLink;
 
     public AreaOfLaw(uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw) {
         this.name = areaOfLaw.getName();
@@ -25,5 +27,6 @@ public class AreaOfLaw {
         this.externalLinkDescription =
             chooseString(areaOfLaw.getExternalLinkDescriptionCy(), areaOfLaw.getExternalLinkDescription());
         this.displayName = chooseString(areaOfLaw.getDisplayNameCy(), areaOfLaw.getDisplayName());
+        this.displayExternalLink = areaOfLaw.getDisplayExternalLink();
     }
 }
