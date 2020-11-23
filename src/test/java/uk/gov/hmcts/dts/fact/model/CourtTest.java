@@ -19,7 +19,9 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import java.util.Locale;
 
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
@@ -40,7 +42,7 @@ class CourtTest {
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
-        addressType.setName("Visit us or write to us");
+        addressType.setName("Visit or contact us");
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
@@ -123,7 +125,7 @@ class CourtTest {
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
-        addressType.setName("Postal");
+        addressType.setName("Write to us");
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
@@ -139,7 +141,7 @@ class CourtTest {
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
-        addressType.setName("Visiting");
+        addressType.setName("Visit us");
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
