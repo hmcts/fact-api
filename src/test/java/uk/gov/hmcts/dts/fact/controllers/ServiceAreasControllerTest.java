@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import static java.nio.file.Files.readAllBytes;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,12 +41,14 @@ class ServiceAreasControllerTest {
         final String expected = new String(readAllBytes(path));
 
         when(serviceAreaService.getServiceArea(matches("adoption"))).thenReturn(serviceArea);
-        mockMvc.perform(get(URL + "/adoption")).andExpect(status().isOk()).andExpect(content().json(expected));
+        mockMvc.perform(get(URL + "/adoption"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expected));
     }
 
     @Test
     void shouldReturn404WhenServiceNotFound() throws Exception {
         when(serviceAreaService.getServiceArea(matches(NON_EXISTENT))).thenThrow(new NotFoundException(NON_EXISTENT));
-        mockMvc.perform(get(URL + "/nonExistent")).andExpect(status().is(404));
+        mockMvc.perform(get(URL + "/nonExistent")).andExpect(status().is(NOT_FOUND.value()));
     }
 }

@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(SpringExtension.class)
 public class SearchEndpointTest {
@@ -44,7 +45,7 @@ public class SearchEndpointTest {
             .thenReturn();
 
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtWithDistance> courts = response.body().jsonPath().getList(".", CourtWithDistance.class);
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
@@ -60,7 +61,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results.json?postcode=OX1 1RZ&aol=" + aol)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<CourtWithDistance> courts = response.body().jsonPath().getList(".", CourtWithDistance.class);
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
@@ -81,7 +82,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results.json?postcode=CF10 1ET")
             .thenReturn();
 
-        assertThat(welshResponse.statusCode()).isEqualTo(200);
+        assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
         final List<CourtWithDistance> welshCourts = welshResponse.body().jsonPath()
             .getList(".", CourtWithDistance.class
             );
@@ -94,7 +95,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results.json?postcode=CF10 1ET")
             .thenReturn();
 
-        assertThat(englishResponse.statusCode()).isEqualTo(200);
+        assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
         final List<CourtWithDistance> englishCourts = englishResponse.body().jsonPath()
             .getList(".", CourtWithDistance.class);
         assertThat(englishCourts.get(0).getAddress().getTownName()).isEqualTo("Cardiff");
@@ -110,7 +111,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results.json?q=caerdydd")
             .thenReturn();
 
-        assertThat(welshResponse.statusCode()).isEqualTo(200);
+        assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
         final List<CourtWithDistance> welshCourts = welshResponse.body().jsonPath()
             .getList(".", CourtWithDistance.class
             );
@@ -123,7 +124,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results.json?q=cardiff")
             .thenReturn();
 
-        assertThat(englishResponse.statusCode()).isEqualTo(200);
+        assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
         final List<CourtWithDistance> englishCourts = englishResponse.body().jsonPath()
             .getList(".", CourtWithDistance.class);
         assertThat(englishCourts.get(0).getAddress().getTownName()).isEqualTo("Cardiff");
@@ -139,7 +140,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results?postcode=OX1 1RZ&serviceArea=" + serviceArea)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
             response.as(ServiceAreaWithCourtReferencesWithDistance.class);
 
@@ -158,7 +159,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&serviceArea=" + serviceArea)
             .thenReturn();
 
-        assertThat(englishResponse.statusCode()).isEqualTo(200);
+        assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
         final ServiceAreaWithCourtReferencesWithDistance englishSrviceAreaCourtReferencesWithDistance =
             englishResponse.as(ServiceAreaWithCourtReferencesWithDistance.class);
         assertThat(englishSrviceAreaCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
@@ -172,7 +173,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&serviceArea=" + serviceArea)
             .thenReturn();
 
-        assertThat(welshResponse.statusCode()).isEqualTo(200);
+        assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
             welshResponse.as(ServiceAreaWithCourtReferencesWithDistance.class);
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
@@ -189,7 +190,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results?postcode=IP1 2AG&serviceArea=" + serviceArea)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
             response.as(ServiceAreaWithCourtReferencesWithDistance.class);
 
@@ -206,7 +207,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results?postcode=TR11 2PH&serviceArea=" + serviceArea)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
             response.as(ServiceAreaWithCourtReferencesWithDistance.class);
 
@@ -223,7 +224,7 @@ public class SearchEndpointTest {
             .get(SEARCH_ENDPOINT + "results?postcode=W1U 6PU&serviceArea=" + serviceArea)
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
             response.as(ServiceAreaWithCourtReferencesWithDistance.class);
 

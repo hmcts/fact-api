@@ -1,0 +1,4 @@
+UPDATE public.search_court
+SET displayed = TRUE
+WHERE id in (1480136, 1480137, 1480138, 1480139, 1480140, 1480141, 1480142);
+
