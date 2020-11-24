@@ -61,15 +61,15 @@ SET display_name_cy = 'Budd-daliadau'
 WHERE name = 'Social security';
 
 UPDATE public.search_areaoflaw
-SET display_name_cy = 'Budd-daliadau'
+SET display_name_cy = 'Mabwysiadu'
 WHERE name = 'Adoption';
 
 UPDATE public.search_areaoflaw
-SET display_name_cy = 'Budd-daliadau'
+SET display_name_cy = 'Methdaliad'
 WHERE name = 'Bankruptcy';
 
 UPDATE public.search_areaoflaw
-SET display_name_cy = 'Budd-daliadau'
+SET display_name_cy = 'Partneriaeth sifil'
 WHERE name = 'Civil partnership';
 
 UPDATE public.search_areaoflaw
