@@ -87,3 +87,7 @@ WHERE name = 'Probate';
 UPDATE public.search_areaoflaw
 SET display_name_cy = 'Treth'
 WHERE name = 'Tax';
+
+UPDATE public.search_areaoflaw
+SET display_name_cy = 'Troseddu'
+WHERE name = 'Crime';
