@@ -4,7 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "search_service")
@@ -26,5 +32,6 @@ public class Service {
         joinColumns = @JoinColumn(name = SERVICE_ID),
         inverseJoinColumns = @JoinColumn(name = "servicearea_id")
     )
+    @OrderBy("sort_order")
     private List<ServiceArea> serviceAreas;
 }

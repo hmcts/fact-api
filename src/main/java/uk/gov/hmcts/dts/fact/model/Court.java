@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.util.CourtAddressTypeConverter;
 
 import java.util.List;
 
@@ -96,7 +97,7 @@ public class Court {
                 return facilityObj;
             })
             .collect(toList());
-        this.addresses = this.refactorAddressType(
+        this.addresses = new CourtAddressTypeConverter().convertAddressType(
             courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
         this.gbs = courtEntity.getGbs();
         this.dxNumbers = courtEntity.getContacts().stream().filter(NAME_IS_DX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
@@ -108,18 +109,4 @@ public class Court {
         this.inPerson = courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
     }
-
-    private List<CourtAddress> refactorAddressType(List<CourtAddress> courtAddresses) {
-        for (CourtAddress courtAddress : courtAddresses) {
-            if (courtAddress.getAddressType().equals("Visit us or write to us")) {
-                courtAddress.setAddressType("Visit or contact us");
-            } else if (courtAddress.getAddressType().equals("Postal")) {
-                courtAddress.setAddressType("Write to us");
-            } else if (courtAddress.getAddressType().equals("Visiting")) {
-                courtAddress.setAddressType("Visit us");
-            }
-        }
-        return courtAddresses;
-    }
-
 }
