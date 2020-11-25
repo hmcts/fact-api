@@ -7,6 +7,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
@@ -55,5 +56,16 @@ public class AdminService {
         }
         Court updatedCourt = courtRepository.save(court);
         return new CourtGeneral(updatedCourt);
+    }
+
+    public void updateAllCourts(CourtInfo info) {
+        List<Court> courts = courtRepository.findAll();
+
+        for (Court c : courts) {
+            c.setInfo(info.getInfo());
+            c.setInfoCy(info.getInfoCy());
+        }
+
+        courtRepository.saveAll(courts);
     }
 }

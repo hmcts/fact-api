@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
 import java.nio.file.Path;
@@ -102,6 +103,26 @@ class AdminCourtsControllerTest {
             .andExpect(jsonPath("$.urgent_message_cy").value(courtGeneral.getAlertCy()))
             .andExpect(jsonPath("$.info").value(courtGeneral.getInfo()))
             .andExpect(jsonPath("$.info_cy").value(courtGeneral.getInfoCy()))
+            .andReturn();
+
+    }
+
+    @Test
+    void updateAll() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        CourtInfo courtInfo = new CourtInfo(
+            "Birmingham Civil and Family Justice Info",
+            "Birmingham Civil and Family Justice Info"
+        );
+
+        String json = mapper.writeValueAsString(courtInfo);
+
+        mockMvc.perform(put(URL + "/all/info")
+                            .content(json)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().is2xxSuccessful())
             .andReturn();
 
     }

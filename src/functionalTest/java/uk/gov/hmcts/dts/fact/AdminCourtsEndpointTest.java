@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -233,4 +234,41 @@ public class AdminCourtsEndpointTest {
 
         assertThat(response.statusCode()).isEqualTo(401);
     }
+
+    @Test
+    public void shouldUpdateAllCourts() throws Exception {
+        CourtInfo courtInfo = new CourtInfo(
+            "Info",
+            "Info Cy"
+        );
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(courtInfo);
+
+        token = authClient.getSuperAdminToken();
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(AUTHORIZATION, BEARER + token)
+            .body(json)
+            .when()
+            .put("/courts/all/info")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(204);
+
+        final var getResponse = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(AUTHORIZATION, BEARER + token)
+            .when()
+            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .thenReturn();
+
+        assertThat(getResponse.statusCode()).isEqualTo(200);
+        final CourtGeneral court = getResponse.as(CourtGeneral.class);
+        assertThat(court.getInfo()).isEqualTo(courtInfo.getInfo());
+        assertThat(court.getInfoCy()).isEqualTo(courtInfo.getInfoCy());
+    }
+
 }

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
@@ -107,4 +109,18 @@ class AdminServiceTest {
         assertThat(courtResults.getInfo()).isEqualTo(courtGeneral.getInfo());
         assertThat(courtResults.getInfoCy()).isEqualTo(courtGeneral.getInfoCy());
     }
+
+    @Test
+    void shouldUpdateAllCourtInfo() {
+        when(courtRepository.findAll()).thenReturn(Lists.newArrayList(COURT));
+        when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
+        when(courtRepository.saveAll(Lists.newArrayList(COURT))).thenReturn(Lists.newArrayList(COURT));
+
+        CourtInfo info = new CourtInfo("updated info", "Welsh info");
+
+        adminService.updateAllCourts(info);
+        assertThat(info.getInfo()).isEqualTo(COURT.getInfo());
+        assertThat(info.getInfoCy()).isEqualTo(COURT.getInfoCy());
+    }
+
 }
