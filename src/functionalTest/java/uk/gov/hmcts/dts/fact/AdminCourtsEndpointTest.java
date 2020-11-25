@@ -242,10 +242,9 @@ public class AdminCourtsEndpointTest {
             "Info Cy"
         );
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(courtInfo);
-
-        token = authClient.getSuperAdminToken();
+        final ObjectMapper mapper = new ObjectMapper();
+        final String json = mapper.writeValueAsString(courtInfo);
+        final String token = authClient.getSuperAdminToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
