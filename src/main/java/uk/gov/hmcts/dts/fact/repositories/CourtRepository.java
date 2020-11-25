@@ -1,7 +1,9 @@
 package uk.gov.hmcts.dts.fact.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import uk.gov.hmcts.dts.fact.entity.Court;
 
 import java.util.List;
@@ -9,6 +11,10 @@ import java.util.Optional;
 
 public interface CourtRepository extends JpaRepository<Court, Integer> {
     Optional<Court> findBySlug(String slug);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Court c SET c.info = :info, c.infoCy = :infoCy WHERE c.slug in :slugs")
+    void updateInfoForSlugs(@Param("slugs") List<String> slugs, @Param("info") String info, @Param("infoCy") String infoCy);
 
     @Query(nativeQuery = true,
         value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca ON ca.court_id = c.id AND ca.address_type_id != 5881 "

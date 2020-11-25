@@ -12,10 +12,12 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 import static java.nio.file.Files.readAllBytes;
@@ -113,8 +115,27 @@ class AdminCourtsControllerTest {
     }
 
     @Test
-    void shouldReturnNotFoundForUnknownSlug() throws Exception {
+    void updateCourtsInfo() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
 
+        CourtInfoUpdate courtInfo = new CourtInfoUpdate(
+            Collections.singletonList("birmingham-civil-and-family-justice-centre-general"),
+            "Birmingham Civil and Family Justice Info",
+            "Birmingham Civil and Family Justice Info"
+        );
+
+        String json = mapper.writeValueAsString(courtInfo);
+
+        mockMvc.perform(put(URL + "/info")
+                            .content(json)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().is2xxSuccessful())
+            .andReturn();
+    }
+
+    @Test
+    void shouldReturnNotFoundForUnknownSlug() throws Exception {
         final String searchSlug = "some-slug";
 
         when(adminService.getCourtGeneralBySlug(searchSlug)).thenThrow(new NotFoundException("search criteria"));
