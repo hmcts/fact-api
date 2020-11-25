@@ -62,7 +62,7 @@ public class AdminCourtsEndpointTest {
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
         String slug = response.jsonPath().get("[0].slug");
-        assertThat(slug).isEqualTo("greenwich-magistrates-court");
+        assertThat(slug).isEqualTo("alton-magistrates-court");
     }
 
     @Test
