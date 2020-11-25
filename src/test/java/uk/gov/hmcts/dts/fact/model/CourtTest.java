@@ -100,7 +100,7 @@ class CourtTest {
 
         Court court = new Court(courtEntity);
         assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
-        assertEquals(welsh ? "Info on court in Welsh" : "Info on court", court.getInfo());
+        assertEquals(welsh ? "<p>Info on court in Welsh</p>" : "<p>Info on court</p>", court.getInfo());
         assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
         assertEquals(welsh ? "Alert in Welsh" : "Alert", court.getAlert());
         assertEquals(courtEntity.getInPerson().getIsInPerson(), court.getInPerson());
