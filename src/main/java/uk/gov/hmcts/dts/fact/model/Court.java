@@ -64,7 +64,7 @@ public class Court {
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
-        this.info = stripHtmlFromString(chooseString(courtEntity.getInfoCy(), courtEntity.getInfo()));
+        this.info = chooseString(courtEntity.getInfoCy(), courtEntity.getInfo());
         this.open = courtEntity.getDisplayed();
         this.directions = chooseString(courtEntity.getDirectionsCy(), courtEntity.getDirections());
         this.imageFile = courtEntity.getImageFile();
