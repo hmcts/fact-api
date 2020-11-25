@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services;
 
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +11,7 @@ import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
-import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
@@ -20,8 +19,7 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
@@ -112,15 +110,12 @@ class AdminServiceTest {
 
     @Test
     void shouldUpdateAllCourtInfo() {
-        when(courtRepository.findAll()).thenReturn(Lists.newArrayList(COURT));
+        CourtInfoUpdate info = new CourtInfoUpdate(singletonList(COURT.getSlug()), "updated info", "Welsh info");
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
-        when(courtRepository.saveAll(Lists.newArrayList(COURT))).thenReturn(Lists.newArrayList(COURT));
 
-        CourtInfo info = new CourtInfo("updated info", "Welsh info");
+        adminService.updateMultipleCourtsInfo(info);
 
-        adminService.updateAllCourts(info);
-        assertThat(info.getInfo()).isEqualTo(COURT.getInfo());
-        assertThat(info.getInfoCy()).isEqualTo(COURT.getInfoCy());
+        verify(courtRepository, times(1)).updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
     }
 
 }

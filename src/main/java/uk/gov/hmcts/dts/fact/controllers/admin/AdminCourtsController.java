@@ -10,7 +10,7 @@ import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
-import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
 import java.util.List;
@@ -43,11 +43,11 @@ public class AdminCourtsController {
         return ok(adminService.getAllCourts());
     }
 
-    @PutMapping(path = "/all/info")
-    @ApiOperation("Update all courts info")
+    @PutMapping(path = "/info")
+    @ApiOperation("Update selected courts info")
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity<Void> updateAllCourts(@RequestBody CourtInfo info) {
-        adminService.updateAllCourts(info);
+    public ResponseEntity<Void> updateCourtsInfo(@RequestBody CourtInfoUpdate info) {
+        adminService.updateMultipleCourtsInfo(info);
 
         return noContent().build();
     }

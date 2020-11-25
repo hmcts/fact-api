@@ -2,12 +2,13 @@ package uk.gov.hmcts.dts.fact.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
-import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
@@ -58,14 +59,8 @@ public class AdminService {
         return new CourtGeneral(updatedCourt);
     }
 
-    public void updateAllCourts(CourtInfo info) {
-        List<Court> courts = courtRepository.findAll();
-
-        for (Court c : courts) {
-            c.setInfo(info.getInfo());
-            c.setInfoCy(info.getInfoCy());
-        }
-
-        courtRepository.saveAll(courts);
+    @Transactional
+    public void updateMultipleCourtsInfo(CourtInfoUpdate info) {
+        courtRepository.updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
     }
 }

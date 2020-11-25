@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
-import uk.gov.hmcts.dts.fact.model.admin.CourtInfo;
+import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -236,10 +237,11 @@ public class AdminCourtsEndpointTest {
     }
 
     @Test
-    public void shouldUpdateAllCourts() throws Exception {
-        CourtInfo courtInfo = new CourtInfo(
-            "Info",
-            "Info Cy"
+    public void shouldUpdateCourts() throws Exception {
+        CourtInfoUpdate courtInfo = new CourtInfoUpdate(
+            Lists.newArrayList(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG),
+            "Bulk info updated",
+            "Bulk info updated Cy"
         );
 
         final ObjectMapper mapper = new ObjectMapper();
@@ -251,7 +253,7 @@ public class AdminCourtsEndpointTest {
             .header(AUTHORIZATION, BEARER + token)
             .body(json)
             .when()
-            .put("/courts/all/info")
+            .put("/courts/info")
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(204);
