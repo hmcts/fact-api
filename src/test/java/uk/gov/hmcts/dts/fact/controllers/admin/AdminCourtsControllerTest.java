@@ -132,6 +132,7 @@ class AdminCourtsControllerTest {
             .andReturn();
     }
 
+    @Test
     void shouldReturnNotFoundForUnknownSlug() throws Exception {
         final String searchSlug = "some-slug";
 
