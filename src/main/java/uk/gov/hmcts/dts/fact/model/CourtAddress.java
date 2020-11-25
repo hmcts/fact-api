@@ -25,7 +25,10 @@ public class CourtAddress {
     private String postcode;
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
-        this.addressType = courtAddress.getAddressType().getName();
+        this.addressType = chooseString(
+            courtAddress.getAddressType().getNameCy(),
+            courtAddress.getAddressType().getName()
+        );
         this.addressLines = this.getLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
