@@ -14,9 +14,12 @@ import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +31,9 @@ class CivilSearchTest {
     private static final double LON = 0.7;
     private static final String AREA_OF_LAW = "Divorce";
     private static final String JE2_4BA = "JE2 4BA";
+    private static final String JE2_4 = "JE2 4";
+    private static final String JE2 = "JE2";
+    private static final String JE = "JE";
 
     @Autowired
     private CivilSearch civilSearch;
@@ -59,5 +65,141 @@ class CivilSearchTest {
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
         verify(fallbackProximitySearch).fallbackIfEmpty(courts, AREA_OF_LAW, mapitData);
+        verify(courtWithDistanceRepository, times(1)).findNearestTenByAreaOfLawAndCourtPostcode(
+            any(),
+            any(),
+            any(),
+            any()
+        );
+    }
+
+    @Test
+    void shouldReturnCivilSearchResultsWithPartialPostcodeMinusUnitCode() {
+
+        final MapitData mapitData = mock(MapitData.class);
+        final ServiceArea serviceArea = new ServiceArea();
+        final AreaOfLaw aol = new AreaOfLaw();
+        aol.setName(AREA_OF_LAW);
+        serviceArea.setAreaOfLaw(aol);
+        final List<CourtWithDistance> courts = singletonList(mock(CourtWithDistance.class));
+
+        when(mapitData.getLat()).thenReturn(LAT);
+        when(mapitData.getLon()).thenReturn(LON);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4))
+            .thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+
+        assertThat(courtWithDistances).isEqualTo(courts);
+        verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
+        verify(courtWithDistanceRepository, times(2)).findNearestTenByAreaOfLawAndCourtPostcode(
+            any(),
+            any(),
+            any(),
+            any()
+        );
+    }
+
+    @Test
+    void shouldReturnCivilSearchResultsWithPartialPostcodeOutcode() {
+
+        final MapitData mapitData = mock(MapitData.class);
+        final ServiceArea serviceArea = new ServiceArea();
+        final AreaOfLaw aol = new AreaOfLaw();
+        aol.setName(AREA_OF_LAW);
+        serviceArea.setAreaOfLaw(aol);
+        final List<CourtWithDistance> courts = singletonList(mock(CourtWithDistance.class));
+
+        when(mapitData.getLat()).thenReturn(LAT);
+        when(mapitData.getLon()).thenReturn(LON);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2))
+            .thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+
+        assertThat(courtWithDistances).isEqualTo(courts);
+        verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
+        verify(courtWithDistanceRepository, times(3)).findNearestTenByAreaOfLawAndCourtPostcode(
+            any(),
+            any(),
+            any(),
+            any()
+        );
+    }
+
+    @Test
+    void shouldReturnCivilSearchResultsWithPartialPostcodeArea() {
+
+        final MapitData mapitData = mock(MapitData.class);
+        final ServiceArea serviceArea = new ServiceArea();
+        final AreaOfLaw aol = new AreaOfLaw();
+        aol.setName(AREA_OF_LAW);
+        serviceArea.setAreaOfLaw(aol);
+        final List<CourtWithDistance> courts = singletonList(mock(CourtWithDistance.class));
+
+        when(mapitData.getLat()).thenReturn(LAT);
+        when(mapitData.getLon()).thenReturn(LON);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE))
+            .thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+
+        assertThat(courtWithDistances).isEqualTo(courts);
+        verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
+        verify(courtWithDistanceRepository, times(4)).findNearestTenByAreaOfLawAndCourtPostcode(
+            any(),
+            any(),
+            any(),
+            any()
+        );
+    }
+
+    @Test
+    void shouldReturnCivilSearchResultsFallback() {
+
+        final MapitData mapitData = mock(MapitData.class);
+        final ServiceArea serviceArea = new ServiceArea();
+        final AreaOfLaw aol = new AreaOfLaw();
+        aol.setName(AREA_OF_LAW);
+        serviceArea.setAreaOfLaw(aol);
+        final List<CourtWithDistance> courts = singletonList(mock(CourtWithDistance.class));
+
+        when(mapitData.getLat()).thenReturn(LAT);
+        when(mapitData.getLon()).thenReturn(LON);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2))
+            .thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE))
+            .thenReturn(emptyList());
+        when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW, mapitData)).thenReturn(courts);
+
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+
+        assertThat(courtWithDistances).isEqualTo(courts);
+        verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
+        verify(courtWithDistanceRepository, times(4)).findNearestTenByAreaOfLawAndCourtPostcode(
+            any(),
+            any(),
+            any(),
+            any()
+        );
     }
 }
