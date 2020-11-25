@@ -8,7 +8,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 import java.util.List;
 
 public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDistance, Integer> {
-    String SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance";
+    String SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance ";
     String FROM_SEARCH_COURT_AS_C = "FROM search_court as c ";
     String WHERE_C_DISPLAYED = "WHERE c.displayed ";
     String ORDER_BY_DISTANCE_C_NAME = "ORDER BY distance, c.name ";
@@ -19,7 +19,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     String AND_UPPER_AOL_NAME_UPPER_AOL = "AND UPPER(aol.name) = UPPER(:aol) ";
 
     @Query(nativeQuery = true,
-        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
             + WHERE_C_DISPLAYED
             + "ORDER BY distance, name "
@@ -27,7 +27,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     List<CourtWithDistance> findNearestTen(@Param(LAT) Double lat, @Param(LON) Double lon);
 
     @Query(nativeQuery = true,
-        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
             + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
@@ -37,7 +37,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     List<CourtWithDistance> findNearestTenByAreaOfLaw(@Param(LAT) Double lat, @Param(LON) Double lon, String aol);
 
     @Query(nativeQuery = true,
-        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
             + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
@@ -50,7 +50,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     List<CourtWithDistance> findNearestTenByAreaOfLawAndCourtPostcode(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String postcode);
 
     @Query(nativeQuery = true,
-        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtlocalauthorityareaoflaw claaol ON claaol.court_id = c.id "
             + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
@@ -63,7 +63,7 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     List<CourtWithDistance> findNearestTenByAreaOfLawAndLocalAuthority(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String localAuthority);
 
     @Query(nativeQuery = true,
-        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtlocalauthorityareaoflaw claaol ON claaol.court_id = c.id "
             + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
@@ -76,9 +76,9 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + ORDER_BY_DISTANCE_C_NAME
             + LIMIT_1)
     List<CourtWithDistance> findNearestRegionalByAreaOfLawAndLocalAuthority(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String localAuthority);
-    
+
     @Query(nativeQuery = true,
-        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE + " "
+        value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtlocalauthorityareaoflaw claaol ON claaol.court_id = c.id "
             + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
