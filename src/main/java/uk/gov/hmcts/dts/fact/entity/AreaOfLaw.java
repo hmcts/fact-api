@@ -22,4 +22,10 @@ public class AreaOfLaw {
     private String externalLinkDescription;
     @Column(name = "external_link_desc_cy")
     private String externalLinkDescriptionCy;
+    @Column(name = "display_name")
+    private String displayName;
+    @Column(name = "display_name_cy")
+    private String displayNameCy;
+    @Column(name = "display_external_link")
+    private String displayExternalLink;
 }
