@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static uk.gov.hmcts.dts.fact.util.Utils.*;
+import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 
 @Getter
 @Setter
