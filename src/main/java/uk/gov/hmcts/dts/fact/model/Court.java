@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
-import uk.gov.hmcts.dts.fact.util.CourtAddressTypeConverter;
 
 import java.util.List;
 
@@ -97,8 +96,7 @@ public class Court {
                 return facilityObj;
             })
             .collect(toList());
-        this.addresses = new CourtAddressTypeConverter().convertAddressType(
-            courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList()));
+        this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();
         this.dxNumbers = courtEntity.getContacts().stream().filter(NAME_IS_DX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
             .collect(toList());

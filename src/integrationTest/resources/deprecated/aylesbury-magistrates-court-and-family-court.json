@@ -91,13 +91,13 @@
   ],
   "addresses": [
     {
-      "type": "Visiting",
+      "type": "Visit us",
       "address": "Walton Street\n\n\n",
       "town": "Aylesbury",
       "postcode": "HP21 7QZ"
     },
     {
-      "type": "Postal",
+      "type": "Write to us",
       "address": "Milton Keynes Magistrates' Court and Family Court Hearing Centre\n301 Silbury Boulevard\nWitan Gate East\n",
       "town": "Central Milton Keynes",
       "postcode": "MK9 2AJ"

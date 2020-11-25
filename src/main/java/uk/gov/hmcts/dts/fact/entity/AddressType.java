@@ -16,6 +16,7 @@ public class AddressType {
     @Id
     private Integer id;
     private String name;
+    private String nameCy;
     @OneToOne(mappedBy = "addressType")
     private CourtAddress courtAddress;
 }

@@ -23,6 +23,7 @@ class CourtAddressTest {
         entity.setAddressCy("line 1 cy\rline 2 cy\nline 3 cy\r\nline 4 cy");
         final AddressType addressType = new AddressType();
         addressType.setName("Address Type");
+        addressType.setNameCy("Address Type in Welsh");
         entity.setAddressType(addressType);
         entity.setPostcode("A post code");
         entity.setTownName("A town name");
@@ -40,7 +41,10 @@ class CourtAddressTest {
         CourtAddress courtAddress = new CourtAddress(entity);
         assertEquals(welsh ? entity.getAddressCy().lines().collect(toList()) : entity.getAddress().lines().collect(
             toList()), courtAddress.getAddressLines());
-        assertEquals(entity.getAddressType().getName(), courtAddress.getAddressType());
+        assertEquals(
+            welsh ? entity.getAddressType().getNameCy() : entity.getAddressType().getName(),
+            courtAddress.getAddressType()
+        );
         assertEquals(entity.getPostcode(), courtAddress.getPostcode());
         assertEquals(welsh ? entity.getTownNameCy() : entity.getTownName(), courtAddress.getTownName());
 
