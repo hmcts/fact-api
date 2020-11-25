@@ -25,8 +25,36 @@ public class CivilSearch implements Search {
 
         final String areaOfLaw = serviceArea.getAreaOfLaw().getName();
 
-        final List<CourtWithDistance> courtsWithDistance = courtWithDistanceRepository
+        List<CourtWithDistance> courtsWithDistance = courtWithDistanceRepository
             .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, postcode);
+
+        if (courtsWithDistance.isEmpty()) {
+            final String postCodeMinusUnitCode = postcode.substring(0, postcode.length() - 2);
+            courtsWithDistance = courtWithDistanceRepository
+                .findNearestTenByAreaOfLawAndCourtPostcode(
+                    mapitData.getLat(),
+                    mapitData.getLon(),
+                    areaOfLaw,
+                    postCodeMinusUnitCode
+                );
+        }
+
+        if (courtsWithDistance.isEmpty()) {
+            final String outcode = postcode.substring(0, postcode.length() - 3);
+            courtsWithDistance = courtWithDistanceRepository
+                .findNearestTenByAreaOfLawAndCourtPostcode(
+                    mapitData.getLat(),
+                    mapitData.getLon(),
+                    areaOfLaw,
+                    outcode.trim()
+                );
+        }
+
+        if (courtsWithDistance.isEmpty()) {
+            final String areacode = postcode.split("[0-9]")[0];
+            courtsWithDistance = courtWithDistanceRepository
+                .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, areacode);
+        }
 
         return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
     }
