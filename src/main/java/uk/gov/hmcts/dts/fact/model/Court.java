@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import java.util.List;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
@@ -91,10 +92,11 @@ public class Court {
             .getFacilities()
             .stream()
             .map(facility -> {
-                Facility facilityObj = new Facility(facility);
+                final Facility facilityObj = new Facility(facility);
                 facilityObj.setDescription(stripHtmlFromString(facilityObj.getDescription()));
                 return facilityObj;
             })
+            .sorted(comparingInt(Facility::getOrder))
             .collect(toList());
         this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();
