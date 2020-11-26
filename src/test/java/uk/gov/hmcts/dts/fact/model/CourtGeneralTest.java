@@ -99,8 +99,8 @@ class CourtGeneralTest {
         assertEquals("slug", court.getSlug());
         assertEquals("Name", court.getName());
         assertEquals("Name in Welsh", court.getNameCy());
-        assertEquals("Info on court", court.getInfo());
-        assertEquals("Info on court in Welsh", court.getInfoCy());
+        assertEquals("<p>Info on court</p>", court.getInfo());
+        assertEquals("<p>Info on court in Welsh</p>", court.getInfoCy());
         assertEquals("Alert", court.getAlert());
         assertEquals("Alert in Welsh", court.getAlertCy());
         assertTrue(court.getOpen());
