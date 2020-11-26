@@ -8,6 +8,8 @@ import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Component
 public class CivilSearch implements Search {
 
@@ -56,6 +58,8 @@ public class CivilSearch implements Search {
                 .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, areacode);
         }
 
-        return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
+        courtsWithDistance = fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
+
+        return courtsWithDistance.stream().distinct().limit(10).collect(toList());
     }
 }

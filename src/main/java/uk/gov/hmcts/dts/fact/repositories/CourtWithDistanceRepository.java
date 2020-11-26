@@ -44,9 +44,8 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "JOIN search_courtpostcode cp ON cp.court_id = c.id "
             + WHERE_C_DISPLAYED
             + AND_UPPER_AOL_NAME_UPPER_AOL
-            + "AND UPPER(REPLACE(cp.postcode, ' ', '')) = UPPER(REPLACE(:postcode, ' ', '')) "
-            + ORDER_BY_DISTANCE_C_NAME
-            + LIMIT_10)
+            + "AND UPPER(REPLACE(cp.postcode, ' ', '')) LIKE CONCAT(UPPER(REPLACE(:postcode, ' ', '')),'%') "
+            + ORDER_BY_DISTANCE_C_NAME)
     List<CourtWithDistance> findNearestTenByAreaOfLawAndCourtPostcode(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String postcode);
 
     @Query(nativeQuery = true,
