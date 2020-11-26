@@ -12,12 +12,16 @@ import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
+import uk.gov.hmcts.dts.fact.entity.FacilityType;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
+import java.util.List;
 import java.util.Locale;
 
+import static java.lang.Integer.MAX_VALUE;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -76,11 +80,7 @@ class CourtTest {
         openingTimeEntity.setHours("opening times");
         courtEntity.setOpeningTimes(singletonList(openingTimeEntity));
 
-        final Facility facilityEntity = new Facility();
-        facilityEntity.setDescription("<p>Description of facility</p>");
-        facilityEntity.setDescriptionCy("<p>Description of facility in Welsh</p>");
-        facilityEntity.setName("Facility");
-        courtEntity.setFacilities(singletonList(facilityEntity));
+        courtEntity.setFacilities(createFacilities());
 
         courtEntity.setInfo("<p>Info on court</p>");
         courtEntity.setInfoCy("<p>Info on court in Welsh</p>");
@@ -110,10 +110,17 @@ class CourtTest {
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
         assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
+
+        final uk.gov.hmcts.dts.fact.model.Facility facility = court.getFacilities().get(0);
         assertEquals(
             welsh ? "Description of facility in Welsh" : "Description of facility",
-            court.getFacilities().get(0).getDescription()
+            facility.getDescription()
         );
+        assertEquals(2, facility.getOrder());
+        assertEquals(5, court.getFacilities().get(1).getOrder());
+        assertEquals(10, court.getFacilities().get(2).getOrder());
+        assertEquals(MAX_VALUE, court.getFacilities().get(3).getOrder());
+
         assertEquals(courtEntity.getServiceAreas().get(0).getName(), court.getServiceAreas().get(0));
 
         LocaleContextHolder.resetLocaleContext();
@@ -150,4 +157,26 @@ class CourtTest {
         assertEquals("Visit us", court.getAddresses().get(0).getAddressType());
     }
 
+    private static List<Facility> createFacilities() {
+        return asList(
+            createFacilityWithOrderOf(10),
+            createFacilityWithOrderOf(2),
+            createFacilityWithOrderOf(5),
+            createFacilityWith(null));
+    }
+
+    private static Facility createFacilityWithOrderOf(final int order) {
+        final FacilityType facilityType = new FacilityType();
+        facilityType.setOrder(order);
+        return createFacilityWith(facilityType);
+    }
+
+    private static Facility createFacilityWith(final FacilityType facilityType) {
+        final Facility facility = new Facility();
+        facility.setDescription("<p>Description of facility</p>");
+        facility.setDescriptionCy("<p>Description of facility in Welsh</p>");
+        facility.setName("Facility");
+        facility.setFacilityType(facilityType);
+        return facility;
+    }
 }

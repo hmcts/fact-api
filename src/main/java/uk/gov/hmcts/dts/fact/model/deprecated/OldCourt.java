@@ -11,7 +11,6 @@ import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.model.Contact;
 import uk.gov.hmcts.dts.fact.model.Email;
-import uk.gov.hmcts.dts.fact.model.Facility;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 
 import java.util.List;
@@ -45,7 +44,7 @@ public class OldCourt {
     private List<Email> emails;
     private List<Contact> contacts;
     private List<OpeningTime> openingTimes;
-    private List<Facility> facilities;
+    private List<OldFacility> facilities;
     private List<OldCourtAddress> addresses;
     private String gbs;
 
@@ -66,7 +65,7 @@ public class OldCourt {
         this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
         this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
         this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
-        this.facilities = courtEntity.getFacilities().stream().map(Facility::new).collect(toList());
+        this.facilities = courtEntity.getFacilities().stream().map(OldFacility::new).collect(toList());
         this.addresses = courtEntity.getAddresses().stream().map(OldCourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();
     }

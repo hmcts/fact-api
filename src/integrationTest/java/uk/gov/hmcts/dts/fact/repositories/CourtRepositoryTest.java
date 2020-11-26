@@ -46,7 +46,7 @@ class CourtRepositoryTest {
         assertThat(court.getAddresses().get(0).getAddressType()).isNotEqualTo("");
         assertThat(court.getEmails()).isEqualTo(expected.getEmails());
         assertThat(court.getCourtTypes()).isEqualTo(expected.getCourtTypes());
-        assertThat(court.getFacilities()).isEqualTo(expected.getFacilities());
+        assertThat(court.getFacilities()).containsExactlyInAnyOrderElementsOf(expected.getFacilities());
         assertThat(court.getOpeningTimes()).isEqualTo(expected.getOpeningTimes());
     }
 
@@ -91,11 +91,11 @@ class CourtRepositoryTest {
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         assertThat(result.stream().anyMatch(r -> r.getName().contains(query)));
         assertThat(result.stream()
-                       .filter(r -> !r.getName().contains(query))
-                       .map(Court::getAddresses)
-                       .flatMap(Collection::stream)
-                       .map(CourtAddress::getAddress)
-                       .anyMatch(a -> a.contains(query)));
+            .filter(r -> !r.getName().contains(query))
+            .map(Court::getAddresses)
+            .flatMap(Collection::stream)
+            .map(CourtAddress::getAddress)
+            .anyMatch(a -> a.contains(query)));
     }
 
     @Test
