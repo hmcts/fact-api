@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -33,8 +31,8 @@ public class CourtGeneral {
         this.slug = courtEntity.getSlug();
         this.name = courtEntity.getName();
         this.nameCy = courtEntity.getNameCy();
-        this.info = stripHtmlFromString(courtEntity.getInfo());
-        this.infoCy = stripHtmlFromString(courtEntity.getInfoCy());
+        this.info = courtEntity.getInfo();
+        this.infoCy = courtEntity.getInfoCy();
         this.open = courtEntity.getDisplayed();
         this.alert = courtEntity.getAlert();
         this.alertCy = courtEntity.getAlertCy();
