@@ -78,7 +78,8 @@ class AdminCourtsControllerTest {
     @Test
     void shouldUpdateGeneralCourtBySlug() throws Exception {
 
-        final Path courtEntityPath = Paths.get("src/test/resources/full-birmingham-civil-and-family-justice-centre-entity.json");
+        final Path courtEntityPath = Paths.get(
+            "src/test/resources/full-birmingham-civil-and-family-justice-centre-entity.json");
         final Court court = OBJECT_MAPPER.readValue(courtEntityPath.toFile(), Court.class);
 
         final CourtGeneral courtGeneral = new CourtGeneral(
@@ -88,6 +89,8 @@ class AdminCourtsControllerTest {
             "Birmingham Civil and Family Justice Centre Info",
             "Birmingham Civil and Family Justice Centre Info",
             true,
+            false,
+            false,
             "Birmingham Civil and Family Justice Centre Alert",
             "Birmingham Civil and Family Justice Centre Alert"
         );
@@ -102,9 +105,9 @@ class AdminCourtsControllerTest {
         final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
 
         mockMvc.perform(put(String.format(URL + "/%s/general", searchSlug))
-            .content(json)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
+                            .content(json)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.urgent_message").value(courtGeneral.getAlert()))
             .andExpect(jsonPath("$.urgent_message_cy").value(courtGeneral.getAlertCy()))

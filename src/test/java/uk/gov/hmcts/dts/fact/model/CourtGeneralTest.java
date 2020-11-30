@@ -18,6 +18,7 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CourtGeneralTest {
@@ -104,5 +105,6 @@ class CourtGeneralTest {
         assertEquals("Alert", court.getAlert());
         assertEquals("Alert in Welsh", court.getAlertCy());
         assertTrue(court.getOpen());
+        assertFalse(court.getAccessScheme());
     }
 }
