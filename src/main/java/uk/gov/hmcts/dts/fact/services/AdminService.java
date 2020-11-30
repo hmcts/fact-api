@@ -51,10 +51,16 @@ public class AdminService {
         Court court = getCourtEntityBySlug(slug);
         court.setAlert(courtGeneral.getAlert());
         court.setAlertCy(courtGeneral.getAlertCy());
+
         if (rolesProvider.getRoles().contains("fact-super-admin")) {
+            court.setDisplayed(courtGeneral.getOpen());
             court.setInfo(courtGeneral.getInfo());
             court.setInfoCy(courtGeneral.getInfoCy());
+            if (court.getInPerson() != null && court.getInPerson().getIsInPerson()) {
+                court.getInPerson().setAccessScheme(courtGeneral.getAccessScheme());
+            }
         }
+
         Court updatedCourt = courtRepository.save(court);
         return new CourtGeneral(updatedCourt);
     }

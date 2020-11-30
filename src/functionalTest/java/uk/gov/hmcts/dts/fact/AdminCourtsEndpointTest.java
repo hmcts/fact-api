@@ -128,6 +128,8 @@ public class AdminCourtsEndpointTest {
             "Admin Info",
             "Welsh Admin Info",
             true,
+            false,
+            false,
             "Admin Alert",
             "Welsh Admin Alert"
         );
@@ -160,6 +162,8 @@ public class AdminCourtsEndpointTest {
             "Admin Info",
             "Welsh Admin Info",
             true,
+            false,
+            false,
             "Admin Alert",
             "Welsh Admin Alert"
         );
@@ -187,6 +191,8 @@ public class AdminCourtsEndpointTest {
             "Super Admin Info",
             "Super Welsh Admin Info",
             true,
+            false,
+            false,
             "Super Admin Alert",
             "Super Welsh Admin Alert"
         );
@@ -220,6 +226,8 @@ public class AdminCourtsEndpointTest {
             "Admin Info",
             "Welsh Admin Info",
             true,
+            false,
+            false,
             "Admin Alert",
             "Welsh Admin Alert"
         );
