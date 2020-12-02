@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class CourtGeneral {
+public class Court {
 
     private String slug;
     private String name;
@@ -28,7 +28,7 @@ public class CourtGeneral {
     @JsonProperty("urgent_message_cy")
     private String alertCy;
 
-    public CourtGeneral(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.slug = courtEntity.getSlug();
         this.name = courtEntity.getName();
         this.nameCy = courtEntity.getNameCy();

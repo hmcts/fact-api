@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 
 import static io.restassured.RestAssured.given;
@@ -92,7 +92,7 @@ public class AdminCourtsEndpointTest {
     }
 
     @Test
-    public void shouldRetrieveCourtGeneralBySlug() {
+    public void shouldRetrieveCourtBySlug() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -102,12 +102,12 @@ public class AdminCourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        final CourtGeneral court = response.as(CourtGeneral.class);
+        final Court court = response.as(Court.class);
         assertThat(court.getName()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
     }
 
     @Test
-    public void shouldBeForbiddenFromGettingCourtGeneralBySlug() {
+    public void shouldBeForbiddenFromGettingCourtBySlug() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -120,8 +120,8 @@ public class AdminCourtsEndpointTest {
     }
 
     @Test
-    public void shouldUpdateCourtGeneralBySlugAsAdmin() throws Exception {
-        final CourtGeneral courtGeneral = new CourtGeneral(
+    public void shouldUpdateCourtBySlugAsAdmin() throws Exception {
+        final Court courtUpdate = new Court(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -134,7 +134,7 @@ public class AdminCourtsEndpointTest {
             "Welsh Admin Alert"
         );
 
-        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -146,16 +146,16 @@ public class AdminCourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        final CourtGeneral court = response.as(CourtGeneral.class);
-        assertThat(court.getAlert()).isEqualTo(courtGeneral.getAlert());
-        assertThat(court.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
-        assertThat(court.getInfo()).isNotEqualTo(courtGeneral.getInfo());
-        assertThat(court.getInfoCy()).isNotEqualTo(courtGeneral.getInfoCy());
+        final Court court = response.as(Court.class);
+        assertThat(court.getAlert()).isEqualTo(courtUpdate.getAlert());
+        assertThat(court.getAlertCy()).isEqualTo(courtUpdate.getAlertCy());
+        assertThat(court.getInfo()).isNotEqualTo(courtUpdate.getInfo());
+        assertThat(court.getInfoCy()).isNotEqualTo(courtUpdate.getInfoCy());
     }
 
     @Test
-    public void shouldBeForbiddenToUpdateCourtGeneralBySlug() throws Exception {
-        final CourtGeneral courtGeneral = new CourtGeneral(
+    public void shouldBeForbiddenToUpdateCourtBySlug() throws Exception {
+        final Court court = new Court(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -168,7 +168,7 @@ public class AdminCourtsEndpointTest {
             "Welsh Admin Alert"
         );
 
-        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(court);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -183,8 +183,8 @@ public class AdminCourtsEndpointTest {
     }
 
     @Test
-    public void shouldUpdateCourtGeneralBySlugAsSuperAdmin() throws Exception {
-        final CourtGeneral courtGeneral = new CourtGeneral(
+    public void shouldUpdateCourtBySlugAsSuperAdmin() throws Exception {
+        final Court courtUpdate = new Court(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -197,7 +197,7 @@ public class AdminCourtsEndpointTest {
             "Super Welsh Admin Alert"
         );
 
-        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
 
         final String superAdminToken = authClient.getSuperAdminToken();
         final var response = given()
@@ -210,16 +210,16 @@ public class AdminCourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        final CourtGeneral court = response.as(CourtGeneral.class);
-        assertThat(court.getAlert()).isEqualTo(courtGeneral.getAlert());
-        assertThat(court.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
-        assertThat(court.getInfo()).isEqualTo(courtGeneral.getInfo());
-        assertThat(court.getInfoCy()).isEqualTo(courtGeneral.getInfoCy());
+        final Court courtResponse = response.as(Court.class);
+        assertThat(courtResponse.getAlert()).isEqualTo(courtUpdate.getAlert());
+        assertThat(courtResponse.getAlertCy()).isEqualTo(courtUpdate.getAlertCy());
+        assertThat(courtResponse.getInfo()).isEqualTo(courtUpdate.getInfo());
+        assertThat(courtResponse.getInfoCy()).isEqualTo(courtUpdate.getInfoCy());
     }
 
     @Test
     public void shouldNotUpdateCourtAsNoTokenProvided() throws Exception {
-        final CourtGeneral courtGeneral = new CourtGeneral(
+        final Court courtUpdate = new Court(
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
             BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
@@ -231,7 +231,7 @@ public class AdminCourtsEndpointTest {
             "Admin Alert",
             "Welsh Admin Alert"
         );
-        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -275,7 +275,7 @@ public class AdminCourtsEndpointTest {
             .thenReturn();
 
         assertThat(getResponse.statusCode()).isEqualTo(200);
-        final CourtGeneral court = getResponse.as(CourtGeneral.class);
+        final Court court = getResponse.as(Court.class);
         assertThat(court.getInfo()).isEqualTo(courtInfo.getInfo());
         assertThat(court.getInfoCy()).isEqualTo(courtInfo.getInfoCy());
     }

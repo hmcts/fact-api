@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.model;
+package uk.gov.hmcts.dts.fact.model.admin;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
-import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Email;
@@ -14,19 +13,18 @@ import uk.gov.hmcts.dts.fact.entity.Facility;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
-import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CourtGeneralTest {
-    static Court courtEntity;
+class CourtTest {
+    static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
 
     @BeforeAll
     static void setUp() {
-        courtEntity = new Court();
+        courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
 
         final ServiceArea serviceAreaEntity = new ServiceArea();
         serviceAreaEntity.setName("Divorce");
@@ -95,7 +93,7 @@ class CourtGeneralTest {
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void testCreationOfAdminCourt(boolean welsh) {
-        CourtGeneral court = new CourtGeneral(courtEntity);
+        Court court = new Court(courtEntity);
 
         assertEquals("slug", court.getSlug());
         assertEquals("Name", court.getName());
