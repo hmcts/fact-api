@@ -7,6 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.dts.fact.model.OpeningTime;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 @Getter
 @Setter
@@ -27,6 +35,7 @@ public class Court {
     private String alert;
     @JsonProperty("urgent_message_cy")
     private String alertCy;
+    private List<OpeningTime> openingTimes;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.slug = courtEntity.getSlug();
@@ -39,5 +48,10 @@ public class Court {
         this.inPerson = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getIsInPerson();
         this.alert = courtEntity.getAlert();
         this.alertCy = courtEntity.getAlertCy();
+        this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(cot -> cot.getOpeningTime())
+            .map(OpeningTime::new).collect(toList());
     }
 }

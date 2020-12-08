@@ -7,6 +7,7 @@ import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
@@ -70,7 +71,9 @@ class CourtTest {
         final OpeningTime openingTimeEntity = new OpeningTime();
         openingTimeEntity.setType("opening time type");
         openingTimeEntity.setHours("opening times");
-        courtEntity.setOpeningTimes(singletonList(openingTimeEntity));
+        final CourtOpeningTime courtOpeningTime = new CourtOpeningTime();
+        courtOpeningTime.setOpeningTime(openingTimeEntity);
+        courtEntity.setCourtOpeningTimes(singletonList(courtOpeningTime));
 
         final Facility facilityEntity = new Facility();
         facilityEntity.setDescription("<p>Description of facility</p>");
@@ -104,5 +107,14 @@ class CourtTest {
         assertEquals("Alert in Welsh", court.getAlertCy());
         assertTrue(court.getOpen());
         assertFalse(court.getAccessScheme());
+        assertEquals(courtEntity.getCourtOpeningTimes().size(), court.getOpeningTimes().size());
+        assertEquals(
+            courtEntity.getCourtOpeningTimes().get(0).getOpeningTime().getType(),
+            court.getOpeningTimes().get(0).getType()
+        );
+        assertEquals(
+            courtEntity.getCourtOpeningTimes().get(0).getOpeningTime().getHours(),
+            court.getOpeningTimes().get(0).getHours()
+        );
     }
 }

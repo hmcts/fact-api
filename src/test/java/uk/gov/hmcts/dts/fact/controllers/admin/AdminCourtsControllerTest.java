@@ -21,6 +21,7 @@ import java.util.List;
 
 import static java.nio.file.Files.readAllBytes;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -94,7 +95,8 @@ class AdminCourtsControllerTest {
             false,
             false,
             "Birmingham Civil and Family Justice Centre Alert",
-            "Birmingham Civil and Family Justice Centre Alert"
+            "Birmingham Civil and Family Justice Centre Alert",
+            emptyList()
         );
 
         courtEntity.setInfo(court.getInfo());

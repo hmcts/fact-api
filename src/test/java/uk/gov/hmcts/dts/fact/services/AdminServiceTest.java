@@ -17,6 +17,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -63,7 +64,8 @@ class AdminServiceTest {
             true,
             true,
             "Birmingham Civil and Family Justice Centre Alert",
-            "Birmingham Civil and Family Justice Centre Alert"
+            "Birmingham Civil and Family Justice Centre Alert",
+            emptyList()
         );
     }
 
@@ -80,7 +82,7 @@ class AdminServiceTest {
     void shouldReturnCourtObject() {
         final Court mock = mock(Court.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
-        assertThat(adminService.getCourtBySlug(SOME_SLUG)).isInstanceOf(Court.class);
+        assertThat(adminService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.Court.class);
     }
 
     @Test

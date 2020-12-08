@@ -14,10 +14,12 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 
 import static io.restassured.RestAssured.given;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -131,7 +133,8 @@ public class AdminCourtsEndpointTest {
             false,
             false,
             "Admin Alert",
-            "Welsh Admin Alert"
+            "Welsh Admin Alert",
+            emptyList()
         );
 
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
@@ -165,7 +168,8 @@ public class AdminCourtsEndpointTest {
             false,
             false,
             "Admin Alert",
-            "Welsh Admin Alert"
+            "Welsh Admin Alert",
+            emptyList()
         );
 
         final String json = OBJECT_MAPPER.writeValueAsString(court);
@@ -194,7 +198,8 @@ public class AdminCourtsEndpointTest {
             false,
             false,
             "Super Admin Alert",
-            "Super Welsh Admin Alert"
+            "Super Welsh Admin Alert",
+            emptyList()
         );
 
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
@@ -229,7 +234,8 @@ public class AdminCourtsEndpointTest {
             false,
             false,
             "Admin Alert",
-            "Welsh Admin Alert"
+            "Welsh Admin Alert",
+            emptyList()
         );
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
 
@@ -264,7 +270,7 @@ public class AdminCourtsEndpointTest {
             .put("/courts/info")
             .thenReturn();
 
-        assertThat(response.statusCode()).isEqualTo(204);
+        assertThat(response.statusCode()).isEqualTo(NO_CONTENT.value());
 
         final var getResponse = given()
             .relaxedHTTPSValidation()
@@ -274,7 +280,7 @@ public class AdminCourtsEndpointTest {
             .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
-        assertThat(getResponse.statusCode()).isEqualTo(200);
+        assertThat(getResponse.statusCode()).isEqualTo(OK.value());
         final Court court = getResponse.as(Court.class);
         assertThat(court.getInfo()).isEqualTo(courtInfo.getInfo());
         assertThat(court.getInfoCy()).isEqualTo(courtInfo.getInfoCy());

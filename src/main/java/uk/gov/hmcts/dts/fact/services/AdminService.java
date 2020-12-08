@@ -4,14 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -58,6 +64,30 @@ public class AdminService {
             if (courtEntity.getInPerson() != null && courtEntity.getInPerson().getIsInPerson()) {
                 courtEntity.getInPerson().setAccessScheme(court.getAccessScheme());
             }
+        }
+
+
+        final List<OpeningTime> openingTimes =
+            ofNullable(court.getOpeningTimes())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .map(o -> new OpeningTime(o.getType(), o.getHours()))
+                .collect(toList());
+
+        List<CourtOpeningTime> courtOpeningTimes = new ArrayList<>();
+        for (int i = 0; i < openingTimes.size(); i++) {
+            @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+            CourtOpeningTime courtOpeningTime = new CourtOpeningTime();
+            courtOpeningTime.setCourt(courtEntity);
+            courtOpeningTime.setOpeningTime(openingTimes.get(i));
+            courtOpeningTime.setSort(i);
+            courtOpeningTimes.add(courtOpeningTime);
+        }
+        if (courtEntity.getCourtOpeningTimes() == null) {
+            courtEntity.setCourtOpeningTimes(courtOpeningTimes);
+        } else {
+            courtEntity.getCourtOpeningTimes().clear();
+            courtEntity.getCourtOpeningTimes().addAll(courtOpeningTimes);
         }
 
         uk.gov.hmcts.dts.fact.entity.Court updatedCourt = courtRepository.save(courtEntity);
