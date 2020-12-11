@@ -4,15 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
-import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -36,33 +41,57 @@ public class AdminService {
             .collect(toList());
     }
 
-    public CourtGeneral getCourtGeneralBySlug(String slug) {
+    public Court getCourtBySlug(String slug) {
         return courtRepository
             .findBySlug(slug)
-            .map(CourtGeneral::new)
+            .map(Court::new)
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
-    public Court getCourtEntityBySlug(String slug) {
+    public uk.gov.hmcts.dts.fact.entity.Court getCourtEntityBySlug(String slug) {
         return courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
     }
 
-    public CourtGeneral saveGeneral(String slug, CourtGeneral courtGeneral) {
-        Court court = getCourtEntityBySlug(slug);
-        court.setAlert(courtGeneral.getAlert());
-        court.setAlertCy(courtGeneral.getAlertCy());
+    public Court save(String slug, Court court) {
+        uk.gov.hmcts.dts.fact.entity.Court courtEntity = getCourtEntityBySlug(slug);
+        courtEntity.setAlert(court.getAlert());
+        courtEntity.setAlertCy(court.getAlertCy());
 
         if (rolesProvider.getRoles().contains("fact-super-admin")) {
-            court.setDisplayed(courtGeneral.getOpen());
-            court.setInfo(courtGeneral.getInfo());
-            court.setInfoCy(courtGeneral.getInfoCy());
-            if (court.getInPerson() != null && court.getInPerson().getIsInPerson()) {
-                court.getInPerson().setAccessScheme(courtGeneral.getAccessScheme());
+            courtEntity.setDisplayed(court.getOpen());
+            courtEntity.setInfo(court.getInfo());
+            courtEntity.setInfoCy(court.getInfoCy());
+            if (courtEntity.getInPerson() != null && courtEntity.getInPerson().getIsInPerson()) {
+                courtEntity.getInPerson().setAccessScheme(court.getAccessScheme());
             }
         }
 
-        Court updatedCourt = courtRepository.save(court);
-        return new CourtGeneral(updatedCourt);
+
+        final List<OpeningTime> openingTimes =
+            ofNullable(court.getOpeningTimes())
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .map(o -> new OpeningTime(o.getType(), o.getHours()))
+                .collect(toList());
+
+        List<CourtOpeningTime> courtOpeningTimes = new ArrayList<>();
+        for (int i = 0; i < openingTimes.size(); i++) {
+            @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+            CourtOpeningTime courtOpeningTime = new CourtOpeningTime();
+            courtOpeningTime.setCourt(courtEntity);
+            courtOpeningTime.setOpeningTime(openingTimes.get(i));
+            courtOpeningTime.setSort(i);
+            courtOpeningTimes.add(courtOpeningTime);
+        }
+        if (courtEntity.getCourtOpeningTimes() == null) {
+            courtEntity.setCourtOpeningTimes(courtOpeningTimes);
+        } else {
+            courtEntity.getCourtOpeningTimes().clear();
+            courtEntity.getCourtOpeningTimes().addAll(courtOpeningTimes);
+        }
+
+        uk.gov.hmcts.dts.fact.entity.Court updatedCourt = courtRepository.save(courtEntity);
+        return new Court(updatedCourt);
     }
 
     @Transactional

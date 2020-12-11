@@ -2,6 +2,15 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
     <cve>CVE-2020-5421</cve>
+    <cve>CVE-2020-25638</cve>
+    <cve>CVE-2020-17527</cve>
+    <cve>CVE-2008-1392</cve>
+    <cve>CVE-2009-0177</cve>
+    <cve>CVE-2009-0908</cve>
+    <cve>CVE-2009-1146</cve>
+    <cve>CVE-2009-1147</cve>
+    <cve>CVE-2009-1244</cve>
+    <cve>CVE-2009-1805</cve>
   </suppress>
   <suppress until="2030-01-01">
     <notes><![CDATA[

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -76,13 +77,8 @@ public class Court {
     )
     private List<Contact> contacts;
 
-    @ManyToMany
-    @JoinTable(
-        name = "search_courtopeningtime",
-        joinColumns = @JoinColumn(name = COURT_ID),
-        inverseJoinColumns = @JoinColumn(name = "opening_time_id")
-    )
-    private List<OpeningTime> openingTimes;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "court", orphanRemoval = true)
+    private List<CourtOpeningTime> courtOpeningTimes;
 
     @ManyToMany
     @JoinTable(

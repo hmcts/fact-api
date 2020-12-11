@@ -78,7 +78,6 @@ class CourtTest {
         final OpeningTime openingTimeEntity = new OpeningTime();
         openingTimeEntity.setType("opening time type");
         openingTimeEntity.setHours("opening times");
-        courtEntity.setOpeningTimes(singletonList(openingTimeEntity));
 
         courtEntity.setFacilities(createFacilities());
 
@@ -162,7 +161,8 @@ class CourtTest {
             createFacilityWithOrderOf(10),
             createFacilityWithOrderOf(2),
             createFacilityWithOrderOf(5),
-            createFacilityWith(null));
+            createFacilityWith(null)
+        );
     }
 
     private static Facility createFacilityWithOrderOf(final int order) {

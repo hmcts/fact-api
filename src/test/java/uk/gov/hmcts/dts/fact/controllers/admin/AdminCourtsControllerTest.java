@@ -8,10 +8,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
@@ -22,6 +21,7 @@ import java.util.List;
 
 import static java.nio.file.Files.readAllBytes;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -64,11 +64,11 @@ class AdminCourtsControllerTest {
         final Path path = Paths.get("src/test/resources/birmingham-civil-and-family-justice-centre-general.json");
         final String expectedJson = new String(readAllBytes(path));
 
-        final CourtGeneral court = OBJECT_MAPPER.readValue(path.toFile(), CourtGeneral.class);
+        final Court courtEntity = OBJECT_MAPPER.readValue(path.toFile(), Court.class);
 
         final String searchSlug = "some-slug";
 
-        when(adminService.getCourtGeneralBySlug(searchSlug)).thenReturn(court);
+        when(adminService.getCourtBySlug(searchSlug)).thenReturn(courtEntity);
         mockMvc.perform(get(String.format(URL + "/%s/general", searchSlug)))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
@@ -80,9 +80,12 @@ class AdminCourtsControllerTest {
 
         final Path courtEntityPath = Paths.get(
             "src/test/resources/full-birmingham-civil-and-family-justice-centre-entity.json");
-        final Court court = OBJECT_MAPPER.readValue(courtEntityPath.toFile(), Court.class);
+        final uk.gov.hmcts.dts.fact.entity.Court courtEntity = OBJECT_MAPPER.readValue(
+            courtEntityPath.toFile(),
+            uk.gov.hmcts.dts.fact.entity.Court.class
+        );
 
-        final CourtGeneral courtGeneral = new CourtGeneral(
+        final Court court = new Court(
             "slug",
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre",
@@ -92,27 +95,28 @@ class AdminCourtsControllerTest {
             false,
             false,
             "Birmingham Civil and Family Justice Centre Alert",
-            "Birmingham Civil and Family Justice Centre Alert"
+            "Birmingham Civil and Family Justice Centre Alert",
+            emptyList()
         );
 
-        court.setInfo(courtGeneral.getInfo());
-        court.setInfoCy(courtGeneral.getInfoCy());
-        court.setAlert(courtGeneral.getAlert());
-        court.setAlertCy(courtGeneral.getAlertCy());
-        when(adminService.saveGeneral(any(), any())).thenReturn(new CourtGeneral(court));
+        courtEntity.setInfo(court.getInfo());
+        courtEntity.setInfoCy(court.getInfoCy());
+        courtEntity.setAlert(court.getAlert());
+        courtEntity.setAlertCy(court.getAlertCy());
+        when(adminService.save(any(), any())).thenReturn(new Court(courtEntity));
 
         final String searchSlug = "some-slug";
-        final String json = OBJECT_MAPPER.writeValueAsString(courtGeneral);
+        final String json = OBJECT_MAPPER.writeValueAsString(court);
 
         mockMvc.perform(put(String.format(URL + "/%s/general", searchSlug))
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.urgent_message").value(courtGeneral.getAlert()))
-            .andExpect(jsonPath("$.urgent_message_cy").value(courtGeneral.getAlertCy()))
-            .andExpect(jsonPath("$.info").value(courtGeneral.getInfo()))
-            .andExpect(jsonPath("$.info_cy").value(courtGeneral.getInfoCy()))
+            .andExpect(jsonPath("$.urgent_message").value(court.getAlert()))
+            .andExpect(jsonPath("$.urgent_message_cy").value(court.getAlertCy()))
+            .andExpect(jsonPath("$.info").value(court.getInfo()))
+            .andExpect(jsonPath("$.info_cy").value(court.getInfoCy()))
             .andReturn();
 
     }
@@ -141,7 +145,7 @@ class AdminCourtsControllerTest {
     void shouldReturnNotFoundForUnknownSlug() throws Exception {
         final String searchSlug = "some-slug";
 
-        when(adminService.getCourtGeneralBySlug(searchSlug)).thenThrow(new NotFoundException("search criteria"));
+        when(adminService.getCourtBySlug(searchSlug)).thenThrow(new NotFoundException("search criteria"));
 
         mockMvc.perform(get(String.format(URL + "/%s/general", searchSlug)))
             .andExpect(status().isNotFound())

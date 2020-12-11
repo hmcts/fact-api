@@ -11,13 +11,13 @@ import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -29,9 +29,9 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = AdminService.class)
 class AdminServiceTest {
 
-    private Court court;
+    private Court courtEntity;
     private static final String SOME_SLUG = "some-slug";
-    private static CourtGeneral courtGeneral;
+    private static uk.gov.hmcts.dts.fact.model.admin.Court court;
 
     @Autowired
     private AdminService adminService;
@@ -44,17 +44,17 @@ class AdminServiceTest {
 
     @BeforeEach
     void setUp() {
-        court = new Court();
-        court.setSlug("slug");
-        court.setName("some-name");
-        court.setNameCy("some-name-cy");
-        court.setInfo("some-info");
-        court.setInfoCy("some-info-cy");
-        court.setAlert("some-urgent-message");
-        court.setAlertCy("some-urgent-message-cy");
-        court.setDisplayed(true);
+        courtEntity = new Court();
+        courtEntity.setSlug("slug");
+        courtEntity.setName("some-name");
+        courtEntity.setNameCy("some-name-cy");
+        courtEntity.setInfo("some-info");
+        courtEntity.setInfoCy("some-info-cy");
+        courtEntity.setAlert("some-urgent-message");
+        courtEntity.setAlertCy("some-urgent-message-cy");
+        courtEntity.setDisplayed(true);
 
-        courtGeneral = new CourtGeneral(
+        court = new uk.gov.hmcts.dts.fact.model.admin.Court(
             "slug",
             "Birmingham Civil and Family Justice Centre",
             "Birmingham Civil and Family Justice Centre",
@@ -64,7 +64,8 @@ class AdminServiceTest {
             true,
             true,
             "Birmingham Civil and Family Justice Centre Alert",
-            "Birmingham Civil and Family Justice Centre Alert"
+            "Birmingham Civil and Family Justice Centre Alert",
+            emptyList()
         );
     }
 
@@ -78,10 +79,10 @@ class AdminServiceTest {
     }
 
     @Test
-    void shouldReturnCourtGeneralObject() {
+    void shouldReturnCourtObject() {
         final Court mock = mock(Court.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(mock));
-        assertThat(adminService.getCourtGeneralBySlug(SOME_SLUG)).isInstanceOf(CourtGeneral.class);
+        assertThat(adminService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.Court.class);
     }
 
     @Test
@@ -93,27 +94,27 @@ class AdminServiceTest {
 
     @Test
     void shouldSaveCourtAsAdmin() {
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(courtEntity));
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-admin"));
-        when(courtRepository.save(court)).thenReturn(court);
-        final CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
-        assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
-        assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
-        assertThat(courtResults.getInfo()).isNotEqualTo(courtGeneral.getInfo());
-        assertThat(courtResults.getInfoCy()).isNotEqualTo(courtGeneral.getInfoCy());
+        when(courtRepository.save(courtEntity)).thenReturn(courtEntity);
+        final uk.gov.hmcts.dts.fact.model.admin.Court courtResults = adminService.save(SOME_SLUG, court);
+        assertThat(courtResults.getAlert()).isEqualTo(court.getAlert());
+        assertThat(courtResults.getAlertCy()).isEqualTo(court.getAlertCy());
+        assertThat(courtResults.getInfo()).isNotEqualTo(court.getInfo());
+        assertThat(courtResults.getInfoCy()).isNotEqualTo(court.getInfoCy());
     }
 
     @Test
     void shouldSaveCourtAsSuperAdmin() {
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(courtEntity));
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
-        when(courtRepository.save(court)).thenReturn(court);
-        final CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
-        assertThat(courtResults.getAlert()).isEqualTo(courtGeneral.getAlert());
-        assertThat(courtResults.getAlertCy()).isEqualTo(courtGeneral.getAlertCy());
-        assertThat(courtResults.getInfo()).isEqualTo(courtGeneral.getInfo());
-        assertThat(courtResults.getInfoCy()).isEqualTo(courtGeneral.getInfoCy());
-        assertThat(courtResults.getOpen()).isEqualTo(courtGeneral.getOpen());
+        when(courtRepository.save(courtEntity)).thenReturn(courtEntity);
+        final uk.gov.hmcts.dts.fact.model.admin.Court courtResults = adminService.save(SOME_SLUG, court);
+        assertThat(courtResults.getAlert()).isEqualTo(court.getAlert());
+        assertThat(courtResults.getAlertCy()).isEqualTo(court.getAlertCy());
+        assertThat(courtResults.getInfo()).isEqualTo(court.getInfo());
+        assertThat(courtResults.getInfoCy()).isEqualTo(court.getInfoCy());
+        assertThat(courtResults.getOpen()).isEqualTo(court.getOpen());
         assertThat(courtResults.getAccessScheme()).isEqualTo(null);
     }
 
@@ -122,17 +123,17 @@ class AdminServiceTest {
         InPerson inPerson = new InPerson();
         inPerson.setIsInPerson(true);
         inPerson.setAccessScheme(true);
-        court.setInPerson(inPerson);
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
+        courtEntity.setInPerson(inPerson);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(courtEntity));
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
-        when(courtRepository.save(court)).thenReturn(court);
-        final CourtGeneral courtResults = adminService.saveGeneral(SOME_SLUG, courtGeneral);
-        assertThat(courtResults.getAccessScheme()).isEqualTo(courtGeneral.getAccessScheme());
+        when(courtRepository.save(courtEntity)).thenReturn(courtEntity);
+        final uk.gov.hmcts.dts.fact.model.admin.Court courtResults = adminService.save(SOME_SLUG, court);
+        assertThat(courtResults.getAccessScheme()).isEqualTo(court.getAccessScheme());
     }
 
     @Test
     void shouldUpdateAllCourtInfo() {
-        CourtInfoUpdate info = new CourtInfoUpdate(singletonList(court.getSlug()), "updated info", "Welsh info");
+        CourtInfoUpdate info = new CourtInfoUpdate(singletonList(courtEntity.getSlug()), "updated info", "Welsh info");
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
 
         adminService.updateMultipleCourtsInfo(info);
