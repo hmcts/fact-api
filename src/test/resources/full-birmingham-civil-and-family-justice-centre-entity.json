@@ -205,20 +205,6 @@
       "explanation": "Court of Protection"
     }
   ],
-  "openingTimes": [
-    {
-      "type": "Telephone Enquiries from",
-      "hours": "8:30am to 5pm"
-    },
-    {
-      "type": "Court building open",
-      "hours": "Monday to Friday 9am to 5pm"
-    },
-    {
-      "type": "Court counter open",
-      "hours": "By prior appointment only (except High Court and Administrative Court 10am to 4pm)"
-    }
-  ],
   "facilities": [
     {
       "description": "Located on every floor.",

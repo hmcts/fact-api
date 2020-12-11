@@ -10,10 +10,13 @@ import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import static java.util.Comparator.comparingInt;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
@@ -87,7 +90,11 @@ public class Court {
             .map(Contact::new).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
-        this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
+        this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(cot -> cot.getOpeningTime())
+            .map(OpeningTime::new).collect(toList());
         this.facilities = courtEntity
             .getFacilities()
             .stream()

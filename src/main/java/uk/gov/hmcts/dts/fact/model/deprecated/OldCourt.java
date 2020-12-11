@@ -13,8 +13,11 @@ import uk.gov.hmcts.dts.fact.model.Contact;
 import uk.gov.hmcts.dts.fact.model.Email;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
@@ -64,7 +67,11 @@ public class OldCourt {
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
         this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
-        this.openingTimes = courtEntity.getOpeningTimes().stream().map(OpeningTime::new).collect(toList());
+        this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(cot -> cot.getOpeningTime())
+            .map(OpeningTime::new).collect(toList());
         this.facilities = courtEntity.getFacilities().stream().map(OldFacility::new).collect(toList());
         this.addresses = courtEntity.getAddresses().stream().map(OldCourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();

@@ -5,11 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.admin.CourtGeneral;
+import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.services.AdminService;
 
@@ -55,15 +62,15 @@ public class AdminCourtsController {
     @GetMapping(path = "/{slug}/general")
     @ApiOperation("Find court details by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<CourtGeneral> findCourtGeneralByName(@PathVariable String slug) {
-        return ok(adminService.getCourtGeneralBySlug(slug));
+    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
+        return ok(adminService.getCourtBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/general")
     @ApiOperation("Update court")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<CourtGeneral> updateGeneralCourtBySlug(@PathVariable String slug, @RequestBody CourtGeneral updatedCourt) {
-        return ok(adminService.saveGeneral(slug, updatedCourt));
+    public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug, @RequestBody Court updatedCourt) {
+        return ok(adminService.save(slug, updatedCourt));
     }
 
     @ExceptionHandler(NotFoundException.class)
