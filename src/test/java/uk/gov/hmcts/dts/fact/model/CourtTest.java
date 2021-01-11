@@ -9,6 +9,8 @@ import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
@@ -56,7 +58,9 @@ class CourtTest {
         emailEntity.setAddress("email address");
         emailEntity.setDescription("email address description");
         emailEntity.setExplanation("explanation for email address");
-        courtEntity.setEmails(singletonList(emailEntity));
+        CourtEmail courtEmailEntity = new CourtEmail();
+        courtEmailEntity.setEmail(emailEntity);
+        courtEntity.setCourtEmails(singletonList(courtEmailEntity));
 
         final Contact contactEntity = new Contact();
         contactEntity.setName("DX");
@@ -78,6 +82,9 @@ class CourtTest {
         final OpeningTime openingTimeEntity = new OpeningTime();
         openingTimeEntity.setType("opening time type");
         openingTimeEntity.setHours("opening times");
+        final CourtOpeningTime courtOpeningTimeEntity = new CourtOpeningTime();
+        courtOpeningTimeEntity.setOpeningTime(openingTimeEntity);
+        courtEntity.setCourtOpeningTimes(singletonList(courtOpeningTimeEntity));
 
         courtEntity.setFacilities(createFacilities());
 

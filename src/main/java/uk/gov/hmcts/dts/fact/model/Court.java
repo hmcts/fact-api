@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
@@ -89,11 +91,15 @@ public class Court {
         this.contacts = courtEntity.getContacts().stream().filter(NAME_IS_NOT_DX)
             .map(Contact::new).collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
-        this.emails = courtEntity.getEmails().stream().map(Email::new).collect(toList());
+        this.emails = ofNullable(courtEntity.getCourtEmails())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtEmail::getEmail)
+            .map(Email::new).collect(toList());
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
-            .map(cot -> cot.getOpeningTime())
+            .map(CourtOpeningTime::getOpeningTime)
             .map(OpeningTime::new).collect(toList());
         this.facilities = courtEntity
             .getFacilities()
