@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import static java.util.Comparator.comparing;
@@ -24,6 +25,7 @@ import static java.util.Comparator.comparing;
 @SuppressWarnings("PMD.TooManyFields")
 public class Court {
     private static final String COURT_ID = "court_id";
+    public static final String COURT_STRING = "court";
     @Id
     private Integer id;
     private String name;
@@ -61,13 +63,9 @@ public class Court {
     )
     private List<CourtType> courtTypes;
 
-    @ManyToMany
-    @JoinTable(
-        name = "search_courtemail",
-        joinColumns = @JoinColumn(name = COURT_ID),
-        inverseJoinColumns = @JoinColumn(name = "email_id")
-    )
-    private List<Email> emails;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
+    @OrderBy("order")
+    private List<CourtEmail> courtEmails;
 
     @ManyToMany
     @JoinTable(
@@ -75,9 +73,11 @@ public class Court {
         joinColumns = @JoinColumn(name = COURT_ID),
         inverseJoinColumns = @JoinColumn(name = "contact_id")
     )
+    @OrderBy("sort_order")
     private List<Contact> contacts;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "court", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
+    @OrderBy("sort")
     private List<CourtOpeningTime> courtOpeningTimes;
 
     @ManyToMany
@@ -88,7 +88,7 @@ public class Court {
     )
     private List<Facility> facilities;
 
-    @OneToMany(mappedBy = "court")
+    @OneToMany(mappedBy = COURT_STRING)
     private List<CourtAddress> addresses;
 
     private String gbs;
@@ -104,7 +104,7 @@ public class Court {
     )
     private List<ServiceArea> serviceAreas;
 
-    @OneToMany(mappedBy = "court")
+    @OneToMany(mappedBy = COURT_STRING)
     private List<ServiceAreaCourt> serviceAreaCourts;
 
     public List<AreaOfLaw> getAreasOfLaw() {
