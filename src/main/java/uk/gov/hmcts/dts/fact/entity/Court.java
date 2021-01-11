@@ -25,7 +25,7 @@ import static java.util.Comparator.comparing;
 @SuppressWarnings("PMD.TooManyFields")
 public class Court {
     private static final String COURT_ID = "court_id";
-    public static final String COURT_STRING = "court";
+    private static final String COURT_STRING = "court";
     @Id
     private Integer id;
     private String name;
