@@ -11,11 +11,13 @@ import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Facility;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
-import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static java.util.Optional.ofNullable;
 
 @Getter
 @Setter
@@ -38,25 +40,33 @@ public class CourtForDownload {
     private String url;
 
     public CourtForDownload(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
-        this.open = courtEntity.getDisplayed() ? "open" : "closed";
+        this.name = courtEntity.getName();
+        this.open = courtEntity.getDisplayed() == true ? "open" : "closed";
         this.updated = courtEntity.getUpdatedAt() == null
             ? null : new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
 
-        this.address = courtEntity
-            .getAddresses()
-            .stream().findFirst()
+        this.address = ofNullable(courtEntity.getAddresses())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .findFirst()
             .map(this::formatAddress)
             .orElse("");
         this.crownCourtCode = courtEntity.getNumber();
         this.countyCourtCode = courtEntity.getCciCode();
         this.magistratesCourtCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::getName).collect(Collectors.joining(", "));
-
-        this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(Collectors.joining(", "));
-        this.facilities = courtEntity
-            .getFacilities()
-            .stream()
+        this.areasOfLaw = ofNullable(courtEntity.getAreasOfLaw())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(AreaOfLaw::getName)
+            .collect(Collectors.joining(", "));
+        this.courtTypes = ofNullable(courtEntity.getCourtTypes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtType::getName)
+            .collect(Collectors.joining(", "));
+        this.facilities = ofNullable(courtEntity.getFacilities())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
             .map(Facility::getName)
             .collect(Collectors.joining(", "));
         this.url = WWW_FIND_COURT_TRIBUNAL_SERVICE_GOV_UK_COURTS + courtEntity.getSlug();
@@ -64,7 +74,7 @@ public class CourtForDownload {
 
     private String formatAddress(CourtAddress courtAddress) {
         return String.format(
-            "%s%s,%s",
+            "%s, %s, %s",
             courtAddress.getAddress()
                 .replaceAll("\\n", ",")
                 .replaceAll("\\r", ",")
