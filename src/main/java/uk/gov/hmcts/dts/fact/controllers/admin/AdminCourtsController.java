@@ -47,7 +47,7 @@ public class AdminCourtsController {
     @ApiOperation("Return all courts")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtReference>> getAllCourts() {
-        return ok(adminService.getAllCourts());
+        return ok(adminService.getAllCourtReferences());
     }
 
     @PutMapping(path = "/info")

@@ -6,6 +6,7 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.Court;
+import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +44,15 @@ public class CourtService {
         this.courtRepository = courtRepository;
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
+    }
+
+    public List<CourtForDownload> getAllCourtsForDownload() {
+        return courtRepository
+            .findAll()
+            .stream()
+            .map(CourtForDownload::new)
+            .sorted(Comparator.comparing(CourtForDownload::getName))
+            .collect(toList());
     }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {

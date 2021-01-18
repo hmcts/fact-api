@@ -33,7 +33,7 @@ public class AdminService {
         this.rolesProvider = rolesProvider;
     }
 
-    public List<CourtReference> getAllCourts() {
+    public List<CourtReference> getAllCourtReferences() {
         return courtRepository
             .findAll()
             .stream()

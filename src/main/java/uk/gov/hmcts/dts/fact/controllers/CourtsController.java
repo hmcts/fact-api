@@ -37,9 +37,15 @@ public class CourtsController {
         this.courtService = courtService;
     }
 
+    @GetMapping(path = "/")
+    @ApiOperation("Return court data for download")
+    public ResponseEntity<List<uk.gov.hmcts.dts.fact.model.CourtForDownload>> getAllCourtsForDownload() {
+        return ok(courtService.getAllCourtsForDownload());
+    }
+
     /**
      * Find court by name.
-     * 
+     *
      * @deprecated Use {@link #findCourtByName}, path = /{slug}}
      */
     @Deprecated(since = "1.0", forRemoval = true)

@@ -73,7 +73,7 @@ class AdminServiceTest {
     void shouldReturnAllCourts() {
         final Court mock = mock(Court.class);
         when(courtRepository.findAll()).thenReturn(singletonList(mock));
-        final List<CourtReference> results = adminService.getAllCourts();
+        final List<CourtReference> results = adminService.getAllCourtReferences();
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
     }

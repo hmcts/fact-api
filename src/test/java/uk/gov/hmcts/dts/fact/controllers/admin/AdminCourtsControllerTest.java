@@ -51,7 +51,7 @@ class AdminCourtsControllerTest {
 
         final List<CourtReference> courts = asList(OBJECT_MAPPER.readValue(path.toFile(), CourtReference[].class));
 
-        when(adminService.getAllCourts()).thenReturn(courts);
+        when(adminService.getAllCourtReferences()).thenReturn(courts);
         mockMvc.perform(get(URL + "/all"))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
