@@ -41,7 +41,7 @@ public class CourtForDownload {
 
     public CourtForDownload(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
-        this.open = courtEntity.getDisplayed() == true ? "open" : "closed";
+        this.open = courtEntity.getDisplayed() ? "open" : "closed";
         this.updated = courtEntity.getUpdatedAt() == null
             ? null : new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
 

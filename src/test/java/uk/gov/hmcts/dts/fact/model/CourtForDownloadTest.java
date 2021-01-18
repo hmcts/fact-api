@@ -28,12 +28,11 @@ class CourtForDownloadTest {
         courtEntity.setDisplayed(true);
         courtEntity.setUpdatedAt(currentTime);
 
-
-        List<CourtAddress> addresses = new ArrayList<>();
         CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("Address");
         courtAddress.setTownName("Town");
         courtAddress.setPostcode("Postcode");
+        List<CourtAddress> addresses = new ArrayList<>();
         addresses.add(courtAddress);
         courtEntity.setAddresses(addresses);
         AreaOfLaw areaOfLawOne = new AreaOfLaw();
