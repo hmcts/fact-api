@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
+import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
@@ -45,6 +46,20 @@ public class CourtsEndpointTest {
     @BeforeEach
     public void setUp() {
         RestAssured.baseURI = testUrl;
+    }
+
+    @Test
+    public void shouldRetrieveCourtsForDownload() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(COURT_SEARCH_ENDPOINT + "/")
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        final List<CourtForDownload> courts = Arrays.asList(response.getBody().as(CourtForDownload[].class));
+        assertThat(courts.size()).isGreaterThan(1);
     }
 
     @Test
