@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -73,9 +74,18 @@ class AdminServiceTest {
     void shouldReturnAllCourts() {
         final Court mock = mock(Court.class);
         when(courtRepository.findAll()).thenReturn(singletonList(mock));
-        final List<CourtReference> results = adminService.getAllCourts();
+        final List<CourtReference> results = adminService.getAllCourtReferences();
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
+    }
+
+    @Test
+    void shouldReturnAllCourtsForDownload() {
+        final Court mock = mock(Court.class);
+        when(courtRepository.findAll()).thenReturn(singletonList(mock));
+        final List<CourtForDownload> results = adminService.getAllCourtsForDownload();
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0)).isInstanceOf(CourtForDownload.class);
     }
 
     @Test

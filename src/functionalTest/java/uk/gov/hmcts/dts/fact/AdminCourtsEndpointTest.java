@@ -10,8 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
@@ -32,7 +36,7 @@ public class AdminCourtsEndpointTest {
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG
         = "birmingham-civil-and-family-justice-centre";
     private static final String CONTENT_TYPE_VALUE = "application/json";
-    private static final String COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/";
+    private static final String COURTS_ENDPOINT = "/courts/";
     private static final String COURT_GENERAL_ENDPOINT = "/general";
     private static final String BEARER = "Bearer ";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -51,6 +55,33 @@ public class AdminCourtsEndpointTest {
         RestAssured.baseURI = testUrl;
         authenticatedToken = authClient.getToken();
         forbiddenToken = authClient.getNobodyToken();
+    }
+
+    @Test
+    public void shouldRetrieveCourtsForDownload() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(AUTHORIZATION, BEARER + authenticatedToken)
+            .when()
+            .get(COURTS_ENDPOINT)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        final List<CourtForDownload> courts = Arrays.asList(response.getBody().as(CourtForDownload[].class));
+        assertThat(courts.size()).isGreaterThan(1);
+    }
+
+    @Test
+    public void shouldRequireATokenForAllCourtsForDownload() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(COURTS_ENDPOINT)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
@@ -100,7 +131,7 @@ public class AdminCourtsEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -115,7 +146,7 @@ public class AdminCourtsEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
-            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -145,7 +176,7 @@ public class AdminCourtsEndpointTest {
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -180,7 +211,7 @@ public class AdminCourtsEndpointTest {
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -211,7 +242,7 @@ public class AdminCourtsEndpointTest {
             .header(AUTHORIZATION, BEARER + superAdminToken)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -244,7 +275,7 @@ public class AdminCourtsEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .body(json)
             .when()
-            .put(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -277,7 +308,7 @@ public class AdminCourtsEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + token)
             .when()
-            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(getResponse.statusCode()).isEqualTo(OK.value());
