@@ -26,7 +26,6 @@ import static java.util.Optional.ofNullable;
 @JsonNaming(SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 public class CourtForDownload {
-    private static final String WWW_FIND_COURT_TRIBUNAL_SERVICE_GOV_UK_COURTS = "https://www.find-court-tribunal.service.gov.uk/courts/";
     private String name;
     private String open;
     private String updated;
@@ -37,7 +36,7 @@ public class CourtForDownload {
     private Integer countyCourtCode;
     private Integer magistratesCourtCode;
     private String facilities;
-    private String url;
+    private String slug;
 
     public CourtForDownload(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
@@ -69,7 +68,7 @@ public class CourtForDownload {
             .orElseGet(Stream::empty)
             .map(Facility::getName)
             .collect(Collectors.joining(", "));
-        this.url = WWW_FIND_COURT_TRIBUNAL_SERVICE_GOV_UK_COURTS + courtEntity.getSlug();
+        this.slug = courtEntity.getSlug();
     }
 
     private String formatAddress(CourtAddress courtAddress) {

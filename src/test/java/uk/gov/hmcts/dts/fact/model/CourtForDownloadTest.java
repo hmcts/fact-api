@@ -69,6 +69,6 @@ class CourtForDownloadTest {
         assertEquals(222, court.getCountyCourtCode());
         assertEquals(333, court.getMagistratesCourtCode());
         assertEquals("facility one, facility two", court.getFacilities());
-        assertEquals("https://www.find-court-tribunal.service.gov.uk/courts/" + courtEntity.getSlug(), court.getUrl());
+        assertEquals(courtEntity.getSlug(), court.getSlug());
     }
 }
