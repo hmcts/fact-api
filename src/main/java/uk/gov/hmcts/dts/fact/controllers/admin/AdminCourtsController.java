@@ -50,6 +50,13 @@ public class AdminCourtsController {
         return ok(adminService.getAllCourtReferences());
     }
 
+    @GetMapping(path = "/")
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @ApiOperation("Return court data for download")
+    public ResponseEntity<List<uk.gov.hmcts.dts.fact.model.CourtForDownload>> getAllCourtsForDownload() {
+        return ok(adminService.getAllCourtsForDownload());
+    }
+
     @PutMapping(path = "/info")
     @ApiOperation("Update selected courts info")
     @Role({FACT_SUPER_ADMIN})

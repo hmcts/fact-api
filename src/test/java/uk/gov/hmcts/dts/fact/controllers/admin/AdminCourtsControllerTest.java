@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
@@ -22,6 +23,7 @@ import java.util.List;
 import static java.nio.file.Files.readAllBytes;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -55,6 +57,20 @@ class AdminCourtsControllerTest {
         mockMvc.perform(get(URL + "/all"))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
+            .andReturn();
+    }
+
+    @Test
+    void shouldFindAllCourtsForDownload() throws Exception {
+        CourtForDownload courtForDownload1 = new CourtForDownload();
+        CourtForDownload courtForDownload2 = new CourtForDownload();
+
+        final List<CourtForDownload> courtsForDownloads = asList(courtForDownload1, courtForDownload2);
+
+        when(adminService.getAllCourtsForDownload()).thenReturn(courtsForDownloads);
+        mockMvc.perform(get(URL + "/"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)))
             .andReturn();
     }
 

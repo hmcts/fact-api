@@ -7,6 +7,7 @@ import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
@@ -14,6 +15,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -38,6 +40,15 @@ public class AdminService {
             .findAll()
             .stream()
             .map(CourtReference::new)
+            .collect(toList());
+    }
+
+    public List<CourtForDownload> getAllCourtsForDownload() {
+        return courtRepository
+            .findAll()
+            .stream()
+            .map(CourtForDownload::new)
+            .sorted(Comparator.comparing(CourtForDownload::getName))
             .collect(toList());
     }
 
