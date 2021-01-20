@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,6 +20,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import static java.util.Comparator.comparing;
+import static java.util.Optional.ofNullable;
 
 @Entity
 @Table(name = "search_court")
@@ -108,7 +112,10 @@ public class Court {
     private List<ServiceAreaCourt> serviceAreaCourts;
 
     public List<AreaOfLaw> getAreasOfLaw() {
-        areasOfLaw.sort(comparing(AreaOfLaw::getName));
-        return areasOfLaw;
+        return ofNullable(areasOfLaw)
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .sorted(comparing(AreaOfLaw::getName))
+            .collect(Collectors.toList());
     }
 }

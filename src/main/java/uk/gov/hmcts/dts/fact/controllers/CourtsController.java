@@ -39,7 +39,7 @@ public class CourtsController {
 
     /**
      * Find court by name.
-     * 
+     *
      * @deprecated Use {@link #findCourtByName}, path = /{slug}}
      */
     @Deprecated(since = "1.0", forRemoval = true)
