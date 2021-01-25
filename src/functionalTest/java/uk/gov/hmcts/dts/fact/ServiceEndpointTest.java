@@ -46,7 +46,7 @@ public class ServiceEndpointTest {
         final List<Service> services = asList(response.getBody().as(Service[].class));
         assertThat(services.size()).isGreaterThan(0);
     }
-    
+
     @Test
     public void shouldRetrieveService() {
         final var response = given()
@@ -83,6 +83,6 @@ public class ServiceEndpointTest {
         assertThat(serviceAreas.get(4).getName()).isEqualTo("Benefits");
         assertThat(serviceAreas.get(5).getName()).isEqualTo("Claims against employers");
         assertThat(serviceAreas.get(6).getName()).isEqualTo("Tax");
-        assertThat(serviceAreas.get(7).getName()).isEqualTo("Minor criminal offences");
+        assertThat(serviceAreas.get(7).getName()).isEqualTo("Single Justice Procedure");
     }
 }
