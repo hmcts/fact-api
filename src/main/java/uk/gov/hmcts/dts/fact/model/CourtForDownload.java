@@ -6,18 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Facility;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 @Getter
 @Setter
@@ -29,7 +32,7 @@ public class CourtForDownload {
     private String name;
     private String open;
     private String updated;
-    private String address;
+    private List<CourtAddress> addresses;
     private String areasOfLaw;
     private String courtTypes;
     private Integer crownCourtCode;
@@ -37,6 +40,9 @@ public class CourtForDownload {
     private Integer magistratesCourtCode;
     private String facilities;
     private String slug;
+    private List<Email> emails;
+    private List<Contact> contacts;
+    private List<OpeningTime> openingTimes;
 
     public CourtForDownload(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
@@ -44,12 +50,12 @@ public class CourtForDownload {
         this.updated = courtEntity.getUpdatedAt() == null
             ? null : new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
 
-        this.address = ofNullable(courtEntity.getAddresses())
+        this.addresses = ofNullable(courtEntity.getAddresses())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
-            .findFirst()
-            .map(this::formatAddress)
-            .orElse("");
+            .map(CourtAddress::new)
+            .collect(toList());
+
         this.crownCourtCode = courtEntity.getNumber();
         this.countyCourtCode = courtEntity.getCciCode();
         this.magistratesCourtCode = courtEntity.getMagistrateCode();
@@ -57,29 +63,33 @@ public class CourtForDownload {
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(AreaOfLaw::getName)
-            .collect(Collectors.joining(", "));
+            .collect(joining(", "));
         this.courtTypes = ofNullable(courtEntity.getCourtTypes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtType::getName)
-            .collect(Collectors.joining(", "));
+            .collect(joining(", "));
         this.facilities = ofNullable(courtEntity.getFacilities())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(Facility::getName)
-            .collect(Collectors.joining(", "));
+            .collect(joining(", "));
         this.slug = courtEntity.getSlug();
-    }
-
-    private String formatAddress(CourtAddress courtAddress) {
-        return String.format(
-            "%s, %s, %s",
-            courtAddress.getAddress()
-                .replaceAll("\\n", ",")
-                .replaceAll("\\r", ",")
-                .replaceAll("\\t", ""),
-            courtAddress.getTownName(),
-            courtAddress.getPostcode()
-        );
+        this.emails = ofNullable(courtEntity.getCourtEmails())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtEmail::getEmail)
+            .map(Email::new)
+            .collect(toList());
+        this.contacts = ofNullable(courtEntity.getContacts())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(Contact::new)
+            .collect(toList());
+        this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtOpeningTime::getOpeningTime)
+            .map(OpeningTime::new).collect(toList());
     }
 }
