@@ -13,7 +13,7 @@ public class OAuthClient {
     @Value("${OAUTH_CLIENT_ID:fact_admin}")
     private String clientId;
 
-    @Value("${OAUTH_SECRET:fact_admin_secret}")
+    @Value("${OAUTH_SECRET:}")
     private String clientSecret;
 
     @Value("${OAUTH_REDIRECT:http://localhost:3300/oauth2/callback}")
