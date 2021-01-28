@@ -8,8 +8,25 @@ def component = "api"
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
+def secrets = [
+    'fact-${env}': [
+        secret("oauth-client-secret", "OAUTH_SECRET"),
+    ]
+]
+
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+    [ $class: 'AzureKeyVaultSecret',
+      secretType: 'Secret',
+      name: secretName,
+      version: '',
+      envVariable: envVar
+    ]
+}
+
 withPipeline(type, product, component) {
   disableLegacyDeployment()
+  loadVaultSecrets(secrets)
   enableDbMigration('fact')
 
   after('test') {

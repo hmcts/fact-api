@@ -64,7 +64,26 @@ test {
   failFast = true
 }
 
+ext.getVaultSecret = { String secretName ->
+  new ByteArrayOutputStream().withStream { os ->
+    exec {
+      commandLine 'az', 'keyvault', 'secret', 'show', '--vault-name', 'fact-aat', '-o', 'tsv', '--query', 'value', '--name', secretName
+      standardOutput = os
+    }
+    return os.toString().replace('\n', '')
+  }
+}
+
 task functional(type: Test) {
+
+  doFirst() {
+    if (System.getenv("TEST_URL") == null) {
+      println("Loading secrets from vault")
+
+      systemProperty 'OAUTH_SECRET', getVaultSecret('oauth-client-secret')
+    }
+  }
+
   description = "Runs functional tests"
   group = "Verification"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
