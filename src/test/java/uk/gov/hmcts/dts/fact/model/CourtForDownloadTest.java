@@ -42,6 +42,7 @@ class CourtForDownloadTest {
         courtAddress.setTownName("Town");
         courtAddress.setPostcode("Postcode");
         AddressType addressType = new AddressType();
+        addressType.setName("Write to us");
         courtAddress.setAddressType(addressType);
         List<CourtAddress> addresses = new ArrayList<>();
         addresses.add(courtAddress);
@@ -65,14 +66,22 @@ class CourtForDownloadTest {
         facilityTwo.setName("facility two");
         courtEntity.setFacilities(asList(facilityOne, facilityTwo));
         courtEntity.setSlug("name-slug");
-        CourtEmail courtEmail = mock(CourtEmail.class);
         Email email = new Email();
+        email.setAddress("email@address.com");
+        email.setDescription("Description of email address");
+        email.setExplanation("Explanation of email address");
+        CourtEmail courtEmail = mock(CourtEmail.class);
         when(courtEmail.getEmail()).thenReturn(email);
         courtEntity.setCourtEmails(asList(courtEmail));
         Contact contact = new Contact();
+        contact.setName("Contact name");
+        contact.setNumber("12345");
+        contact.setExplanation("Contact explanation");
         courtEntity.setContacts(asList(contact));
         CourtOpeningTime courtOpeningTime = mock(CourtOpeningTime.class);
         OpeningTime openingTime = new OpeningTime();
+        openingTime.setType("A description");
+        openingTime.setHours("Some opening hours");
         when(courtOpeningTime.getOpeningTime()).thenReturn(openingTime);
         courtEntity.setCourtOpeningTimes(asList(courtOpeningTime));
     }
@@ -83,7 +92,7 @@ class CourtForDownloadTest {
         assertEquals("Name", court.getName());
         assertEquals("open", court.getOpen());
         assertEquals(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(currentTime), court.getUpdated());
-        assertEquals(1, court.getAddresses().size());
+        assertEquals("Write to us: Address, Town, Postcode", court.getAddresses());
         assertEquals("Area of law one, Area of law two", court.getAreasOfLaw());
         assertEquals("court type one, court type two", court.getCourtTypes());
         assertEquals(111, court.getCrownCourtCode());
@@ -91,8 +100,11 @@ class CourtForDownloadTest {
         assertEquals(333, court.getMagistratesCourtCode());
         assertEquals("facility one, facility two", court.getFacilities());
         assertEquals(courtEntity.getSlug(), court.getSlug());
-        assertEquals(1, court.getEmails().size());
-        assertEquals(1, court.getOpeningTimes().size());
-        assertEquals(1, court.getContacts().size());
+        assertEquals(
+            "Address: email@address.com, Description: Description of email address, Explanation: Explanation of email address",
+            court.getEmails()
+        );
+        assertEquals("Description: A description, Hours: Some opening hours", court.getOpeningTimes());
+        assertEquals("Number: 12345, Description: Contact name, Explanation: Contact explanation", court.getContacts());
     }
 }
