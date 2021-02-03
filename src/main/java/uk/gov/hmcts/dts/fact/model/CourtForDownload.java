@@ -21,6 +21,8 @@ import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
+import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
+import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 
 @Getter
 @Setter
@@ -29,6 +31,7 @@ import static java.util.stream.Collectors.joining;
 @JsonNaming(SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 public class CourtForDownload {
+    private static final String DX = "DX";
     private String name;
     private String open;
     private String updated;
@@ -43,6 +46,7 @@ public class CourtForDownload {
     private String emails;
     private String contacts;
     private String openingTimes;
+    private String dxNumber;
 
     public CourtForDownload(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = courtEntity.getName();
@@ -82,6 +86,7 @@ public class CourtForDownload {
         this.contacts = ofNullable(courtEntity.getContacts())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
+            .filter(NAME_IS_NOT_DX)
             .map(this::formatContact)
             .collect(joining(lineSeparator()));
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
@@ -89,6 +94,12 @@ public class CourtForDownload {
             .orElseGet(Stream::empty)
             .map(CourtOpeningTime::getOpeningTime)
             .map(this::formatOpeningTime)
+            .collect(joining(lineSeparator()));
+        this.dxNumber = courtEntity
+            .getContacts()
+            .stream()
+            .filter(NAME_IS_DX)
+            .map(this::formatContact)
             .collect(joining(lineSeparator()));
     }
 
@@ -119,11 +130,10 @@ public class CourtForDownload {
     }
 
     private String formatContact(uk.gov.hmcts.dts.fact.entity.Contact contact) {
-        StringBuffer formatted = new StringBuffer(format(
-            "Number: %s, Description: %s",
-            contact.getNumber(),
-            contact.getName()
-        ));
+        StringBuffer formatted = new StringBuffer(format("Number: %s", contact.getNumber()));
+        if (!DX.equalsIgnoreCase(contact.getName())) {
+            formatted.append(format(", Description: %s", contact.getName()));
+        }
         if (contact.getExplanation() != null && !contact.getExplanation().isBlank()) {
             formatted.append(format(", Explanation: %s", contact.getExplanation()));
         }
