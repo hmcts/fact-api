@@ -11,13 +11,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
+import uk.gov.hmcts.dts.fact.model.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -29,6 +30,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
+@SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtsEndpointTest {
 
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
@@ -68,7 +70,7 @@ public class AdminCourtsEndpointTest {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        final List<CourtForDownload> courts = Arrays.asList(response.getBody().as(CourtForDownload[].class));
+        final List<CourtForDownload> courts = asList(response.getBody().as(CourtForDownload[].class));
         assertThat(courts.size()).isGreaterThan(1);
     }
 
@@ -165,7 +167,7 @@ public class AdminCourtsEndpointTest {
             false,
             "Admin Alert",
             "Welsh Admin Alert",
-            emptyList()
+            openingTimes()
         );
 
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
@@ -230,7 +232,7 @@ public class AdminCourtsEndpointTest {
             false,
             "Super Admin Alert",
             "Super Welsh Admin Alert",
-            emptyList()
+            openingTimes()
         );
 
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
@@ -317,4 +319,16 @@ public class AdminCourtsEndpointTest {
         assertThat(court.getInfoCy()).isEqualTo(courtInfo.getInfoCy());
     }
 
+    private List<OpeningTime> openingTimes() {
+        OpeningTime openingTime1 = new OpeningTime();
+        openingTime1.setType("Court open");
+        openingTime1.setHours("Monday to Friday 9am to 5pm");
+        OpeningTime openingTime2 = new OpeningTime();
+        openingTime2.setType("Counter service by appointment only");
+        openingTime2.setHours("By prior appointment only (except High Court and Administrative Court 10am to 4pm)");
+        OpeningTime openingTime3 = new OpeningTime();
+        openingTime3.setType("Telephone enquiries answered");
+        openingTime3.setHours("8:30am to 5pm");
+        return asList(openingTime1, openingTime2, openingTime3);
+    }
 }
