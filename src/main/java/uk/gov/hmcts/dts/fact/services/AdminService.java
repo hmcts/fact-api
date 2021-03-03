@@ -82,7 +82,7 @@ public class AdminService {
             ofNullable(court.getOpeningTimes())
                 .map(Collection::stream)
                 .orElseGet(Stream::empty)
-                .map(o -> new OpeningTime(o.getType(), o.getHours()))
+                .map(o -> new OpeningTime(o.getType(), o.getTypeCy(), o.getHours()))
                 .collect(toList());
 
         List<CourtOpeningTime> courtOpeningTimes = new ArrayList<>();

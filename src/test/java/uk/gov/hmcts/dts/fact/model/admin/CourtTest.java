@@ -73,6 +73,7 @@ class CourtTest {
 
         final OpeningTime openingTimeEntity = new OpeningTime();
         openingTimeEntity.setType("opening time type");
+        openingTimeEntity.setTypeCy("opening time type in Welsh");
         openingTimeEntity.setHours("opening times");
         final CourtOpeningTime courtOpeningTime = new CourtOpeningTime();
         courtOpeningTime.setOpeningTime(openingTimeEntity);

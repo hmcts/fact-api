@@ -18,7 +18,7 @@ public class Contact {
 
     public Contact(uk.gov.hmcts.dts.fact.entity.Contact contact) {
         this.number = contact.getNumber();
-        this.name = contact.getName();
+        this.name = chooseString(contact.getNameCy(), contact.getName());
         this.explanation = chooseString(contact.getExplanationCy(), contact.getExplanation());
     }
 }
