@@ -9,16 +9,17 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FacilityTest {
-    static uk.gov.hmcts.dts.fact.entity.Facility entity;
+class OpeningTimeTest {
+
+    static uk.gov.hmcts.dts.fact.entity.OpeningTime entity;
 
     @BeforeAll
     static void setUp() {
-        entity = new uk.gov.hmcts.dts.fact.entity.Facility();
-        entity.setName("A name");
-        entity.setNameCy("A name but in Welsh");
-        entity.setDescription("A description");
-        entity.setDescriptionCy("A description in Welsh");
+        entity = new uk.gov.hmcts.dts.fact.entity.OpeningTime();
+        entity.setId(117);
+        entity.setType("A type");
+        entity.setTypeCy("A type but in Welsh");
+        entity.setHours("A set of hours");
     }
 
     @ParameterizedTest
@@ -28,10 +29,9 @@ class FacilityTest {
             Locale locale = new Locale("cy");
             LocaleContextHolder.setLocale(locale);
         }
-
-        Facility facility = new Facility(entity);
-        assertEquals(welsh ? entity.getNameCy() : entity.getName(), facility.getName());
-        assertEquals(welsh ? entity.getDescriptionCy() : entity.getDescription(), facility.getDescription());
+        OpeningTime openingTime = new OpeningTime(entity);
+        assertEquals(entity.getHours(), openingTime.getHours());
+        assertEquals(welsh ? entity.getTypeCy() : entity.getType(), openingTime.getType());
 
         LocaleContextHolder.resetLocaleContext();
     }

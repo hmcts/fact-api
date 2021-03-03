@@ -17,6 +17,7 @@ class ContactTest {
     static void setUp() {
         entity = new uk.gov.hmcts.dts.fact.entity.Contact();
         entity.setName("A name");
+        entity.setNameCy("A name but in Welsh");
         entity.setNumber("A number");
         entity.setExplanation("An explanation.");
         entity.setExplanationCy("An explanation in Welsh.");
@@ -32,8 +33,8 @@ class ContactTest {
         }
 
         Contact contact = new Contact(entity);
-        assertEquals(entity.getName(), contact.getName());
         assertEquals(entity.getNumber(), contact.getNumber());
+        assertEquals(welsh ? entity.getNameCy() : entity.getName(), contact.getName());
         assertEquals(welsh ? entity.getExplanationCy() : entity.getExplanation(), contact.getExplanation());
 
         LocaleContextHolder.resetLocaleContext();

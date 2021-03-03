@@ -16,6 +16,7 @@ public class Email {
     private Integer id;
     private String address;
     private String description;
+    private String descriptionCy;
     private String explanation;
     private String explanationCy;
 }
