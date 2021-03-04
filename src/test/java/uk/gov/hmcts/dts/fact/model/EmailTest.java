@@ -18,6 +18,7 @@ class EmailTest {
         entity = new uk.gov.hmcts.dts.fact.entity.Email();
         entity.setAddress("test@test.com");
         entity.setDescription("An email address");
+        entity.setDescriptionCy("An email address but in Welsh");
         entity.setExplanation("You email it.");
         entity.setExplanationCy("You email it in Welsh.");
     }
@@ -31,8 +32,8 @@ class EmailTest {
         }
         Email email = new Email(entity);
         assertEquals(entity.getAddress(), email.getAddress());
-        assertEquals(entity.getDescription(), email.getDescription());
         assertEquals(welsh ? entity.getExplanationCy() : entity.getExplanation(), email.getExplanation());
+        assertEquals(welsh ? entity.getDescriptionCy() : entity.getDescription(), email.getDescription());
 
         LocaleContextHolder.resetLocaleContext();
     }

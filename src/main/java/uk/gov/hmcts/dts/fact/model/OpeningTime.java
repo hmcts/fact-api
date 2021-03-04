@@ -5,16 +5,20 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+
 @Data
 @NoArgsConstructor
 @JsonPropertyOrder({"description", "hours"})
 public class OpeningTime {
     @JsonProperty("description")
     private String type;
+    @JsonProperty(value = "description_cy", required = false)
+    private String typeCy;
     private String hours;
 
     public OpeningTime(uk.gov.hmcts.dts.fact.entity.OpeningTime openingTime) {
-        this.type = openingTime.getType();
+        this.type = chooseString(openingTime.getTypeCy(), openingTime.getType());
         this.hours = openingTime.getHours();
     }
 }

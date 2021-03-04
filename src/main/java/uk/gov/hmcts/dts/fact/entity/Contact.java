@@ -16,6 +16,7 @@ public class Contact {
     private Integer id;
     private String number;
     private String name;
+    private String nameCy;
     private String explanation;
     private String explanationCy;
     private Integer sortOrder;

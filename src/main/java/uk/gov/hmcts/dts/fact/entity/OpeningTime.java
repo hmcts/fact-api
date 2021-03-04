@@ -22,10 +22,12 @@ public class OpeningTime {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     private String type;
+    private String typeCy;
     private String hours;
 
-    public OpeningTime(final String type, final String hours) {
+    public OpeningTime(final String type, final String typeCy, String hours) {
         this.type = type;
+        this.typeCy = typeCy;
         this.hours = hours;
     }
 }

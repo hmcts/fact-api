@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("PMD.NcssCount")
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
 
@@ -73,6 +74,7 @@ class CourtTest {
 
         final OpeningTime openingTimeEntity = new OpeningTime();
         openingTimeEntity.setType("opening time type");
+        openingTimeEntity.setTypeCy("opening time type in Welsh");
         openingTimeEntity.setHours("opening times");
         final CourtOpeningTime courtOpeningTime = new CourtOpeningTime();
         courtOpeningTime.setOpeningTime(openingTimeEntity);
@@ -83,7 +85,6 @@ class CourtTest {
         facilityEntity.setDescriptionCy("<p>Description of facility in Welsh</p>");
         facilityEntity.setName("Facility");
         courtEntity.setFacilities(singletonList(facilityEntity));
-
         courtEntity.setInfo("<p>Info on court</p>");
         courtEntity.setInfoCy("<p>Info on court in Welsh</p>");
         courtEntity.setName("Name");
