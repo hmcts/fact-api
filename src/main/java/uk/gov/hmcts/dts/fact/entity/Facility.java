@@ -23,6 +23,7 @@ public class Facility {
     private String description;
     private String descriptionCy;
     private String name;
+    private String nameCy;
 
     @ManyToOne
     @JoinTable(

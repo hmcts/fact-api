@@ -14,7 +14,7 @@ public class Email {
 
     public Email(uk.gov.hmcts.dts.fact.entity.Email email) {
         this.address = email.getAddress();
-        this.description = email.getDescription();
+        this.description = chooseString(email.getDescriptionCy(), email.getDescription());
         this.explanation = chooseString(email.getExplanationCy(), email.getExplanation());
     }
 }
