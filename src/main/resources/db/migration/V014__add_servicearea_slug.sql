@@ -28,6 +28,6 @@ domestic-abuse	Domestic abuse	Cam-drin domestig	Support for an injunction if you
 female-genital-mutilation	Female Genital Mutilation	Anffurfio Organau Cenhedlu Benywod	Support for legal protection for victims of female genital mutilation.	Cymorth i ddiogelu'n gyfreithiol dioddefwyr anffurfio organau cenhedlu benywod.		\N
 forced-marriage	Forced marriage	Priodas dan orfod	Being made to marry against your will.	Cael eich gorfodi i briodi yn erbyn eich ewyllys.		\N
 major-criminal-offences	Major criminal offences	Troseddau mawr	Major criminal cases at a Crown or Magistrates’ Court.	Achosion troseddol mawr yn Llys y Goron neu mewn Llys Ynadon.		\N
-immigration	Immigration	Mewnfudo	Seeking asylum, right to live in the UK, and appealing deportation.	Mewnfudo a lloches Ceisio lloches, hawl i fyw yn y DU, ac apelio yn erbyn allgludiad.	https://www.gov.uk/immigration-asylum-tribunal	Appeal against a visa or immigration decision
+immigration	Immigration	Mewnfudo	Seeking asylum, right to live in the UK, and appealing deportation.	Ceisio lloches, hawl i fyw yn y DU, ac apelio yn erbyn allgludiad.	https://www.gov.uk/immigration-asylum-tribunal	Appeal against a visa or immigration decision
 high-court-district-registries	High Court district registries	cofrestrfa dosbarth yr Uchel Lys	Courts that deal with the most serious and high profile cases in criminal and civil law.	Llysoedd sy'n delio â'r achosion mwyaf difrifol a phroffil uchel mewn cyfraith droseddol a chyfraith sifil.		\N
 \.
