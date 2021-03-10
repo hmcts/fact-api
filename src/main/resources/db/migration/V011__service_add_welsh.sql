@@ -20,12 +20,12 @@ WHERE id = 4;
 
 UPDATE public.search_service
 SET name_cy        = 'Mewnfudo a lloches',
-	description_cy = 'Mewnfudo a lloches	Ceisio lloches, hawl i fyw yn y DU, ac apelio yn erbyn allgludiad.'
+	description_cy = 'Ceisio lloches, hawl i fyw yn y DU, ac apelio yn erbyn allgludiad.'
 WHERE id = 5;
 
 UPDATE public.search_service
 SET name_cy        = 'Troseddu',
-	description_cy = 'Mân ddirwyon troseddol am drwyddedau teledu neu goryrru, neu achosion mawr yn Llys y Goron neu mewn Llys Ynadon.'
+	description_cy = 'Y Weithdrefn Un Ynad ac achosion troseddol eraill yn Llys y Goron neu''r Llys Ynadon.'
 WHERE id = 6;
 
 UPDATE public.search_service
