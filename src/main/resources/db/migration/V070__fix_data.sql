@@ -9,7 +9,6 @@ WHERE slug in
        'civil-money-claims-service-centre',
        'immigration-and-asylum-appeals-service-centre',
        'single-justice-procedures-service-centre',
-       'criminal-offences-service-centre',
        'social-security-and-child-support-appeals-service-centre');
 
 /* Replicant of V044 */
@@ -543,6 +542,16 @@ WHERE name = 'FGM';
 UPDATE public.search_areaoflaw
 SET display_name_cy = 'Y Weithdrefn Un Ynad'
 WHERE name = 'Single justice procedure';
+
+/* Replicant of V060 */
+UPDATE public.search_inperson
+SET is_in_person = false,
+    access_scheme = false
+WHERE court_id IN (
+	    SELECT id
+	    FROM public.search_court
+	    WHERE slug = 'civil-money-claims-service-centre'
+	);
 
 /* Replicant of V063 */
 ALTER TABLE ONLY search_openingtime ADD type_cy varchar(255);
