@@ -51,4 +51,4 @@ VALUES (DEFAULT,
         (SELECT id FROM public.search_court WHERE slug = 'worthing-county-court-and-family-court'),
         (SELECT id FROM public.search_email ORDER BY id DESC LIMIT 1),
         1
-       );
+);
