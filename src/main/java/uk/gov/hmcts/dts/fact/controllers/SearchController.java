@@ -13,12 +13,8 @@ import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
-import javax.annotation.RegEx;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
@@ -31,7 +27,6 @@ import static org.springframework.http.ResponseEntity.ok;
 public class SearchController {
 
     private final CourtService courtService;
-    private final Pattern scottishPostcodeRegex = Pattern.compile("^(ZE|KW|IV|HS|PH|AB|DD|PA|FK|G[0-9]|KY|KA|DG|TD|EH|ML)", Pattern.CASE_INSENSITIVE);
 
     @Autowired
     public SearchController(final CourtService courtService) {
@@ -53,10 +48,6 @@ public class SearchController {
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
-            if(areaOfLaw.get().equals("Children") && scottishPostcodeRegex.matcher(postcode.get()).find()) {
-                return ok(Collections.emptyList());
-            }
-
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
         } else if (postcode.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcode(postcode.get()));

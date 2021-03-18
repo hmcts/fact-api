@@ -21,6 +21,8 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.isChildrenAreaOfLaw;
+import static uk.gov.hmcts.dts.fact.util.Utils.isScottishPostcode;
 
 @Service
 public class CourtService {
@@ -85,13 +87,15 @@ public class CourtService {
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
-        return mapitService.getMapitData(postcode)
-            .map(value -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw)
-                .stream()
-                .map(CourtWithDistance::new)
-                .collect(toList()))
-            .orElse(emptyList());
+        return isScottishPostcode(postcode) && isChildrenAreaOfLaw(areaOfLaw)
+            ? emptyList()
+            : mapitService.getMapitData(postcode)
+                .map(value -> courtWithDistanceRepository
+                    .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw)
+                    .stream()
+                    .map(CourtWithDistance::new)
+                    .collect(toList()))
+                .orElse(emptyList());
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {

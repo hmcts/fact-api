@@ -31,12 +31,8 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CourtService.class)
@@ -46,6 +42,8 @@ class CourtServiceTest {
     private static final String SOME_SLUG = "some-slug";
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     private static final String JE2_4BA = "JE2 4BA";
+    private static final String ZE2_9TE = "ZE2 9TE";
+    private static final String CHILDREN = "children";
     private static final String TAX = "tax";
 
     @Autowired
@@ -93,7 +91,7 @@ class CourtServiceTest {
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
         final List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
-        assertThat(results.size()).isEqualTo(1);
+        assertThat(results).hasSize(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
     }
 
@@ -105,7 +103,7 @@ class CourtServiceTest {
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
         final List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
-        assertThat(results.size()).isEqualTo(1);
+        assertThat(results).hasSize(1);
     }
 
     @Test
@@ -121,7 +119,7 @@ class CourtServiceTest {
         when(courtWithDistanceRepository.findNearestTen(anyDouble(), anyDouble())).thenReturn(courts);
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode("OX1 1RZ");
-        assertThat(results.size()).isEqualTo(10);
+        assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
 
@@ -131,7 +129,7 @@ class CourtServiceTest {
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode("JE3 4BA");
-        assertThat(results.isEmpty()).isTrue();
+        assertThat(results).isEmpty();
         verifyNoInteractions(courtRepository);
     }
 
@@ -159,7 +157,7 @@ class CourtServiceTest {
             "OX2 1RZ",
             AREA_OF_LAW_NAME
         );
-        assertThat(results.size()).isEqualTo(10);
+        assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
 
@@ -170,10 +168,22 @@ class CourtServiceTest {
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
             JE2_4BA,
-            AREA_OF_LAW_NAME
+            CHILDREN
         );
 
-        assertThat(results.isEmpty()).isTrue();
+        assertThat(results).isEmpty();
+        verifyNoInteractions(courtRepository);
+    }
+
+    @Test
+    void shouldReturnEmptyListForScottishPostcodeAndChildrenAreaOfLaw() {
+        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+            ZE2_9TE,
+            CHILDREN
+        );
+
+        assertThat(results).isEmpty();
+        verifyNoInteractions(mapitService);
         verifyNoInteractions(courtRepository);
     }
 
@@ -201,7 +211,7 @@ class CourtServiceTest {
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
-        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts()).hasSize(2);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 

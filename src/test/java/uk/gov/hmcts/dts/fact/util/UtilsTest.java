@@ -1,17 +1,21 @@
 package uk.gov.hmcts.dts.fact.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static org.junit.jupiter.api.Assertions.*;
+import static uk.gov.hmcts.dts.fact.util.Utils.*;
 
 class UtilsTest {
 
@@ -106,5 +110,29 @@ class UtilsTest {
         LocaleContextHolder.resetLocaleContext();
     }
 
+    private static Stream<Arguments> parameterForScottishPostcodes() {
+        return Stream.of(
+            Arguments.of("ZE2 9TE", true),
+            Arguments.of("EH1 1BJ", true),
+            Arguments.of("G1 1UT", true),
+            Arguments.of("GU1 1AF", false),
+            Arguments.of("M1 7EP", false)
+        );
+    }
 
+    @ParameterizedTest
+    @MethodSource("parameterForScottishPostcodes")
+    void testForScottishPostcodes(final String postcode, final boolean expectedResult) {
+        assertEquals(isScottishPostcode(postcode), expectedResult);
+    }
+
+    @Test
+    void shouldReturnTrueForChildrenAreaOfLaw() {
+        assertTrue(isChildrenAreaOfLaw("Children"));
+    }
+
+    @Test
+    void shouldReturnFalseForTaxAreaOfLaw() {
+        assertFalse(isChildrenAreaOfLaw("Tax"));
+    }
 }
