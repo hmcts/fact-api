@@ -35,7 +35,6 @@ public class SearchController {
 
     /**
      * Find court by postcode.
-     * 
      * @deprecated Use {@link #findCourtsByPostcodeAndServiceArea}, path = /results}
      */
     @Deprecated(since = "1.0", forRemoval = true)
@@ -48,6 +47,11 @@ public class SearchController {
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
+            switch(areaOfLaw.get().toLowerCase()) {
+                case "children":
+                    return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode.get(), areaOfLaw.get()));
+            }
+
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
         } else if (postcode.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
