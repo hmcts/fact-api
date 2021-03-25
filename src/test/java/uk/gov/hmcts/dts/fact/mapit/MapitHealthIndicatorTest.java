@@ -12,7 +12,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MapitHealthIndicatorTest {
+class MapitHealthIndicatorTest {
     @Mock
     private MapItService mapItService;
 
