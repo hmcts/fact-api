@@ -20,7 +20,6 @@ import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
