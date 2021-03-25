@@ -47,6 +47,7 @@ class CourtServiceTest {
     private static final String SOME_SLUG = "some-slug";
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     private static final String JE2_4BA = "JE2 4BA";
+    private static final String LONDON = "London";
     private static final String TAX = "tax";
     private static final double LAT = 52.1;
     private static final double LON = 0.7;
@@ -96,7 +97,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListOfCourtReferenceObject() {
-        final String query = "London";
+        final String query = LONDON;
         final Court court = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
@@ -107,7 +108,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListOfCourts() {
-        final String query = "London";
+        final String query = LONDON;
         final Court court = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
