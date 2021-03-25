@@ -9,6 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -160,8 +161,9 @@ class CourtServiceTest {
 
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode("JE3 4BA");
-        assertThat(results.isEmpty()).isTrue();
+        assertThrows(InvalidPostcodeException.class, () -> {
+            courtService.getNearestCourtsByPostcode("JE3 4BA");
+        });
         verifyNoInteractions(courtRepository);
     }
 

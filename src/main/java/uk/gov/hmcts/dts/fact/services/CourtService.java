@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.Court;
@@ -81,7 +82,7 @@ public class CourtService {
                 .stream()
                 .map(CourtWithDistance::new)
                 .collect(toList()))
-            .orElse(emptyList());
+            .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
@@ -97,18 +98,18 @@ public class CourtService {
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw) {
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
         if (optionalMapitData.isEmpty()) {
-            return emptyList();
+            throw new InvalidPostcodeException(postcode);
         }
 
         final MapitData mapitData = optionalMapitData.get();
 
-        return mapitData.getLocalAuthority()
+        return mapitService.getMapitData(postcode).get().getLocalAuthority()
             .map(localAuthority -> courtWithDistanceRepository
                 .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority)
                 .stream()
                 .map(CourtWithDistance::new)
                 .collect(toList()))
-            .orElse(emptyList());
+            .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
