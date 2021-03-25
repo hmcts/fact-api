@@ -34,9 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CourtService.class)
@@ -47,6 +45,9 @@ class CourtServiceTest {
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     private static final String JE2_4BA = "JE2 4BA";
     private static final String TAX = "tax";
+    private static final double LAT = 52.1;
+    private static final double LON = 0.7;
+    private static final String LOCAL_AUTHORITY_NAME = "Suffolk County Council";
 
     @Autowired
     private CourtService courtService;
@@ -121,6 +122,35 @@ class CourtServiceTest {
         when(courtWithDistanceRepository.findNearestTen(anyDouble(), anyDouble())).thenReturn(courts);
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode("OX1 1RZ");
+        assertThat(results.size()).isEqualTo(10);
+        assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
+    }
+
+    @Test
+    void shouldReturnListOfCourtsWithRelevantLocalAuthority() {
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitData.getLat()).thenReturn(LAT);
+        when(mapitData.getLon()).thenReturn(LON);
+        when(mapitData.getLocalAuthority()).thenReturn(Optional.of(LOCAL_AUTHORITY_NAME));
+        when(mapitService.getMapitData(JE2_4BA)).thenReturn(Optional.of(mapitData));
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
+            final AreaOfLaw areaOfLaw = new AreaOfLaw();
+            areaOfLaw.setName(AREA_OF_LAW_NAME);
+            final List<AreaOfLaw> areasOfLaw = singletonList(areaOfLaw);
+            when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
+            courts.add(mock);
+        }
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(anyDouble(), anyDouble(), anyString(), anyString())).thenReturn(
+            courts);
+
+        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
+            JE2_4BA,
+            AREA_OF_LAW_NAME
+        );
+
         assertThat(results.size()).isEqualTo(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
