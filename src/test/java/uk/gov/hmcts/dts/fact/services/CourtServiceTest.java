@@ -199,13 +199,13 @@ class CourtServiceTest {
     void shouldReturnEmptyListForFilterSearchByAreaOfLawIfNoCoordinates() {
 
         when(mapitService.getMapitData(any())).thenReturn(empty());
+        assertThrows(InvalidPostcodeException.class, () -> {
+            courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+                JE2_4BA,
+                AREA_OF_LAW_NAME
+            );
+        });
 
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
-            JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results.isEmpty()).isTrue();
         verifyNoInteractions(courtRepository);
     }
 
