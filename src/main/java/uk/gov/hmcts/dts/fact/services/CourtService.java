@@ -18,12 +18,19 @@ import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.isNorthernIrishPostcode;
+import static uk.gov.hmcts.dts.fact.util.Utils.isScottishPostcode;
 
 @Service
 public class CourtService {
+
+    private static final String IMMIGRATION_AREA_OF_LAW = "Immigration";
+    private static final String GLASGOW_TRIBUNAL_CENTRE = "Glasgow Tribunals Centre";
 
     private final MapitService mapitService;
     private final CourtRepository courtRepository;
@@ -59,19 +66,11 @@ public class CourtService {
     }
 
     public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTown(final String query) {
-        return courtRepository
-            .queryBy(query)
-            .stream()
-            .map(CourtReference::new)
-            .collect(toList());
+        return getCourtByQuery(query, CourtReference::new);
     }
 
     public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(final String query) {
-        return courtRepository
-            .queryBy(query)
-            .stream()
-            .map(CourtWithDistance::new)
-            .collect(toList());
+        return getCourtByQuery(query, CourtWithDistance::new);
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcode(final String postcode) {
@@ -85,16 +84,25 @@ public class CourtService {
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
+        if (filterResultByPostcode(postcode, areaOfLaw)) {
+            return emptyList();
+        }
+
         return mapitService.getMapitData(postcode)
             .map(value -> courtWithDistanceRepository
                 .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw)
                 .stream()
+                .filter(getCourtWithDistancePredicate(postcode, areaOfLaw))
                 .map(CourtWithDistance::new)
                 .collect(toList()))
             .orElse(emptyList());
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw) {
+        if (filterResultByPostcode(postcode, areaOfLaw)) {
+            return emptyList();
+        }
+
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
         if (optionalMapitData.isEmpty()) {
             return emptyList();
@@ -134,5 +142,28 @@ public class CourtService {
         return courtsWithDistance.stream()
             .map(CourtReferenceWithDistance::new)
             .collect(toList());
+    }
+
+    private <T> List<T> getCourtByQuery(final String query, final Function<uk.gov.hmcts.dts.fact.entity.Court, T> function) {
+        return courtRepository
+            .queryBy(query)
+            .stream()
+            .map(function::apply)
+            .collect(toList());
+    }
+
+    private boolean filterResultByPostcode(final String postcode, final String areaOfLaw) {
+        if (isScottishPostcode(postcode)
+            || (isNorthernIrishPostcode(postcode) && !areaOfLaw.equalsIgnoreCase(IMMIGRATION_AREA_OF_LAW))) {
+            return true;
+        }
+        return false;
+    }
+
+    private Predicate<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getCourtWithDistancePredicate(String postcode, String areaOfLaw) {
+        // Only allow courts not in Northern Ireland or Glasglow court for Northern Ireland postcode and Immigration area of law
+        return c -> !isNorthernIrishPostcode(postcode)
+            || (areaOfLaw.equalsIgnoreCase(IMMIGRATION_AREA_OF_LAW)
+                && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE));
     }
 }
