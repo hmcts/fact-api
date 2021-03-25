@@ -94,6 +94,23 @@ public class CourtService {
             .orElse(emptyList());
     }
 
+    public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw) {
+        final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
+        if (optionalMapitData.isEmpty()) {
+            return emptyList();
+        }
+
+        final MapitData mapitData = optionalMapitData.get();
+
+        return mapitData.getLocalAuthority()
+            .map(localAuthority -> courtWithDistanceRepository
+                .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority)
+                .stream()
+                .map(CourtWithDistance::new)
+                .collect(toList()))
+            .orElse(emptyList());
+    }
+
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
 
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);

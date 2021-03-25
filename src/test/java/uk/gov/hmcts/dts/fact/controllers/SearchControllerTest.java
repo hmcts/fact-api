@@ -52,6 +52,14 @@ class SearchControllerTest {
     }
 
     @Test
+    void shouldSearchByPostcodeAndAreaOfLawAndLocalAuthority() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority("BN21 2BH", "Children");
+    }
+
+    @Test
     void shouldSearchByNameOrAddress() throws Exception {
         mockMvc.perform(get(BASE_URL + "/results.json?q=name"))
             .andExpect(status().isOk());
