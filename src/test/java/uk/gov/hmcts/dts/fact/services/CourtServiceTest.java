@@ -157,7 +157,7 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnEmptyListOfCourtsIfNoCoordinates() {
+    void shouldReturnExceptionIfNoCoordinates() {
 
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
