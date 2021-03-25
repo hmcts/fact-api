@@ -4,10 +4,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "mappitApi", url = "https://mapit.mysociety.org/")
+@FeignClient(name = "mappitApi", url = "${mapit.url}")
 public interface MapitClient {
 
-    @GetMapping("/postcode/{postcode}")
+    @GetMapping("${mapit.endpoint.postcode-search}/{postcode}")
     MapitData getMapitData(@PathVariable("postcode") String postcode);
 }
 
