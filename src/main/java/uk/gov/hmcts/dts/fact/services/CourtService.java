@@ -92,7 +92,7 @@ public class CourtService {
                 .stream()
                 .map(CourtWithDistance::new)
                 .collect(toList()))
-            .orElse(emptyList());
+            .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw) {
