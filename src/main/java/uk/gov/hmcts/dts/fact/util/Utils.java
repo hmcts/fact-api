@@ -4,6 +4,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -45,6 +46,6 @@ public final class Utils {
     }
 
     public static boolean isNorthernIrishPostcode(final String postcode) {
-        return postcode.toUpperCase().startsWith(NORTHERN_IRISH_POSTCODE_AREA);
+        return postcode.toUpperCase(Locale.getDefault()).startsWith(NORTHERN_IRISH_POSTCODE_AREA);
     }
 }

@@ -235,6 +235,7 @@ class CourtServiceTest {
         assertThat(results.get(0).getName()).isEqualTo(GLASGOW_TRIBUNALS_CENTRE);
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForPostcodeSearchWithoutLocalAuthority() {
         return Stream.of(
             // Scottish postcode
@@ -257,15 +258,15 @@ class CourtServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForPostcodeSearchWithoutLocalAuthority")
     void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearch(final String postcode, final String areaOfLaw, final boolean useMapitService) {
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, areaOfLaw);
+        courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, areaOfLaw);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
         } else {
             verifyNoInteractions(mapitService);
-            assertThat(results).isEmpty();
         }
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForPostcodeSearchWithLocalAuthority() {
         return Stream.of(
             // Scottish postcode
@@ -286,12 +287,11 @@ class CourtServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForPostcodeSearchWithLocalAuthority")
     void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearchWithLocalAuthority(final String postcode, final boolean useMapitService) {
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode, CHILDREN);
+        courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode, CHILDREN);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
         } else {
             verifyNoInteractions(mapitService);
-            assertThat(results).isEmpty();
         }
     }
 

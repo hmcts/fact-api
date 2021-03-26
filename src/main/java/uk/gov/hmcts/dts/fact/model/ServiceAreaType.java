@@ -1,5 +1,7 @@
 package uk.gov.hmcts.dts.fact.model;
 
+import java.util.Locale;
+
 public enum ServiceAreaType {
     FAMILY,
     CIVIL,
@@ -7,7 +9,7 @@ public enum ServiceAreaType {
 
     public static ServiceAreaType serviceAreaTypeFrom(final String type) {
         try {
-            return ServiceAreaType.valueOf(type.toUpperCase());
+            return valueOf(type.toUpperCase(Locale.getDefault()));
         } catch (final IllegalArgumentException e) {
             return OTHER;
         }
