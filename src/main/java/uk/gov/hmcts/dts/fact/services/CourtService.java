@@ -102,7 +102,7 @@ public class CourtService {
 
         final MapitData mapitData = optionalMapitData.get();
 
-        return mapitService.getMapitData(postcode).get().getLocalAuthority()
+        return mapitData.getLocalAuthority()
             .map(localAuthority -> courtWithDistanceRepository
                 .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority)
                 .stream()
