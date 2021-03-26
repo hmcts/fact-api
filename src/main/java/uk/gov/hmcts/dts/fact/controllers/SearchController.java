@@ -3,12 +3,11 @@ package uk.gov.hmcts.dts.fact.controllers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.services.CourtService;
@@ -72,5 +71,11 @@ public class SearchController {
         } else {
             return badRequest().build();
         }
+    }
+
+    @ExceptionHandler(InvalidPostcodeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String postcodeNotFoundHandler(InvalidPostcodeException ex) {
+        return ex.getMessage();
     }
 }
