@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -162,12 +163,13 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnEmptyListOfCourtsIfNoCoordinates() {
+    void shouldReturnExceptionIfNoCoordinates() {
 
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode("JE3 4BA");
-        assertThat(results).isEmpty();
+        assertThrows(InvalidPostcodeException.class, () -> {
+            courtService.getNearestCourtsByPostcode("JE3 4BA");
+        });
         verifyNoInteractions(courtRepository);
     }
 
@@ -203,13 +205,13 @@ class CourtServiceTest {
     void shouldReturnEmptyListForFilterSearchByAreaOfLawIfNoCoordinates() {
 
         when(mapitService.getMapitData(any())).thenReturn(empty());
+        assertThrows(InvalidPostcodeException.class, () -> {
+            courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+                JE2_4BA,
+                AREA_OF_LAW_NAME
+            );
+        });
 
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
-            JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
-
-        assertThat(results).isEmpty();
         verifyNoInteractions(courtRepository);
     }
 
@@ -258,6 +260,9 @@ class CourtServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForPostcodeSearchWithoutLocalAuthority")
     void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearch(final String postcode, final String areaOfLaw, final boolean useMapitService) {
+        if (useMapitService) {
+            when(mapitService.getMapitData(anyString())).thenReturn(Optional.of(new MapitData()));
+        }
         courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, areaOfLaw);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
@@ -287,6 +292,11 @@ class CourtServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForPostcodeSearchWithLocalAuthority")
     void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearchWithLocalAuthority(final String postcode, final boolean useMapitService) {
+        if (useMapitService) {
+            MapitData mockData = mock(MapitData.class);
+            when(mockData.getLocalAuthority()).thenReturn(Optional.of(LOCAL_AUTHORITY_NAME));
+            when(mapitService.getMapitData(anyString())).thenReturn(Optional.of(mockData));
+        }
         courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode, CHILDREN);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
