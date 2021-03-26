@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.isNorthernIrishPostcode;
 import static uk.gov.hmcts.dts.fact.util.Utils.isScottishPostcode;
