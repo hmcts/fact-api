@@ -260,6 +260,9 @@ class CourtServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForPostcodeSearchWithoutLocalAuthority")
     void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearch(final String postcode, final String areaOfLaw, final boolean useMapitService) {
+        if (useMapitService) {
+            when(mapitService.getMapitData(anyString())).thenReturn(Optional.of(new MapitData()));
+        }
         courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, areaOfLaw);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
@@ -289,6 +292,11 @@ class CourtServiceTest {
     @ParameterizedTest
     @MethodSource("parametersForPostcodeSearchWithLocalAuthority")
     void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearchWithLocalAuthority(final String postcode, final boolean useMapitService) {
+        if (useMapitService) {
+            MapitData mockData = mock(MapitData.class);
+            when(mockData.getLocalAuthority()).thenReturn(Optional.of(LOCAL_AUTHORITY_NAME));
+            when(mapitService.getMapitData(anyString())).thenReturn(Optional.of(mockData));
+        }
         courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode, CHILDREN);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
