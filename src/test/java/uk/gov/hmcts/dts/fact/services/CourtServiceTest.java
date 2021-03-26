@@ -2,6 +2,9 @@ package uk.gov.hmcts.dts.fact.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,15 +29,13 @@ import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -45,10 +46,15 @@ class CourtServiceTest {
     private static final String SOME_SLUG = "some-slug";
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     private static final String JE2_4BA = "JE2 4BA";
+    private static final String LONDON = "London";
     private static final String TAX = "tax";
     private static final double LAT = 52.1;
     private static final double LON = 0.7;
     private static final String LOCAL_AUTHORITY_NAME = "Suffolk County Council";
+    private static final String CHILDREN = "Children";
+    private static final String IMMIGRATION = "Immigration";
+    private static final String EMPLOYMENT = "Employment";
+    private static final String GLASGOW_TRIBUNALS_CENTRE = "Glasgow Tribunals Centre";
 
     @Autowired
     private CourtService courtService;
@@ -90,7 +96,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListOfCourtReferenceObject() {
-        final String query = "London";
+        final String query = LONDON;
         final Court court = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
@@ -101,7 +107,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListOfCourts() {
-        final String query = "London";
+        final String query = LONDON;
         final Court court = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
@@ -207,6 +213,88 @@ class CourtServiceTest {
         });
 
         verifyNoInteractions(courtRepository);
+    }
+
+    @Test
+    void shouldReturnGlasgowTribunalOnlyForNorthernIrishPostcodeSearchWithImmigration() {
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance court = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
+            if (i == 0) {
+                when(court.getName()).thenReturn(GLASGOW_TRIBUNALS_CENTRE);
+            } else {
+                when(court.getName()).thenReturn("Random court " + i);
+            }
+            courts.add(court);
+        }
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), eq(IMMIGRATION))).thenReturn(courts);
+        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw("BT701AH", IMMIGRATION);
+
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).getName()).isEqualTo(GLASGOW_TRIBUNALS_CENTRE);
+    }
+
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private static Stream<Arguments> parametersForPostcodeSearchWithoutLocalAuthority() {
+        return Stream.of(
+            // Scottish postcode
+            Arguments.of("EH12DH", EMPLOYMENT, false),
+            // TD area postcode in Scotland (currently TD postcode not counted as Scottish postcode)
+            Arguments.of("TD13SP", EMPLOYMENT, true),
+            // TD area postcode in England
+            Arguments.of("TD152PS", EMPLOYMENT, true),
+            // Northern Irish postcode with Immigration area of law
+            Arguments.of("BT39JS", IMMIGRATION, true),
+            // Northern Irish postcode with Employment area of law
+            Arguments.of("BT39JS", EMPLOYMENT, false),
+            // English postcode
+            Arguments.of("E149DT", IMMIGRATION, true),
+            // Welsh postcode
+            Arguments.of("LL328DE", IMMIGRATION, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("parametersForPostcodeSearchWithoutLocalAuthority")
+    void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearch(final String postcode, final String areaOfLaw, final boolean useMapitService) {
+        courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, areaOfLaw);
+        if (useMapitService) {
+            verify(mapitService).getMapitData(postcode);
+        } else {
+            verifyNoInteractions(mapitService);
+        }
+    }
+
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private static Stream<Arguments> parametersForPostcodeSearchWithLocalAuthority() {
+        return Stream.of(
+            // Scottish postcode
+            Arguments.of("EH12DH", false),
+            // TD area postcode in Scotland
+            Arguments.of("TD13SP", true),
+            // TD area postcode in England
+            Arguments.of("TD152PS", true),
+            // Northern Irish postcode
+            Arguments.of("BT39JS", false),
+            // English postcode
+            Arguments.of("E149DT", true),
+            // Welsh postcode
+            Arguments.of("LL328DE", true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("parametersForPostcodeSearchWithLocalAuthority")
+    void shouldNotUseMapitServiceForScottishOrNorthernIrishPostcodeSearchWithLocalAuthority(final String postcode, final boolean useMapitService) {
+        courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode, CHILDREN);
+        if (useMapitService) {
+            verify(mapitService).getMapitData(postcode);
+        } else {
+            verifyNoInteractions(mapitService);
+        }
     }
 
     @Test

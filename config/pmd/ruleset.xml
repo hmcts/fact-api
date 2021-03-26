@@ -70,7 +70,7 @@
   <rule ref="category/java/multithreading.xml"/>
   <rule ref="category/java/performance.xml"/>
   <rule ref="category/java/security.xml"/>
-  <rule ref="rulesets/java/controversial.xml/DataflowAnomalyAnalysis">
+  <rule ref="category/java/errorprone.xml/DataflowAnomalyAnalysis">
     <properties>
       <property name="violationSuppressRegex" value="^Found 'UR'-anomaly.*"/>
     </properties>
