@@ -153,17 +153,13 @@ public class CourtService {
     }
 
     private boolean filterResultByPostcode(final String postcode, final String areaOfLaw) {
-        if (isScottishPostcode(postcode)
-            || (isNorthernIrishPostcode(postcode) && !areaOfLaw.equalsIgnoreCase(IMMIGRATION_AREA_OF_LAW))) {
-            return true;
-        }
-        return false;
+        return isScottishPostcode(postcode)
+            || isNorthernIrishPostcode(postcode) && !areaOfLaw.equalsIgnoreCase(IMMIGRATION_AREA_OF_LAW);
     }
 
     private Predicate<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> getCourtWithDistancePredicate(String postcode, String areaOfLaw) {
         // Only allow courts not in Northern Ireland or Glasglow court for Northern Ireland postcode and Immigration area of law
         return c -> !isNorthernIrishPostcode(postcode)
-            || (areaOfLaw.equalsIgnoreCase(IMMIGRATION_AREA_OF_LAW)
-                && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE));
+            || areaOfLaw.equalsIgnoreCase(IMMIGRATION_AREA_OF_LAW) && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE);
     }
 }
