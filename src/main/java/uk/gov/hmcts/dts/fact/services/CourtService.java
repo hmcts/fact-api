@@ -47,13 +47,13 @@ public class CourtService {
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
                         final ServiceAreaSearchFactory serviceAreaSearchFactory,
-                        final FallbackProximitySearch fallbackProximitySearch, FallbackProximitySearch fallbackProximitySearch1) {
+                        final FallbackProximitySearch fallbackProximitySearch) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
         this.courtRepository = courtRepository;
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
-        this.fallbackProximitySearch = fallbackProximitySearch1;
+        this.fallbackProximitySearch = fallbackProximitySearch;
     }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
