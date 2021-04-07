@@ -15,6 +15,7 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
+import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
 import java.util.List;
@@ -38,18 +39,21 @@ public class CourtService {
     private final CourtWithDistanceRepository courtWithDistanceRepository;
     private final ServiceAreaRepository serviceAreaRepository;
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
+    private final FallbackProximitySearch fallbackProximitySearch;
 
     @Autowired
     public CourtService(final MapitService mapitService,
                         final CourtRepository courtRepository,
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
-                        final ServiceAreaSearchFactory serviceAreaSearchFactory) {
+                        final ServiceAreaSearchFactory serviceAreaSearchFactory,
+                        final FallbackProximitySearch fallbackProximitySearch) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
         this.courtRepository = courtRepository;
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
+        this.fallbackProximitySearch = fallbackProximitySearch;
     }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
@@ -111,13 +115,15 @@ public class CourtService {
 
         final MapitData mapitData = optionalMapitData.get();
 
-        return mapitData.getLocalAuthority()
+        List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courtsWithDistance = mapitData.getLocalAuthority()
             .map(localAuthority -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority)
-                .stream()
-                .map(CourtWithDistance::new)
-                .collect(toList()))
-            .orElseThrow(() -> new InvalidPostcodeException(postcode));
+                .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority))
+            .orElse(emptyList());
+
+        return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData)
+            .stream()
+            .map(CourtWithDistance::new)
+            .collect(toList());
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
