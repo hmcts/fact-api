@@ -1,5 +1,5 @@
-# FACT-API 
- 
+# FACT-API
+
 [![Build Status](https://travis-ci.org/hmcts/fact-api.svg?branch=master)](https://travis-ci.org/hmcts/fact-api)
 
 API for the find a court or tribunal service.
@@ -86,5 +86,3 @@ There is no need to remove postgres and java or similar core images.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-
