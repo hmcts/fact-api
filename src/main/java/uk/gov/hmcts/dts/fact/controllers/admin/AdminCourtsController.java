@@ -5,25 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
-import uk.gov.hmcts.dts.fact.services.AdminService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
+import static uk.gov.hmcts.dts.fact.controllers.admin.AdminRole.FACT_ADMIN;
+import static uk.gov.hmcts.dts.fact.controllers.admin.AdminRole.FACT_SUPER_ADMIN;
 
 
 @RestController
@@ -32,9 +27,6 @@ import static org.springframework.http.ResponseEntity.ok;
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
 public class AdminCourtsController {
-
-    public static final String FACT_SUPER_ADMIN = "fact-super-admin";
-    public static final String FACT_ADMIN = "fact-admin";
 
     private final AdminService adminService;
 
