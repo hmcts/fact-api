@@ -24,6 +24,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
+import uk.gov.hmcts.dts.fact.services.search.ProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.Search;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
@@ -63,6 +64,9 @@ class CourtServiceTest {
     private CourtService courtService;
 
     @MockBean
+    private ProximitySearch proximitySearch;
+
+    @MockBean
     private CourtRepository courtRepository;
 
     @MockBean
@@ -98,6 +102,12 @@ class CourtServiceTest {
         final Court court = mock(Court.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
         assertThat(courtService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+    }
+
+    @Test
+    void shouldReturnPostcode() {
+        final MapitData mapitData = mock(MapitData.class);
+        proximitySearch.searchWith(mapitData);
     }
 
     @Test

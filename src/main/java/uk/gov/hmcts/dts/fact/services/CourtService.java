@@ -1,5 +1,7 @@
 package uk.gov.hmcts.dts.fact.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
@@ -16,8 +18,10 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
+import uk.gov.hmcts.dts.fact.services.search.ProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -36,20 +40,25 @@ public class CourtService {
 
     private final MapitService mapitService;
     private final CourtRepository courtRepository;
+    private final ProximitySearch proximitySearch;
     private final CourtWithDistanceRepository courtWithDistanceRepository;
     private final ServiceAreaRepository serviceAreaRepository;
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
     private final FallbackProximitySearch fallbackProximitySearch;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CourtService.class);
+
     @Autowired
     public CourtService(final MapitService mapitService,
                         final CourtRepository courtRepository,
+                        final ProximitySearch proximitySearch,
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
                         final ServiceAreaSearchFactory serviceAreaSearchFactory,
                         final FallbackProximitySearch fallbackProximitySearch) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
+        this.proximitySearch = proximitySearch;
         this.courtRepository = courtRepository;
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
@@ -124,6 +133,20 @@ public class CourtService {
             .stream()
             .map(CourtWithDistance::new)
             .collect(toList());
+    }
+
+    public List<CourtReferenceWithDistance> getNearestCourtsReferencesByPostcode(final String postcode) {
+        final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
+
+        if (optionalMapitData.isEmpty()) {
+            LOGGER.error("No mapit data found for provided postcode: {}", postcode);
+            throw new NotFoundException("Postcode data not found");
+        }
+
+        List<CourtReferenceWithDistance> crwds = convert(proximitySearch.searchWith(optionalMapitData.get()));
+        LOGGER.info("Found {} nearest courts for postcode {}: {}",
+                    crwds.size(), postcode, Arrays.stream(crwds.toArray()).toArray());
+        return crwds;
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
