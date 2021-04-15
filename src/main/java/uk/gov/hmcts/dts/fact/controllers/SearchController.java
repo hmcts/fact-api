@@ -64,15 +64,13 @@ public class SearchController {
         }
     }
 
-    @GetMapping(path = "/results/postcode")
+    @GetMapping(path = "/results/{postcode}")
     @ApiOperation("Find closest courts by postcode")
     @Description("Endpoint to return the 10 closest courts for a provided postcode")
     public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcode(
-        @RequestParam("postcode")
         @Pattern(regexp = "^[a-z]{1,2}\\d[a-z\\d]?\\s*\\d[a-z]{2}$",
             message = "Postcode does not match regex pattern")
-            String postcode
-    ) {
+        @PathVariable String postcode) {
         return ok(courtService.getNearestCourtsReferencesByPostcode(postcode));
     }
 

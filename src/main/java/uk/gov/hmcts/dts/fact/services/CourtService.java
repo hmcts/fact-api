@@ -144,8 +144,8 @@ public class CourtService {
         }
 
         List<CourtReferenceWithDistance> crwds = convert(proximitySearch.searchWith(optionalMapitData.get()));
-        LOGGER.info("Found {} nearest courts for postcode {}: {}",
-                    crwds.size(), postcode, Arrays.stream(crwds.toArray()).toArray());
+        LOGGER.debug("Found {} nearest courts for postcode {}: {}",
+                     crwds.size(), postcode, Arrays.stream(crwds.toArray()).toArray());
         return crwds;
     }
 
