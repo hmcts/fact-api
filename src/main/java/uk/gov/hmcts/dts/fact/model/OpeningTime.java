@@ -15,7 +15,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 public class OpeningTime {
     @JsonProperty("description")
     private String type;
-    @JsonProperty(value = "description_cy")
+    @JsonProperty("description_cy")
     private String typeCy;
     private String hours;
 
