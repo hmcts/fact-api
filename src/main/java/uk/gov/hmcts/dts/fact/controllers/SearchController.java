@@ -3,22 +3,27 @@ package uk.gov.hmcts.dts.fact.controllers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.util.List;
 import java.util.Optional;
+import javax.validation.constraints.Pattern;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
+@Validated
 @RequestMapping(
     path = "/search",
     produces = {MediaType.APPLICATION_JSON_VALUE}
@@ -57,6 +62,18 @@ public class SearchController {
         } else {
             return badRequest().build();
         }
+    }
+
+    @GetMapping(path = "/results/postcode")
+    @ApiOperation("Find closest courts by postcode")
+    @Description("Endpoint to return the 10 closest courts for a provided postcode")
+    public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcode(
+        @RequestParam("postcode")
+        @Pattern(regexp = "^[a-z]{1,2}\\d[a-z\\d]?\\s*\\d[a-z]{2}$",
+            message = "Postcode does not match regex pattern")
+            String postcode
+    ) {
+        return ok(courtService.getNearestCourtsReferencesByPostcode(postcode));
     }
 
     @GetMapping(path = "/results")
