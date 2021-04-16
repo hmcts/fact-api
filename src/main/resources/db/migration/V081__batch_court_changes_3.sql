@@ -1,7 +1,7 @@
 --- FACT-418 ---
---UPDATE search_court
---SET alert = 'We’re aware of fraudulent calls (mimicking Inner London Crown Court’s phone number) claiming to be from HMRC/Government Departments. If you receive a call like this please don’t enter into any financial transactions; report it to Action Fraud (0300 123 2040) & HMRC.'
---WHERE slug = 'inner-london-crown-court';
+UPDATE search_court
+SET alert = 'We’re aware of fraudulent calls (mimicking Inner London Crown Court’s phone number) claiming to be from HMRC/Government Departments. If you receive a call like this please report it to Action Fraud (0300 123 2040) and HMRC immediately.'
+WHERE slug = 'inner-london-crown-court';
 
 --- FACT-403 ---
 UPDATE search_facility
