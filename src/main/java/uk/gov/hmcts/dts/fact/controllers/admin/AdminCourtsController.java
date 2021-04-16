@@ -2,12 +2,10 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
@@ -70,11 +68,5 @@ public class AdminCourtsController {
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug, @RequestBody Court updatedCourt) {
         return ok(adminService.save(slug, updatedCourt));
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    String slugNotFoundHandler(NotFoundException ex) {
-        return ex.getMessage();
     }
 }
