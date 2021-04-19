@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
@@ -56,11 +55,4 @@ public class CourtsController {
     public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(courtService.getCourtBySlug(slug));
     }
-
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    String slugNotFoundHandler(NotFoundException ex) {
-        return ex.getMessage();
-    }
-
 }
