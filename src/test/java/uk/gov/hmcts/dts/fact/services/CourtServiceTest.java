@@ -403,7 +403,6 @@ class CourtServiceTest {
         );
         assertEquals(2, results.size());
         assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
-        assertThat(results.get(1)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
     @Test
