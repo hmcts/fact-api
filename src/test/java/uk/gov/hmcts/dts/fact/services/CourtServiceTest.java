@@ -38,7 +38,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -376,6 +376,34 @@ class CourtServiceTest {
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
         assertThat(results.getCourts().size()).isEqualTo(2);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+    }
+
+    @Test
+    void shouldReturnEmptyListIfNoMapitdataForPostcodeOnlySearch() {
+        when(mapitService.getMapitData(any())).thenReturn(empty());
+        List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
+            JE2_4BA
+        );
+        assertEquals(0, results.size());
+        verifyNoInteractions(serviceAreaSearchFactory);
+    }
+
+    @Test
+    void shouldReturnListIfMapitdataForPostcodeOnlySearchFound() {
+        final MapitData mapitData = mock(MapitData.class);
+        when(mapitService.getMapitData(JE2_4BA)).thenReturn(Optional.of(mapitData));
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+        when(proximitySearch.searchWith(mapitData)).thenReturn(courts);
+
+        List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
+            JE2_4BA
+        );
+        assertEquals(2, results.size());
+        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+        assertThat(results.get(1)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
     @Test

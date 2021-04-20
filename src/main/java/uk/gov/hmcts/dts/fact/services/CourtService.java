@@ -21,6 +21,7 @@ import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -135,12 +136,12 @@ public class CourtService {
             .collect(toList());
     }
 
-    public List<CourtReferenceWithDistance> getNearestCourtsReferencesByPostcode(final String postcode) {
+    public List<CourtReferenceWithDistance> getNearestCourtReferencesByPostcode(final String postcode) {
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
 
         if (optionalMapitData.isEmpty()) {
             LOGGER.error("No mapit data found for provided postcode: {}", postcode);
-            throw new NotFoundException("Postcode data not found");
+            return new ArrayList<>(); // Return empty so the frontend logic can be invoked
         }
 
         List<CourtReferenceWithDistance> crwds = convert(proximitySearch.searchWith(optionalMapitData.get()));

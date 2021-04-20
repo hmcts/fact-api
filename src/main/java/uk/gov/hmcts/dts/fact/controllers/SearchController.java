@@ -71,7 +71,7 @@ public class SearchController {
         @Pattern(regexp = "^[a-z]{1,2}\\d[a-z\\d]?\\s*\\d[a-z]{2}$",
             message = "Postcode does not match regex pattern")
         @PathVariable String postcode) {
-        return ok(courtService.getNearestCourtsReferencesByPostcode(postcode));
+        return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
     }
 
     @GetMapping(path = "/results")
