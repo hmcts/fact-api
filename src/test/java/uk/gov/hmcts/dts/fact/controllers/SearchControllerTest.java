@@ -77,7 +77,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchCourtsByPostcodeOnly() throws Exception {
-        mockMvc.perform(get(String.format("%s/%s", BASE_URL, "results/sw1a2by")))
+        mockMvc.perform(get(format("%s/%s", BASE_URL, "results/sw1a2by")))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtReferencesByPostcode("sw1a2by");
