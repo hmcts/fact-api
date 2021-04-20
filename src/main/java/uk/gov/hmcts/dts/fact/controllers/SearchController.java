@@ -68,7 +68,10 @@ public class SearchController {
     @ApiOperation("Find closest courts by postcode")
     @Description("Endpoint to return the 10 closest courts for a provided postcode")
     public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcode(
-        @Pattern(regexp = "^[a-z]{1,2}\\d[a-z\\d]?\\s*\\d[a-z]{2}$",
+        @Pattern(regexp =
+            "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]" +
+            "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]" +
+            "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})",
             message = "Provided postcode is not valid")
         @PathVariable String postcode) {
         return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
