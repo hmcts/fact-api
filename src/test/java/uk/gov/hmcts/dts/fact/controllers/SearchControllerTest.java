@@ -7,18 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import static org.assertj.core.api.Assertions.assertThat;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
-import javax.validation.Constraint;
 import javax.validation.ConstraintViolationException;
 
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -111,9 +106,10 @@ class SearchControllerTest {
         try {
             mockMvc.perform(get(BASE_URL + "/results/abc123")).andReturn();
         } catch (NestedServletException e) {
-            Exception exception =
-                assertThrows(ConstraintViolationException.class, () -> { throw e.getCause(); });
-            assertThat(exception.getMessage())
+            assertThrows(ConstraintViolationException.class, () -> {
+                throw e.getCause();
+            });
+            assertThat(e.getMessage())
                 .containsPattern("findCourtsByPostcode.postcode: Provided postcode is not valid");
         }
         verifyNoInteractions(courtService);
