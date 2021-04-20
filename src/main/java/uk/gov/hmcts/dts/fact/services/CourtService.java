@@ -1,8 +1,6 @@
 package uk.gov.hmcts.dts.fact.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
@@ -22,7 +20,6 @@ import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
