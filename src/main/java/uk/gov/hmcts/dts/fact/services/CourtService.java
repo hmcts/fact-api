@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.isNorthernIrishPostcode;
 import static uk.gov.hmcts.dts.fact.util.Utils.isScottishPostcode;
 
 @Service
+@Slf4j
 public class CourtService {
 
     private static final String IMMIGRATION_AREA_OF_LAW = "Immigration";
@@ -46,8 +48,6 @@ public class CourtService {
     private final ServiceAreaRepository serviceAreaRepository;
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
     private final FallbackProximitySearch fallbackProximitySearch;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CourtService.class);
 
     @Autowired
     public CourtService(final MapitService mapitService,
@@ -140,14 +140,14 @@ public class CourtService {
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
 
         if (optionalMapitData.isEmpty()) {
-            LOGGER.error("No mapit data found for provided postcode: {}", postcode);
-            return new ArrayList<>(); // Return empty so the frontend logic can be invoked
+            log.error("No mapit data found for provided postcode: {}", postcode);
+            return emptyList(); // Return empty so the frontend logic can be invoked
         }
 
-        List<CourtReferenceWithDistance> crwds = convert(proximitySearch.searchWith(optionalMapitData.get()));
-        LOGGER.debug("Found {} nearest courts for postcode {}: {}",
-                     crwds.size(), postcode, Arrays.stream(crwds.toArray()).toArray());
-        return crwds;
+        List<CourtReferenceWithDistance> courtReferences = convert(proximitySearch.searchWith(optionalMapitData.get()));
+        log.debug("Found {} nearest courts for postcode {}: {}",
+                  courtReferences.size(), postcode, Arrays.stream(courtReferences.toArray()).toArray());
+        return courtReferences;
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {

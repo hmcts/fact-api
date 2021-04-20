@@ -69,7 +69,7 @@ public class SearchController {
     @Description("Endpoint to return the 10 closest courts for a provided postcode")
     public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcode(
         @Pattern(regexp = "^[a-z]{1,2}\\d[a-z\\d]?\\s*\\d[a-z]{2}$",
-            message = "Postcode does not match regex pattern")
+            message = "Provided postcode is not valid")
         @PathVariable String postcode) {
         return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
     }
