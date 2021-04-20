@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -42,7 +43,7 @@ public class AdminCourtOpeningTimeService {
         List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimesEntity = getNewOpeningTimesEntity(openingTimes);
         List<CourtOpeningTime> courtOpeningTimesEntity = getNewCourtOpeningTimesEntity(courtEntity, openingTimesEntity);
 
-        if (courtEntity.getCourtOpeningTimes() == null) {
+        if (CollectionUtils.isEmpty(courtEntity.getCourtOpeningTimes())) {
             courtEntity.setCourtOpeningTimes(courtOpeningTimesEntity);
         } else {
             courtEntity.getCourtOpeningTimes().clear();
@@ -67,8 +68,7 @@ public class AdminCourtOpeningTimeService {
     private List<CourtOpeningTime> getNewCourtOpeningTimesEntity(final Court court, final List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimes) {
         final List<CourtOpeningTime> courtOpeningTimes = new ArrayList<>();
         for (int i = 0; i < openingTimes.size(); i++) {
-            final CourtOpeningTime courtOpeningTime = new CourtOpeningTime(court, openingTimes.get(i), i);
-            courtOpeningTimes.add(courtOpeningTime);
+            courtOpeningTimes.add(new CourtOpeningTime(court, openingTimes.get(i), i));
         }
         return courtOpeningTimes;
     }

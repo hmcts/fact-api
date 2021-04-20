@@ -31,6 +31,7 @@ public class AdminCourtOpeningTimesControllerTest {
     private static final String BASE_PATH = "/courts/";
     private static final String CHILD_PATH = "/openingTimes";
     private static final String TEST_SLUG = "unknownSlug";
+    private static final Path TEST_OPENING_TIMES_PATH = Paths.get("src/test/resources/opening-times.json");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -90,8 +91,7 @@ public class AdminCourtOpeningTimesControllerTest {
             .andExpect(content().string("Not found: " + TEST_SLUG));
     }
 
-    private String getOpeningTimesJson() throws IOException {
-        final Path path = Paths.get("src/test/resources/opening-times.json");
-        return new String(readAllBytes(path));
+    private static String getOpeningTimesJson() throws IOException {
+        return new String(readAllBytes(TEST_OPENING_TIMES_PATH));
     }
 }
