@@ -4,12 +4,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
@@ -89,11 +87,5 @@ public class SearchController {
         } else {
             return badRequest().build();
         }
-    }
-
-    @ExceptionHandler(InvalidPostcodeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String postcodeNotFoundHandler(InvalidPostcodeException ex) {
-        return ex.getMessage();
     }
 }
