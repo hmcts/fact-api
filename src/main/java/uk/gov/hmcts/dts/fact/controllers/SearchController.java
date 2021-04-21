@@ -3,23 +3,25 @@ package uk.gov.hmcts.dts.fact.controllers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.util.List;
 import java.util.Optional;
+import javax.validation.constraints.Pattern;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
+@Validated
 @RequestMapping(
     path = "/search",
     produces = {MediaType.APPLICATION_JSON_VALUE}
@@ -58,6 +60,19 @@ public class SearchController {
         } else {
             return badRequest().build();
         }
+    }
+
+    @GetMapping(path = "/results/{postcode}")
+    @ApiOperation("Find closest courts by postcode")
+    @Description("Endpoint to return the 10 closest courts for a provided postcode")
+    public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcode(
+        @Pattern(regexp =
+            "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]"
+            + "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
+            + "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})",
+            message = "Provided postcode is not valid")
+        @PathVariable String postcode) {
+        return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
     }
 
     @GetMapping(path = "/results")
