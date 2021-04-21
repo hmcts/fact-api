@@ -1,14 +1,13 @@
 package uk.gov.hmcts.dts.fact;
 
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Service;
 import uk.gov.hmcts.dts.fact.model.ServiceArea;
+import uk.gov.hmcts.dts.fact.util.FunctionalTestBase;
+import uk.gov.hmcts.dts.fact.util.OAuthClient;
 
 import java.util.List;
 
@@ -21,17 +20,7 @@ import static org.springframework.http.HttpStatus.OK;
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
 @SuppressWarnings("PMD.TooManyMethods")
-public class ServiceEndpointTest {
-
-    private static final String CONTENT_TYPE_VALUE = "application/json";
-
-    @Value("${TEST_URL:http://localhost:8080}")
-    private String testUrl;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = testUrl;
-    }
+public class ServiceEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldRetrieveServices() {

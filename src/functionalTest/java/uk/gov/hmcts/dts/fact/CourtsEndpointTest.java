@@ -1,15 +1,14 @@
 package uk.gov.hmcts.dts.fact;
 
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
+import uk.gov.hmcts.dts.fact.util.FunctionalTestBase;
+import uk.gov.hmcts.dts.fact.util.OAuthClient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +24,7 @@ import static org.springframework.http.HttpStatus.OK;
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
 @SuppressWarnings("PMD.TooManyMethods")
-public class CourtsEndpointTest {
+public class CourtsEndpointTest extends FunctionalTestBase {
 
     private static final String AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT
         = "aylesbury-magistrates-court-and-family-court";
@@ -39,14 +38,6 @@ public class CourtsEndpointTest {
 
     protected static final String CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL = "cardiff-social-security-and-child-support-tribunal";
 
-    @Value("${TEST_URL:http://localhost:8080}")
-    private String testUrl;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = testUrl;
-    }
-
     @Test
     public void shouldRetrieveCourtDetail() {
         final var response = given()
@@ -59,7 +50,6 @@ public class CourtsEndpointTest {
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final OldCourt court = response.as(OldCourt.class);
         assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
-
     }
 
     @Test
