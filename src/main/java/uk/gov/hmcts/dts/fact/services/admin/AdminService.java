@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.services;
+package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -77,11 +76,9 @@ public class AdminService {
             }
         }
 
-
         final List<OpeningTime> openingTimes =
-            ofNullable(court.getOpeningTimes())
-                .map(Collection::stream)
-                .orElseGet(Stream::empty)
+            ofNullable(court.getOpeningTimes()).stream()
+                .flatMap(Collection::stream)
                 .map(o -> new OpeningTime(o.getType(), o.getTypeCy(), o.getHours()))
                 .collect(toList());
 
