@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact;
+package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.OAuthClient;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
@@ -23,24 +24,17 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
+import static uk.gov.hmcts.dts.fact.admin.AdminCommon.*;
 
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {OAuthClient.class})
 @SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtsEndpointTest {
 
-    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
-        = "Birmingham Civil and Family Justice Centre";
-    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG
-        = "birmingham-civil-and-family-justice-centre";
-    private static final String CONTENT_TYPE_VALUE = "application/json";
-    private static final String COURTS_ENDPOINT = "/courts/";
+    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE = "Birmingham Civil and Family Justice Centre";
+    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String COURT_GENERAL_ENDPOINT = "/general";
-    private static final String BEARER = "Bearer ";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Value("${TEST_URL:http://localhost:8080}")
