@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
@@ -24,7 +23,6 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith({SpringExtension.class})
-@SpringBootTest()
 @SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 

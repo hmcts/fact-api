@@ -3,11 +3,9 @@ package uk.gov.hmcts.dts.fact.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
-import uk.gov.hmcts.dts.fact.util.OAuthClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +20,6 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {OAuthClient.class})
 public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     private static final String OPENING_TIME_PATH = "/openingTimes";

@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
-import uk.gov.hmcts.dts.fact.util.OAuthClient;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +19,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.COURTS_ENDPOINT;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {OAuthClient.class})
 public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_COURT_GENERAL_INFO_PATH = "/generalInfo";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
