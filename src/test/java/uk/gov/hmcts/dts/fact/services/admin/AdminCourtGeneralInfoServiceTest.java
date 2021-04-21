@@ -59,5 +59,4 @@ public class AdminCourtGeneralInfoServiceTest {
 
         assertThat(adminService.updateCourtGeneralInfo(COURT_SLUG, COURT_GENERAL_INFO)).isEqualTo(COURT_GENERAL_INFO);
     }
-
 }
