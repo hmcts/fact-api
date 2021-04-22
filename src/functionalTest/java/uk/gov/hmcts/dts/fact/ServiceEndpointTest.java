@@ -2,12 +2,10 @@ package uk.gov.hmcts.dts.fact;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Service;
 import uk.gov.hmcts.dts.fact.model.ServiceArea;
 import uk.gov.hmcts.dts.fact.util.FunctionalTestBase;
-import uk.gov.hmcts.dts.fact.util.OAuthClient;
 
 import java.util.List;
 
@@ -18,8 +16,6 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith({SpringExtension.class})
-@SpringBootTest(classes = {OAuthClient.class})
-@SuppressWarnings("PMD.TooManyMethods")
 public class ServiceEndpointTest extends FunctionalTestBase {
 
     @Test

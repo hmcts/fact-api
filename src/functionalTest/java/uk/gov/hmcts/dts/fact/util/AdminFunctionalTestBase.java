@@ -2,9 +2,7 @@ package uk.gov.hmcts.dts.fact.util;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = {OAuthClient.class})
 public class AdminFunctionalTestBase extends FunctionalTestBase {
 
     @Autowired
