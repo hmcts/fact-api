@@ -7,9 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
+import javax.validation.ConstraintViolationException;
+
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -75,6 +80,14 @@ class SearchControllerTest {
         verify(courtService).getNearestCourtsByPostcodeSearch("OX1 1RZ", "Crime");
     }
 
+    @Test
+    void shouldSearchCourtsByPostcodeOnly() throws Exception {
+        mockMvc.perform(get(format("%s/%s", BASE_URL, "results/sw1a2by")))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtReferencesByPostcode("sw1a2by");
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
         "serviceArea=Crime",
@@ -85,6 +98,20 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + format("/results?%s", requestParam)))
             .andExpect(status().isBadRequest());
 
+        verifyNoInteractions(courtService);
+    }
+
+    @Test
+    void shouldReturnInvalidPostCodeError() throws Exception {
+        try {
+            mockMvc.perform(get(BASE_URL + "/results/abc123")).andReturn();
+        } catch (NestedServletException e) {
+            assertThrows(ConstraintViolationException.class, () -> {
+                throw e.getCause();
+            });
+            assertThat(e.getMessage())
+                .containsPattern("findCourtsByPostcode.postcode: Provided postcode is not valid");
+        }
         verifyNoInteractions(courtService);
     }
 }
