@@ -15,12 +15,9 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-import static java.nio.file.Files.readAllBytes;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.hasSize;
@@ -29,12 +26,16 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @WebMvcTest(AdminCourtsController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AdminCourtsControllerTest {
 
     private static final String URL = "/courts";
+    private static final String TEST_COURT_FILE = "courts.json";
+    private static final String TEST_GENERAL_FILE = "birmingham-civil-and-family-justice-centre-general.json";
+    private static final String TEST_COURT_ENTITY_FILE = "full-birmingham-civil-and-family-justice-centre-entity.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -46,10 +47,8 @@ class AdminCourtsControllerTest {
     @Test
     void shouldFindAllCourts() throws Exception {
 
-        final Path path = Paths.get("src/test/resources/courts.json");
-        final String expectedJson = new String(readAllBytes(path));
-
-        final List<CourtReference> courts = asList(OBJECT_MAPPER.readValue(path.toFile(), CourtReference[].class));
+        final String expectedJson = getResourceAsJson(TEST_COURT_FILE);
+        final List<CourtReference> courts = asList(OBJECT_MAPPER.readValue(expectedJson, CourtReference[].class));
 
         when(adminService.getAllCourtReferences()).thenReturn(courts);
         mockMvc.perform(get(URL + "/all"))
@@ -75,10 +74,8 @@ class AdminCourtsControllerTest {
     @Test
     void shouldFindCourtBySlug() throws Exception {
 
-        final Path path = Paths.get("src/test/resources/birmingham-civil-and-family-justice-centre-general.json");
-        final String expectedJson = new String(readAllBytes(path));
-
-        final Court courtEntity = OBJECT_MAPPER.readValue(path.toFile(), Court.class);
+        final String expectedJson = getResourceAsJson(TEST_GENERAL_FILE);
+        final Court courtEntity = OBJECT_MAPPER.readValue(expectedJson, Court.class);
 
         final String searchSlug = "some-slug";
 
@@ -92,10 +89,8 @@ class AdminCourtsControllerTest {
     @Test
     void shouldUpdateGeneralCourtBySlug() throws Exception {
 
-        final Path courtEntityPath = Paths.get(
-            "src/test/resources/full-birmingham-civil-and-family-justice-centre-entity.json");
         final uk.gov.hmcts.dts.fact.entity.Court courtEntity = OBJECT_MAPPER.readValue(
-            courtEntityPath.toFile(),
+            getResourceAsJson(TEST_COURT_ENTITY_FILE),
             uk.gov.hmcts.dts.fact.entity.Court.class
         );
 

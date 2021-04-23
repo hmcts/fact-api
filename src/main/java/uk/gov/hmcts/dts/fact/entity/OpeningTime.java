@@ -4,12 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_openingtime")
@@ -17,17 +12,25 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 public class OpeningTime {
-    @Id()
+    @Id
     @SequenceGenerator(name = "seq-gen", sequenceName = "search_openingtime_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     private String type;
+    @Column(name = "type_cy")
     private String typeCy;
     private String hours;
+    @Column(name = "opening_type_id")
+    private Integer openingTypeId;
 
-    public OpeningTime(final String type, final String typeCy, String hours) {
+    public OpeningTime(final String type, final String typeCy, final String hours) {
         this.type = type;
         this.typeCy = typeCy;
+        this.hours = hours;
+    }
+
+    public OpeningTime(final Integer openingTypeId, final String hours) {
+        this.openingTypeId = openingTypeId;
         this.hours = hours;
     }
 }

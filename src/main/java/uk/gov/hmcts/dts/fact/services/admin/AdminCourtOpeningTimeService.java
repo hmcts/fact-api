@@ -6,8 +6,10 @@ import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.OpeningTime;
+import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
+import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.repositories.OpeningTypeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +19,12 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class AdminCourtOpeningTimeService {
     private final CourtRepository courtRepository;
+    private final OpeningTypeRepository openingTypeRepository;
 
     @Autowired
-    public AdminCourtOpeningTimeService(final CourtRepository courtRepository) {
+    public AdminCourtOpeningTimeService(final CourtRepository courtRepository, final OpeningTypeRepository openingTypeRepository) {
         this.courtRepository = courtRepository;
+        this.openingTypeRepository = openingTypeRepository;
     }
 
     public List<OpeningTime> getCourtOpeningTimesBySlug(final String slug) {
@@ -39,15 +43,22 @@ public class AdminCourtOpeningTimeService {
         return saveNewOpeningTimes(courtEntity, openingTimes);
     }
 
+    public List<OpeningType> getAllCourtOpeningTypes() {
+        return openingTypeRepository.findAll()
+            .stream()
+            .map(OpeningType::new)
+            .collect(toList());
+    }
+
     private List<OpeningTime> saveNewOpeningTimes(final Court courtEntity, final List<OpeningTime> openingTimes) {
-        List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimesEntity = getNewOpeningTimesEntity(openingTimes);
-        List<CourtOpeningTime> courtOpeningTimesEntity = getNewCourtOpeningTimesEntity(courtEntity, openingTimesEntity);
+        List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimeEntities = getNewOpeningTimes(openingTimes);
+        List<CourtOpeningTime> courtOpeningTimeEntities = getNewCourtOpeningTimes(courtEntity, openingTimeEntities);
 
         if (CollectionUtils.isEmpty(courtEntity.getCourtOpeningTimes())) {
-            courtEntity.setCourtOpeningTimes(courtOpeningTimesEntity);
+            courtEntity.setCourtOpeningTimes(courtOpeningTimeEntities);
         } else {
             courtEntity.getCourtOpeningTimes().clear();
-            courtEntity.getCourtOpeningTimes().addAll(courtOpeningTimesEntity);
+            courtEntity.getCourtOpeningTimes().addAll(courtOpeningTimeEntities);
         }
         final Court courtWithUpdatedOpeningTime = courtRepository.save(courtEntity);
 
@@ -58,14 +69,14 @@ public class AdminCourtOpeningTimeService {
             .collect(toList());
     }
 
-    private List<uk.gov.hmcts.dts.fact.entity.OpeningTime> getNewOpeningTimesEntity(final List<OpeningTime> openingTimes) {
+    private List<uk.gov.hmcts.dts.fact.entity.OpeningTime> getNewOpeningTimes(final List<OpeningTime> openingTimes) {
         return openingTimes.stream()
-            .map(o -> new uk.gov.hmcts.dts.fact.entity.OpeningTime(o.getType(), o.getTypeCy(), o.getHours()))
+            .map(o -> new uk.gov.hmcts.dts.fact.entity.OpeningTime(o.getTypeId(), o.getHours()))
             .collect(toList());
     }
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-    private List<CourtOpeningTime> getNewCourtOpeningTimesEntity(final Court court, final List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimes) {
+    private List<CourtOpeningTime> getNewCourtOpeningTimes(final Court court, final List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimes) {
         final List<CourtOpeningTime> courtOpeningTimes = new ArrayList<>();
         for (int i = 0; i < openingTimes.size(); i++) {
             courtOpeningTimes.add(new CourtOpeningTime(court, openingTimes.get(i), i));
