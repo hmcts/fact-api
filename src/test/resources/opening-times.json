@@ -1,14 +1,14 @@
 [
   {
-    "typeId": 1,
+    "type_id": 1,
     "hours": "Monday to Friday 9.00am to 5.00pm"
   },
   {
-    "typeId": 2,
+    "type_id": 2,
     "hours": "Monday to Friday 9.00am to 3.30pm"
   },
   {
-    "typeId": 3,
+    "type_id": 3,
     "hours": "Monday to Friday 9.00am to 4.30pm"
   }
 ]
