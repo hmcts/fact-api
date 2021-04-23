@@ -1,14 +1,14 @@
 [
   {
-    "description": "Court building open",
+    "typeId": 1,
     "hours": "Monday to Friday 9.00am to 5.00pm"
   },
   {
-    "description": "Counter open",
+    "typeId": 2,
     "hours": "Monday to Friday 9.00am to 3.30pm"
   },
   {
-    "description": "Telephone enquiries answered",
+    "typeId": 3,
     "hours": "Monday to Friday 9.00am to 4.30pm"
   }
 ]
