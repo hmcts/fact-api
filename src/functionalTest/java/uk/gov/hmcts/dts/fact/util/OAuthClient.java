@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact;
+package uk.gov.hmcts.dts.fact.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

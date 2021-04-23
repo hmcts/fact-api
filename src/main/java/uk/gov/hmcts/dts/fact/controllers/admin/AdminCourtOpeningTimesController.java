@@ -12,8 +12,8 @@ import uk.gov.hmcts.dts.fact.services.admin.AdminCourtOpeningTimeService;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
-import static uk.gov.hmcts.dts.fact.controllers.admin.AdminRole.FACT_ADMIN;
-import static uk.gov.hmcts.dts.fact.controllers.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @RestController
 @RequestMapping(

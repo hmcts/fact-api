@@ -1,17 +1,11 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.OAuthClient;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
+import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,32 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.admin.AdminCommon.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
-@ExtendWith({SpringExtension.class})
-@SpringBootTest(classes = {OAuthClient.class})
-public class AdminCourtOpeningTimeEndpointTest {
+@ExtendWith(SpringExtension.class)
+public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     private static final String OPENING_TIME_PATH = "/openingTimes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String TEST = "Test";
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    @Value("${TEST_URL:http://localhost:8080}")
-    private String testUrl;
-
-    @Autowired
-    private OAuthClient authClient;
-
-    private String authenticatedToken;
-    private String forbiddenToken;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = testUrl;
-        authenticatedToken = authClient.getToken();
-        forbiddenToken = authClient.getNobodyToken();
-    }
 
     @Test
     public void shouldGetOpeningTimes() {
@@ -94,7 +70,7 @@ public class AdminCourtOpeningTimeEndpointTest {
     public void shouldUpdateOpeningTimes() throws JsonProcessingException {
         final List<OpeningTime> currentOpeningTimes = getCurrentOpeningTimes();
         final List<OpeningTime> expectedOpeningTimes = updateOpeningTimes(currentOpeningTimes);
-        final String json = OBJECT_MAPPER.writeValueAsString(expectedOpeningTimes);
+        final String json = objectMapper().writeValueAsString(expectedOpeningTimes);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -175,6 +151,6 @@ public class AdminCourtOpeningTimeEndpointTest {
             new OpeningTime("Counter open", "", "Monday to Friday 9.00am - 3.30pm"),
             new OpeningTime("Telephone enquiries answered", "", "Monday to Friday 9.00am - 4.30pm")
         );
-        return OBJECT_MAPPER.writeValueAsString(openingTimes);
+        return objectMapper().writeValueAsString(openingTimes);
     }
 }

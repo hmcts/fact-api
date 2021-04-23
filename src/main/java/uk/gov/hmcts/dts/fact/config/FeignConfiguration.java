@@ -16,5 +16,4 @@ public class FeignConfiguration {
 
         return template -> template.header("X-Api-Key", key);
     }
-
 }

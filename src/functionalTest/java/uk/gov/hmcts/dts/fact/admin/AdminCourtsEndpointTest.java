@@ -1,20 +1,15 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.OAuthClient;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.List;
 
@@ -25,33 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.admin.AdminCommon.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith({SpringExtension.class})
-@SpringBootTest(classes = {OAuthClient.class})
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtsEndpointTest {
+public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE = "Birmingham Civil and Family Justice Centre";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String COURT_GENERAL_ENDPOINT = "/general";
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    @Value("${TEST_URL:http://localhost:8080}")
-    private String testUrl;
-
-    @Autowired
-    private OAuthClient authClient;
-
-    private String authenticatedToken;
-    private String forbiddenToken;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = testUrl;
-        authenticatedToken = authClient.getToken();
-        forbiddenToken = authClient.getNobodyToken();
-    }
 
     @Test
     public void shouldRetrieveCourtsForDownload() {
@@ -164,7 +141,7 @@ public class AdminCourtsEndpointTest {
             openingTimes()
         );
 
-        final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
+        final String json = objectMapper().writeValueAsString(courtUpdate);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -199,7 +176,7 @@ public class AdminCourtsEndpointTest {
             emptyList()
         );
 
-        final String json = OBJECT_MAPPER.writeValueAsString(court);
+        final String json = objectMapper().writeValueAsString(court);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -229,9 +206,8 @@ public class AdminCourtsEndpointTest {
             openingTimes()
         );
 
-        final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
+        final String json = objectMapper().writeValueAsString(courtUpdate);
 
-        final String superAdminToken = authClient.getSuperAdminToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -264,7 +240,7 @@ public class AdminCourtsEndpointTest {
             "Welsh Admin Alert",
             emptyList()
         );
-        final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
+        final String json = objectMapper().writeValueAsString(courtUpdate);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -287,11 +263,10 @@ public class AdminCourtsEndpointTest {
 
         final ObjectMapper mapper = new ObjectMapper();
         final String json = mapper.writeValueAsString(courtInfo);
-        final String token = authClient.getSuperAdminToken();
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + superAdminToken)
             .body(json)
             .when()
             .put("/courts/info")
@@ -302,7 +277,7 @@ public class AdminCourtsEndpointTest {
         final var getResponse = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + token)
+            .header(AUTHORIZATION, BEARER + superAdminToken)
             .when()
             .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
