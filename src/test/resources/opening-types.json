@@ -1,0 +1,17 @@
+[
+  {
+    "id": 13,
+    "type": "Telephone enquiries answered",
+    "type_cy": "Oriau ateb ymholiadau dros y ffôn"
+  },
+  {
+    "id": 44,
+    "type": "Counter open",
+    "type_cy": "Oriau agor y cownter"
+  },
+  {
+    "id": 17,
+    "type": "Court open",
+    "type_cy": "Oriau agor y Llys"
+  }
+]
