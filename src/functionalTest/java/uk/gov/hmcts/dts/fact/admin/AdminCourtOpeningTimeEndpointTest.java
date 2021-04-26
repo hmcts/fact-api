@@ -39,6 +39,8 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
             .thenReturn();
 
+        System.out.println(BEARER + authenticatedToken);
+
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<OpeningTime> openingTimes = response.body().jsonPath().getList(".", OpeningTime.class);
         assertThat(openingTimes).hasSizeGreaterThan(1);

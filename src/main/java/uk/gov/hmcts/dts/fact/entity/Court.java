@@ -3,21 +3,12 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
 
 import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
@@ -26,7 +17,6 @@ import static java.util.Optional.ofNullable;
 @Table(name = "search_court")
 @Getter
 @Setter
-@SuppressWarnings("PMD.TooManyFields")
 public class Court {
     private static final String COURT_ID = "court_id";
     private static final String COURT_STRING = "court";
@@ -118,4 +108,6 @@ public class Court {
             .sorted(comparing(AreaOfLaw::getName))
             .collect(Collectors.toList());
     }
+
+
 }
