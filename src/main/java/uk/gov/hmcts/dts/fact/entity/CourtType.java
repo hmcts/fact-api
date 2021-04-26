@@ -26,8 +26,8 @@ public class CourtType {
         this.id = id;
         this.name = name;
     }
-    @ManyToMany(mappedBy = "courtTypes")
 
+    @ManyToMany(mappedBy = "courtTypes")
     private List<Court> courts;
 
 }

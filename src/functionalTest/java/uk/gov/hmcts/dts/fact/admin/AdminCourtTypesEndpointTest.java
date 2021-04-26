@@ -1,17 +1,11 @@
 package uk.gov.hmcts.dts.fact.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.OAuthClient;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
+import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,36 +16,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.admin.AdminCommon.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @ExtendWith({SpringExtension.class})
-@SpringBootTest(classes = {OAuthClient.class})
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtTypesEndpointTest {
+public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
 
 
-
+    private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_TYPES_PATH = "/courtTypes";
     private static final String ALL_COURT_TYPES_PATH = "courtTypes/all";
     private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court";
     private static final String TEST = "Crown Court";
     private static final Integer TEST_ID = 11420;
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    @Value("${TEST_URL:http://localhost:8080}")
-    private String testUrl;
-
-    @Autowired
-    private OAuthClient authClient;
-
-    private String authenticatedToken;
-    private String forbiddenToken;
-
-    @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = testUrl;
-        authenticatedToken = authClient.getToken();
-        forbiddenToken = authClient.getNobodyToken();
-    }
 
     @Test
     public void returnAllCourtTypes() {
@@ -60,7 +37,7 @@ public class AdminCourtTypesEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + ALL_COURT_TYPES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + ALL_COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -74,7 +51,7 @@ public class AdminCourtTypesEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get(COURTS_ENDPOINT + ALL_COURT_TYPES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + ALL_COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -87,7 +64,7 @@ public class AdminCourtTypesEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
-            .get(COURTS_ENDPOINT + ALL_COURT_TYPES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + ALL_COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -100,7 +77,7 @@ public class AdminCourtTypesEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -115,7 +92,7 @@ public class AdminCourtTypesEndpointTest {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get(COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -128,7 +105,7 @@ public class AdminCourtTypesEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
-            .get(COURTS_ENDPOINT  + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT  + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -138,8 +115,8 @@ public class AdminCourtTypesEndpointTest {
     public void shouldUpdateCourtCourtTypes() throws JsonProcessingException {
         final List<CourtType> currentCourtCourtTypes = getCurrentCourtCourtTypes();
         final List<CourtType> expectedCourtCourtTypes = updateCourtCourtTypes(currentCourtCourtTypes);
-        final String updatedJson = OBJECT_MAPPER.writeValueAsString(expectedCourtCourtTypes);
-        final String originalJson = OBJECT_MAPPER.writeValueAsString(currentCourtCourtTypes);
+        final String updatedJson = objectMapper().writeValueAsString(expectedCourtCourtTypes);
+        final String originalJson = objectMapper().writeValueAsString(currentCourtCourtTypes);
 
         final var response = getResponse(updatedJson);
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -154,13 +131,13 @@ public class AdminCourtTypesEndpointTest {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtCourtTyoes() throws JsonProcessingException {
+    public void shouldRequireATokenWhenUpdatingCourtCourtTypes() throws JsonProcessingException {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .body(getTestCourtCourtTypesJson())
             .when()
-            .put(COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -174,7 +151,7 @@ public class AdminCourtTypesEndpointTest {
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .body(getTestCourtCourtTypesJson())
             .when()
-            .put(COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -188,7 +165,7 @@ public class AdminCourtTypesEndpointTest {
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .body(json)
             .when()
-            .put(COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
 
         return response;
@@ -201,7 +178,7 @@ public class AdminCourtTypesEndpointTest {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
 
         return response.body().jsonPath().getList(".", CourtType.class);
@@ -225,6 +202,6 @@ public class AdminCourtTypesEndpointTest {
             new CourtType()
 
         );
-        return OBJECT_MAPPER.writeValueAsString(courtTypes);
+        return objectMapper().writeValueAsString(courtTypes);
     }
 }

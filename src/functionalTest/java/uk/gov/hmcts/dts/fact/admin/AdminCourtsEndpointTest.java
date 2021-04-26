@@ -15,6 +15,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyEnumeration;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -138,7 +139,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             false,
             "Admin Alert",
             "Welsh Admin Alert",
-            openingTimes()
+            openingTimes(),
+            emptyList()
         );
 
         final String json = objectMapper().writeValueAsString(courtUpdate);
@@ -173,6 +175,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             false,
             "Admin Alert",
             "Welsh Admin Alert",
+            emptyList(),
             emptyList()
         );
 
@@ -203,7 +206,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             false,
             "Super Admin Alert",
             "Super Welsh Admin Alert",
-            openingTimes()
+            openingTimes(),
+            emptyList()
         );
 
         final String json = objectMapper().writeValueAsString(courtUpdate);
@@ -238,6 +242,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             false,
             "Admin Alert",
             "Welsh Admin Alert",
+            emptyList(),
             emptyList()
         );
         final String json = objectMapper().writeValueAsString(courtUpdate);
