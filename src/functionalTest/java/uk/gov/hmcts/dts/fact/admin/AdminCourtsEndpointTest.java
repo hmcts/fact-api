@@ -161,7 +161,8 @@ public class AdminCourtsEndpointTest {
             false,
             "Admin Alert",
             "Welsh Admin Alert",
-            openingTimes()
+            openingTimes(),
+            emptyList()
         );
 
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
@@ -196,6 +197,7 @@ public class AdminCourtsEndpointTest {
             false,
             "Admin Alert",
             "Welsh Admin Alert",
+            openingTimes(),
             emptyList()
         );
 
@@ -226,7 +228,8 @@ public class AdminCourtsEndpointTest {
             false,
             "Super Admin Alert",
             "Super Welsh Admin Alert",
-            openingTimes()
+            openingTimes(),
+            emptyList()
         );
 
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
@@ -262,6 +265,7 @@ public class AdminCourtsEndpointTest {
             false,
             "Admin Alert",
             "Welsh Admin Alert",
+            openingTimes(),
             emptyList()
         );
         final String json = OBJECT_MAPPER.writeValueAsString(courtUpdate);
