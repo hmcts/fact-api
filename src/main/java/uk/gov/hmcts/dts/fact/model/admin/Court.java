@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.model.admin;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -36,6 +37,9 @@ public class Court {
     @JsonProperty("urgent_message_cy")
     private String alertCy;
     private List<OpeningTime> openingTimes;
+    @JsonProperty("types")
+    private List<CourtType> courtTypes;
+
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.slug = courtEntity.getSlug();
@@ -53,5 +57,9 @@ public class Court {
             .orElseGet(Stream::empty)
             .map(cot -> cot.getOpeningTime())
             .map(OpeningTime::new).collect(toList());
+        this.courtTypes = ofNullable(courtEntity.getCourtTypes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtType::new).collect(toList());
     }
 }
