@@ -32,11 +32,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AdminCourtTypesControllerTest {
 
 
-    private static final String BASE_PATH = "/courts/";
+    private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/courtTypes";
     private static final String CHILD_PATH_ALL = "courtTypes/all";
     private static final String TEST_SLUG = "unknownSlug";
-    private static final Path TEST_OPENING_TIMES_PATH = Paths.get("src/test/resources/court-types.json");
+    private static final Path TEST_COURT_TYPES_PATH = Paths.get("src/test/resources/court-types.json");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -114,7 +114,7 @@ public class AdminCourtTypesControllerTest {
     }
 
     private static String getCourtTypesJson() throws IOException {
-        return new String(readAllBytes(TEST_OPENING_TIMES_PATH));
+        return new String(readAllBytes(TEST_COURT_TYPES_PATH));
     }
 
 
