@@ -157,9 +157,9 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-    private Response getResponse(String json){
+    private Response getResponse(final String json){
 
-        final var response = given()
+        return given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
@@ -167,8 +167,6 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
             .when()
             .put(ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH)
             .thenReturn();
-
-        return response;
 
     }
 
@@ -185,7 +183,7 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private List<CourtType> updateCourtCourtTypes(List<CourtType> courtTypes) {
+    private List<CourtType> updateCourtCourtTypes(final List<CourtType> courtTypes) {
         List<CourtType> updatedCourtCourtTypes = new ArrayList<>(courtTypes);
 
             CourtType courtType = new CourtType();
