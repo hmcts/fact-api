@@ -19,6 +19,9 @@ import javax.persistence.Table;
 
 public class CourtType {
 
+    @ManyToMany(mappedBy = "courtTypes")
+    private List<Court> courts;
+
     @Id
     private Integer id;
     private String name;
@@ -28,7 +31,6 @@ public class CourtType {
         this.name = name;
     }
 
-    @ManyToMany(mappedBy = "courtTypes")
-    private List<Court> courts;
+
 
 }

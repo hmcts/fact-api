@@ -72,13 +72,13 @@ public class AdminCourtTypesService {
 
 
             switch (courtType.getName()) {
-                case ("Magistrates' Court"):
+                case "Magistrates' Court":
                     courtEntity.setMagistrateCode(courtType.getCode());
                     break;
-                case ("County Court"):
+                case "County Court":
                     courtEntity.setCciCode(courtType.getCode());
                     break;
-                case ("Crown Court"):
+                case "Crown Court":
                     courtEntity.setNumber(courtType.getCode());
                     break;
                 default:
@@ -107,13 +107,13 @@ public class AdminCourtTypesService {
         for (CourtType courtType : courtTypes) {
 
             switch (courtType.getName()) {
-                case ("Magistrates' Court"):
+                case "Magistrates' Court":
                     courtType.setCode(court.getMagistrateCode());
                     break;
-                case ("County Court"):
+                case "County Court":
                     courtType.setCode(court.getCciCode());
                     break;
-                case ("Crown Court"):
+                case "Crown Court":
                     courtType.setCode(court.getNumber());
                     break;
                 default:
