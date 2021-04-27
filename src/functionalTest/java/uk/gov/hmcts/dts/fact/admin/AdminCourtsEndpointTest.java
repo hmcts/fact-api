@@ -15,7 +15,6 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyEnumeration;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;

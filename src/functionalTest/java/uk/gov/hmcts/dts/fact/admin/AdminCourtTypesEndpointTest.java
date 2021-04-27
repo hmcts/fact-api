@@ -1,4 +1,5 @@
 package uk.gov.hmcts.dts.fact.admin;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+
 @ExtendWith({SpringExtension.class})
 @SuppressWarnings("PMD.TooManyMethods")
+
 public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
 
 
@@ -157,7 +160,7 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-    private Response getResponse(final String json){
+    private Response getResponse(final String json) {
 
         return given()
             .relaxedHTTPSValidation()
@@ -185,11 +188,10 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<CourtType> updateCourtCourtTypes(final List<CourtType> courtTypes) {
         List<CourtType> updatedCourtCourtTypes = new ArrayList<>(courtTypes);
-
-            CourtType courtType = new CourtType();
-            courtType.setName(TEST);
-            courtType.setId(TEST_ID);
-            updatedCourtCourtTypes.add(courtType);
+        CourtType courtType = new CourtType();
+        courtType.setName(TEST);
+        courtType.setId(TEST_ID);
+        updatedCourtCourtTypes.add(courtType);
 
         return updatedCourtCourtTypes;
     }
