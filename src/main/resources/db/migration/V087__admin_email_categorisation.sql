@@ -22,7 +22,12 @@ ALTER COLUMN id SET DEFAULT nextval('public.admin_emailtype_id_seq'::regclass);
 
 -- Amending the existing search_email table to include a foreign key to the one above
 ALTER TABLE public.search_email
-    ADD COLUMN admin_email_type_id integer NULL;
+ADD COLUMN admin_email_type_id integer NULL;
+
+-- Current constraint is for it to be a default of an empty string, if we are
+-- going to be removing these columns moving forwards, best to not initialise it as such
+ALTER TABLE public.search_email
+    ALTER COLUMN description DROP NOT NULL;
 
 -- Inserting the data for the new table
 INSERT INTO public.admin_emailtype(description, description_cy)

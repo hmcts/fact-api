@@ -17,6 +17,8 @@ public class Email {
         this.address = email.getAddress();
         this.explanation = email.getExplanation();
         this.explanationCy = email.getExplanationCy();
-        this.adminEmailTypeId = email.getAdminEmailTypeId();
+
+        if (email.getAdminEmailType() != null)
+            this.adminEmailTypeId = email.getAdminEmailType().getId();
     }
 }

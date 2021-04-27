@@ -3,7 +3,6 @@ package uk.gov.hmcts.dts.fact.services.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -15,8 +14,10 @@ import uk.gov.hmcts.dts.fact.repositories.EmailTypeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @Slf4j
@@ -48,54 +49,43 @@ public class AdminCourtEmailService {
     }
 
     public List<Email> updateEmailListForCourt(final String slug, final List<Email> emailList) {
-
-        // search_court
-        //  court_id (int)
-        //      search_courtemail (table) - List<CourtEmail>)
-        //          id
-        //          court_id
-        //          email_id
-        //          order
-        //              search_email (table) - List<Email>)
-
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        log.info("Found a court, updating with info of {}", emailList.toArray());
-
         List<uk.gov.hmcts.dts.fact.entity.Email> newEmailList = getNewEmails(emailList);
         List<CourtEmail> newCourtEmailList = getNewCourtEmails(courtEntity, newEmailList);
 
-        if (!CollectionUtils.isEmpty(courtEntity.getCourtOpeningTimes())) {
-            log.info("deleted all court emails!");
-            emailRepository.deleteAll();
-        }
+        // Remove existing emails and then replace with newly updated ones
+        log.info("old {}", courtEntity.getCourtEmails().size());
+        log.info("new {}", newCourtEmailList.size());
 
-        List<CourtEmail> courtEmailList = emailRepository.saveAll(newCourtEmailList);
-        log.info("Updated list is: {}", courtEmailList.toArray());
+        for(CourtEmail courtEmail: courtEntity.getCourtEmails())
+            emailRepository.deleteById(courtEmail.getId()); // not quite working, get it to delete the old ones
 
-        return courtEmailList
+        return emailRepository
+            .saveAll(newCourtEmailList)
             .stream()
             .map(CourtEmail::getEmail)
-            .collect(toList()).stream()
+            .collect(toList())
+            .stream()
             .map(Email::new)
             .collect(toList());
     }
 
     private List<uk.gov.hmcts.dts.fact.entity.Email> getNewEmails(final List<Email> emailList) {
+        final Map<Integer, uk.gov.hmcts.dts.fact.entity.EmailType> emailTypeMap = getEmailTypeMap();
         return emailList.stream()
-            .map(e -> new uk.gov.hmcts.dts.fact.entity.Email(e.getAddress(), "", "",
-                                                             e.getExplanation(), e.getExplanationCy(),
-                                                             e.getAdminEmailTypeId()))
+            .map(e -> new uk.gov.hmcts.dts.fact.entity.Email(e.getAddress(), e.getExplanation(),
+                                                             e.getExplanationCy(),
+                                                             emailTypeMap.get(e.getAdminEmailTypeId())
+            ))
             .collect(toList());
     }
 
-//    private Integer id;
-//    private String address;
-//    private String description;
-//    private String descriptionCy;
-//    private String explanation;
-//    private String explanationCy;
-//    private int adminEmailTypeId;
+    private Map<Integer, uk.gov.hmcts.dts.fact.entity.EmailType> getEmailTypeMap() {
+        return emailTypeRepository.findAll()
+            .stream()
+            .collect(toMap(uk.gov.hmcts.dts.fact.entity.EmailType::getId, type -> type));
+    }
 
     private List<CourtEmail> getNewCourtEmails(final Court court, final List<uk.gov.hmcts.dts.fact.entity.Email> emails) {
         final List<CourtEmail> newEmailsList = new ArrayList<>();

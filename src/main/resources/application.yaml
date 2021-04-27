@@ -32,6 +32,7 @@ spring:
   jpa:
     properties:
       hibernate:
+        globally_quoted_identifiers: true
         jdbc:
           lob:
             # silence the 'wall-of-text' - unnecessary exception throw about blob types
@@ -41,6 +42,9 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: ${OAUTH_PROVIDER_URL:https://idam-api.aat.platform.hmcts.net}/jwks
+
+hibernate:
+  show_sql=true:
 
 dbMigration:
   runOnStartup: ${RUN_DB_MIGRATION_ON_STARTUP:true}
