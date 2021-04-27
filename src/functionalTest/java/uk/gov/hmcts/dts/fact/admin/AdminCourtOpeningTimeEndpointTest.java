@@ -26,7 +26,6 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
     private static final String OPENING_TYPES_PATH = "openingTypes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
-    private static final Integer TEST_OPENING_TYPE_ID = 9999;
     private static final String TEST_HOURS = "test hour";
 
     @Test
@@ -36,7 +35,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -50,7 +49,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -63,7 +62,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -71,7 +70,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateOpeningTimes() throws JsonProcessingException {
-        final List<OpeningTime> currentOpeningTimes = getCurrentOpeningTimes();
+        final List<OpeningTime> currentOpeningTimes = getCurrentOpeningTimes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         final List<OpeningTime> expectedOpeningTimes = updateOpeningTimes(currentOpeningTimes);
         final String json = objectMapper().writeValueAsString(expectedOpeningTimes);
 
@@ -81,7 +80,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .body(json)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -96,7 +95,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .body(getTestOpeningTimeJson())
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -110,7 +109,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .body(getTestOpeningTimeJson())
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -123,7 +122,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + OPENING_TYPES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + OPENING_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -131,13 +130,25 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
         assertThat(openingTypes).hasSizeGreaterThan(1);
     }
 
-    private List<OpeningTime> getCurrentOpeningTimes() {
+    @Test
+    public void shouldRequireATokenWhenGettingAllOpeningTypes() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(ADMIN_COURTS_ENDPOINT + OPENING_TYPES_PATH)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    private List<OpeningTime> getCurrentOpeningTimes(final String slug) {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + slug + OPENING_TIMES_PATH)
             .thenReturn();
 
         return response.body().jsonPath().getList(".", OpeningTime.class);
@@ -156,7 +167,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
                 .collect(toList());
         } else {
             updatedOpeningTimes = new ArrayList<>(openingTimes);
-            updatedOpeningTimes.add(new OpeningTime(TEST_OPENING_TYPE_ID, TEST_HOURS));
+            updatedOpeningTimes.add(new OpeningTime(null, TEST_HOURS));
         }
         return updatedOpeningTimes;
     }

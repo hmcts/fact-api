@@ -15,8 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
 public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
@@ -55,7 +54,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -73,7 +72,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -86,7 +85,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -100,7 +99,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .body(adminCourtInfoJson)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -120,7 +119,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + superAdminToken)
             .body(new ObjectMapper().writeValueAsString(EXPECTED_SUPER_ADMIN_COURT_INFO))
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -139,7 +138,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .body(adminCourtInfoJson)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -153,7 +152,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .body(adminCourtInfoJson)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
