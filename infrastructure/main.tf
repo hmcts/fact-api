@@ -13,7 +13,7 @@ data "azurerm_key_vault" "fact_key_vault" {
 }
 
 data "azurerm_key_vault_secret" "launch_darkly_sdk_key" {
-  name = "launchDarkly-sdk-key"
+  name = "launchdarkly-sdk-key"
   key_vault_id = data.azurerm_key_vault.fact_key_vault.id
 }
 

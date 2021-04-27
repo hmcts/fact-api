@@ -19,7 +19,7 @@ java:
       secrets:
         - AppInsightsInstrumentationKey
         - mapit-key
-        - launchDarkly-sdk-key
+        - launchdarkly-sdk-key
   environment:
     POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
     DB_OPTIONS: ?sslmode=require&gssEncMode=disable
