@@ -12,6 +12,11 @@ data "azurerm_key_vault" "fact_key_vault" {
   resource_group_name = local.resource_group_name
 }
 
+data "azurerm_key_vault_secret" "launch_darkly_sdk_key" {
+  name = "launchDarkly-sdk-key"
+  key_vault_id = data.azurerm_key_vault.fact_key_vault.id
+}
+
 provider "vault" {
   address = "https://vault.reform.hmcts.net:6200"
 }
