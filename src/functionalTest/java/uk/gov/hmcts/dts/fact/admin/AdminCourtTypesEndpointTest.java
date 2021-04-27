@@ -30,7 +30,7 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
     private static final String ALL_COURT_TYPES_PATH = "courtTypes/all";
     private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court";
     private static final String TEST = "Crown Court";
-    private static final Integer TEST_ID = 11420;
+    private static final int TEST_ID = 11_420;
 
 
     @Test

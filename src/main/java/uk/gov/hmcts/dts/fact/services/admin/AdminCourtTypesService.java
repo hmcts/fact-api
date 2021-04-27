@@ -8,7 +8,6 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -25,7 +24,7 @@ public class AdminCourtTypesService {
     }
 
 
-    public List<CourtType> getAllCourtTypes(){
+    public List<CourtType> getAllCourtTypes() {
         return  courtTypeRepository.findAll()
             .stream()
             .map(CourtType::new)
@@ -33,6 +32,7 @@ public class AdminCourtTypesService {
 
 
     }
+
     public List<CourtType> getCourtCourtTypesBySlug(final String slug) {
         List<CourtType> returnCourtTypes = courtRepository.findBySlug(slug)
             .map(c -> c.getCourtTypes()
@@ -40,8 +40,7 @@ public class AdminCourtTypesService {
                 .map(CourtType::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
-
-       return mapCourtTypesCodes(returnCourtTypes,courtRepository.findBySlug(slug).get()) ;
+        return mapCourtTypesCodes(returnCourtTypes,courtRepository.findBySlug(slug).get());
 
     }
 
@@ -82,6 +81,8 @@ public class AdminCourtTypesService {
                 case ("Crown Court"):
                     courtEntity.setNumber(courtType.getCode());
                     break;
+                default:
+                    break;
             }
         }
 
@@ -102,10 +103,7 @@ public class AdminCourtTypesService {
             .collect(toList());
     }
 
-
-
-    protected List<CourtType> mapCourtTypesCodes (List<CourtType> courtTypes, Court court )
-    {//map court codes
+    protected List<CourtType> mapCourtTypesCodes(List<CourtType> courtTypes, Court court) {  //map court codes
         for (CourtType courtType : courtTypes) {
 
             switch (courtType.getName()) {
@@ -117,6 +115,8 @@ public class AdminCourtTypesService {
                     break;
                 case ("Crown Court"):
                     courtType.setCode(court.getNumber());
+                    break;
+                default:
                     break;
             }
         }
