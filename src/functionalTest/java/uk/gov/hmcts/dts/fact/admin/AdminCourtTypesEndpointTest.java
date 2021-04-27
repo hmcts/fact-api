@@ -196,8 +196,8 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
 
     private static String getTestCourtCourtTypesJson() throws JsonProcessingException {
         final List<CourtType> courtTypes = Arrays.asList(
-            new CourtType(),
-            new CourtType()
+            new CourtType(1,"test1",null),
+            new CourtType(2,"test2",null)
 
         );
         return objectMapper().writeValueAsString(courtTypes);
