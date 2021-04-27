@@ -60,13 +60,11 @@ public class AdminCourtTypeServiceTest {
 
 
     @Mock
-    private CourtType courtType;
-    @Mock
     private Court court;
 
     @Spy
     @Autowired
-    private AdminCourtTypesService adminCourtTypesServiceSpy = new AdminCourtTypesService(courtRepository,courtTypeRepository);
+    final AdminCourtTypesService adminCourtTypesServiceSpy = new AdminCourtTypesService(courtRepository,courtTypeRepository);
 
     @BeforeAll
     static void setUp() {

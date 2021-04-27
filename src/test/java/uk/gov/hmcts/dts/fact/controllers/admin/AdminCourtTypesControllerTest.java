@@ -47,7 +47,7 @@ public class AdminCourtTypesControllerTest {
 
 
     @Test
-    void getAllCourtTypesShouldReturnAllCourtTypes() throws Exception {
+    void shouldReturnAllCourtTypes() throws Exception {
         final String expectedJson = getCourtTypesJson();
         final List<CourtType> courtTypes = asList(OBJECT_MAPPER.readValue(expectedJson, CourtType[].class));
 
@@ -61,7 +61,7 @@ public class AdminCourtTypesControllerTest {
 
 
     @Test
-    void getCourtCourtTypesShouldReturnCourtCourtTypes() throws Exception {
+    void shouldReturnCourtCourtTypes() throws Exception {
         final String expectedJson = getCourtTypesJson();
         final List<CourtType> courtTypes = asList(OBJECT_MAPPER.readValue(expectedJson, CourtType[].class));
 
