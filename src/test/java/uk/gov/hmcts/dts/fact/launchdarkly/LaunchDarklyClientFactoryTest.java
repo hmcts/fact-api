@@ -4,6 +4,8 @@ import com.launchdarkly.sdk.server.interfaces.LDClientInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -16,10 +18,9 @@ class LaunchDarklyClientFactoryTest {
     }
 
     @Test
-    void testCreate() {
-        LDClientInterface client = factory.create("test key", true);
-        //TODO: Fix PMD violation where client isn't closed.
-
-        assertThat(client).isNotEqualTo(null);
+    void testCreate() throws IOException {
+        try (LDClientInterface client = factory.create("test key", true)) {
+            assertThat(client).isNotEqualTo(null);
+        }
     }
 }
