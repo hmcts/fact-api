@@ -55,7 +55,7 @@ public class AdminCourtTypesService {
     }
 
 
-    public List<CourtType> saveNewCourtCourtTypes(final Court courtEntity, final List<CourtType> courtTypes) {
+    protected List<CourtType> saveNewCourtCourtTypes(final Court courtEntity, final List<CourtType> courtTypes) {
 
 
         List<uk.gov.hmcts.dts.fact.entity.CourtType> courtTypeEntity = getNewCourtCourtTypesEntity(courtTypes);
@@ -104,7 +104,7 @@ public class AdminCourtTypesService {
 
 
 
-    public List<CourtType> mapCourtTypesCodes (List<CourtType> courtTypes, Court court )
+    protected List<CourtType> mapCourtTypesCodes (List<CourtType> courtTypes, Court court )
     {//map court codes
         for (CourtType courtType : courtTypes) {
 
