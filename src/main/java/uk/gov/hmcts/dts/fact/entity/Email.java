@@ -29,6 +29,9 @@ public class Email {
     public Email(String address, String explanation,
                  String explanationCy, EmailType emailType) {
         this.address = address;
+        // Cater for the frontend not allowing null values
+        if (description == null)
+            description = "";
         this.explanation = explanation;
         this.explanationCy = explanationCy;
         this.adminEmailType = emailType;

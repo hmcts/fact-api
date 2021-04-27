@@ -57,7 +57,7 @@ public class Court {
     )
     private List<CourtType> courtTypes;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
     @OrderBy("order")
     private List<CourtEmail> courtEmails;
 
