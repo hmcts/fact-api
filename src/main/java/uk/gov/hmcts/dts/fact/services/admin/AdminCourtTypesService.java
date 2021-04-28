@@ -29,8 +29,6 @@ public class AdminCourtTypesService {
             .stream()
             .map(CourtType::new)
             .collect(toList());
-
-
     }
 
     public List<CourtType> getCourtCourtTypesBySlug(final String slug) {
@@ -41,7 +39,6 @@ public class AdminCourtTypesService {
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
         return mapCourtTypesCodes(returnCourtTypes,courtRepository.findBySlug(slug).get());
-
     }
 
 
