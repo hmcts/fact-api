@@ -44,7 +44,7 @@ public class AdminCourtEmailController {
         return ok(adminCourtEmailService.updateEmailListForCourt(slug, adminEmails));
     }
 
-    @GetMapping(path = "/emails")
+    @GetMapping(path = "/emailTypes")
     @ApiOperation("Retrieve all email details for provided court")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<EmailType>> getAllCourtEmailDescTypes() {

@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.Email;
-import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
-import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
+import uk.gov.hmcts.dts.fact.model.admin.EmailType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.ArrayList;
@@ -24,16 +23,13 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @ExtendWith(SpringExtension.class)
 public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
-    private static final String OPENING_TIMES_PATH = "/emails";
-    private static final String OPENING_TYPES_PATH = "/emailTypes";
-
-
-
     private static final String ALL_EMAILS_PATH = "/emails";
-    private static final String ALL_EMAIL_TYPES_PATH = "/emailTypes";
+    private static final String ALL_EMAIL_TYPES_PATH = "emailTypes";
     private static final String PLYMOUTH_COMBINED_COURT_SLUG = "plymouth-combined-court";
-    private static final Integer TEST_OPENING_TYPE_ID = 9999;
-    private static final String TEST_HOURS = "test hour";
+    private static final String TEST_EMAIL_ADDRESS = "fancy.pancy.email@cat.com";
+    private static final String TEST_EMAIL_EXPLANATION = "explanation";
+    private static final String TEST_EMAIL_EXPLANATION_CY = "explanation cy";
+    private static final int TEST_EMAIL_TYPE = 7;
 
     @Test
     public void shouldGetEmails() {
@@ -82,10 +78,9 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateOpeningTimes() throws JsonProcessingException {
-        final List<OpeningTime> currentOpeningTimes = getCurrentOpeningTimes();
-        final List<OpeningTime> expectedOpeningTimes = updateOpeningTimes(currentOpeningTimes);
-        final String json = objectMapper().writeValueAsString(expectedOpeningTimes);
+    public void shouldUpdateEmails() throws JsonProcessingException {
+        final List<Email> expectedEmails = updateEmails(getCurrentEmails());
+        final String json = objectMapper().writeValueAsString(expectedEmails);
 
         final var response = given()
             .relaxedHTTPSValidation()
@@ -93,92 +88,124 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .body(json)
             .when()
-            .put(COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + OPENING_TIMES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        final List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
-        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+        final List<Email> updatedOpeningTimes = response.body().jsonPath().getList(".", Email.class);
+        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedEmails);
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingOpeningTimes() throws JsonProcessingException {
+    public void shouldRequireATokenWhenUpdatingEmails() throws JsonProcessingException {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .body(getTestOpeningTimeJson())
+            .body(getTestEmails())
             .when()
-            .put(COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + OPENING_TIMES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingOpeningTimes() throws JsonProcessingException {
+    public void shouldBeForbiddenFromUpdatingEmails() throws JsonProcessingException {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .body(getTestOpeningTimeJson())
+            .body(getTestEmails())
             .when()
-            .put(COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + OPENING_TIMES_PATH)
+            .put(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldGetAllOpeningTypes() {
+    public void shouldGetAllEmailTypes() {
+
+        System.out.println(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH);
+
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + OPENING_TYPES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        final List<OpeningType> openingTypes = response.body().jsonPath().getList(".", OpeningType.class);
-        assertThat(openingTypes).hasSizeGreaterThan(1);
+        final List<EmailType> emailTypes = response.body().jsonPath().getList(".", EmailType.class);
+        assertThat(emailTypes).hasSizeGreaterThan(1);
     }
 
-    private List<OpeningTime> getCurrentOpeningTimes() {
+    @Test
+    public void shouldRequireATokenWhenGettingEmailTypes() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .when()
+            .get(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldBeForbiddenForGettingAllEmailTypes() {
+        final var response = given()
+            .relaxedHTTPSValidation()
+            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
+            .header(AUTHORIZATION, BEARER + forbiddenToken)
+            .when()
+            .get(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH)
+            .thenReturn();
+
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    private List<Email> getCurrentEmails() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + OPENING_TIMES_PATH)
+            .get(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
             .thenReturn();
 
-        return response.body().jsonPath().getList(".", OpeningTime.class);
+        return response.body().jsonPath().getList(".", Email.class);
     }
 
-    private List<OpeningTime> updateOpeningTimes(List<OpeningTime> openingTimes) {
-        List<OpeningTime> updatedOpeningTimes;
+    private List<Email> updateEmails(List<Email> openingTimes) {
+        List<Email> newEmailList;
 
         final boolean testRecordPresent = openingTimes.stream()
-            .map(o -> o.getHours())
-            .anyMatch(o -> o.equals(TEST_HOURS));
+            .map(Email::getAddress)
+            .anyMatch(o -> o.equals(TEST_EMAIL_ADDRESS));
 
         if (testRecordPresent) {
-            updatedOpeningTimes = openingTimes.stream()
-                .filter(o -> !o.getHours().equals(TEST_HOURS))
+            newEmailList = openingTimes.stream()
+                .filter(o -> !o.getAddress().equals(TEST_EMAIL_ADDRESS))
                 .collect(toList());
         } else {
-            updatedOpeningTimes = new ArrayList<>(openingTimes);
-            updatedOpeningTimes.add(new OpeningTime(TEST_OPENING_TYPE_ID, TEST_HOURS));
+            // Add test email
+            newEmailList = new ArrayList<>(openingTimes);
+            newEmailList.add(new Email(TEST_EMAIL_ADDRESS, TEST_EMAIL_EXPLANATION,
+                                       TEST_EMAIL_EXPLANATION_CY, TEST_EMAIL_TYPE));
         }
-        return updatedOpeningTimes;
+        return newEmailList;
     }
 
-    private static String getTestOpeningTimeJson() throws JsonProcessingException {
-        final List<OpeningTime> openingTimes = Arrays.asList(
-            new OpeningTime(2, "Monday to Friday 9.00am - 5.00pm"),
-            new OpeningTime(5, "Monday to Friday 9.00am - 3.30pm"),
-            new OpeningTime(9, "Monday to Friday 9.00am - 4.30pm")
+
+
+    private static String getTestEmails() throws JsonProcessingException {
+        final List<Email> emails = Arrays.asList(
+            new Email("Address 1", "Desc 1", "Desc 1 cy", 1),
+            new Email("Address 2", "Desc 2", "Desc 2 cy", 2),
+            new Email("Address 3", "Desc 3", "Desc 3 cy", 3)
         );
-        return objectMapper().writeValueAsString(openingTimes);
+        return objectMapper().writeValueAsString(emails);
     }
 }
