@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +8,8 @@ import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.Email;
 import uk.gov.hmcts.dts.fact.model.admin.EmailType;
+import uk.gov.hmcts.dts.fact.repositories.CourtEmailRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
-import uk.gov.hmcts.dts.fact.repositories.EmailRepository;
 import uk.gov.hmcts.dts.fact.repositories.EmailTypeRepository;
 
 import java.util.ArrayList;
@@ -21,16 +20,15 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Service
-@Slf4j
 public class AdminCourtEmailService {
 
     private final CourtRepository courtRepository;
-    private final EmailRepository emailRepository;
+    private final CourtEmailRepository emailRepository;
     private final EmailTypeRepository emailTypeRepository;
 
     @Autowired
     public AdminCourtEmailService(final CourtRepository courtRepository,
-                                  final EmailRepository emailRepository,
+                                  final CourtEmailRepository emailRepository,
                                   final EmailTypeRepository emailTypeRepository) {
         this.courtRepository = courtRepository;
         this.emailRepository = emailRepository;
@@ -49,7 +47,7 @@ public class AdminCourtEmailService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
-    @Transactional(rollbackFor={RuntimeException.class})
+    @Transactional(rollbackFor = {RuntimeException.class})
     public List<Email> updateEmailListForCourt(final String slug, final List<Email> emailList) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
@@ -58,7 +56,7 @@ public class AdminCourtEmailService {
 
         // Remove existing emails and then replace with newly updated ones
         emailRepository.deleteAll(courtEntity.getCourtEmails());
-        
+
         return emailRepository
             .saveAll(newCourtEmailList)
             .stream()
@@ -75,8 +73,7 @@ public class AdminCourtEmailService {
             .map(e -> new uk.gov.hmcts.dts.fact.entity.Email(e.getAddress(), e.getExplanation(),
                                                              e.getExplanationCy(),
                                                              emailTypeMap.get(e.getAdminEmailTypeId())
-            ))
-            .collect(toList());
+            )).collect(toList());
     }
 
     private Map<Integer, uk.gov.hmcts.dts.fact.entity.EmailType> getEmailTypeMap() {

@@ -3,12 +3,12 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.persistence.*;
 
 import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
@@ -108,6 +108,4 @@ public class Court {
             .sorted(comparing(AreaOfLaw::getName))
             .collect(Collectors.toList());
     }
-
-
 }

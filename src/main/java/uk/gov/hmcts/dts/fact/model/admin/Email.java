@@ -20,7 +20,8 @@ public class Email {
         this.explanation = email.getExplanation();
         this.explanationCy = email.getExplanationCy();
 
-        if (email.getAdminEmailType() != null)
+        if (email.getAdminEmailType() != null) {
             this.adminEmailTypeId = email.getAdminEmailType().getId();
+        }
     }
 }

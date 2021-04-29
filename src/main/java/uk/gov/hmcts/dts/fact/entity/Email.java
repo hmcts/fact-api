@@ -30,8 +30,9 @@ public class Email {
                  String explanationCy, EmailType emailType) {
         this.address = address;
         // Cater for the frontend not allowing null values
-        if (description == null)
+        if (description == null) {
             description = "";
+        }
         this.explanation = explanation;
         this.explanationCy = explanationCy;
         this.adminEmailType = emailType;

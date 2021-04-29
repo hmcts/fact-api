@@ -34,9 +34,6 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldGetEmails() {
 
-        String path = ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH;
-        System.out.println(path);
-
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -44,8 +41,6 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
             .when()
             .get(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
             .thenReturn();
-
-        System.out.println(BEARER + authenticatedToken);
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final List<Email> openingTimes = response.body().jsonPath().getList(".", Email.class);
@@ -126,8 +121,6 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldGetAllEmailTypes() {
 
-        System.out.println(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH);
-
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -202,9 +195,9 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
     private static String getTestEmails() throws JsonProcessingException {
         final List<Email> emails = Arrays.asList(
-            new Email("Address 1", "Desc 1", "Desc 1 cy", 1),
-            new Email("Address 2", "Desc 2", "Desc 2 cy", 2),
-            new Email("Address 3", "Desc 3", "Desc 3 cy", 3)
+            new Email("Address 1", "Exp 1", "Exp 1 cy", 1),
+            new Email("Address 2", "Exp 2", "Exp 2 cy", 2),
+            new Email("Address 3", "Exp 3", "Exp 3 cy", 3)
         );
         return objectMapper().writeValueAsString(emails);
     }

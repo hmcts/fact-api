@@ -85,9 +85,6 @@ WHERE aet.id =
 
     WHEN LOWER(se.description) IN ('witness service', 'witness care unit', 'citizens advice witness service')
     THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'witness')
-
-    ELSE -- default to enquiries for now WHERE we do not have a category to match against
-    (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'enquiries')
 END
 -- Prevent empty expensive updates and dead rows FROM being produced
 AND   se.admin_email_type_id IS DISTINCT FROM aet.id;

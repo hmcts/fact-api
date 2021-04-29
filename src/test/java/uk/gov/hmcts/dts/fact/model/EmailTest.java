@@ -1,13 +1,16 @@
 package uk.gov.hmcts.dts.fact.model;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import uk.gov.hmcts.dts.fact.entity.EmailType;
 
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class EmailTest {
 
@@ -21,6 +24,19 @@ class EmailTest {
         entity.setDescriptionCy("An email address but in Welsh");
         entity.setExplanation("You email it.");
         entity.setExplanationCy("You email it in Welsh.");
+    }
+
+    @Test
+    void testEmailTypeConstructor() {
+        EmailType emailType = new EmailType(1, "desc", "desc cy");
+        uk.gov.hmcts.dts.fact.entity.Email email = new uk.gov.hmcts.dts.fact.entity.Email(
+            "address", "expl", "expl cy", emailType);
+        assertEquals(email.getAdminEmailType(), emailType);
+        assertEquals(email.getExplanation(), "expl");
+        assertEquals(email.getExplanationCy(), "expl cy");
+        assertEquals(email.getAddress(), "address");
+        assertEquals(email.getDescription(), "");
+        assertNull(email.getDescriptionCy());
     }
 
     @ParameterizedTest
