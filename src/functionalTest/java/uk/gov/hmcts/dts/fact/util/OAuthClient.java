@@ -19,16 +19,16 @@ public class OAuthClient {
     @Value("${OAUTH_REDIRECT:http://localhost:3300/oauth2/callback}")
     private String redirectUri;
 
-    @Value("${OAUTH_PROVIDER_URL:https://idam-api.aat.platform.hmcts.net}")
+    @Value("${OAUTH_PROVIDER_URL:}")
     private String providerUrl;
 
-    @Value("${OAUTH_USER:hmcts.fact@gmail.com}")
+    @Value("${OAUTH_USER}")
     private String username;
 
-    @Value("${OAUTH_USER_PASSWORD:Pa55word11}")
+    @Value("${OAUTH_USER_PASSWORD}")
     private String password;
 
-    @Value("${OAUTH_SUPER_USER:hmcts.super.fact@gmail.com}")
+    @Value("${OAUTH_SUPER_USER}")
     private String superUser;
 
     @Value("${OAUTH_WRONG_ROLE_USER:hmcts.wrong.fact@gmail.com}")
