@@ -7,6 +7,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
+import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 
 import java.util.List;
 
@@ -16,11 +17,13 @@ import static java.util.stream.Collectors.toList;
 public class AdminCourtTypesService {
     private final CourtRepository courtRepository;
     private final CourtTypeRepository courtTypeRepository;
+    private final MapCourtCode mapCourtCode;
 
     @Autowired
-    public AdminCourtTypesService(final CourtRepository courtRepository, final CourtTypeRepository courtTypeRepository) {
+    public AdminCourtTypesService(final CourtRepository courtRepository, final CourtTypeRepository courtTypeRepository, final MapCourtCode mapCourtCode) {
         this.courtRepository = courtRepository;
         this.courtTypeRepository = courtTypeRepository;
+        this.mapCourtCode = mapCourtCode;
     }
 
 
@@ -38,7 +41,7 @@ public class AdminCourtTypesService {
                 .map(CourtType::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
-        return mapCourtTypesCodes(returnCourtTypes,courtRepository.findBySlug(slug).get());
+        return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, courtRepository.findBySlug(slug).get());
     }
 
 
@@ -51,7 +54,7 @@ public class AdminCourtTypesService {
     }
 
 
-    protected List<CourtType> saveNewCourtCourtTypes(final Court courtEntity, final List<CourtType> courtTypes) {
+    protected List<CourtType> saveNewCourtCourtTypes(Court courtEntity, final List<CourtType> courtTypes) {
 
 
         List<uk.gov.hmcts.dts.fact.entity.CourtType> courtTypeEntity = getNewCourtCourtTypesEntity(courtTypes);
@@ -64,24 +67,7 @@ public class AdminCourtTypesService {
             courtEntity.getCourtTypes().addAll(courtTypeEntity);
         }
 
-        //set court codes in Court Entity
-        for (CourtType courtType : courtTypes) {
-
-
-            switch (courtType.getName()) {
-                case "Magistrates' Court":
-                    courtEntity.setMagistrateCode(courtType.getCode());
-                    break;
-                case "County Court":
-                    courtEntity.setCciCode(courtType.getCode());
-                    break;
-                case "Crown Court":
-                    courtEntity.setNumber(courtType.getCode());
-                    break;
-                default:
-                    break;
-            }
-        }
+        courtEntity = mapCourtCode.mapCourtCodesForCourtEntity(courtTypes, courtEntity);
 
         final Court courtWithUpdatedCourtTypes = courtRepository.save(courtEntity);
 
@@ -91,7 +77,7 @@ public class AdminCourtTypesService {
             .collect(toList());
 
 
-        return mapCourtTypesCodes(returnCourtTypes, courtWithUpdatedCourtTypes);
+        return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, courtWithUpdatedCourtTypes);
     }
 
     private List<uk.gov.hmcts.dts.fact.entity.CourtType> getNewCourtCourtTypesEntity(final List<CourtType> courtTypes) {
@@ -100,27 +86,7 @@ public class AdminCourtTypesService {
             .collect(toList());
     }
 
-    protected List<CourtType> mapCourtTypesCodes(List<CourtType> courtTypes, Court court) {  //map court codes
-        for (CourtType courtType : courtTypes) {
 
-            switch (courtType.getName()) {
-                case "Magistrates' Court":
-                    courtType.setCode(court.getMagistrateCode());
-                    break;
-                case "County Court":
-                    courtType.setCode(court.getCciCode());
-                    break;
-                case "Crown Court":
-                    courtType.setCode(court.getNumber());
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return courtTypes;
-
-    }
 
 
 }
