@@ -19,7 +19,7 @@ public class OAuthClient {
     @Value("${OAUTH_REDIRECT:http://localhost:3300/oauth2/callback}")
     private String redirectUri;
 
-    @Value("${OAUTH_PROVIDER_URL:}")
+    @Value("${OAUTH_PROVIDER_URL:https://idam-api.aat.platform.hmcts.net}")
     private String providerUrl;
 
     @Value("${OAUTH_USER}")
