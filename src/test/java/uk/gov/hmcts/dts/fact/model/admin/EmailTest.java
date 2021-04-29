@@ -15,17 +15,17 @@ public class EmailTest {
     private static final String EMAIL_EXPLANATION = "expl";
     private static final String EMAIL_EXPLANATION_CY = "expl cy";
 
-    private static final EmailType emailType = new EmailType(
+    private static final EmailType EMAIL_TYPE = new EmailType(
         EMAIL_TYPE_ID, EMAIL_TYPE_DESCRIPTION, EMAIL_TYPE_DESCRIPTION_CY);
 
-    private static final uk.gov.hmcts.dts.fact.entity.Email entEmail =
-        new uk.gov.hmcts.dts.fact.entity.Email(EMAIL_ADDRESS, EMAIL_EXPLANATION, EMAIL_EXPLANATION_CY, emailType);
+    private static final uk.gov.hmcts.dts.fact.entity.Email ENT_EMAIL =
+        new uk.gov.hmcts.dts.fact.entity.Email(EMAIL_ADDRESS, EMAIL_EXPLANATION, EMAIL_EXPLANATION_CY, EMAIL_TYPE);
 
     @Test
     void testEmailConstructorSetsEmailType() {
-        Email email = new Email(entEmail);
+        Email email = new Email(ENT_EMAIL);
 
-        assertEquals(email.getAdminEmailTypeId(), emailType.getId());
+        assertEquals(email.getAdminEmailTypeId(), EMAIL_TYPE.getId());
         assertEquals(email.getExplanation(), "expl");
         assertEquals(email.getExplanationCy(), "expl cy");
         assertEquals(email.getAddress(), "address");
@@ -36,8 +36,8 @@ public class EmailTest {
      */
     @Test
     void testEmailConstructorNoEmailTypeFound() {
-        entEmail.setAdminEmailType(null);
-        Email email = new Email(entEmail);
+        ENT_EMAIL.setAdminEmailType(null);
+        Email email = new Email(ENT_EMAIL);
 
         assertEquals(email.getExplanation(), "expl");
         assertEquals(email.getExplanationCy(), "expl cy");

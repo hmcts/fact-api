@@ -67,6 +67,7 @@ public class AdminCourtEmailService {
             .collect(toList());
     }
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.Email> getNewEmails(final List<Email> emailList) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.EmailType> emailTypeMap = getEmailTypeMap();
         return emailList.stream()
@@ -82,6 +83,7 @@ public class AdminCourtEmailService {
             .collect(toMap(uk.gov.hmcts.dts.fact.entity.EmailType::getId, type -> type));
     }
 
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtEmail> getNewCourtEmails(final Court court, final List<uk.gov.hmcts.dts.fact.entity.Email> emails) {
         final List<CourtEmail> newEmailsList = new ArrayList<>();
         for (int i = 0; i < emails.size(); i++) {
