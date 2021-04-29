@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,6 +13,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
+import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,13 +37,13 @@ public class AdminCourtTypeServiceTest {
 
 
 
-    private static final List<CourtType> EXPECTED_COURT_TYPES = Arrays.asList(
+    private static final List<CourtType> EXPECTED_COURT_TYPES_ENTITY = Arrays.asList(
         new CourtType(1,"test1"),
         new CourtType(2,"test2"),
         new CourtType(3,"test3")
     );
 
-    private static final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> EXPECTED_COURT_TYPES1 = Arrays.asList(
+    private static final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> EXPECTED_COURT_TYPES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(1,"test1",null),
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(2,"test2",null),
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",null)
@@ -55,6 +55,9 @@ public class AdminCourtTypeServiceTest {
     @MockBean
     private CourtTypeRepository courtTypeRepository;
 
+    @MockBean
+    private MapCourtCode mapCourtCode;
+
     @Autowired
     private AdminCourtTypesService adminCourtTypesService;
 
@@ -62,9 +65,6 @@ public class AdminCourtTypeServiceTest {
     @Mock
     private Court court;
 
-    @Spy
-    @Autowired
-    final AdminCourtTypesService adminCourtTypesServiceSpy = new AdminCourtTypesService(courtRepository,courtTypeRepository);
 
     @BeforeAll
     static void setUp() {
@@ -78,7 +78,7 @@ public class AdminCourtTypeServiceTest {
     @Test
     void shouldReturnAllCourtTypes() {
 
-        when(courtTypeRepository.findAll()).thenReturn(EXPECTED_COURT_TYPES);
+        when(courtTypeRepository.findAll()).thenReturn(EXPECTED_COURT_TYPES_ENTITY);
 
         assertThat(adminCourtTypesService.getAllCourtTypes())
             .hasSize(COURT_TYPE_COUNT)
@@ -90,9 +90,9 @@ public class AdminCourtTypeServiceTest {
     void shouldReturnCourtCourtTypes() {
         when(court.getCourtTypes()).thenReturn(COURT_TYPES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(adminCourtTypesServiceSpy.mapCourtTypesCodes(anyList(), any())).thenReturn(EXPECTED_COURT_TYPES1);
+        when(mapCourtCode.mapCourtCodesForCourtTypeModel(anyList(), any())).thenReturn(EXPECTED_COURT_TYPES);
 
-        assertThat(adminCourtTypesServiceSpy.getCourtCourtTypesBySlug(COURT_SLUG))
+        assertThat(adminCourtTypesService.getCourtCourtTypesBySlug(COURT_SLUG))
             .hasSize(COURT_TYPE_COUNT)
             .first()
             .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtType.class);
@@ -104,11 +104,13 @@ public class AdminCourtTypeServiceTest {
     void shouldUpdateCourtCourtTypes() {
         when(court.getCourtTypes()).thenReturn(COURT_TYPES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(mapCourtCode.mapCourtCodesForCourtEntity(anyList(), any())).thenReturn(court);
         when(courtRepository.save(court)).thenReturn(court);
-        when(adminCourtTypesServiceSpy.saveNewCourtCourtTypes(court, EXPECTED_COURT_TYPES1)).thenReturn(EXPECTED_COURT_TYPES1);
+        when(adminCourtTypesService.saveNewCourtCourtTypes(court, EXPECTED_COURT_TYPES)).thenReturn(
+            EXPECTED_COURT_TYPES);
 
-        assertThat(adminCourtTypesServiceSpy.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES1))
+        assertThat(adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES))
             .hasSize(COURT_TYPE_COUNT)
-            .containsExactlyElementsOf(EXPECTED_COURT_TYPES1);
+            .containsExactlyElementsOf(EXPECTED_COURT_TYPES);
     }
 }
