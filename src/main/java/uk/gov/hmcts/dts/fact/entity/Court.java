@@ -17,6 +17,7 @@ import static java.util.Optional.ofNullable;
 @Table(name = "search_court")
 @Getter
 @Setter
+@SuppressWarnings("PMD.TooManyFields")
 public class Court {
     private static final String COURT_ID = "court_id";
     private static final String COURT_STRING = "court";
