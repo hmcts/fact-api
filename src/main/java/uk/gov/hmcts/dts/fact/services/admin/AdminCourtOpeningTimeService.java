@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -13,8 +12,10 @@ import uk.gov.hmcts.dts.fact.repositories.OpeningTypeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 public class AdminCourtOpeningTimeService {
@@ -54,7 +55,7 @@ public class AdminCourtOpeningTimeService {
         List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimeEntities = getNewOpeningTimes(openingTimes);
         List<CourtOpeningTime> courtOpeningTimeEntities = getNewCourtOpeningTimes(courtEntity, openingTimeEntities);
 
-        if (CollectionUtils.isEmpty(courtEntity.getCourtOpeningTimes())) {
+        if (courtEntity.getCourtOpeningTimes() == null) {
             courtEntity.setCourtOpeningTimes(courtOpeningTimeEntities);
         } else {
             courtEntity.getCourtOpeningTimes().clear();
@@ -69,10 +70,22 @@ public class AdminCourtOpeningTimeService {
             .collect(toList());
     }
 
+    @SuppressWarnings({"PMD.AvoidInstantiatingObjectsInLoops", "PMD.DataflowAnomalyAnalysis"})
     private List<uk.gov.hmcts.dts.fact.entity.OpeningTime> getNewOpeningTimes(final List<OpeningTime> openingTimes) {
-        return openingTimes.stream()
-            .map(o -> new uk.gov.hmcts.dts.fact.entity.OpeningTime(o.getTypeId(), o.getHours()))
-            .collect(toList());
+        final Map<Integer, uk.gov.hmcts.dts.fact.entity.OpeningType> openingTypeMap = getOpeningTypeMap();
+        final List<uk.gov.hmcts.dts.fact.entity.OpeningTime> openingTimeEntities = new ArrayList<>();
+
+        for (OpeningTime openingTime : openingTimes) {
+            final uk.gov.hmcts.dts.fact.entity.OpeningType openingType = openingTypeMap.get(openingTime.getTypeId());
+            openingTimeEntities.add(new uk.gov.hmcts.dts.fact.entity.OpeningTime(openingType, openingTime.getHours()));
+        }
+        return openingTimeEntities;
+    }
+
+    private Map<Integer, uk.gov.hmcts.dts.fact.entity.OpeningType> getOpeningTypeMap() {
+        return openingTypeRepository.findAll()
+            .stream()
+            .collect(toMap(uk.gov.hmcts.dts.fact.entity.OpeningType::getId, type -> type));
     }
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")

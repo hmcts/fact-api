@@ -20,8 +20,9 @@ public class OpeningTime {
     @Column(name = "type_cy")
     private String typeCy;
     private String hours;
-    @Column(name = "opening_type_id")
-    private Integer openingTypeId;
+    @OneToOne()
+    @JoinColumn(name = "opening_type_id")
+    private OpeningType openingType;
 
     public OpeningTime(final String type, final String typeCy, final String hours) {
         this.type = type;
@@ -29,8 +30,8 @@ public class OpeningTime {
         this.hours = hours;
     }
 
-    public OpeningTime(final Integer openingTypeId, final String hours) {
-        this.openingTypeId = openingTypeId;
+    public OpeningTime(final OpeningType openingType, final String hours) {
+        this.openingType = openingType;
         this.hours = hours;
     }
 }

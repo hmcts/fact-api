@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class TestUtil {
     public static final String COURTS_ENDPOINT = "/courts/";
+    public static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     public static final String BEARER = "Bearer ";
 
     private TestUtil() {

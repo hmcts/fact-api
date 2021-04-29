@@ -89,8 +89,9 @@ public class AdminCourtOpeningTimeServiceTest {
 
     @Test
     void shouldUpdateCourtOpeningTimes() {
-        when(court.getCourtOpeningTimes()).thenReturn(COURT_OPENING_TIMES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(openingTypeRepository.findAll()).thenReturn(OPENING_TYPES);
+        when(court.getCourtOpeningTimes()).thenReturn(COURT_OPENING_TIMES);
         when(courtRepository.save(court)).thenReturn(court);
 
         assertThat(adminService.updateCourtOpeningTimes(COURT_SLUG, EXPECTED_OPENING_TIMES))
