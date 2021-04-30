@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,7 +27,6 @@ public class AdminCourtTypesService {
         this.mapCourtCode = mapCourtCode;
     }
 
-
     public List<CourtType> getAllCourtTypes() {
         return  courtTypeRepository.findAll()
             .stream()
@@ -35,16 +35,22 @@ public class AdminCourtTypesService {
     }
 
     public List<CourtType> getCourtCourtTypesBySlug(final String slug) {
-        List<CourtType> returnCourtTypes = courtRepository.findBySlug(slug)
+
+        Optional<Court> court = courtRepository.findBySlug(slug);
+
+        if (court.isEmpty()) {
+            throw new NotFoundException(String.format("Court %s was not found", slug));
+        }
+
+        List<CourtType> returnCourtTypes = court
             .map(c -> c.getCourtTypes()
                 .stream()
                 .map(CourtType::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
-        return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, courtRepository.findBySlug(slug).get());
+
+        return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, court.get());
     }
-
-
 
     public List<CourtType> updateCourtCourtTypes(final String slug, final List<CourtType> courtTypes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
@@ -53,12 +59,9 @@ public class AdminCourtTypesService {
 
     }
 
-
     protected List<CourtType> saveNewCourtCourtTypes(final Court courtEntity, final List<CourtType> courtTypes) {
 
-
         List<uk.gov.hmcts.dts.fact.entity.CourtType> courtTypeEntity = getNewCourtCourtTypesEntity(courtTypes);
-
 
         if (courtEntity.getCourtTypes() == null) {
             courtEntity.setCourtTypes(courtTypeEntity);
@@ -76,7 +79,6 @@ public class AdminCourtTypesService {
             .map(CourtType::new)
             .collect(toList());
 
-
         return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, courtWithUpdatedCourtTypes);
     }
 
@@ -85,8 +87,4 @@ public class AdminCourtTypesService {
             .map(o -> new uk.gov.hmcts.dts.fact.entity.CourtType(o.getId(),o.getName()))
             .collect(toList());
     }
-
-
-
-
 }
