@@ -98,21 +98,15 @@ public class AdminCourtEmailServiceTest {
 
         when(COURT_EMAILS.get(0).getEmail())
             .thenReturn(new uk.gov.hmcts.dts.fact.entity.Email(
-                TEST_EMAIL_ADDRESS, TEST_EMAIL_EXPLANATION, TEST_EMAIL_EXPLANATION_CY,
-                new uk.gov.hmcts.dts.fact.entity.EmailType(TEST_EMAIL_TYPE,
-                                                           TEST_EMAIL_DESCRIPTION, TEST_EMAIL_DESCRIPTION_CY)));
+                TEST_EMAIL_ADDRESS, TEST_EMAIL_EXPLANATION, TEST_EMAIL_EXPLANATION_CY, EMAIL_TYPE1));
 
         when(COURT_EMAILS.get(1).getEmail())
             .thenReturn(new uk.gov.hmcts.dts.fact.entity.Email(
-                TEST_EMAIL_ADDRESS2, TEST_EMAIL_EXPLANATION2, TEST_EMAIL_EXPLANATION_CY2,
-                new uk.gov.hmcts.dts.fact.entity.EmailType(TEST_EMAIL_TYPE2,
-                                                           TEST_EMAIL_DESCRIPTION2, TEST_EMAIL_DESCRIPTION_CY2)));
+                TEST_EMAIL_ADDRESS2, TEST_EMAIL_EXPLANATION2, TEST_EMAIL_EXPLANATION_CY2, EMAIL_TYPE2));
 
         when(COURT_EMAILS.get(2).getEmail())
             .thenReturn(new uk.gov.hmcts.dts.fact.entity.Email(
-                TEST_EMAIL_ADDRESS3, TEST_EMAIL_EXPLANATION3, TEST_EMAIL_EXPLANATION_CY3,
-                new uk.gov.hmcts.dts.fact.entity.EmailType(TEST_EMAIL_TYPE3,
-                                                           TEST_EMAIL_DESCRIPTION3, TEST_EMAIL_DESCRIPTION_CY3)));
+                TEST_EMAIL_ADDRESS3, TEST_EMAIL_EXPLANATION3, TEST_EMAIL_EXPLANATION_CY3, EMAIL_TYPE3));
     }
 
     @Test
@@ -134,8 +128,8 @@ public class AdminCourtEmailServiceTest {
         when(emailRepository.saveAll(any())).thenReturn(COURT_EMAILS);
 
         List<Email> emails = adminService.updateEmailListForCourt(COURT_SLUG, EXPECTED_EMAILS);
-        verify(emailRepository, times(1)).deleteAll(COURT_EMAILS);
-        verify(emailRepository, times(1)).saveAll(anyIterable());
+        verify(emailRepository).deleteAll(COURT_EMAILS);
+        verify(emailRepository).saveAll(anyIterable());
 
         assertThat(emails)
             .hasSize(EMAIL_COUNT)

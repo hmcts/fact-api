@@ -1,11 +1,10 @@
-package uk.gov.hmcts.dts.fact.model;
+package uk.gov.hmcts.dts.fact.entity;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import uk.gov.hmcts.dts.fact.entity.EmailType;
 
 import java.util.Locale;
 
@@ -46,7 +45,7 @@ class EmailTest {
             Locale locale = new Locale("cy");
             LocaleContextHolder.setLocale(locale);
         }
-        Email email = new Email(entity);
+        uk.gov.hmcts.dts.fact.model.Email email = new uk.gov.hmcts.dts.fact.model.Email(entity);
         assertEquals(entity.getAddress(), email.getAddress());
         assertEquals(welsh ? entity.getExplanationCy() : entity.getExplanation(), email.getExplanation());
         assertEquals(welsh ? entity.getDescriptionCy() : entity.getDescription(), email.getDescription());
