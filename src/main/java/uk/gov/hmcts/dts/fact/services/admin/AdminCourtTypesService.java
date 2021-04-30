@@ -54,7 +54,7 @@ public class AdminCourtTypesService {
     }
 
 
-    protected List<CourtType> saveNewCourtCourtTypes(Court courtEntity, final List<CourtType> courtTypes) {
+    protected List<CourtType> saveNewCourtCourtTypes(final Court courtEntity, final List<CourtType> courtTypes) {
 
 
         List<uk.gov.hmcts.dts.fact.entity.CourtType> courtTypeEntity = getNewCourtCourtTypesEntity(courtTypes);
@@ -67,9 +67,9 @@ public class AdminCourtTypesService {
             courtEntity.getCourtTypes().addAll(courtTypeEntity);
         }
 
-        courtEntity = mapCourtCode.mapCourtCodesForCourtEntity(courtTypes, courtEntity);
+        Court amendedCourtEntity = mapCourtCode.mapCourtCodesForCourtEntity(courtTypes, courtEntity);
 
-        final Court courtWithUpdatedCourtTypes = courtRepository.save(courtEntity);
+        final Court courtWithUpdatedCourtTypes = courtRepository.save(amendedCourtEntity);
 
         List<CourtType> returnCourtTypes = courtWithUpdatedCourtTypes.getCourtTypes()
             .stream()

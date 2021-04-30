@@ -9,10 +9,10 @@ import java.util.List;
 @Component
 public class MapCourtCode {
 
-    public Court mapCourtCodesForCourtEntity(final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> courtTypes, final Court courtEntity) {
+    public Court mapCourtCodesForCourtEntity(final List<CourtType> courtTypes, final Court courtEntity) {
 
         //set court codes in Court Entity
-        for (final uk.gov.hmcts.dts.fact.model.admin.CourtType courtType : courtTypes) {
+        for (final CourtType courtType : courtTypes) {
 
             switch (courtType.getName()) {
                 case "Magistrates' Court":
@@ -32,7 +32,7 @@ public class MapCourtCode {
         return courtEntity;
     }
 
-    public List<uk.gov.hmcts.dts.fact.model.admin.CourtType> mapCourtCodesForCourtTypeModel(final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> courtTypes, final Court court) {
+    public List<CourtType> mapCourtCodesForCourtTypeModel(final List<CourtType> courtTypes, final Court court) {
         for (final CourtType courtType : courtTypes) {
 
             switch (courtType.getName()) {
