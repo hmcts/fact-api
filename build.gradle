@@ -78,9 +78,12 @@ task functional(type: Test) {
 
   doFirst() {
     if (System.getenv("TEST_URL") == null) {
-      println("Loading secrets from vault")
+      println("Loading secrets and admin credentials from vault")
 
       systemProperty 'OAUTH_SECRET', getVaultSecret('oauth-client-secret')
+      systemProperty 'OAUTH_USER', getVaultSecret('oauth-user')
+      systemProperty 'OAUTH_USER_PASSWORD', getVaultSecret('oauth-user-password')
+      systemProperty 'OAUTH_SUPER_USER', getVaultSecret('oauth-super-user')
     }
   }
 
