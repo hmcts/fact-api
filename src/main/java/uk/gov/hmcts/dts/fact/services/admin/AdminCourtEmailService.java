@@ -40,8 +40,6 @@ public class AdminCourtEmailService {
             .map(c -> c.getCourtEmails()
                 .stream()
                 .map(CourtEmail::getEmail)
-                .collect(toList())
-                .stream()
                 .map(Email::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
@@ -61,8 +59,6 @@ public class AdminCourtEmailService {
             .saveAll(newCourtEmailList)
             .stream()
             .map(CourtEmail::getEmail)
-            .collect(toList())
-            .stream()
             .map(Email::new)
             .collect(toList());
     }
