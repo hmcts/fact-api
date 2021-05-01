@@ -1,36 +1,25 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-
 @Entity
-@Table(name = "search_courttype")
+@Table(name = "admin_openingtype")
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
-
-public class CourtType {
-
-    @ManyToMany(mappedBy = "courtTypes")
-    private List<Court> courts;
-
+public class OpeningType {
     @Id
     private Integer id;
     private String name;
-
-    public CourtType(final Integer id, final String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-
-
+    @Column(name = "name_cy")
+    private String nameCy;
 }

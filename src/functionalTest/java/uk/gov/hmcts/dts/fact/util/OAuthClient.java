@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact;
+package uk.gov.hmcts.dts.fact.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,13 +22,13 @@ public class OAuthClient {
     @Value("${OAUTH_PROVIDER_URL:https://idam-api.aat.platform.hmcts.net}")
     private String providerUrl;
 
-    @Value("${OAUTH_USER:hmcts.fact@gmail.com}")
+    @Value("${OAUTH_USER}")
     private String username;
 
-    @Value("${OAUTH_USER_PASSWORD:Pa55word11}")
+    @Value("${OAUTH_USER_PASSWORD}")
     private String password;
 
-    @Value("${OAUTH_SUPER_USER:hmcts.super.fact@gmail.com}")
+    @Value("${OAUTH_SUPER_USER}")
     private String superUser;
 
     @Value("${OAUTH_WRONG_ROLE_USER:hmcts.wrong.fact@gmail.com}")
