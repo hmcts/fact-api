@@ -220,9 +220,10 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformLogging
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.6.RELEASE'
   implementation group: 'uk.gov.hmcts.reform', name: 'properties-volume-spring-boot-starter', version: '0.1.0'
-
   implementation group: 'org.flywaydb', name: 'flyway-core'
   implementation group: 'org.postgresql', name: 'postgresql'
+
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '5.4.0'
 
   compile group: 'org.apache.logging.log4j', name: 'log4j-api'
   compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
