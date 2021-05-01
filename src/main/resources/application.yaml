@@ -45,12 +45,15 @@ spring:
 dbMigration:
   runOnStartup: ${RUN_DB_MIGRATION_ON_STARTUP:true}
 
-mapit.key: ${MAPIT_KEY:}
 mapit:
+  key: ${MAPIT_KEY:}
   url: https://mapit.mysociety.org
   endpoint:
     postcode-search: /postcode
     quota: /quota
+
+launchDarkly:
+  sdk-key: ${LAUNCH_DARKLY_SDK_KEY:}
 
 azure:
   application-insights:
