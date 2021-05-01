@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
@@ -38,7 +36,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -59,6 +58,8 @@ class CourtServiceTest {
     private static final String IMMIGRATION = "Immigration";
     private static final String EMPLOYMENT = "Employment";
     private static final String GLASGOW_TRIBUNALS_CENTRE = "Glasgow Tribunals Centre";
+    private static final String TEST_TYPE_IN_OPENING_TIME_TABLE = "Test type in opening time";
+    private static final String TEST_TYPE_IN_ADMIN_TABLE = "Test type in opening type";
 
     @Autowired
     private CourtService courtService;
@@ -102,6 +103,42 @@ class CourtServiceTest {
         final Court court = mock(Court.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
         assertThat(courtService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+    }
+
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private static Stream<Arguments> parametersForOpeningTypeInAdminTableShouldTakePrecedence() {
+        return Stream.of(
+            // Opening type in opening time table only
+            Arguments.of(TEST_TYPE_IN_OPENING_TIME_TABLE, null, TEST_TYPE_IN_OPENING_TIME_TABLE),
+            // Opening type in admin type table only
+            Arguments.of(null, TEST_TYPE_IN_ADMIN_TABLE, TEST_TYPE_IN_ADMIN_TABLE),
+            // Opening type in both opening time and admin type tables
+            Arguments.of(TEST_TYPE_IN_OPENING_TIME_TABLE, TEST_TYPE_IN_ADMIN_TABLE, TEST_TYPE_IN_ADMIN_TABLE)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("parametersForOpeningTypeInAdminTableShouldTakePrecedence")
+    void openingTypeInAdminTableShouldTakePrecedence(final String typeInOpeningTimeTable, final String typeInAdminTable, final String expectedType) {
+        final OpeningTime openingTime = new OpeningTime();
+        openingTime.setType(typeInOpeningTimeTable);
+        if (typeInAdminTable != null) {
+            openingTime.setOpeningType(new OpeningType(1, typeInAdminTable, null));
+        }
+
+        final CourtOpeningTime courtOpeningTime = mock(CourtOpeningTime.class);
+        when(courtOpeningTime.getOpeningTime()).thenReturn(openingTime);
+        List<CourtOpeningTime> courtOpeningTimes = singletonList(courtOpeningTime);
+
+        final Court court = mock(Court.class);
+        when(court.getCourtOpeningTimes()).thenReturn(courtOpeningTimes);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
+
+        final uk.gov.hmcts.dts.fact.model.Court result = courtService.getCourtBySlug(SOME_SLUG);
+        assertThat(result).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+        final List<uk.gov.hmcts.dts.fact.model.OpeningTime> openingTimes = result.getOpeningTimes();
+        assertThat(openingTimes).hasSize(1);
+        assertThat(openingTimes.get(0).getType()).isEqualTo(expectedType);
     }
 
     @Test
