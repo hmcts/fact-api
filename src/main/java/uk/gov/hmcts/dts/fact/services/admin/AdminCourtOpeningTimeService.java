@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -38,6 +39,7 @@ public class AdminCourtOpeningTimeService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    @Transactional()
     public List<OpeningTime> updateCourtOpeningTimes(final String slug, final List<OpeningTime> openingTimes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));

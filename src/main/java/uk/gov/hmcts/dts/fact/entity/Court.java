@@ -71,14 +71,8 @@ public class Court {
     @OrderBy("order")
     private List<CourtEmail> courtEmails;
 
-    @ManyToMany
-    @JoinTable(
-        name = "search_courtcontact",
-        joinColumns = @JoinColumn(name = COURT_ID),
-        inverseJoinColumns = @JoinColumn(name = "contact_id")
-    )
-    @OrderBy("sort_order")
-    private List<Contact> contacts;
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
+    private List<CourtContact> courtContacts;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
     @OrderBy("sort")

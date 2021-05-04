@@ -109,5 +109,7 @@ public class AdminCourtOpeningTimeServiceTest {
         assertThat(results.get(0).getTypeCy()).isEqualTo(WELSH_TYPE1);
         assertThat(results.get(1).getType()).isEqualTo(ENGLISH_TYPE2);
         assertThat(results.get(1).getTypeCy()).isEqualTo(WELSH_TYPE2);
+        assertThat(results.get(2).getType()).isEqualTo(ENGLISH_TYPE3);
+        assertThat(results.get(2).getTypeCy()).isEqualTo(WELSH_TYPE3);
     }
 }
