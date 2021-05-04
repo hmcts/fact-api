@@ -49,6 +49,6 @@ withPipeline(type, product, component) {
   }
 
   before('Smoke Test - AKS preview') {
-    steps.junit allowEmptyResults: true, testResults: '**/test-results/*.xml'
+    steps.junit allowEmptyResults: true, testResults: '**/test-results/**/*.xml'
   }
 }
