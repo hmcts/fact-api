@@ -58,7 +58,7 @@ WHERE aet.id =
     WHEN LOWER(se.description) IN ('crown court', 'crown court listing')
     THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'crown court')
 
-    WHEN LOWER(se.description) IN ('enquries', 'scottish enquiries', 'urgent queries', 'issue')
+    WHEN LOWER(se.description) IN ('enquiries', 'scottish enquiries', 'urgent queries', 'issue')
     THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'enquiries')
 
     WHEN LOWER(se.description) IN ('orders and accounts', 'filing and records', 'send documents',
