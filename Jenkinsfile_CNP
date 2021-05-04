@@ -49,6 +49,22 @@ withPipeline(type, product, component) {
   }
 
   stage('test:smoke') {
-    
+    echo 'test this does something'
+  }
+
+  stage('Smoke Test - AKS preview') {
+    echo 'goes into Smoke Test - AKS preview'
+  }
+
+  before('smoketest:preview') {
+    echo 'goes before smoketest:preview'
+  }
+
+  stage('smoketest:preview') {
+    echo 'goes into smoketest:preview'
+  }
+
+  after('smoketest:preview') {
+    echo 'goes after smoketest:preview'
   }
 }
