@@ -67,4 +67,16 @@ withPipeline(type, product, component) {
   after('smoketest:preview') {
     echo 'goes after smoketest:preview'
   }
+
+  before('smokeTest:preview') {
+    echo 'goes before caps t smoketest:preview'
+  }
+
+  stage('smokeTest:preview') {
+    echo 'goes into caps t smoketest:preview'
+  }
+
+  after('smokeTest:preview') {
+    echo 'goes after caps t smoketest:preview'
+  }
 }
