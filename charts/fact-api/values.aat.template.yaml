@@ -11,5 +11,6 @@ java:
         - api-POSTGRES-PORT
         - api-POSTGRES-USER
         - mapit-key
+        - launchdarkly-sdk-key
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
