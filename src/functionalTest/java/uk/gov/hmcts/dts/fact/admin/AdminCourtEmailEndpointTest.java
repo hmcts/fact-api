@@ -171,20 +171,20 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
         return response.body().jsonPath().getList(".", Email.class);
     }
 
-    private List<Email> updateEmails(List<Email> openingTimes) {
+    private List<Email> updateEmails(List<Email> emailList) {
         List<Email> newEmailList;
 
-        final boolean testRecordPresent = openingTimes.stream()
+        final boolean testRecordPresent = emailList.stream()
             .map(Email::getAddress)
             .anyMatch(o -> o.equals(TEST_EMAIL_ADDRESS));
 
         if (testRecordPresent) {
-            newEmailList = openingTimes.stream()
+            newEmailList = emailList.stream()
                 .filter(o -> !o.getAddress().equals(TEST_EMAIL_ADDRESS))
                 .collect(toList());
         } else {
             // Add test email
-            newEmailList = new ArrayList<>(openingTimes);
+            newEmailList = new ArrayList<>(emailList);
             newEmailList.add(new Email(TEST_EMAIL_ADDRESS, TEST_EMAIL_EXPLANATION,
                                        TEST_EMAIL_EXPLANATION_CY, TEST_EMAIL_TYPE));
         }
