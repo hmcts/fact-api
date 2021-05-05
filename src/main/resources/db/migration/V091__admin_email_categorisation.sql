@@ -68,10 +68,10 @@ WHERE aet.id =
     WHEN LOWER(se.description) IN ('family queries', 'family listing',
                                    'family public law (children in care)',
                                    'divorce', 'adoption', 'social security and child support')
-    THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'finances')
+    THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'family')
 
     WHEN LOWER(se.description) IN ('fine queries', 'small claims', 'fixed penalties')
-    THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'family')
+    THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'finances')
 
     WHEN LOWER(se.description) IN ('immigration and asylum', 'immigration bail applications')
     THEN (SELECT aet.id FROM admin_emailtype as aet WHERE LOWER(aet.description) = 'immigration')
