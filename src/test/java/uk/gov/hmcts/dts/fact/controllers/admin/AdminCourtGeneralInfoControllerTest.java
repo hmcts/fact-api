@@ -28,7 +28,8 @@ public class AdminCourtGeneralInfoControllerTest {
     private static final String TEST_SLUG = "unknownSlug";
     private static final CourtGeneralInfo COURT_GENERAL_INFO = new CourtGeneralInfo(
         true,
-        false,
+        true,
+        true,
         "English info",
         "Welsh info",
         "English alert",
