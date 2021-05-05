@@ -11,6 +11,8 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 @NoArgsConstructor
 public class CourtGeneralInfo {
     private Boolean open;
+    @JsonProperty("in_person")
+    private Boolean inPerson;
     @JsonProperty("access_scheme")
     private Boolean accessScheme;
     private String info;
@@ -22,7 +24,8 @@ public class CourtGeneralInfo {
 
     public CourtGeneralInfo(Court court) {
         this.open = court.getDisplayed();
-        this.accessScheme = court.getInPerson() == null ? null : court.getInPerson().getAccessScheme();
+        this.inPerson = court.getInPerson() != null && court.getInPerson().getIsInPerson();
+        this.accessScheme = this.inPerson && court.getInPerson().getAccessScheme();
         this.info = court.getInfo();
         this.infoCy = court.getInfoCy();
         this.alert = court.getAlert();
