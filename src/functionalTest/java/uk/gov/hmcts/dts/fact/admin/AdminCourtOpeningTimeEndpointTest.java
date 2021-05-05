@@ -12,8 +12,8 @@ import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.*;
@@ -23,8 +23,9 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
-    private static final String OPENING_TYPES_PATH = "openingTypes";
+    private static final String OPENING_TYPES_FULL_PATH = ADMIN_COURTS_ENDPOINT + "openingTypes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
+    private static final String BIRMINGHAM_OPENING_TIMES_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH;
     private static final String TEST_HOURS = "test hour";
     private static final int BAILIFF_OFFICE_OPEN_TYPE_ID = 5;
     private static final String BAILIFF_OFFICE_OPEN_TYPE = "Bailiff office open";
@@ -33,72 +34,42 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldGetOpeningTimes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<OpeningTime> openingTimes = response.body().jsonPath().getList(".", OpeningTime.class);
         assertThat(openingTimes).hasSizeGreaterThan(1);
     }
 
     @Test
     public void shouldRequireATokenWhenGettingOpeningTimes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForGettingOpeningTimes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldAddOrRemoveOpeningTimes() throws JsonProcessingException {
+    public void shouldAddAndRemoveOpeningTimes() throws JsonProcessingException {
+        var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+
         // Add a new opening time
-        final List<OpeningTime> currentOpeningTimes = getCurrentOpeningTimes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         List<OpeningTime> expectedOpeningTimes = addNewOpeningTime(currentOpeningTimes);
         String json = objectMapper().writeValueAsString(expectedOpeningTimes);
 
-        var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .body(json)
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
-            .thenReturn();
-
+        response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
         assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
 
         // Check the standard court endpoint still display the added opening type in English after the opening time update
-        response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG)
-            .thenReturn();
-
+        response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         Court court = response.as(Court.class);
@@ -108,14 +79,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
             && openingTime.getType().equals(BAILIFF_OFFICE_OPEN_TYPE));
 
         // Check the standard court endpoint still display the added opening type in Welsh after the opening time update
-        response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(ACCEPT_LANGUAGE, "cy")
-            .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG)
-            .thenReturn();
-
+        response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG, Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         court = response.as(Court.class);
@@ -128,84 +92,38 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
         expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
         json = objectMapper().writeValueAsString(expectedOpeningTimes);
 
-        response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .body(json)
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
-            .thenReturn();
-
+        response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
         assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
     }
 
     @Test
     public void shouldRequireATokenWhenUpdatingOpeningTimes() throws JsonProcessingException {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .body(getTestOpeningTimeJson())
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
-            .thenReturn();
-
+        final var response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, getTestOpeningTimeJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForUpdatingOpeningTimes() throws JsonProcessingException {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .body(getTestOpeningTimeJson())
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH)
-            .thenReturn();
-
+        final var response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestOpeningTimeJson());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
     public void shouldGetAllOpeningTypes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + OPENING_TYPES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(OPENING_TYPES_FULL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<OpeningType> openingTypes = response.body().jsonPath().getList(".", OpeningType.class);
         assertThat(openingTypes).hasSizeGreaterThan(1);
     }
 
     @Test
     public void shouldRequireATokenWhenGettingAllOpeningTypes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + OPENING_TYPES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(OPENING_TYPES_FULL_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    }
-
-    private List<OpeningTime> getCurrentOpeningTimes(final String slug) {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + slug + OPENING_TIMES_PATH)
-            .thenReturn();
-
-        return response.body().jsonPath().getList(".", OpeningTime.class);
     }
 
     private List<OpeningTime> addNewOpeningTime(List<OpeningTime> openingTimes) {

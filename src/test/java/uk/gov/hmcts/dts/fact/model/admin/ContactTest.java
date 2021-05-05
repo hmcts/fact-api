@@ -14,7 +14,7 @@ public class ContactTest {
     private static final ContactType CONTACT_TYPE = new ContactType(10, TYPE, TYPE_CY);
 
     @Test
-    void testCreationWhenEmailTypeIsSet() {
+    void testCreationWhenContactTypeIsSet() {
         final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY);
         Contact contact = new Contact(contactEntity);
 
@@ -25,7 +25,7 @@ public class ContactTest {
     }
 
     @Test
-    void testCreationWhenEmailTypeIsNotSet() {
+    void testCreationWhenContactTypeIsNotSet() {
         final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact(null, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY);
         Contact contact = new Contact(contactEntity);
 

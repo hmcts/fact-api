@@ -12,18 +12,20 @@ import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
 public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String CONTACTS_PATH = "/" + "contacts";
-    private static final String CONTACT_TYPES_PATH = "contactTypes";
+    private static final String CONTACT_TYPES_FULL_PATH = ADMIN_COURTS_ENDPOINT + "contactTypes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
+    private static final String BIRMINGHAM_CONTACTS_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH;
     private static final int ENQUIRIES_CONTACT_TYPE_ID = 22;
     private static final String ENQUIRIES_CONTACT_TYPE = "Enquiries";
     private static final String ENQUIRIES_CONTACT_TYPE_WELSH = "Ymholiadau";
@@ -32,72 +34,89 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRetrieveContacts() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<Contact> contacts = response.body().jsonPath().getList(".", Contact.class);
         assertThat(contacts).hasSizeGreaterThan(1);
     }
 
     @Test
     public void shouldRequireATokenWhenRetrievingContacts() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForRetrievingContacts() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldAddOrRemoveContacts() throws JsonProcessingException {
+    public void shouldAddAndRemoveContacts() throws JsonProcessingException {
+        var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final List<Contact> currentContacts = response.body().jsonPath().getList(".", Contact.class);
+
         // Add a new contact
-        final List<Contact> currentContacts = getCurrentContacts(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         List<Contact> expectedContacts = addNewContact(currentContacts);
         String json = objectMapper().writeValueAsString(expectedContacts);
 
-        var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .body(json)
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH)
-            .thenReturn();
-
+        response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         List<Contact> updatedContacts = response.body().jsonPath().getList(".", Contact.class);
         assertThat(updatedContacts).containsExactlyElementsOf(expectedContacts);
 
-        // Check the standard court endpoint still display the added contact type in English after the contact update
-        response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG)
-            .thenReturn();
+        verifyCourtContactsAfterUpdate();
 
+        // Remove the added contact
+        expectedContacts = removeContact(updatedContacts);
+        json = objectMapper().writeValueAsString(expectedContacts);
+
+        response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        updatedContacts = response.body().jsonPath().getList(".", Contact.class);
+        assertThat(updatedContacts).containsExactlyElementsOf(expectedContacts);
+    }
+
+    @Test
+    public void shouldRequireATokenWhenUpdatingContacts() throws JsonProcessingException {
+        final var response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, getTestContactsJson());
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldBeForbiddenForUpdatingContacts() throws JsonProcessingException {
+        final var response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestContactsJson());
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldRetrieveAllContactTypes() {
+        final var response = doGetRequest(CONTACT_TYPES_FULL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<ContactType> contactTypes = response.body().jsonPath().getList(".", ContactType.class);
+        assertThat(contactTypes).hasSizeGreaterThan(1);
+    }
+
+    @Test
+    public void shouldRequireATokenWhenRetrievingAllContactTypes() {
+        final var response = doGetRequest(CONTACT_TYPES_FULL_PATH);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldBeForbiddenForRetrievingContactTypes() {
+        final var response = doGetRequest(CONTACT_TYPES_FULL_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    private void verifyCourtContactsAfterUpdate() {
+        // Check the standard court endpoint still display the added contact type in English after the contact update
+        var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         Court court = response.as(Court.class);
@@ -107,14 +126,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
             && contact.getName().equals(ENQUIRIES_CONTACT_TYPE));
 
         // Check the standard court endpoint still display the added contact type in Welsh after the contact update
-        response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(ACCEPT_LANGUAGE, "cy")
-            .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG)
-            .thenReturn();
-
+        response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG, Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         court = response.as(Court.class);
@@ -122,102 +134,6 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         assertThat(contacts).hasSizeGreaterThan(1);
         assertThat(contacts.stream()).anyMatch(contact -> contact.getNumber().equals(TEST_NUMBER)
             && contact.getName().equals(ENQUIRIES_CONTACT_TYPE_WELSH));
-
-        // Remove the added contact
-        expectedContacts = removeContact(updatedContacts);
-        json = objectMapper().writeValueAsString(expectedContacts);
-
-        response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .body(json)
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH)
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-        updatedContacts = response.body().jsonPath().getList(".", Contact.class);
-        assertThat(updatedContacts).containsExactlyElementsOf(expectedContacts);
-    }
-
-    @Test
-    public void shouldRequireATokenWhenUpdatingContacts() throws JsonProcessingException {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .body(getTestContactsJson())
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH)
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    }
-
-    @Test
-    public void shouldBeForbiddenForUpdatingContacts() throws JsonProcessingException {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .body(getTestContactsJson())
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH)
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
-    }
-
-    @Test
-    public void shouldRetrieveAllContactTypes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + CONTACT_TYPES_PATH)
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-        final List<ContactType> contactTypes = response.body().jsonPath().getList(".", ContactType.class);
-        assertThat(contactTypes).hasSizeGreaterThan(1);
-    }
-
-    @Test
-    public void shouldRequireATokenWhenRetrievingAllContactTypes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + CONTACT_TYPES_PATH)
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    }
-
-    @Test
-    public void shouldBeForbiddenForRetrievingContactTypes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + CONTACT_TYPES_PATH)
-            .thenReturn();
-
-        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
-    }
-
-    private List<Contact> getCurrentContacts(final String slug) {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + slug + CONTACTS_PATH)
-            .thenReturn();
-
-        return response.body().jsonPath().getList(".", Contact.class);
     }
 
     private List<Contact> addNewContact(List<Contact> contacts) {
