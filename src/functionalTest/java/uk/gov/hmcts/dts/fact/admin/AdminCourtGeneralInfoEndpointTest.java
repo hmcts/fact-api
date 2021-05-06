@@ -24,6 +24,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
     private static final CourtGeneralInfo EXPECTED_ADMIN_COURT_INFO = new CourtGeneralInfo(
         true,
+        true,
         false,
         "Admin Info",
         "Welsh Admin Info",
@@ -31,6 +32,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Welsh Admin Alert"
     );
     private static final CourtGeneralInfo EXPECTED_SUPER_ADMIN_COURT_INFO = new CourtGeneralInfo(
+        true,
         true,
         false,
         "Super Admin Info",
@@ -56,6 +58,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
         final CourtGeneralInfo generalInfo = response.as(CourtGeneralInfo.class);
         assertThat(generalInfo.getOpen()).isEqualTo(expectedCourtDetails.getOpen());
+        assertThat(generalInfo.getInPerson()).isEqualTo(expectedCourtDetails.getInPerson());
         assertThat(generalInfo.getAccessScheme()).isEqualTo(expectedCourtDetails.getAccessScheme());
         assertThat(generalInfo.getInfo()).isEqualTo(expectedCourtDetails.getInfo());
         assertThat(generalInfo.getAlert()).isEqualTo(expectedCourtDetails.getAlert());
