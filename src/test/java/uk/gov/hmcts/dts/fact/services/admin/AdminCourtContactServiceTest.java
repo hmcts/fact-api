@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.Contact;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -45,6 +47,7 @@ public class AdminCourtContactServiceTest {
     private static final String TEST_EXPLANATION1 = "some explanation";
     private static final String TEST_EXPLANATION2 = "Another explanation";
     private static final String TEST_EXPLANATION3 = "Yet another explanation";
+    private static final String NOT_FOUND = "Not found: ";
 
     private static final int CONTACT_COUNT = 3;
     private static final List<CourtContact> COURT_CONTACTS = new ArrayList<>();
@@ -101,6 +104,15 @@ public class AdminCourtContactServiceTest {
     }
 
     @Test
+    void shouldReturnNotFoundWhenRetrievingContactsForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.getCourtContactsBySlug(COURT_SLUG))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
     void shouldUpdateCourtContacts() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(contactTypeRepository.findAll()).thenReturn(CONTACT_TYPES);
@@ -113,6 +125,15 @@ public class AdminCourtContactServiceTest {
 
         verify(courtContactRepository).deleteAll(COURT_CONTACTS);
         verify(courtContactRepository).saveAll(any());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingContactsForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.updateCourtContacts(COURT_SLUG, any()))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 
     @Test

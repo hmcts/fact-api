@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 import uk.gov.hmcts.dts.fact.util.MapCourtCode;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
@@ -33,9 +35,7 @@ public class AdminCourtTypeServiceTest {
     private static final int COURT_TYPE_COUNT = 3;
     private static final List<CourtType> COURT_TYPES = new ArrayList<>();
     private static final String COURT_SLUG = "some slug";
-
-
-
+    private static final String NOT_FOUND = "Not found: ";
 
     private static final List<CourtType> EXPECTED_COURT_TYPES_ENTITY = Arrays.asList(
         new CourtType(1,"test1"),
@@ -61,10 +61,8 @@ public class AdminCourtTypeServiceTest {
     @Autowired
     private AdminCourtTypesService adminCourtTypesService;
 
-
     @Mock
     private Court court;
-
 
     @BeforeAll
     static void setUp() {
@@ -72,7 +70,6 @@ public class AdminCourtTypeServiceTest {
             final CourtType courtType = mock(CourtType.class);
             COURT_TYPES.add(courtType);
         }
-
     }
 
     @Test
@@ -98,7 +95,14 @@ public class AdminCourtTypeServiceTest {
             .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtType.class);
     }
 
+    @Test
+    void shouldReturnNotFoundWhenRetrievingCourtTypesForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
 
+        assertThatThrownBy(() -> adminCourtTypesService.getCourtCourtTypesBySlug(COURT_SLUG))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
 
     @Test
     void shouldUpdateCourtCourtTypes() {
@@ -112,5 +116,14 @@ public class AdminCourtTypeServiceTest {
         assertThat(adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES))
             .hasSize(COURT_TYPE_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_TYPES);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingCourtTypesForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, any()))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 }

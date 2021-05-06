@@ -37,13 +37,9 @@ public class AdminCourtTypesService {
 
     public List<CourtType> getCourtCourtTypesBySlug(final String slug) {
 
-        Optional<Court> court = courtRepository.findBySlug(slug);
+        final Optional<Court> court = courtRepository.findBySlug(slug);
 
-        if (court.isEmpty()) {
-            throw new NotFoundException(String.format("Court %s was not found", slug));
-        }
-
-        List<CourtType> returnCourtTypes = court
+        final List<CourtType> returnCourtTypes = court
             .map(c -> c.getCourtTypes()
                 .stream()
                 .map(CourtType::new)

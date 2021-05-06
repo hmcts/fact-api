@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.Email;
 import uk.gov.hmcts.dts.fact.model.admin.EmailType;
 import uk.gov.hmcts.dts.fact.repositories.CourtEmailRepository;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -53,6 +55,8 @@ public class AdminCourtEmailServiceTest {
     private static final String TEST_EMAIL_EXPLANATION_CY = "explanation cy";
     private static final String TEST_EMAIL_EXPLANATION_CY2 = "explanation cy2";
     private static final String TEST_EMAIL_EXPLANATION_CY3 = "explanation cy3";
+
+    private static final String NOT_FOUND = "Not found: ";
 
     private static final uk.gov.hmcts.dts.fact.entity.EmailType EMAIL_TYPE1 =
         new uk.gov.hmcts.dts.fact.entity.EmailType(TEST_EMAIL_TYPE, TEST_EMAIL_DESCRIPTION, TEST_EMAIL_DESCRIPTION_CY);
@@ -121,7 +125,16 @@ public class AdminCourtEmailServiceTest {
     }
 
     @Test
-    void shouldUpdateCourtOpeningTimes() {
+    void shouldReturnNotFoundWhenRetrievingEmailsForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.getCourtEmailsBySlug(COURT_SLUG))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
+    void shouldUpdateCourtEmails() {
 
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(court.getCourtEmails()).thenReturn(COURT_EMAILS);
@@ -137,7 +150,16 @@ public class AdminCourtEmailServiceTest {
     }
 
     @Test
-    void shouldReturnAllOpeningTypes() {
+    void shouldReturnNotFoundWhenUpdatingEmailsForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.updateEmailListForCourt(COURT_SLUG, any()))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
+    void shouldReturnAllEmailTypes() {
         when(emailTypeRepository.findAll()).thenReturn(EMAIL_TYPES);
 
         final List<EmailType> results = adminService.getAllEmailTypes();
