@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EmailTest {
 
-    static uk.gov.hmcts.dts.fact.entity.Email entity;
+    private static uk.gov.hmcts.dts.fact.entity.Email entity;
 
     @BeforeAll
     static void setUp() {
