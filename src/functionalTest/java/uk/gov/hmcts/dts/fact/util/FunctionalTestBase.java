@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static io.restassured.RestAssured.given;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -52,7 +53,7 @@ public class FunctionalTestBase {
     }
 
     private static Map<String, String> getRequestHeaders(final Map<String, String> additionalHeaders) {
-        final Map<String, String> headers = Map.of(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+        final Map<String, String> headers = new ConcurrentHashMap<>(Map.of(CONTENT_TYPE, CONTENT_TYPE_VALUE));
         if (!CollectionUtils.isEmpty(additionalHeaders)) {
             headers.putAll(additionalHeaders);
         }

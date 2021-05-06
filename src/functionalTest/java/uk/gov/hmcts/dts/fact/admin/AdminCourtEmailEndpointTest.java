@@ -11,12 +11,11 @@ import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
@@ -26,6 +25,7 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     private static final String ALL_EMAILS_PATH = "/emails";
     private static final String ALL_EMAIL_TYPES_PATH = "emailTypes";
     private static final String PLYMOUTH_COMBINED_COURT_SLUG = "plymouth-combined-court";
+    private static final String PLYMOUTH_ALL_EMAILS_PATH = ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH;
     private static final String TEST_EMAIL_ADDRESS = "fancy.pancy.email@cat.com";
     private static final String TEST_EMAIL_EXPLANATION = "explanation";
     private static final String TEST_EMAIL_EXPLANATION_CY = "explanation cy";
@@ -33,42 +33,22 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldGetEmails() {
-
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<Email> openingTimes = response.body().jsonPath().getList(".", Email.class);
         assertThat(openingTimes).hasSizeGreaterThan(1);
     }
 
     @Test
     public void shouldRequireATokenWhenGettingEmails() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForGettingEmails() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
@@ -77,97 +57,48 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
         final List<Email> expectedEmails = updateEmails(getCurrentEmails());
         final String json = objectMapper().writeValueAsString(expectedEmails);
 
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .body(json)
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
-            .thenReturn();
-
+        final var response = doPutRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<Email> updatedOpeningTimes = response.body().jsonPath().getList(".", Email.class);
         assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedEmails);
     }
 
     @Test
     public void shouldRequireATokenWhenUpdatingEmails() throws JsonProcessingException {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .body(getTestEmails())
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
-            .thenReturn();
-
+        final var response = doPutRequest(PLYMOUTH_ALL_EMAILS_PATH, getTestEmails());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenFromUpdatingEmails() throws JsonProcessingException {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .body(getTestEmails())
-            .when()
-            .put(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
-            .thenReturn();
-
+        final var response = doPutRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestEmails());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
     public void shouldGetAllEmailTypes() {
-
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<EmailType> emailTypes = response.body().jsonPath().getList(".", EmailType.class);
         assertThat(emailTypes).hasSizeGreaterThan(1);
     }
 
     @Test
     public void shouldRequireATokenWhenGettingEmailTypes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForGettingAllEmailTypes() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + forbiddenToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     private List<Email> getCurrentEmails() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(AUTHORIZATION, BEARER + authenticatedToken)
-            .when()
-            .get(ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH)
-            .thenReturn();
-
+        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         return response.body().jsonPath().getList(".", Email.class);
     }
 
