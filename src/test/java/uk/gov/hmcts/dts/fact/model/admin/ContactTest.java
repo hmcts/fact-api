@@ -22,16 +22,18 @@ public class ContactTest {
         assertThat(contact.getNumber()).isEqualTo(CONTACT_NUMBER);
         assertThat(contact.getExplanation()).isEqualTo(EXPLANATION);
         assertThat(contact.getExplanationCy()).isEqualTo(EXPLANATION_CY);
+        assertThat(contact.isFax()).isEqualTo(false);
     }
 
     @Test
     void testCreationWhenContactTypeIsNotSet() {
-        final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact(null, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY);
+        final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact(null, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY, true, null);
         Contact contact = new Contact(contactEntity);
 
         assertThat(contact.getTypeId()).isNull();
         assertThat(contact.getNumber()).isEqualTo(CONTACT_NUMBER);
         assertThat(contact.getExplanation()).isEqualTo(EXPLANATION);
         assertThat(contact.getExplanationCy()).isEqualTo(EXPLANATION_CY);
+        assertThat(contact.isFax()).isEqualTo(true);
     }
 }

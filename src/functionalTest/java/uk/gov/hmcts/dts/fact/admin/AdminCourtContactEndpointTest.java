@@ -30,7 +30,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String ENQUIRIES_CONTACT_TYPE = "Enquiries";
     private static final String ENQUIRIES_CONTACT_TYPE_WELSH = "Ymholiadau";
     private static final String TEST_NUMBER = "test number";
-    private static final Contact TEST_CONTACT = new Contact(ENQUIRIES_CONTACT_TYPE_ID, TEST_NUMBER, "explanation", "explanation cy");
+    private static final Contact TEST_CONTACT = new Contact(ENQUIRIES_CONTACT_TYPE_ID, TEST_NUMBER, "explanation", "explanation cy", false);
 
     @Test
     public void shouldRetrieveContacts() {
@@ -150,9 +150,9 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
 
     private static String getTestContactsJson() throws JsonProcessingException {
         final List<Contact> contacts = Arrays.asList(
-            new Contact(2, "0207123456", "explanation 1", "explanation cy 1"),
-            new Contact(5, "0207234567", "explanation 2", "explanation cy 2"),
-            new Contact(9, "0207345678", "explanation 3", "explanation cy 3")
+            new Contact(2, "0207123456", "explanation 1", "explanation cy 1", false),
+            new Contact(5, "0207234567", "explanation 2", "explanation cy 2", false),
+            new Contact(9, "0207345678", "explanation 3", "explanation cy 3", true)
         );
         return objectMapper().writeValueAsString(contacts);
     }

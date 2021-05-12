@@ -68,15 +68,20 @@ public class AdminCourtContactService {
             .collect(toList());
     }
 
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidInstantiatingObjectsInLoops"})
     private List<uk.gov.hmcts.dts.fact.entity.Contact> getNewContacts(final List<Contact> contacts) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> contactTypeMap = getContactTypeMap();
-        return contacts.stream()
-            .map(c -> new uk.gov.hmcts.dts.fact.entity.Contact(contactTypeMap.get(c.getTypeId()),
-                                                               c.getNumber(),
-                                                               c.getExplanation(),
-                                                               c.getExplanationCy()))
-            .collect(toList());
+        final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = new ArrayList<>();
+        for (int i = 0; i < contacts.size(); i++) {
+            final Contact contact = contacts.get(i);
+            newContacts.add(new uk.gov.hmcts.dts.fact.entity.Contact(contactTypeMap.get(contact.getTypeId()),
+                                                                     contact.getNumber(),
+                                                                     contact.getExplanation(),
+                                                                     contact.getExplanationCy(),
+                                                                     contact.isFax(),
+                                                                     i));
+        }
+        return newContacts;
     }
 
     private Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> getContactTypeMap() {

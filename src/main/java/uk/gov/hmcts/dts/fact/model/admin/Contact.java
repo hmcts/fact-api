@@ -15,6 +15,7 @@ public class Contact {
     private String explanation;
     @JsonProperty("explanation_cy")
     private String explanationCy;
+    private boolean fax;
 
     public Contact(uk.gov.hmcts.dts.fact.entity.Contact contact) {
         if (contact.getContactType() != null) {
@@ -23,5 +24,6 @@ public class Contact {
         this.number = contact.getNumber();
         this.explanation = contact.getExplanation();
         this.explanationCy = contact.getExplanationCy();
+        this.fax = contact.isFax();
     }
 }
