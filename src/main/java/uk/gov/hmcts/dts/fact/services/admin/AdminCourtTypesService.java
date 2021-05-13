@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
@@ -36,13 +37,9 @@ public class AdminCourtTypesService {
 
     public List<CourtType> getCourtCourtTypesBySlug(final String slug) {
 
-        Optional<Court> court = courtRepository.findBySlug(slug);
+        final Optional<Court> court = courtRepository.findBySlug(slug);
 
-        if (court.isEmpty()) {
-            throw new NotFoundException(String.format("Court %s was not found", slug));
-        }
-
-        List<CourtType> returnCourtTypes = court
+        final List<CourtType> returnCourtTypes = court
             .map(c -> c.getCourtTypes()
                 .stream()
                 .map(CourtType::new)
@@ -52,6 +49,7 @@ public class AdminCourtTypesService {
         return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, court.get());
     }
 
+    @Transactional()
     public List<CourtType> updateCourtCourtTypes(final String slug, final List<CourtType> courtTypes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -88,8 +89,15 @@ public class Court {
                 return areaOfLawObj;
             })
             .collect(toList());
-        this.contacts = courtEntity.getContacts().stream().filter(NAME_IS_NOT_DX)
-            .map(Contact::new).collect(toList());
+        final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = ofNullable(courtEntity.getCourtContacts())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtContact::getContact)
+            .collect(toList());
+        this.contacts = contacts.stream()
+            .filter(NAME_IS_NOT_DX)
+            .map(Contact::new)
+            .collect(toList());
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = ofNullable(courtEntity.getCourtEmails())
             .map(Collection::stream)
@@ -113,7 +121,9 @@ public class Court {
             .collect(toList());
         this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();
-        this.dxNumbers = courtEntity.getContacts().stream().filter(NAME_IS_DX).map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
+        this.dxNumbers = contacts.stream()
+            .filter(NAME_IS_DX)
+            .map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
             .collect(toList());
         this.serviceAreas = courtEntity.getServiceAreas() == null ? null : courtEntity.getServiceAreas()
             .stream()

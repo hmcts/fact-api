@@ -8,16 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
@@ -67,18 +58,12 @@ public class Court {
     )
     private List<CourtType> courtTypes;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
     @OrderBy("order")
     private List<CourtEmail> courtEmails;
 
-    @ManyToMany
-    @JoinTable(
-        name = "search_courtcontact",
-        joinColumns = @JoinColumn(name = COURT_ID),
-        inverseJoinColumns = @JoinColumn(name = "contact_id")
-    )
-    @OrderBy("sort_order")
-    private List<Contact> contacts;
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
+    private List<CourtContact> courtContacts;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
     @OrderBy("sort")

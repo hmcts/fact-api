@@ -9,10 +9,8 @@ import uk.gov.hmcts.dts.fact.util.FunctionalTestBase;
 
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith({SpringExtension.class})
@@ -20,28 +18,18 @@ public class ServiceEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldRetrieveServices() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get("/services")
-            .thenReturn();
-
+        final var response = doGetRequest("/services");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<Service> services = asList(response.getBody().as(Service[].class));
         assertThat(services.size()).isGreaterThan(0);
     }
 
     @Test
     public void shouldRetrieveService() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get("/services/money")
-            .thenReturn();
-
+        final var response = doGetRequest("/services/money");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final Service service = response.getBody().as(Service.class);
         assertThat(service.getSlug()).isEqualTo("money");
         assertThat(service.getName()).isEqualTo("Money");
@@ -50,14 +38,9 @@ public class ServiceEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldRetrieveServiceAreasSortedbySortOrder() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get("/services/money/service-areas")
-            .thenReturn();
-
+        final var response = doGetRequest("/services/money/service-areas");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<ServiceArea> serviceAreas = asList(response.getBody().as(ServiceArea[].class));
         assertThat(serviceAreas.size()).isGreaterThan(0);
         assertThat(serviceAreas.size()).isGreaterThan(0);

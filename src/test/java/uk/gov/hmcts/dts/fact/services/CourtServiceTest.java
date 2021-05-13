@@ -58,8 +58,8 @@ class CourtServiceTest {
     private static final String IMMIGRATION = "Immigration";
     private static final String EMPLOYMENT = "Employment";
     private static final String GLASGOW_TRIBUNALS_CENTRE = "Glasgow Tribunals Centre";
-    private static final String TEST_TYPE_IN_OPENING_TIME_TABLE = "Test type in opening time";
-    private static final String TEST_TYPE_IN_ADMIN_TABLE = "Test type in opening type";
+    private static final String TEST_TYPE_IN_SEARCH_TABLE = "Test type in search table";
+    private static final String TEST_TYPE_IN_ADMIN_TABLE = "Test type in admin table";
 
     @Autowired
     private CourtService courtService;
@@ -106,19 +106,19 @@ class CourtServiceTest {
     }
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
-    private static Stream<Arguments> parametersForOpeningTypeInAdminTableShouldTakePrecedence() {
+    private static Stream<Arguments> parametersForTypesTests() {
         return Stream.of(
             // Opening type in opening time table only
-            Arguments.of(TEST_TYPE_IN_OPENING_TIME_TABLE, null, TEST_TYPE_IN_OPENING_TIME_TABLE),
+            Arguments.of(TEST_TYPE_IN_SEARCH_TABLE, null, TEST_TYPE_IN_SEARCH_TABLE),
             // Opening type in admin type table only
             Arguments.of(null, TEST_TYPE_IN_ADMIN_TABLE, TEST_TYPE_IN_ADMIN_TABLE),
             // Opening type in both opening time and admin type tables
-            Arguments.of(TEST_TYPE_IN_OPENING_TIME_TABLE, TEST_TYPE_IN_ADMIN_TABLE, TEST_TYPE_IN_ADMIN_TABLE)
+            Arguments.of(TEST_TYPE_IN_SEARCH_TABLE, TEST_TYPE_IN_ADMIN_TABLE, TEST_TYPE_IN_ADMIN_TABLE)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("parametersForOpeningTypeInAdminTableShouldTakePrecedence")
+    @MethodSource("parametersForTypesTests")
     void openingTypeInAdminTableShouldTakePrecedence(final String typeInOpeningTimeTable, final String typeInAdminTable, final String expectedType) {
         final OpeningTime openingTime = new OpeningTime();
         openingTime.setType(typeInOpeningTimeTable);
@@ -139,6 +139,30 @@ class CourtServiceTest {
         final List<uk.gov.hmcts.dts.fact.model.OpeningTime> openingTimes = result.getOpeningTimes();
         assertThat(openingTimes).hasSize(1);
         assertThat(openingTimes.get(0).getType()).isEqualTo(expectedType);
+    }
+
+    @ParameterizedTest
+    @MethodSource("parametersForTypesTests")
+    void contactInAdminTableShouldTakePrecedence(final String typeInContactTable, final String typeInAdminTable, final String expectedType) {
+        final Contact contact = new Contact();
+        contact.setName(typeInContactTable);
+        if (typeInAdminTable != null) {
+            contact.setContactType(new ContactType(1, typeInAdminTable, null));
+        }
+
+        final CourtContact courtContact = mock(CourtContact.class);
+        when(courtContact.getContact()).thenReturn(contact);
+        List<CourtContact> courtContacts = singletonList(courtContact);
+
+        final Court court = mock(Court.class);
+        when(court.getCourtContacts()).thenReturn(courtContacts);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
+
+        final uk.gov.hmcts.dts.fact.model.Court result = courtService.getCourtBySlug(SOME_SLUG);
+        assertThat(result).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+        final List<uk.gov.hmcts.dts.fact.model.Contact> contacts = result.getContacts();
+        assertThat(contacts).hasSize(1);
+        assertThat(contacts.get(0).getName()).isEqualTo(expectedType);
     }
 
     @Test
