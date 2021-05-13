@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -35,6 +36,7 @@ public class AdminCourtTypesService {
             .collect(toList());
     }
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<CourtType> getCourtCourtTypesBySlug(final String slug) {
 
         final Optional<Court> court = courtRepository.findBySlug(slug);
@@ -46,7 +48,10 @@ public class AdminCourtTypesService {
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
 
-        return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, court.get());
+        if (court.isPresent()) {
+            return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, court.get());
+        }
+        return emptyList();
     }
 
     @Transactional()
