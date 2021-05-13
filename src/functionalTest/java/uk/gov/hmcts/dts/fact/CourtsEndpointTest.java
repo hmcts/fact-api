@@ -10,12 +10,11 @@ import uk.gov.hmcts.dts.fact.util.FunctionalTestBase;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -26,8 +25,6 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         = "aylesbury-magistrates-court-and-family-court";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
         = "birmingham-civil-and-family-justice-centre";
-    private static final String CONTENT_TYPE_VALUE = "application/json";
-
     private static final String COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/";
     private static final String OLD_COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/%s.json";
     private static final String COURT_SEARCH_ENDPOINT = "/courts";
@@ -36,14 +33,9 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldRetrieveCourtDetail() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT))
-            .thenReturn();
-
+        final var response = doGetRequest(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final OldCourt court = response.as(OldCourt.class);
         assertThat(court.getSlug()).isEqualTo(AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT);
     }
@@ -53,14 +45,9 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         final String name = "Oxford Combined Court Centre";
         final String slug = "oxford-combined-court-centre";
 
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_SEARCH_ENDPOINT + "?q=Oxford Combine")
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=Oxford Combine");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -71,14 +58,9 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         final String name = "Oxford Combined Court Centre";
         final String slug = "oxford-combined-court-centre";
 
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_SEARCH_ENDPOINT + "?q=Oxford Combined Court Centre")
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=Oxford Combined Court Centre");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -89,14 +71,9 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         final String name = "Skipton County Court and Family Court";
         final String slug = "skipton-county-court-and-family-court";
 
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_SEARCH_ENDPOINT + "?q=BD23")
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=BD23");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -107,14 +84,9 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         final String name = "Skipton County Court and Family Court";
         final String slug = "skipton-county-court-and-family-court";
 
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_SEARCH_ENDPOINT + "?q=BD23 1RH")
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=BD23 1RH");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
@@ -122,56 +94,35 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldReturnBadRequestForEmptyQuery() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_SEARCH_ENDPOINT + "?q=")
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=");
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
     public void shouldRetrieveCourtDetailBySlug() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE)
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_DETAIL_BY_SLUG_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final Court court = response.as(Court.class);
         assertThat(court.getSlug()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
     }
 
     @Test
     public void shouldRetrieveCourtDetailInWelsh() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(ACCEPT_LANGUAGE, "cy")
-            .when()
-            .get(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL))
-            .thenReturn();
-
+        final var response = doGetRequest(format(OLD_COURT_DETAIL_BY_SLUG_ENDPOINT, CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL),
+                                          Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final OldCourt court = response.as(OldCourt.class);
         assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
     }
 
     @Test
     public void shouldRetrieveCourtDetailBySlugInWelsh() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .header(ACCEPT_LANGUAGE, "cy")
-            .when()
-            .get(COURT_DETAIL_BY_SLUG_ENDPOINT + CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL)
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_DETAIL_BY_SLUG_ENDPOINT + CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL,
+                                          Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final Court court = response.as(Court.class);
         assertThat(court.getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
     }
@@ -179,29 +130,18 @@ public class CourtsEndpointTest extends FunctionalTestBase {
     @Test
     public void shouldNotRetrieveClosedCourts() {
         final String slug = "aylesbury-crown-court";
-
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_SEARCH_ENDPOINT + "?q=aylesbury")
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=aylesbury");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
     }
 
     @Test
     public void shouldNotReturnDuplicatesForCourtsWithMultipleAddresses() {
-        final var response = given()
-            .relaxedHTTPSValidation()
-            .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
-            .when()
-            .get(COURT_SEARCH_ENDPOINT + "?q=Darlington Magistrates' Court and Family Court")
-            .thenReturn();
-
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=Darlington Magistrates' Court and Family Court");
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.size()).isEqualTo(1);
     }

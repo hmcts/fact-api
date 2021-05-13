@@ -1,0 +1,20 @@
+[
+  {
+    "address": "Address 1",
+    "explanation": "Exp 1",
+    "explanationCy": "Exp 1 cy",
+    "adminEmailTypeId": 1
+  },
+  {
+    "address": "Address 2",
+    "explanation": "Exp 2",
+    "explanationCy": "Exp 2 cy",
+    "adminEmailTypeId": 2
+  },
+  {
+    "address": "Address 3",
+    "explanation": "Exp 3",
+    "explanationCy": "Exp 3 cy",
+    "adminEmailTypeId": 3
+  }
+]

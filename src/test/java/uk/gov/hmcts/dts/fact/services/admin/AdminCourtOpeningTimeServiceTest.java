@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +42,7 @@ public class AdminCourtOpeningTimeServiceTest {
     private static final String WELSH_TYPE2 = "test4";
     private static final String ENGLISH_TYPE3 = "test5";
     private static final String WELSH_TYPE3 = "test6";
+    private static final String NOT_FOUND = "Not found: ";
 
     private static final int OPENING_TIME_COUNT = 3;
     private static final List<CourtOpeningTime> COURT_OPENING_TIMES = new ArrayList<>();
@@ -88,6 +92,15 @@ public class AdminCourtOpeningTimeServiceTest {
     }
 
     @Test
+    void shouldReturnNotFoundWhenRetrievingOpeningTimesForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.getCourtOpeningTimesBySlug(COURT_SLUG))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
     void shouldUpdateCourtOpeningTimes() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(openingTypeRepository.findAll()).thenReturn(OPENING_TYPES);
@@ -100,6 +113,15 @@ public class AdminCourtOpeningTimeServiceTest {
     }
 
     @Test
+    void shouldReturnNotFoundWhenUpdatingOpeningTimesForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.updateCourtOpeningTimes(COURT_SLUG, any()))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
     void shouldReturnAllOpeningTypes() {
         when(openingTypeRepository.findAll()).thenReturn(OPENING_TYPES);
 
@@ -109,5 +131,7 @@ public class AdminCourtOpeningTimeServiceTest {
         assertThat(results.get(0).getTypeCy()).isEqualTo(WELSH_TYPE1);
         assertThat(results.get(1).getType()).isEqualTo(ENGLISH_TYPE2);
         assertThat(results.get(1).getTypeCy()).isEqualTo(WELSH_TYPE2);
+        assertThat(results.get(2).getType()).isEqualTo(ENGLISH_TYPE3);
+        assertThat(results.get(2).getTypeCy()).isEqualTo(WELSH_TYPE3);
     }
 }
