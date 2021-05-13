@@ -4,7 +4,7 @@
 
 API for the find a court or tribunal service.
 
-## Building and deploying the application 
+## Building and deploying the application
 
 ### Building the application.
 
@@ -86,3 +86,4 @@ There is no need to remove postgres and java or similar core images.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
