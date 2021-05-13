@@ -88,8 +88,8 @@ CASE
     WHEN LOWER(sc.name) IN ('county court', 'county court fax', 'county court listing')
     THEN (SELECT act.id FROM admin_contacttype as act WHERE act.name = 'County court')
 
-    WHEN sc.name ILIKE 'Criminal%'
-    THEN (SELECT act.id FROM admin_contacttype AS act WHERE act.name = 'Criminal')
+--     WHEN sc.name ILIKE 'Criminal%'
+--     THEN (SELECT act.id FROM admin_contacttype AS act WHERE act.name = 'Criminal')
 
     WHEN LOWER(sc.name) IN ('crown court', 'crown court enquiries', 'crown court listing', 'crown court fax')
     THEN (SELECT act.id FROM admin_contacttype as act WHERE act.name = 'Crown court')

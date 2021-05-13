@@ -100,8 +100,8 @@ CASE
     WHEN LOWER(se.description) IN ('county court', 'county court money claims centre', 'county court listing', 'court of protection')
     THEN (SELECT aet.id FROM admin_emailtype as aet WHERE aet.description = 'County court')
 
-    WHEN se.description ILIKE 'Criminal%'
-    THEN (SELECT aet.id FROM admin_emailtype AS aet WHERE aet.description = 'Criminal')
+--     WHEN se.description ILIKE 'Criminal%'
+--     THEN (SELECT aet.id FROM admin_emailtype AS aet WHERE aet.description = 'Criminal')
 
     WHEN LOWER(se.description) IN ('crown court', 'crown court enquiries', 'crown court listing', 'crown court witness service enquiries')
     THEN (SELECT aet.id FROM admin_emailtype as aet WHERE aet.description = 'Crown court')
