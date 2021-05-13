@@ -32,8 +32,8 @@ VALUES
 ('Applications', 'Ceisiadau'),
 ('Breathing space enquiries', 'Ymholiadau lle i anadlu'),
 ('Business and property courts', 'Llysoedd busnes ac eiddo'),
-('CAPS', 'CAPS'),
 ('Case progression', 'Hwyluso achosion'),
+('Centralised Attachment of Earnings (CAPS)', 'System Ganolog Atafaelu Enillion (CAPS)'),
 ('Chancery', 'Siawnsri'),
 ('Citizens advice', 'Cyngor ar bopeth'),
 ('Civil court', 'Llys sifil'),
@@ -78,9 +78,6 @@ CASE
 
     WHEN LOWER(se.description) IN ('breathing space enquiries', 'breathing space notifications')
     THEN (SELECT aet.id FROM admin_emailtype AS aet WHERE aet.description = 'Breathing space enquiries')
-
-    WHEN se.description ILIKE 'Centralised Attachment of Earnings (CAPS)'
-    THEN (SELECT aet.id FROM admin_emailtype AS aet WHERE aet.description = 'CAPS')
 
     WHEN LOWER(se.description) IN ('case progression', 'care cases', 'children cases')
     THEN (SELECT aet.id FROM admin_emailtype AS aet WHERE aet.description = 'Case progression')
