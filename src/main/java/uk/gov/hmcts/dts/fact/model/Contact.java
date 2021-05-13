@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang.StringUtils;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
+
+import java.util.Locale;
 
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
@@ -13,6 +14,9 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @NoArgsConstructor
 @JsonPropertyOrder({"number", "description", "explanation"})
 public class Contact {
+    private static final String FAX = "Fax";
+    private static final String FAX_CY = "Ffacs";
+
     private String number;
     @JsonProperty("description")
     private String name;
@@ -28,8 +32,11 @@ public class Contact {
         final ContactType contactType = contact.getContactType();
         String contactDescription = (contactType == null) ? contact.getName() : contactType.getName();
 
-        if (contact.isFax()) {
-            contactDescription = StringUtils.isBlank(contactDescription) ? "Fax" : contactDescription + " fax";
+        if (contact.isFax() && !contactDescription.equalsIgnoreCase(FAX)) {
+            return new StringBuilder(contactDescription)
+                .append(" ")
+                .append(FAX.toLowerCase(Locale.getDefault()))
+                .toString();
         }
         return contactDescription;
     }
@@ -38,8 +45,11 @@ public class Contact {
         final ContactType contactType = contact.getContactType();
         String contactDescription = (contactType == null) ? contact.getNameCy() : contactType.getNameCy();
 
-        if (contact.isFax()) {
-            contactDescription = StringUtils.isBlank(contactDescription) ? "Ffacs" : "Ffacs " + contactDescription;
+        if (contact.isFax() && !contactDescription.equalsIgnoreCase(FAX_CY)) {
+            return new StringBuilder(FAX_CY)
+                .append(" ")
+                .append(contactDescription)
+                .toString();
         }
         return contactDescription;
     }

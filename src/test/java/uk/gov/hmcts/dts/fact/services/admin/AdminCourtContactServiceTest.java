@@ -44,18 +44,20 @@ public class AdminCourtContactServiceTest {
     private static final String TEST_NUMBER1 = "123";
     private static final String TEST_NUMBER2 = "456";
     private static final String TEST_NUMBER3 = "789";
+    private static final String TEST_NUMBER4 = "000";
     private static final String TEST_EXPLANATION1 = "some explanation";
     private static final String TEST_EXPLANATION2 = "Another explanation";
     private static final String TEST_EXPLANATION3 = "Yet another explanation";
     private static final String NOT_FOUND = "Not found: ";
 
-    private static final int CONTACT_COUNT = 3;
+    private static final int CONTACT_COUNT = 4;
     private static final List<CourtContact> COURT_CONTACTS = new ArrayList<>();
 
     private static final Contact CONTACT1 = new Contact(TEST_TYPE_ID1, TEST_NUMBER1, TEST_EXPLANATION1, TEST_EXPLANATION1, false);
     private static final Contact CONTACT2 = new Contact(TEST_TYPE_ID2, TEST_NUMBER2, TEST_EXPLANATION2, TEST_EXPLANATION2, false);
     private static final Contact CONTACT3 = new Contact(TEST_TYPE_ID3, TEST_NUMBER3, TEST_EXPLANATION3, TEST_EXPLANATION3, true);
-    private static final List<Contact> EXPECTED_CONTACTS = Arrays.asList(CONTACT1, CONTACT2, CONTACT3);
+    private static final Contact CONTACT4 = new Contact(null, TEST_NUMBER4, null, null, true);
+    private static final List<Contact> EXPECTED_CONTACTS = Arrays.asList(CONTACT1, CONTACT2, CONTACT3, CONTACT4);
 
     private static final uk.gov.hmcts.dts.fact.entity.ContactType CONTACT_TYPE1 = new uk.gov.hmcts.dts.fact.entity.ContactType(TEST_TYPE_ID1, TEST_TYPE1, TEST_TYPE_CY1);
     private static final uk.gov.hmcts.dts.fact.entity.ContactType CONTACT_TYPE2 = new uk.gov.hmcts.dts.fact.entity.ContactType(TEST_TYPE_ID2, TEST_TYPE2, TEST_TYPE_CY2);
@@ -65,7 +67,8 @@ public class AdminCourtContactServiceTest {
     private static final List<uk.gov.hmcts.dts.fact.entity.Contact> CONTACT_ENTITIES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE1, TEST_NUMBER1, TEST_EXPLANATION1, TEST_EXPLANATION1, false, 0),
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE2, TEST_NUMBER2, TEST_EXPLANATION2, TEST_EXPLANATION2, false, 1),
-        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE3, TEST_NUMBER3, TEST_EXPLANATION3, TEST_EXPLANATION3, true, 2)
+        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE3, TEST_NUMBER3, TEST_EXPLANATION3, TEST_EXPLANATION3, true, 2),
+        new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true, 3)
     );
 
     @Autowired

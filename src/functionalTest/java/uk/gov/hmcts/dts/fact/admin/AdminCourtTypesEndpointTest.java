@@ -19,9 +19,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith({SpringExtension.class})
 @SuppressWarnings("PMD.TooManyMethods")
-
 public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
-
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_TYPES_PATH = "/courtTypes";
@@ -30,7 +28,6 @@ public class AdminCourtTypesEndpointTest extends AdminFunctionalTestBase {
     private static final String AYLESBURY_COURT_TYPES_PATH = ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + COURT_TYPES_PATH;
     private static final String TEST = "Crown Court";
     private static final int TEST_ID = 11_420;
-
 
     @Test
     public void returnAllCourtTypes() {

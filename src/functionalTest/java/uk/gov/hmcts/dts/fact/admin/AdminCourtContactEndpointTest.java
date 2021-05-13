@@ -15,22 +15,20 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String CONTACTS_PATH = "/" + "contacts";
     private static final String CONTACT_TYPES_FULL_PATH = ADMIN_COURTS_ENDPOINT + "contactTypes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String BIRMINGHAM_CONTACTS_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH;
-    private static final int ENQUIRIES_CONTACT_TYPE_ID = 22;
-    private static final String ENQUIRIES_CONTACT_TYPE = "Enquiries";
-    private static final String ENQUIRIES_CONTACT_TYPE_WELSH = "Ymholiadau";
     private static final String TEST_NUMBER = "test number";
-    private static final Contact TEST_CONTACT = new Contact(ENQUIRIES_CONTACT_TYPE_ID, TEST_NUMBER, "explanation", "explanation cy", false);
+    private static final Contact TEST_CONTACT = new Contact(null, TEST_NUMBER, "explanation", "explanation cy", true);
+    private static final String FAX_TYPE_SUFFIX = " fax";
 
     @Test
     public void shouldRetrieveContacts() {
@@ -82,6 +80,50 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
+    public void shouldChangePhoneNumberToFaxAndViceVersa() throws JsonProcessingException {
+        var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final List<Contact> currentContacts = response.body().jsonPath().getList(".", Contact.class);
+
+        // Update a contact from phone number to fax
+        List<Contact> expectedContacts = updateAPhoneNumberContactToFax(currentContacts);
+        String json = objectMapper().writeValueAsString(expectedContacts);
+
+        response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        List<Contact> updatedContacts = response.body().jsonPath().getList(".", Contact.class);
+        assertThat(updatedContacts).containsExactlyElementsOf(expectedContacts);
+
+        // Check the fax contact type is shown in the standard court object
+        response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        Court court = response.as(Court.class);
+        List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
+        assertThat(contacts).hasSizeGreaterThan(1);
+        assertThat(contacts.get(0).getName()).endsWith(FAX_TYPE_SUFFIX);
+
+        // Update a contact from fax to phone number
+        expectedContacts = updateAFaxContactToPhoneNumber(updatedContacts);
+        json = objectMapper().writeValueAsString(expectedContacts);
+
+        response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        updatedContacts = response.body().jsonPath().getList(".", Contact.class);
+        assertThat(updatedContacts).containsExactlyElementsOf(expectedContacts);
+
+        // Check the fax contact type is not shown in the standard court object
+        response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        court = response.as(Court.class);
+        contacts = court.getContacts();
+        assertThat(contacts).hasSizeGreaterThan(1);
+        assertThat(contacts.get(0).getName()).doesNotEndWith(FAX_TYPE_SUFFIX);
+    }
+
+    @Test
     public void shouldRequireATokenWhenUpdatingContacts() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, getTestContactsJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -115,36 +157,36 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     private void verifyCourtContactsAfterUpdate() {
-        // Check the standard court endpoint still display the added contact type in English after the contact update
         var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         Court court = response.as(Court.class);
         List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
         assertThat(contacts).hasSizeGreaterThan(1);
-        assertThat(contacts.stream()).anyMatch(contact -> contact.getNumber().equals(TEST_NUMBER)
-            && contact.getName().equals(ENQUIRIES_CONTACT_TYPE));
-
-        // Check the standard court endpoint still display the added contact type in Welsh after the contact update
-        response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG, Map.of(ACCEPT_LANGUAGE, "cy"));
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
-        court = response.as(Court.class);
-        contacts = court.getContacts();
-        assertThat(contacts).hasSizeGreaterThan(1);
-        assertThat(contacts.stream()).anyMatch(contact -> contact.getNumber().equals(TEST_NUMBER)
-            && contact.getName().equals(ENQUIRIES_CONTACT_TYPE_WELSH));
+        assertThat(contacts.stream()).anyMatch(contact -> contact.getNumber().equals(TEST_NUMBER));
     }
 
-    private List<Contact> addNewContact(List<Contact> contacts) {
-        List<Contact> updatedContacts = new ArrayList<>(contacts);
+    private List<Contact> addNewContact(final List<Contact> contacts) {
+        final List<Contact> updatedContacts = new ArrayList<>(contacts);
         updatedContacts.add(TEST_CONTACT);
         return updatedContacts;
     }
 
-    private List<Contact> removeContact(List<Contact> contacts) {
-        List<Contact> updatedContacts = new ArrayList<>(contacts);
+    private List<Contact> removeContact(final List<Contact> contacts) {
+        final List<Contact> updatedContacts = new ArrayList<>(contacts);
         updatedContacts.removeIf(time -> time.getNumber().equals(TEST_NUMBER));
+        return updatedContacts;
+    }
+
+    private List<Contact> updateAPhoneNumberContactToFax(final List<Contact> contacts) {
+        final List<Contact> updatedContacts = new ArrayList<>(contacts);
+        updatedContacts.get(0).setFax(true);
+        return updatedContacts;
+    }
+
+    private List<Contact> updateAFaxContactToPhoneNumber(final List<Contact> contacts) {
+        final List<Contact> updatedContacts = new ArrayList<>(contacts);
+        updatedContacts.get(0).setFax(false);
         return updatedContacts;
     }
 

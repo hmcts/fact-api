@@ -17,6 +17,8 @@ class ContactTest {
     private static final String DESCRIPTION_CY_IN_CONTACT_TABLE = "Contact description cy";
     private static final String DESCRIPTION_IN_ADMIN_TABLE = "Admin description";
     private static final String DESCRIPTION_CY_IN_ADMIN_TABLE = "Admin description cy";
+    private static final String FAX = "Fax";
+    private static final String FAX_CY = "Ffacs";
 
     private static uk.gov.hmcts.dts.fact.entity.Contact entity;
 
@@ -34,10 +36,10 @@ class ContactTest {
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForTestCreationWithoutContactType() {
         return Stream.of(
-            Arguments.of(true, false, null, null, "Fax"),
+            Arguments.of(true, false, FAX, FAX_CY, FAX),
             Arguments.of(true, false, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, DESCRIPTION_IN_CONTACT_TABLE + " fax"),
             Arguments.of(false, false, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, DESCRIPTION_IN_CONTACT_TABLE),
-            Arguments.of(true, true, null, null, "Ffacs"),
+            Arguments.of(true, true, FAX, FAX_CY, FAX_CY),
             Arguments.of(true, true, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, "Ffacs " + DESCRIPTION_CY_IN_CONTACT_TABLE),
             Arguments.of(false, true, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE)
         );
