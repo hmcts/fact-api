@@ -60,7 +60,6 @@ class CourtTest {
         contactEntity.setName("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
-        contactEntity.setSortOrder(1);
         final CourtContact courtContactEntity = new CourtContact();
         courtContactEntity.setContact(contactEntity);
         courtEntity.setCourtContacts(singletonList(courtContactEntity));
