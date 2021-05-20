@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -40,6 +41,7 @@ public class Court {
     private Integer cciCode;
     private Integer magistrateCode;
     private Boolean hideAols;
+    @UpdateTimestamp
     private Timestamp updatedAt;
 
     @ManyToMany

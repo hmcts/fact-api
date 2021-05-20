@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
@@ -24,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CourtRepositoryTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String TEST_HOURS = "Test hours";
 
     @Autowired
     private CourtRepository courtRepository;
@@ -108,5 +108,35 @@ class CourtRepositoryTest {
     void shouldFindAllCourts() {
         final List<Court> result = courtRepository.findAll();
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    void shouldUpdateTimestampWhenOpeningTimesIsUpdated() {
+        final Optional<Court> courtOptional = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
+        assertThat(courtOptional).isPresent();
+        Court court = courtOptional.get();
+        final long currentUpdateTime = court.getUpdatedAt().getTime();
+
+        // Add a new opening time
+        final OpeningTime newOpeningTime = new OpeningTime();
+        newOpeningTime.setHours(TEST_HOURS);
+        List<CourtOpeningTime> courtOpeningTimes = court.getCourtOpeningTimes();
+        courtOpeningTimes.add(new CourtOpeningTime(court, newOpeningTime, 99));
+
+        court.setCourtOpeningTimes(courtOpeningTimes);
+        Court result = courtRepository.save(court);
+
+        // Check the timestamp has been updated
+        final long newUpdateTime = result.getUpdatedAt().getTime();
+        assertThat(newUpdateTime).isGreaterThan(currentUpdateTime);
+
+        // Remove the added opening time
+        courtOpeningTimes = court.getCourtOpeningTimes();
+        courtOpeningTimes.removeIf(o -> o.getOpeningTime().getHours().equals(TEST_HOURS));
+        court.setCourtOpeningTimes(courtOpeningTimes);
+        result = courtRepository.save(court);
+
+        // Check the timestamp has been updated again
+        assertThat(result.getUpdatedAt().getTime()).isGreaterThan(currentUpdateTime);
     }
 }
