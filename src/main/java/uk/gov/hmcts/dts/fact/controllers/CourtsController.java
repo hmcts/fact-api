@@ -61,9 +61,8 @@ public class CourtsController {
     }
 
     @GetMapping(path = "/search")
-    @ApiOperation("Return court data for download")
-    public ResponseEntity<List<CourtReference>> getCourtsBySearch(@RequestParam("prefix") @Size(min = 1, max = 1) @NotBlank String prefix,
-                                                                  @RequestParam boolean active) {
-        return ok(courtService.getCourtsByPrefixAndActiveSearch(prefix, active));
+    @ApiOperation("Return active courts based on a provided prefix")
+    public ResponseEntity<List<CourtReference>> getCourtsBySearch(@RequestParam @Size(min = 1, max = 1) @NotBlank String prefix) {
+        return ok(courtService.getCourtsByPrefixAndActiveSearch(prefix));
     }
 }

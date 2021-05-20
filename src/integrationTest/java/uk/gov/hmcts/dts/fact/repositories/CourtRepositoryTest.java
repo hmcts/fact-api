@@ -87,7 +87,7 @@ class CourtRepositoryTest {
 
     @Test
     void shouldFindCourtsByPrefixAndDisplayedValueTrue() {
-        final List<Court> result = courtRepository.findCourtBySlugStartingWithAndDisplayed("a", true);
+        final List<Court> result = courtRepository.findCourtBySlugStartingWithAndDisplayedOrderBySlugAsc("a", true);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         Assertions.assertTrue(result.stream().allMatch(Court::getDisplayed));
         Assertions.assertTrue(result.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
@@ -96,7 +96,7 @@ class CourtRepositoryTest {
 
     @Test
     void shouldFindCourtsByPrefixAndDisplayedValueFalse() {
-        final List<Court> result = courtRepository.findCourtBySlugStartingWithAndDisplayed("b", false);
+        final List<Court> result = courtRepository.findCourtBySlugStartingWithAndDisplayedOrderBySlugAsc("b", false);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         Assertions.assertFalse(result.stream().allMatch(Court::getDisplayed));
         Assertions.assertTrue(result.stream().allMatch(c -> c.getName().charAt(0) == 'B'));

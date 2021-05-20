@@ -120,7 +120,7 @@ class CourtsControllerTest {
 
         final List<CourtReference> courts = Arrays.asList(OBJECT_MAPPER.readValue(path.toFile(), CourtReference[].class));
 
-        when(courtService.getCourtsByPrefixAndActiveSearch(anyString(), anyBoolean())).thenReturn(courts);
+        when(courtService.getCourtsByPrefixAndActiveSearch(anyString())).thenReturn(courts);
         mockMvc.perform(get(SEARCH_BY_PREFIX_AND_ACTIVE_URL))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
