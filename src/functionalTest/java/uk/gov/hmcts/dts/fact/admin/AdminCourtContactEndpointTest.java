@@ -178,8 +178,9 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         // information in the expected order
         for (int i = 0; i < expectedContacts.size(); i++) {
             final Integer expectedContactTypeId = expectedContacts.get(i).getTypeId();
+            final String expectedContactType;
             if (expectedContactTypeId != null) {
-                final String expectedContactType = contactTypeMap.get(expectedContactTypeId).getType();
+                expectedContactType = contactTypeMap.get(expectedContactTypeId).getType();
                 assertThat(contacts.get(i).getName()).isEqualTo(expectedContactType);
             }
             assertThat(contacts.get(i).getNumber()).isEqualTo(expectedContacts.get(i).getNumber());
