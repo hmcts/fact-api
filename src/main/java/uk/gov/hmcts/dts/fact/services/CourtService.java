@@ -22,6 +22,7 @@ import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -164,6 +165,13 @@ public class CourtService {
             .searchWith(serviceArea, mapitData, postcode);
 
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
+    }
+
+    public List<CourtReference> getCourtsBySearch(String prefix, boolean active) {
+        return courtRepository.findCourtBySlugStartingWithAndDisplayed(prefix.toLowerCase(Locale.getDefault()), active)
+            .stream()
+            .map(CourtReference::new)
+            .collect(toList());
     }
 
     private List<CourtReferenceWithDistance> convert(final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courtsWithDistance) {
