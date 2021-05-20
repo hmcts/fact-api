@@ -167,7 +167,7 @@ public class CourtService {
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
-    public List<CourtReference> getCourtsBySearch(String prefix, boolean active) {
+    public List<CourtReference> getCourtsByPrefixAndActiveSearch(String prefix, boolean active) {
         return courtRepository.findCourtBySlugStartingWithAndDisplayed(prefix.toLowerCase(Locale.getDefault()), active)
             .stream()
             .map(CourtReference::new)

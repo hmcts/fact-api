@@ -501,4 +501,14 @@ class CourtServiceTest {
         assertThat(results.getCourts()).isNull();
         verifyNoInteractions(serviceAreaSearchFactory);
     }
+
+    @Test
+    void shouldReturnCourtReferenceListWhenSearchingByPrefixAndActive() {
+        final Court court = mock(Court.class);
+        when(courtRepository.findCourtBySlugStartingWithAndDisplayed(anyString(), anyBoolean()))
+            .thenReturn(singletonList(court));
+        final List<CourtReference> results = courtService.getCourtsByPrefixAndActiveSearch("mosh kupo", true);
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0)).isInstanceOf(CourtReference.class);
+    }
 }
