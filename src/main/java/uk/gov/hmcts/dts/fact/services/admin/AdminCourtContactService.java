@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 
 @Service
 public class AdminCourtContactService {
@@ -37,6 +38,7 @@ public class AdminCourtContactService {
             .map(c -> c.getCourtContacts()
                 .stream()
                 .map(CourtContact::getContact)
+                .filter(NAME_IS_NOT_DX)
                 .map(Contact::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
@@ -60,10 +62,16 @@ public class AdminCourtContactService {
         final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = getNewContacts(contacts);
         List<CourtContact> newCourtContacts = getNewCourtContacts(courtEntity, newContacts);
 
-        courtContactRepository.deleteAll(courtEntity.getCourtContacts());
+        final List<CourtContact> existingCourtContacts = courtEntity.getCourtContacts()
+            .stream()
+            .filter(c -> !c.getContact().getName().equalsIgnoreCase("DX"))
+            .collect(toList());
+
+        courtContactRepository.deleteAll(existingCourtContacts);
         return courtContactRepository.saveAll(newCourtContacts)
             .stream()
             .map(CourtContact::getContact)
+            .filter(NAME_IS_NOT_DX)
             .map(Contact::new)
             .collect(toList());
     }

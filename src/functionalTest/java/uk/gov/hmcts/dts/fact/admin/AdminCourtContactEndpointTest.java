@@ -161,9 +161,18 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         Court court = response.as(Court.class);
-        List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
+        final List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
         assertThat(contacts).hasSizeGreaterThan(1);
         assertThat(contacts.stream()).anyMatch(contact -> contact.getNumber().equals(TEST_NUMBER));
+        verifyCourtDxAfterUpdate(court);
+    }
+
+    private void verifyCourtDxAfterUpdate(final Court court) {
+        assertThat(court.getDxNumbers()).hasSize(1)
+            .first()
+            .isNotNull();
+        final List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
+        assertThat(contacts.stream()).noneMatch(c -> c.getName().equals("DX"));
     }
 
     private List<Contact> addNewContact(final List<Contact> contacts) {
