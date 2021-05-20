@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -12,6 +13,8 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -20,6 +23,7 @@ import static org.springframework.http.ResponseEntity.ok;
     path = "/courts",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
+@Validated
 public class CourtsController {
 
     private final CourtService courtService;
@@ -54,5 +58,12 @@ public class CourtsController {
     @ApiOperation("Find court details by slug")
     public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(courtService.getCourtBySlug(slug));
+    }
+
+    @GetMapping(path = "/search")
+    @ApiOperation("Return court data for download")
+    public ResponseEntity<List<CourtReference>> getCourtsBySearch(@RequestParam("prefix") @Size(min = 1, max = 1) @NotBlank String prefix,
+                                                                  @RequestParam boolean active) {
+        return ok(courtService.getCourtsBySearch(prefix, active));
     }
 }
