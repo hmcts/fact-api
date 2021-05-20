@@ -64,6 +64,6 @@ public class CourtsController {
     @ApiOperation("Return court data for download")
     public ResponseEntity<List<CourtReference>> getCourtsBySearch(@RequestParam("prefix") @Size(min = 1, max = 1) @NotBlank String prefix,
                                                                   @RequestParam boolean active) {
-        return ok(courtService.getCourtsBySearch(prefix, active));
+        return ok(courtService.getCourtsByPrefixAndActiveSearch(prefix, active));
     }
 }

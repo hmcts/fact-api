@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -15,9 +16,9 @@ import java.util.Map;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class})
 public class CourtsEndpointTest extends FunctionalTestBase {
 
@@ -26,6 +27,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE
         = "birmingham-civil-and-family-justice-centre";
     private static final String COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/";
+    private static final String COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT = "/courts/search";
     private static final String OLD_COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/%s.json";
     private static final String COURT_SEARCH_ENDPOINT = "/courts";
 
@@ -105,6 +107,38 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
         final Court court = response.as(Court.class);
         assertThat(court.getSlug()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
+    }
+
+    @Test
+    public void shouldRetrieveCourtsByPrefixWhereDisplayedFalseAndCaseLower() {
+        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=a&active=false");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
+        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
+        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
+    }
+
+    @Test
+    public void shouldRetrieveCourtsByPrefixWhereDispayedTrueAndCaseUpper() {
+        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=B&active=true");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
+        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'B'));
+        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'b'));
+    }
+
+    @Test
+    public void shouldReturnAnErrorWhenSizeConstraintBreached() {
+        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=mosh&active=true");
+        assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+    }
+
+    @Test
+    public void shouldReturnAnErrorWhenRequiredParamMissing() {
+        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=kupo");
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
