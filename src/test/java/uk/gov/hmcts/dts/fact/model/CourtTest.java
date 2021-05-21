@@ -69,7 +69,6 @@ class CourtTest {
         contactEntity.setName("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
-        contactEntity.setSortOrder(1);
         CourtContact courtContactEntity = mock(CourtContact.class);
         when(courtContactEntity.getContact()).thenReturn(contactEntity);
         courtEntity.setCourtContacts(singletonList(courtContactEntity));
