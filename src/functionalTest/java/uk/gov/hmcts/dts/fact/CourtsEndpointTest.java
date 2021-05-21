@@ -138,7 +138,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
     @Test
     public void shouldReturnAnErrorWhenRequiredParamMissing() {
         final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=kupo");
-        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
     }
 
     @Test
