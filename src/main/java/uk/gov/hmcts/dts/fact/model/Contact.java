@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
 
 import java.util.Locale;
@@ -30,26 +31,34 @@ public class Contact {
 
     private String getDescription(final uk.gov.hmcts.dts.fact.entity.Contact contact) {
         final ContactType contactType = contact.getContactType();
-        String contactDescription = (contactType == null) ? contact.getName() : contactType.getName();
+        final String contactDescription = (contactType == null) ? contact.getName() : contactType.getName();
 
-        if (contact.isFax() && !contactDescription.equalsIgnoreCase(FAX)) {
-            return new StringBuilder(contactDescription)
-                .append(" ")
-                .append(FAX.toLowerCase(Locale.getDefault()))
-                .toString();
+        if (contact.isFax()) {
+            if (StringUtils.isBlank(contactDescription)) {
+                return FAX;
+            } else if (!contactDescription.equalsIgnoreCase(FAX)) {
+                return new StringBuilder(contactDescription)
+                    .append(" ")
+                    .append(FAX.toLowerCase(Locale.getDefault()))
+                    .toString();
+            }
         }
         return contactDescription;
     }
 
     private String getDescriptionCy(final uk.gov.hmcts.dts.fact.entity.Contact contact) {
         final ContactType contactType = contact.getContactType();
-        String contactDescription = (contactType == null) ? contact.getNameCy() : contactType.getNameCy();
+        final String contactDescription = (contactType == null) ? contact.getNameCy() : contactType.getNameCy();
 
-        if (contact.isFax() && !contactDescription.equalsIgnoreCase(FAX_CY)) {
-            return new StringBuilder(FAX_CY)
-                .append(" ")
-                .append(contactDescription)
-                .toString();
+        if (contact.isFax()) {
+            if (StringUtils.isBlank(contactDescription)) {
+                return FAX_CY;
+            } else if (!contactDescription.equalsIgnoreCase(FAX_CY)) {
+                return new StringBuilder(FAX_CY)
+                    .append(" ")
+                    .append(contactDescription)
+                    .toString();
+            }
         }
         return contactDescription;
     }
