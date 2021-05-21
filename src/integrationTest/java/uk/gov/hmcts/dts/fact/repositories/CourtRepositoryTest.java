@@ -1,12 +1,12 @@
 package uk.gov.hmcts.dts.fact.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
@@ -82,6 +82,24 @@ class CourtRepositoryTest {
         final CourtReference court = new CourtReference(result.get(0));
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
         assertThat(court.getSlug()).isEqualTo(expected.get(0).getSlug());
+    }
+
+    @Test
+    void shouldFindCourtsByPrefixAndDisplayedValueTrue() {
+        final List<Court> result = courtRepository.findCourtBySlugStartingWithAndDisplayedOrderBySlugAsc("a", true);
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
+        Assertions.assertTrue(result.stream().allMatch(Court::getDisplayed));
+        Assertions.assertTrue(result.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
+        Assertions.assertTrue(result.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
+    }
+
+    @Test
+    void shouldFindCourtsByPrefixAndDisplayedValueFalse() {
+        final List<Court> result = courtRepository.findCourtBySlugStartingWithAndDisplayedOrderBySlugAsc("b", false);
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
+        Assertions.assertFalse(result.stream().allMatch(Court::getDisplayed));
+        Assertions.assertTrue(result.stream().allMatch(c -> c.getName().charAt(0) == 'B'));
+        Assertions.assertTrue(result.stream().allMatch(c -> c.getSlug().charAt(0) == 'b'));
     }
 
     @Test

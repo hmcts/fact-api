@@ -67,9 +67,9 @@ public class AdminCourtContactServiceTest {
     private static final List<uk.gov.hmcts.dts.fact.entity.ContactType> CONTACT_TYPES = Arrays.asList(CONTACT_TYPE1, CONTACT_TYPE2, CONTACT_TYPE3);
 
     private static final List<uk.gov.hmcts.dts.fact.entity.Contact> CONTACT_ENTITIES = Arrays.asList(
-        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE1, TEST_NUMBER1, TEST_EXPLANATION1, TEST_EXPLANATION1, false, 0),
-        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE2, TEST_NUMBER2, TEST_EXPLANATION2, TEST_EXPLANATION2, false, 1),
-        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE3, TEST_NUMBER3, TEST_EXPLANATION3, TEST_EXPLANATION3, true, 2),
+        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE1, TEST_NUMBER1, TEST_EXPLANATION1, TEST_EXPLANATION1, false),
+        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE2, TEST_NUMBER2, TEST_EXPLANATION2, TEST_EXPLANATION2, false),
+        new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE3, TEST_NUMBER3, TEST_EXPLANATION3, TEST_EXPLANATION3, true),
         new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true, 3),
         new uk.gov.hmcts.dts.fact.entity.Contact(TEST_TYPE_ID1, TEST_DX_NUMBER, DX, DX, TEST_EXPLANATION1, TEST_EXPLANATION1, false, false, 4, null)
     );

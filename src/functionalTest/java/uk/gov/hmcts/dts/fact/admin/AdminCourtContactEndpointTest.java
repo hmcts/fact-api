@@ -9,11 +9,9 @@ import uk.gov.hmcts.dts.fact.model.admin.Contact;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
@@ -56,8 +54,9 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         final List<Contact> currentContacts = response.body().jsonPath().getList(".", Contact.class);
 
-        // Add a new contact
-        List<Contact> expectedContacts = addNewContact(currentContacts);
+        // Add a new contact and swap the order of the first 2 contacts
+        final List<Contact> addedContacts = addNewContact(currentContacts);
+        List<Contact> expectedContacts = swapTwoContacts(addedContacts);
         String json = objectMapper().writeValueAsString(expectedContacts);
 
         response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
@@ -66,10 +65,11 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         List<Contact> updatedContacts = response.body().jsonPath().getList(".", Contact.class);
         assertThat(updatedContacts).containsExactlyElementsOf(expectedContacts);
 
-        verifyCourtContactsAfterUpdate();
+        verifyCourtContactsAfterUpdate(expectedContacts);
 
-        // Remove the added contact
-        expectedContacts = removeContact(updatedContacts);
+        // Remove the added contact and swap the order back
+        final List<Contact> removedContacts = removeContact(updatedContacts);
+        expectedContacts = swapTwoContacts(removedContacts);
         json = objectMapper().writeValueAsString(expectedContacts);
 
         response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
@@ -156,12 +156,23 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-    private void verifyCourtContactsAfterUpdate() {
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    private void verifyCourtContactsAfterUpdate(final List<Contact> expectedContacts) {
+        // Call the standard /courts/{slug} endpoint
         var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         assertThat(response.statusCode()).isEqualTo(OK.value());
+        final Court court = response.as(Court.class);
+
+        // Call the contact types endpoint so we can map the type name from the standard courts endpoint to the type ID
+        // from the expected results
+        response = doGetRequest(CONTACT_TYPES_FULL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        final List<ContactType> contactTypes = response.body().jsonPath().getList(".", ContactType.class);
+        final Map<Integer, ContactType> contactTypeMap = contactTypes.stream()
+            .collect(toMap(ContactType::getId, type -> type));
 
         Court court = response.as(Court.class);
-        final List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
+        List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
         assertThat(contacts).hasSizeGreaterThan(1);
         assertThat(contacts.stream()).anyMatch(contact -> contact.getNumber().equals(TEST_NUMBER));
         verifyCourtDxAfterUpdate(court);
@@ -184,6 +195,12 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private List<Contact> removeContact(final List<Contact> contacts) {
         final List<Contact> updatedContacts = new ArrayList<>(contacts);
         updatedContacts.removeIf(time -> time.getNumber().equals(TEST_NUMBER));
+        return updatedContacts;
+    }
+
+    private List<Contact> swapTwoContacts(final List<Contact> contacts) {
+        final List<Contact> updatedContacts = new ArrayList<>(contacts);
+        Collections.swap(updatedContacts, 0, 1);
         return updatedContacts;
     }
 

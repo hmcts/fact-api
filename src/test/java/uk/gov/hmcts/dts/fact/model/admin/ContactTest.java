@@ -27,7 +27,7 @@ public class ContactTest {
 
     @Test
     void testCreationWhenContactTypeIsNotSet() {
-        final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact(null, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY, true, null);
+        final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact(null, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY, true);
         Contact contact = new Contact(contactEntity);
 
         assertThat(contact.getTypeId()).isNull();

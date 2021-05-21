@@ -25,23 +25,21 @@ public class Contact {
     private String explanationCy;
     private boolean inLeaflet;
     private boolean fax;
-    private Integer sortOrder;
 
     @OneToOne()
     @JoinColumn(name = "contact_type_id")
     private ContactType contactType;
 
     public Contact(final ContactType contactType, final String number, final String explanation, final String explanationCy) {
-        this(contactType, number, explanation, explanationCy, false, null);
+        this(contactType, number, explanation, explanationCy, false);
     }
 
-    public Contact(final ContactType contactType, final String number, final String explanation, final String explanationCy, final boolean fax, final Integer sortOrder) {
+    public Contact(final ContactType contactType, final String number, final String explanation, final String explanationCy, final boolean fax) {
         this.contactType = contactType;
         this.number = number;
         this.explanation = explanation;
         this.explanationCy = explanationCy;
         this.fax = fax;
-        this.sortOrder = sortOrder;
 
         // Cater for the frontend not allowing null values
         if (this.name == null) {
