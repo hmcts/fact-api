@@ -70,8 +70,8 @@ public class AdminCourtContactServiceTest {
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE1, TEST_NUMBER1, TEST_EXPLANATION1, TEST_EXPLANATION1, false),
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE2, TEST_NUMBER2, TEST_EXPLANATION2, TEST_EXPLANATION2, false),
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE3, TEST_NUMBER3, TEST_EXPLANATION3, TEST_EXPLANATION3, true),
-        new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true, 3),
-        new uk.gov.hmcts.dts.fact.entity.Contact(TEST_TYPE_ID1, TEST_DX_NUMBER, DX, DX, TEST_EXPLANATION1, TEST_EXPLANATION1, false, false, 4, null)
+        new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true),
+        new uk.gov.hmcts.dts.fact.entity.Contact(TEST_TYPE_ID1, TEST_DX_NUMBER, DX, DX, TEST_EXPLANATION1, TEST_EXPLANATION1, false, false, null)
     );
 
     @Autowired

@@ -171,10 +171,19 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         final Map<Integer, ContactType> contactTypeMap = contactTypes.stream()
             .collect(toMap(ContactType::getId, type -> type));
 
-        Court court = response.as(Court.class);
         List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
-        assertThat(contacts).hasSizeGreaterThan(1);
-        assertThat(contacts.stream()).anyMatch(contact -> contact.getNumber().equals(TEST_NUMBER));
+        assertThat(contacts).hasSize(expectedContacts.size());
+
+        // Check the results coming back from the standard courts endpoint (i.e. from the front end) contain the expected
+        // information in the expected order
+        for (int i = 0; i < expectedContacts.size(); i++) {
+            final Integer expectedContactTypeId = expectedContacts.get(i).getTypeId();
+            if (expectedContactTypeId != null) {
+                final String expectedContactType = contactTypeMap.get(expectedContactTypeId).getType();
+                assertThat(contacts.get(i).getName()).isEqualTo(expectedContactType);
+            }
+            assertThat(contacts.get(i).getNumber()).isEqualTo(expectedContacts.get(i).getNumber());
+        }
         verifyCourtDxAfterUpdate(court);
     }
 
