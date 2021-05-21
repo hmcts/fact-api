@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 

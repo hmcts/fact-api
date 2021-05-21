@@ -68,20 +68,16 @@ public class AdminCourtContactService {
             .collect(toList());
     }
 
-    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidInstantiatingObjectsInLoops"})
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.Contact> getNewContacts(final List<Contact> contacts) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> contactTypeMap = getContactTypeMap();
-        final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = new ArrayList<>();
-        for (int i = 0; i < contacts.size(); i++) {
-            final Contact contact = contacts.get(i);
-            newContacts.add(new uk.gov.hmcts.dts.fact.entity.Contact(contactTypeMap.get(contact.getTypeId()),
+        return contacts.stream()
+            .map(contact -> new uk.gov.hmcts.dts.fact.entity.Contact(contactTypeMap.get(contact.getTypeId()),
                                                                      contact.getNumber(),
                                                                      contact.getExplanation(),
                                                                      contact.getExplanationCy(),
-                                                                     contact.isFax(),
-                                                                     i));
-        }
-        return newContacts;
+                                                                     contact.isFax()))
+            .collect(toList());
     }
 
     private Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> getContactTypeMap() {
@@ -93,8 +89,8 @@ public class AdminCourtContactService {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtContact> getNewCourtContacts(final Court court, final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts) {
         final List<CourtContact> courtContacts = new ArrayList<>();
-        for (final uk.gov.hmcts.dts.fact.entity.Contact contact : contacts) {
-            courtContacts.add(new CourtContact(court, contact));
+        for (int i = 0; i < contacts.size(); i++) {
+            courtContacts.add(new CourtContact(court, contacts.get(i), i));
         }
         return courtContacts;
     }
