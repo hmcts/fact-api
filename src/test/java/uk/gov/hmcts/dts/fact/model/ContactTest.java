@@ -41,7 +41,9 @@ class ContactTest {
             Arguments.of(false, false, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, DESCRIPTION_IN_CONTACT_TABLE),
             Arguments.of(true, true, FAX, FAX_CY, FAX_CY),
             Arguments.of(true, true, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, "Ffacs " + DESCRIPTION_CY_IN_CONTACT_TABLE),
-            Arguments.of(false, true, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE)
+            Arguments.of(false, true, DESCRIPTION_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE, DESCRIPTION_CY_IN_CONTACT_TABLE),
+            Arguments.of(true, false, null, null, FAX),
+            Arguments.of(true, true, null, null, FAX_CY)
         );
     }
 
