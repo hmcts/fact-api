@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 
 @Service
 public class AdminCourtContactService {
@@ -37,6 +38,7 @@ public class AdminCourtContactService {
             .map(c -> c.getCourtContacts()
                 .stream()
                 .map(CourtContact::getContact)
+                .filter(NAME_IS_NOT_DX)
                 .map(Contact::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
@@ -60,28 +62,30 @@ public class AdminCourtContactService {
         final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = getNewContacts(contacts);
         List<CourtContact> newCourtContacts = getNewCourtContacts(courtEntity, newContacts);
 
-        courtContactRepository.deleteAll(courtEntity.getCourtContacts());
+        final List<CourtContact> existingCourtContacts = courtEntity.getCourtContacts()
+            .stream()
+            .filter(c -> !c.getContact().getName().equalsIgnoreCase("DX"))
+            .collect(toList());
+
+        courtContactRepository.deleteAll(existingCourtContacts);
         return courtContactRepository.saveAll(newCourtContacts)
             .stream()
             .map(CourtContact::getContact)
+            .filter(NAME_IS_NOT_DX)
             .map(Contact::new)
             .collect(toList());
     }
 
-    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidInstantiatingObjectsInLoops"})
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.Contact> getNewContacts(final List<Contact> contacts) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> contactTypeMap = getContactTypeMap();
-        final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = new ArrayList<>();
-        for (int i = 0; i < contacts.size(); i++) {
-            final Contact contact = contacts.get(i);
-            newContacts.add(new uk.gov.hmcts.dts.fact.entity.Contact(contactTypeMap.get(contact.getTypeId()),
+        return contacts.stream()
+            .map(contact -> new uk.gov.hmcts.dts.fact.entity.Contact(contactTypeMap.get(contact.getTypeId()),
                                                                      contact.getNumber(),
                                                                      contact.getExplanation(),
                                                                      contact.getExplanationCy(),
-                                                                     contact.isFax(),
-                                                                     i));
-        }
-        return newContacts;
+                                                                     contact.isFax()))
+            .collect(toList());
     }
 
     private Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> getContactTypeMap() {
@@ -93,8 +97,8 @@ public class AdminCourtContactService {
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtContact> getNewCourtContacts(final Court court, final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts) {
         final List<CourtContact> courtContacts = new ArrayList<>();
-        for (final uk.gov.hmcts.dts.fact.entity.Contact contact : contacts) {
-            courtContacts.add(new CourtContact(court, contact));
+        for (int i = 0; i < contacts.size(); i++) {
+            courtContacts.add(new CourtContact(court, contacts.get(i), i));
         }
         return courtContacts;
     }

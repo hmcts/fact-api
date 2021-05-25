@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.nio.file.Files.readAllBytes;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CourtsControllerTest {
 
     private static final String URL = "/courts";
+    private static final String SEARCH_BY_PREFIX_AND_ACTIVE_URL = "/courts/search?prefix=a&active=true";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -106,6 +108,20 @@ class CourtsControllerTest {
         when(courtService.getCourtBySlug(searchSlug)).thenReturn(court);
 
         mockMvc.perform(get(String.format(URL + "/%s", searchSlug)))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedJson))
+            .andReturn();
+    }
+
+    @Test
+    void shouldFindCourtsByPrefixAndDisplayed() throws Exception {
+        final Path path = Paths.get("src/test/resources/courts.json");
+        final String expectedJson = new String(readAllBytes(path));
+
+        final List<CourtReference> courts = Arrays.asList(OBJECT_MAPPER.readValue(path.toFile(), CourtReference[].class));
+
+        when(courtService.getCourtsByPrefixAndActiveSearch(anyString())).thenReturn(courts);
+        mockMvc.perform(get(SEARCH_BY_PREFIX_AND_ACTIVE_URL))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
             .andReturn();

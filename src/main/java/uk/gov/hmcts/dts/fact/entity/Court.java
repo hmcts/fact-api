@@ -65,6 +65,7 @@ public class Court {
     private List<CourtEmail> courtEmails;
 
     @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
+    @OrderBy("sort_order")
     private List<CourtContact> courtContacts;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)

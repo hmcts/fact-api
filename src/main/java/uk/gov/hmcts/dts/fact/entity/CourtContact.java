@@ -23,12 +23,13 @@ public class CourtContact {
     private Court court;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contact_id")
-    @OrderBy("sort_order")
     private Contact contact;
+    private Integer sortOrder;
 
-    public CourtContact(final Court court, final Contact contact) {
+    public CourtContact(final Court court, final Contact contact, final Integer sortOrder) {
         this.court = court;
         this.contact = contact;
+        this.sortOrder = sortOrder;
     }
 
     @PrePersist
