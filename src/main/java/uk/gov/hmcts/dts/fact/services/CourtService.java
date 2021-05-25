@@ -22,7 +22,6 @@ import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -168,7 +167,7 @@ public class CourtService {
     }
 
     public List<CourtReference> getCourtsByPrefixAndActiveSearch(String prefix) {
-        return courtRepository.findCourtBySlugStartingWithAndDisplayedOrderBySlugAsc(prefix.toLowerCase(Locale.getDefault()), true)
+        return courtRepository.findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(prefix, true)
             .stream()
             .map(CourtReference::new)
             .collect(toList());
