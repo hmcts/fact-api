@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import javax.persistence.*;
 
 @Entity
@@ -28,5 +30,12 @@ public class CourtEmail {
         this.court = court;
         this.email = email;
         this.order = order;
+    }
+
+    @PrePersist
+    @PreUpdate
+    @PreRemove
+    public void updateTimestamp() {
+        court.setUpdatedAt(Timestamp.from(Instant.now()));
     }
 }
