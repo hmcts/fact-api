@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
+@SuppressWarnings("PMD.TooManyMethods")
 class CourtRepositoryTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -174,8 +175,8 @@ class CourtRepositoryTest {
         final long currentUpdateTime = court.getUpdatedAt().getTime();
 
         List<CourtContact> courtContacts = court.getCourtContacts();
-        final Contact contact = new Contact(null, TEST_NUMBER, "", "", false, 0);
-        courtContacts.add(new CourtContact(court, contact));
+        final Contact contact = new Contact(null, TEST_NUMBER, "", "", false);
+        courtContacts.add(new CourtContact(court, contact, 0));
         courtContactRepository.saveAll(courtContacts);
 
         // Check the timestamp has been updated
