@@ -9,9 +9,9 @@ import java.util.List;
 @Component
 public class MapCourtCode {
 
-    final static int MAGISTRATE_COURT_TYPE_ID = 11_416;
-    final static int COUNTY_COURT_TYPE_ID = 11_419;
-    final static int CROWN_COURT_TYPE_ID = 11_420;
+    static final int MAGISTRATE_COURT_TYPE_ID = 11_416;
+    static final int COUNTY_COURT_TYPE_ID = 11_419;
+    static final int CROWN_COURT_TYPE_ID = 11_420;
 
     public Court mapCourtCodesForCourtEntity(final List<CourtType> courtTypes, final Court courtEntity) {
 
