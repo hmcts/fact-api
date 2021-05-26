@@ -9,6 +9,7 @@ import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -28,6 +29,8 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
@@ -66,8 +69,9 @@ class CourtTest {
         contactEntity.setName("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
-        contactEntity.setSortOrder(1);
-        courtEntity.setContacts(singletonList(contactEntity));
+        CourtContact courtContactEntity = mock(CourtContact.class);
+        when(courtContactEntity.getContact()).thenReturn(contactEntity);
+        courtEntity.setCourtContacts(singletonList(courtContactEntity));
 
         final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
         areaOfLawEntity.setName("Divorce");
@@ -115,7 +119,7 @@ class CourtTest {
         assertEquals(courtEntity.getInPerson().getAccessScheme(), court.getAccessScheme());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
-        assertEquals(courtEntity.getContacts().get(0).getNumber(), court.getDxNumbers().get(0));
+        assertEquals(courtEntity.getCourtContacts().get(0).getContact().getNumber(), court.getDxNumbers().get(0));
 
         final uk.gov.hmcts.dts.fact.model.Facility facility = court.getFacilities().get(0);
         assertEquals(

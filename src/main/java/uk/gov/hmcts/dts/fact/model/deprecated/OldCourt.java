@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -30,7 +31,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
-    "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
+    "crown_location_code", "county_location_code", "cci_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs"})
 public class OldCourt {
     private String name;
@@ -42,6 +43,7 @@ public class OldCourt {
     private Double lon;
     private Integer crownLocationCode;
     private Integer countyLocationCode;
+    private Integer cciCode;
     private Integer magistratesLocationCode;
     private List<String> areasOfLaw;
     @JsonProperty("types")
@@ -63,6 +65,7 @@ public class OldCourt {
         this.lon = courtEntity.getLon();
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
+        this.cciCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(uk.gov.hmcts.dts.fact.entity.AreaOfLaw::getName)
             .collect(toList());
@@ -72,7 +75,12 @@ public class OldCourt {
             .orElseGet(Stream::empty)
             .map(CourtEmail::getEmail)
             .map(Email::new).collect(toList());
-        this.contacts = courtEntity.getContacts().stream().map(Contact::new).collect(toList());
+        this.contacts = ofNullable(courtEntity.getCourtContacts())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtContact::getContact)
+            .map(Contact::new)
+            .collect(toList());
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)

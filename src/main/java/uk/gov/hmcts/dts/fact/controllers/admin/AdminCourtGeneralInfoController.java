@@ -15,7 +15,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @RestController
 @RequestMapping(
-    path = "courts/{slug}/generalInfo",
+    path = "/admin/courts/{slug}/generalInfo",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
 public class AdminCourtGeneralInfoController {

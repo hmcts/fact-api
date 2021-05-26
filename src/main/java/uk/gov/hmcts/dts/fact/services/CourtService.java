@@ -166,6 +166,13 @@ public class CourtService {
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
+    public List<CourtReference> getCourtsByPrefixAndActiveSearch(String prefix) {
+        return courtRepository.findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(prefix, true)
+            .stream()
+            .map(CourtReference::new)
+            .collect(toList());
+    }
+
     private List<CourtReferenceWithDistance> convert(final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courtsWithDistance) {
         return courtsWithDistance.stream()
             .map(CourtReferenceWithDistance::new)

@@ -4,15 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.sql.Timestamp;
+import java.time.Instant;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_courtemail")
@@ -31,4 +25,17 @@ public class CourtEmail {
     @JoinColumn(name = "email_id")
     private Email email;
     private Integer order;
+
+    public CourtEmail(Court court, Email email, Integer order) {
+        this.court = court;
+        this.email = email;
+        this.order = order;
+    }
+
+    @PrePersist
+    @PreUpdate
+    @PreRemove
+    public void updateTimestamp() {
+        court.setUpdatedAt(Timestamp.from(Instant.now()));
+    }
 }

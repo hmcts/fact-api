@@ -26,7 +26,7 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 @WebMvcTest(AdminCourtOpeningTimesController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminCourtOpeningTimesControllerTest {
-    private static final String BASE_PATH = "/courts/";
+    private static final String BASE_PATH = "/admin/courts/";
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
     private static final String OPENING_TYPES_PATH = "openingTypes";
     private static final String TEST_SLUG = "unknownSlug";

@@ -105,7 +105,9 @@ class AdminCourtsControllerTest {
             false,
             "Birmingham Civil and Family Justice Centre Alert",
             "Birmingham Civil and Family Justice Centre Alert",
+            emptyList(),
             emptyList()
+
         );
 
         courtEntity.setInfo(court.getInfo());

@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "description": "Case progression",
+    "description_cy": "Case progression cy"
+  },
+  {
+    "id": 2,
+    "description": "Chancery",
+    "description_cy": "Chancery cy"
+  },
+  {
+    "id": 3,
+    "description": "Civil court",
+    "description_cy": "Civil court cy"
+  }
+]

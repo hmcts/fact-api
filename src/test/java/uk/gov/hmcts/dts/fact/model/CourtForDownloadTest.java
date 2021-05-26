@@ -8,6 +8,7 @@ import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -77,7 +78,9 @@ class CourtForDownloadTest {
         contact.setName("Contact name");
         contact.setNumber("12345");
         contact.setExplanation("Contact explanation");
-        courtEntity.setContacts(asList(contact));
+        CourtContact courtContact = mock(CourtContact.class);
+        when(courtContact.getContact()).thenReturn(contact);
+        courtEntity.setCourtContacts(asList(courtContact));
         CourtOpeningTime courtOpeningTime = mock(CourtOpeningTime.class);
         OpeningTime openingTime = new OpeningTime();
         openingTime.setType("A description");

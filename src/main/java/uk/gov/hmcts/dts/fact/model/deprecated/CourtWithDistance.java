@@ -9,14 +9,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
@@ -61,7 +65,12 @@ public class CourtWithDistance {
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
-        this.dxNumber = this.getDxNumber(courtEntity.getContacts());
+        final List<Contact> contacts = ofNullable(courtEntity.getCourtContacts())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtContact::getContact)
+            .collect(toList());
+        this.dxNumber = this.getDxNumber(contacts);
     }
 
     public CourtWithDistance(final uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtWithDistanceEntity) {
@@ -82,8 +91,7 @@ public class CourtWithDistance {
     }
 
     private String getDxNumber(final List<Contact> contacts) {
-        return contacts
-            .stream()
+        return contacts.stream()
             .filter(Utils.NAME_IS_DX)
             .map(Contact::getNumber)
             .findFirst()
