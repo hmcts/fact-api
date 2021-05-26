@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.dts.fact.entity.Facility;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -21,6 +23,7 @@ import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
 import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 
@@ -29,7 +32,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(SnakeCaseStrategy.class)
-@SuppressWarnings("PMD.TooManyFields")
+@SuppressWarnings({"PMD.TooManyFields", "PMD.UnnecessaryFullyQualifiedName"})
 public class CourtForDownload {
     private static final String DX = "DX";
     private String name;
@@ -83,9 +86,12 @@ public class CourtForDownload {
             .map(CourtEmail::getEmail)
             .map(this::formatEmail)
             .collect(joining(lineSeparator()));
-        this.contacts = ofNullable(courtEntity.getContacts())
+        final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = ofNullable(courtEntity.getCourtContacts())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
+            .map(CourtContact::getContact)
+            .collect(toList());
+        this.contacts = contacts.stream()
             .filter(NAME_IS_NOT_DX)
             .map(this::formatContact)
             .collect(joining(lineSeparator()));
@@ -95,9 +101,7 @@ public class CourtForDownload {
             .map(CourtOpeningTime::getOpeningTime)
             .map(this::formatOpeningTime)
             .collect(joining(lineSeparator()));
-        this.dxNumber = courtEntity
-            .getContacts()
-            .stream()
+        this.dxNumber = contacts.stream()
             .filter(NAME_IS_DX)
             .map(this::formatContact)
             .collect(joining(lineSeparator()));
@@ -141,6 +145,7 @@ public class CourtForDownload {
     }
 
     private String formatOpeningTime(uk.gov.hmcts.dts.fact.entity.OpeningTime openingTime) {
-        return format("Description: %s, Hours: %s", openingTime.getType(), openingTime.getHours());
+        final String openingType = openingTime.getOpeningType() == null ? openingTime.getType() : openingTime.getOpeningType().getName();
+        return format("Description: %s, Hours: %s", openingType, openingTime.getHours());
     }
 }

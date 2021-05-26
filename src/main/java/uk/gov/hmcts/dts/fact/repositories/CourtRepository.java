@@ -16,6 +16,8 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     @Query("UPDATE Court c SET c.info = :info, c.infoCy = :infoCy WHERE c.slug in :slugs")
     void updateInfoForSlugs(@Param("slugs") List<String> slugs, @Param("info") String info, @Param("infoCy") String infoCy);
 
+    List<Court> findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(String prefix, boolean active);
+
     @Query(nativeQuery = true,
         value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca ON ca.court_id = c.id AND ca.address_type_id != 5881 "
         + "WHERE displayed = true AND ("

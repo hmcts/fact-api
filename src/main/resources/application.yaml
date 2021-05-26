@@ -32,6 +32,7 @@ spring:
   jpa:
     properties:
       hibernate:
+        globally_quoted_identifiers: true
         jdbc:
           lob:
             # silence the 'wall-of-text' - unnecessary exception throw about blob types
@@ -42,15 +43,21 @@ spring:
         jwt:
           jwk-set-uri: ${OAUTH_PROVIDER_URL:https://idam-api.aat.platform.hmcts.net}/jwks
 
+hibernate:
+  show_sql=true:
+
 dbMigration:
   runOnStartup: ${RUN_DB_MIGRATION_ON_STARTUP:true}
 
-mapit.key: ${MAPIT_KEY:}
 mapit:
+  key: ${MAPIT_KEY:}
   url: https://mapit.mysociety.org
   endpoint:
     postcode-search: /postcode
     quota: /quota
+
+launchDarkly:
+  sdk-key: ${LAUNCH_DARKLY_SDK_KEY:}
 
 azure:
   application-insights:

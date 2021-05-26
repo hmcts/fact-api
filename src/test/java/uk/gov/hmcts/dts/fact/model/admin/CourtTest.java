@@ -7,6 +7,7 @@ import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -59,8 +60,9 @@ class CourtTest {
         contactEntity.setName("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
-        contactEntity.setSortOrder(1);
-        courtEntity.setContacts(singletonList(contactEntity));
+        final CourtContact courtContactEntity = new CourtContact();
+        courtContactEntity.setContact(contactEntity);
+        courtEntity.setCourtContacts(singletonList(courtContactEntity));
 
         final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
         areaOfLawEntity.setName("Divorce");

@@ -23,12 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AdminCourtGeneralInfoController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminCourtGeneralInfoControllerTest {
-    private static final String BASE_PATH = "/courts/";
+    private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/generalInfo";
     private static final String TEST_SLUG = "unknownSlug";
     private static final CourtGeneralInfo COURT_GENERAL_INFO = new CourtGeneralInfo(
         true,
-        false,
+        true,
+        true,
         "English info",
         "Welsh info",
         "English alert",

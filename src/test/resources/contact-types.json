@@ -1,0 +1,17 @@
+[
+  {
+    "id": 36,
+    "type": "Applications",
+    "type_cy": "Ceisiadau"
+  },
+  {
+    "id": 111,
+    "type": "Appointments",
+    "type_cy": "Oriau agor y cownter"
+  },
+  {
+    "id": 54,
+    "type": "Bankruptcy",
+    "type_cy": "methdaliad"
+  }
+]

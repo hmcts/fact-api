@@ -19,7 +19,7 @@ public class OpeningTypeRepositoryTest {
     @Test
     void shouldRetrieveAllOpeningTypes() {
         List<OpeningType> results = openingTypeRepository.findAll();
-        assertThat(results).hasSize(8);
+        assertThat(results).hasSize(12);
         assertThat(results.stream().map(r -> r.getName())).isNotEmpty();
         assertThat(results.stream().map(r -> r.getNameCy())).isNotEmpty();
     }

@@ -86,58 +86,6 @@
       "name": "County Court"
     }
   ],
-  "contacts": [
-    {
-      "number": "0121  681 4441",
-      "name": "High Court",
-      "explanation": ""
-    },
-    {
-      "number": "0300 123 1142",
-      "name": "Social security and child support",
-      "explanation": null
-    },
-    {
-      "number": "01264 785 057",
-      "name": "Fax",
-      "explanation": "Family fax"
-    },
-    {
-      "number": "0121 250 6764",
-      "name": "Appointments",
-      "explanation": "Civil appointment booking line"
-    },
-    {
-      "number": "01264 785 131",
-      "name": "Fax",
-      "explanation": "High Court fax"
-    },
-    {
-      "number": "0121 681 3010",
-      "name": "Appointments",
-      "explanation": "Emergency  Family appointment bookings"
-    },
-    {
-      "number": "0121 250 6354",
-      "name": "Personal Support Unit",
-      "explanation": "Personal Support Unit Enquiries"
-    },
-    {
-      "number": "0121 250 6777",
-      "name": "Enforcement",
-      "explanation": "Enforcement appointment booking line"
-    },
-    {
-      "number": "0300 123 5577",
-      "name": "County Court",
-      "explanation": "Civil and Family Contact Centre enquiry line"
-    },
-    {
-      "number": "0121 250 6395",
-      "name": "County Court",
-      "explanation": "Court of Protection"
-    }
-  ],
   "facilities": [
     {
       "description": "Located on every floor.",

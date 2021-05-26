@@ -1,32 +1,41 @@
 package uk.gov.hmcts.dts.fact.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
+@SuppressWarnings("PMD.TooManyMethods")
 class CourtRepositoryTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private static final String ACCRINGTON_COURT_SLUG = "accrington-county-court";
+    private static final String TEST_HOURS = "Test hours";
+    private static final String TEST_NUMBER = "123";
+    private static final String TEST_EMAIL = "test@test.com";
+
     @Autowired
     private CourtRepository courtRepository;
+
+    @Autowired
+    private CourtContactRepository courtContactRepository;
+
+    @Autowired
+    private CourtEmailRepository courtEmailRepository;
 
     @Test
     void shouldFindExistingCourt() throws IOException {
@@ -85,6 +94,22 @@ class CourtRepositoryTest {
     }
 
     @Test
+    void shouldFindCourtsByPrefixAndDisplayedValueTrue() {
+        final List<Court> result = courtRepository.findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc("a", true);
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
+        Assertions.assertTrue(result.stream().allMatch(Court::getDisplayed));
+        Assertions.assertTrue(result.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
+    }
+
+    @Test
+    void shouldFindCourtsByPrefixAndDisplayedValueFalse() {
+        final List<Court> result = courtRepository.findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc("c", false);
+        assertThat(result.size()).isGreaterThanOrEqualTo(1);
+        Assertions.assertFalse(result.stream().allMatch(Court::getDisplayed));
+        Assertions.assertTrue(result.stream().allMatch(c -> c.getName().charAt(0) == 'C'));
+    }
+
+    @Test
     void shouldFindCourtsByNameOrAddress() {
         final String query = "Oxford";
         final List<Court> result = courtRepository.queryBy(query);
@@ -108,5 +133,71 @@ class CourtRepositoryTest {
     void shouldFindAllCourts() {
         final List<Court> result = courtRepository.findAll();
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    void shouldUpdateTimestampWhenOpeningTimeIsUpdated() {
+        final Optional<Court> courtOptional = courtRepository.findBySlug("aylesbury-magistrates-court-and-family-court");
+        assertThat(courtOptional).isPresent();
+        Court court = courtOptional.get();
+        final long currentUpdateTime = court.getUpdatedAt().getTime();
+
+        // Add a new opening time
+        final OpeningTime newOpeningTime = new OpeningTime();
+        newOpeningTime.setHours(TEST_HOURS);
+        List<CourtOpeningTime> courtOpeningTimes = court.getCourtOpeningTimes();
+        courtOpeningTimes.add(new CourtOpeningTime(court, newOpeningTime, 99));
+
+        court.setCourtOpeningTimes(courtOpeningTimes);
+        Court result = courtRepository.save(court);
+
+        // Check the timestamp has been updated
+        final long newUpdateTime = result.getUpdatedAt().getTime();
+        assertThat(newUpdateTime).isGreaterThan(currentUpdateTime);
+
+        // Remove the added opening time
+        courtOpeningTimes = court.getCourtOpeningTimes();
+        courtOpeningTimes.removeIf(o -> o.getOpeningTime().getHours().equals(TEST_HOURS));
+        court.setCourtOpeningTimes(courtOpeningTimes);
+        result = courtRepository.save(court);
+
+        // Check the timestamp has been updated again
+        assertThat(result.getUpdatedAt().getTime()).isGreaterThan(currentUpdateTime);
+    }
+
+    @Test
+    void shouldUpdateTimestampWhenContactIsUpdated() {
+        Optional<Court> courtOptional = courtRepository.findBySlug(ACCRINGTON_COURT_SLUG);
+        assertThat(courtOptional).isPresent();
+        Court court = courtOptional.get();
+        final long currentUpdateTime = court.getUpdatedAt().getTime();
+
+        List<CourtContact> courtContacts = court.getCourtContacts();
+        final Contact contact = new Contact(null, TEST_NUMBER, "", "", false);
+        courtContacts.add(new CourtContact(court, contact, 0));
+        courtContactRepository.saveAll(courtContacts);
+
+        // Check the timestamp has been updated
+        courtOptional = courtRepository.findBySlug(ACCRINGTON_COURT_SLUG);
+        assertThat(courtOptional).isPresent();
+        assertThat(courtOptional.get().getUpdatedAt().getTime()).isGreaterThan(currentUpdateTime);
+    }
+
+    @Test
+    void shouldUpdateTimestampWhenEmailIsUpdated() {
+        Optional<Court> courtOptional = courtRepository.findBySlug(ACCRINGTON_COURT_SLUG);
+        assertThat(courtOptional).isPresent();
+        Court court = courtOptional.get();
+        final long currentUpdateTime = court.getUpdatedAt().getTime();
+
+        List<CourtEmail> courtEmails = new ArrayList<>();
+        final Email email = new Email(TEST_EMAIL, "", "", null);
+        courtEmails.add(new CourtEmail(court, email, 0));
+        courtEmailRepository.saveAll(courtEmails);
+
+        // Check the timestamp has been updated
+        courtOptional = courtRepository.findBySlug(ACCRINGTON_COURT_SLUG);
+        assertThat(courtOptional).isPresent();
+        assertThat(courtOptional.get().getUpdatedAt().getTime()).isGreaterThan(currentUpdateTime);
     }
 }

@@ -11,3 +11,4 @@ spring:
         api-POSTGRES-USER: POSTGRES_USER
         mapit-key: MAPIT_KEY
         AppInsightsInstrumentationKey: APPINSIGHTS_INSTRUMENTATIONKEY
+        launchdarkly-sdk-key: LAUNCH_DARKLY_SDK_KEY
