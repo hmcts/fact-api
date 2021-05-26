@@ -9,19 +9,24 @@ import java.util.List;
 @Component
 public class MapCourtCode {
 
+    final static int MAGISTRATE_COURT_TYPE_ID = 11_416;
+    final static int COUNTY_COURT_TYPE_ID = 11_419;
+    final static int CROWN_COURT_TYPE_ID = 11_420;
+
     public Court mapCourtCodesForCourtEntity(final List<CourtType> courtTypes, final Court courtEntity) {
 
         //set court codes in Court Entity
         for (final CourtType courtType : courtTypes) {
 
-            switch (courtType.getName()) {
-                case "Magistrates' Court":
+
+            switch (courtType.getId()) {
+                case MAGISTRATE_COURT_TYPE_ID:
                     courtEntity.setMagistrateCode(courtType.getCode());
                     break;
-                case "County Court":
+                case COUNTY_COURT_TYPE_ID:
                     courtEntity.setCciCode(courtType.getCode());
                     break;
-                case "Crown Court":
+                case CROWN_COURT_TYPE_ID:
                     courtEntity.setNumber(courtType.getCode());
                     break;
                 default:
@@ -29,20 +34,21 @@ public class MapCourtCode {
             }
         }
 
+
         return courtEntity;
     }
 
     public List<CourtType> mapCourtCodesForCourtTypeModel(final List<CourtType> courtTypes, final Court court) {
         for (final CourtType courtType : courtTypes) {
 
-            switch (courtType.getName()) {
-                case "Magistrates' Court":
+            switch (courtType.getId()) {
+                case MAGISTRATE_COURT_TYPE_ID:
                     courtType.setCode(court.getMagistrateCode());
                     break;
-                case "County Court":
+                case COUNTY_COURT_TYPE_ID:
                     courtType.setCode(court.getCciCode());
                     break;
-                case "Crown Court":
+                case CROWN_COURT_TYPE_ID:
                     courtType.setCode(court.getNumber());
                     break;
                 default:

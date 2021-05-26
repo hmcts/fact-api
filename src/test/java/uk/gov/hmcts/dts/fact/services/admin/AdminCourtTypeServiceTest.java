@@ -38,15 +38,15 @@ public class AdminCourtTypeServiceTest {
     private static final String NOT_FOUND = "Not found: ";
 
     private static final List<CourtType> EXPECTED_COURT_TYPES_ENTITY = Arrays.asList(
-        new CourtType(1,"test1"),
-        new CourtType(2,"test2"),
-        new CourtType(3,"test3")
+        new CourtType(11_416,"test1"),
+        new CourtType(11_419,"test2"),
+        new CourtType(11_420,"test3")
     );
 
     private static final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> EXPECTED_COURT_TYPES = Arrays.asList(
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(1,"test1",null),
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(2,"test2",null),
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",null)
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(11_416,"test1",null),
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(11_419,"test2",null),
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(11_420, "test3",null)
     );
 
     @MockBean
@@ -64,8 +64,12 @@ public class AdminCourtTypeServiceTest {
     @Mock
     private Court court;
 
+    @Mock
+    private CourtType courtType;
+
     @BeforeAll
     static void setUp() {
+
         for (int i = 0; i < COURT_TYPE_COUNT; i++) {
             final CourtType courtType = mock(CourtType.class);
             COURT_TYPES.add(courtType);
@@ -110,6 +114,7 @@ public class AdminCourtTypeServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(mapCourtCode.mapCourtCodesForCourtEntity(anyList(), any())).thenReturn(court);
         when(courtRepository.save(court)).thenReturn(court);
+        when(courtTypeRepository.findById(any())).thenReturn(Optional.of(courtType));
         when(adminCourtTypesService.saveNewCourtCourtTypes(court, EXPECTED_COURT_TYPES)).thenReturn(
             EXPECTED_COURT_TYPES);
 

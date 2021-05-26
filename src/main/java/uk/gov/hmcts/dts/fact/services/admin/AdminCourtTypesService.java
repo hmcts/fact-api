@@ -87,7 +87,18 @@ public class AdminCourtTypesService {
 
     private List<uk.gov.hmcts.dts.fact.entity.CourtType> getNewCourtCourtTypesEntity(final List<CourtType> courtTypes) {
         return courtTypes.stream()
-            .map(o -> new uk.gov.hmcts.dts.fact.entity.CourtType(o.getId(),o.getName()))
+            .map(o -> this.getCourtTypeById(o.getId()))
             .collect(toList());
+
+    }
+
+    private uk.gov.hmcts.dts.fact.entity.CourtType getCourtTypeById(final Integer id) {
+
+        final Optional<uk.gov.hmcts.dts.fact.entity.CourtType> courtType = courtTypeRepository.findById(id);
+        if (courtType.isPresent()) {
+            return  courtType.get();
+        }
+        return null;
     }
 }
+
