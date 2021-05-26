@@ -505,7 +505,7 @@ class CourtServiceTest {
     @Test
     void shouldReturnCourtReferenceListWhenSearchingByPrefixAndActive() {
         final Court court = mock(Court.class);
-        when(courtRepository.findCourtBySlugStartingWithAndDisplayedOrderBySlugAsc(anyString(), anyBoolean()))
+        when(courtRepository.findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(anyString(), anyBoolean()))
             .thenReturn(singletonList(court));
         final List<CourtReference> results = courtService.getCourtsByPrefixAndActiveSearch("mosh kupo");
         assertThat(results).hasSize(1);
