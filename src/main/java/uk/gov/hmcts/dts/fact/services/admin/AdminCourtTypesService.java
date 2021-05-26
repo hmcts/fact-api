@@ -10,6 +10,8 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,6 +76,7 @@ public class AdminCourtTypesService {
         }
 
         Court amendedCourtEntity = mapCourtCode.mapCourtCodesForCourtEntity(courtTypes, courtEntity);
+        amendedCourtEntity.setUpdatedAt(Timestamp.from(Instant.now()));
 
         final Court courtWithUpdatedCourtTypes = courtRepository.save(amendedCourtEntity);
 
