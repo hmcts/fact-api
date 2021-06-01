@@ -7,51 +7,26 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import java.util.List;
 
 @Component
+@SuppressWarnings("PMD.LawOfDemeter")
 public class MapCourtCode {
 
     public Court mapCourtCodesForCourtEntity(final List<CourtType> courtTypes, final Court courtEntity) {
-
-        //set court codes in Court Entity
-        for (final CourtType courtType : courtTypes) {
-
-            switch (courtType.getName()) {
-                case "Magistrates' Court":
-                    courtEntity.setMagistrateCode(courtType.getCode());
-                    break;
-                case "County Court":
-                    courtEntity.setCciCode(courtType.getCode());
-                    break;
-                case "Crown Court":
-                    courtEntity.setNumber(courtType.getCode());
-                    break;
-                default:
-                    break;
+        for (final CourtType c : courtTypes) {
+            final uk.gov.hmcts.dts.fact.util.CourtType courtType = uk.gov.hmcts.dts.fact.util.CourtType.findByName(c.getName());
+            if (courtType.getCourtCodeConsumer() != null) {
+                courtType.setCourtCodeInEntity(courtEntity, c.getCode());
             }
         }
-
         return courtEntity;
     }
 
     public List<CourtType> mapCourtCodesForCourtTypeModel(final List<CourtType> courtTypes, final Court court) {
-        for (final CourtType courtType : courtTypes) {
-
-            switch (courtType.getName()) {
-                case "Magistrates' Court":
-                    courtType.setCode(court.getMagistrateCode());
-                    break;
-                case "County Court":
-                    courtType.setCode(court.getCciCode());
-                    break;
-                case "Crown Court":
-                    courtType.setCode(court.getNumber());
-                    break;
-                default:
-                    break;
+        for (final CourtType c : courtTypes) {
+            final uk.gov.hmcts.dts.fact.util.CourtType courtType = uk.gov.hmcts.dts.fact.util.CourtType.findByName(c.getName());
+            if (courtType.getCourtCodeFunction() != null) {
+                c.setCode(courtType.getCourtCodeFromEntity(court));
             }
         }
-
         return courtTypes;
-
     }
-
 }

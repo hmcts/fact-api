@@ -36,6 +36,7 @@ public class AdminCourtTypeServiceTest {
     private static final List<CourtType> COURT_TYPES = new ArrayList<>();
     private static final String COURT_SLUG = "some slug";
     private static final String NOT_FOUND = "Not found: ";
+    private static final String TEST_MESSAGE = "Test Message";
 
     private static final List<CourtType> EXPECTED_COURT_TYPES_ENTITY = Arrays.asList(
         new CourtType(1,"test1"),
@@ -125,5 +126,16 @@ public class AdminCourtTypeServiceTest {
         assertThatThrownBy(() -> adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
+    void shouldReturnIllegalArgumentForUnknownCourtType() {
+        when(court.getCourtTypes()).thenReturn(COURT_TYPES);
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(mapCourtCode.mapCourtCodesForCourtEntity(anyList(), any())).thenThrow(new IllegalArgumentException(TEST_MESSAGE));
+
+        assertThatThrownBy(() -> adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(TEST_MESSAGE);
     }
 }
