@@ -18,7 +18,7 @@ public class OpeningType {
 
     public OpeningType(final uk.gov.hmcts.dts.fact.entity.OpeningType openingType) {
         this.id = openingType.getId();
-        this.type = openingType.getName();
-        this.typeCy = openingType.getNameCy();
+        this.type = openingType.getDescription();
+        this.typeCy = openingType.getDescriptionCy();
     }
 }

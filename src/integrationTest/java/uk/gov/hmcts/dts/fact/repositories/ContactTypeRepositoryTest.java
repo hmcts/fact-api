@@ -20,7 +20,7 @@ public class ContactTypeRepositoryTest {
     void shouldRetrieveContactTypes() {
         List<ContactType> results = contactTypeRepository.findAll();
         assertThat(results).hasSizeGreaterThan(1);
-        assertThat(results.stream().map(r -> r.getName())).isNotEmpty();
-        assertThat(results.stream().map(r -> r.getNameCy())).isNotEmpty();
+        assertThat(results.stream().map(r -> r.getDescription())).isNotEmpty();
+        assertThat(results.stream().map(r -> r.getDescriptionCy())).isNotEmpty();
     }
 }

@@ -16,8 +16,7 @@ import javax.persistence.Table;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmailType {
-
+public class EmailType extends ElementType {
     @Id
     private Integer id;
     private String description;

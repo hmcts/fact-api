@@ -64,7 +64,7 @@ public class AdminCourtContactService {
 
         final List<CourtContact> existingCourtContacts = courtEntity.getCourtContacts()
             .stream()
-            .filter(c -> !c.getContact().getName().equalsIgnoreCase("DX"))
+            .filter(c -> !c.getContact().getDescription().equalsIgnoreCase("DX"))
             .collect(toList());
 
         courtContactRepository.deleteAll(existingCourtContacts);

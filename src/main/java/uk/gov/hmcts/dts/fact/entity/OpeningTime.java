@@ -11,27 +11,35 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OpeningTime {
+public class OpeningTime extends Element {
     @Id
     @SequenceGenerator(name = "seq-gen", sequenceName = "search_openingtime_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
-    private String type;
+    @Column(name = "type")
+    private String description;
     @Column(name = "type_cy")
-    private String typeCy;
+    private String descriptionCy;
     private String hours;
     @OneToOne()
     @JoinColumn(name = "opening_type_id")
     private OpeningType openingType;
 
     public OpeningTime(final String type, final String typeCy, final String hours) {
-        this.type = type;
-        this.typeCy = typeCy;
+        super();
+        this.description = type;
+        this.descriptionCy = typeCy;
         this.hours = hours;
     }
 
     public OpeningTime(final OpeningType openingType, final String hours) {
+        super();
         this.openingType = openingType;
         this.hours = hours;
+    }
+
+    @Override
+    public ElementType getAdminType() {
+        return openingType;
     }
 }

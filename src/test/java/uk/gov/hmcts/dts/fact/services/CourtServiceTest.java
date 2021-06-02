@@ -121,7 +121,7 @@ class CourtServiceTest {
     @MethodSource("parametersForTypesTests")
     void openingTypeInAdminTableShouldTakePrecedence(final String typeInOpeningTimeTable, final String typeInAdminTable, final String expectedType) {
         final OpeningTime openingTime = new OpeningTime();
-        openingTime.setType(typeInOpeningTimeTable);
+        openingTime.setDescription(typeInOpeningTimeTable);
         if (typeInAdminTable != null) {
             openingTime.setOpeningType(new OpeningType(1, typeInAdminTable, null));
         }
@@ -145,7 +145,7 @@ class CourtServiceTest {
     @MethodSource("parametersForTypesTests")
     void contactInAdminTableShouldTakePrecedence(final String typeInContactTable, final String typeInAdminTable, final String expectedType) {
         final Contact contact = new Contact();
-        contact.setName(typeInContactTable);
+        contact.setDescription(typeInContactTable);
         if (typeInAdminTable != null) {
             contact.setContactType(new ContactType(1, typeInAdminTable, null));
         }

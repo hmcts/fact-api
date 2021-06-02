@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.dts.fact.entity.OpeningType;
 
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 
@@ -21,11 +20,7 @@ public class OpeningTime {
     private String hours;
 
     public OpeningTime(uk.gov.hmcts.dts.fact.entity.OpeningTime openingTime) {
-        final OpeningType openingType = openingTime.getOpeningType();
-        final String openingTimeDescription = (openingType == null) ? openingTime.getType() : openingType.getName();
-        final String openingTimeDescriptionCy = (openingType == null) ? openingTime.getTypeCy() : openingType.getNameCy();
-
-        this.type = chooseString(openingTimeDescriptionCy, openingTimeDescription);
+        this.type = chooseString(openingTime.getDescriptionCy(openingTime), openingTime.getDescription(openingTime));
         this.hours = openingTime.getHours();
     }
 }

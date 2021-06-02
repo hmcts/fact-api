@@ -75,7 +75,7 @@ class CourtForDownloadTest {
         when(courtEmail.getEmail()).thenReturn(email);
         courtEntity.setCourtEmails(asList(courtEmail));
         Contact contact = new Contact();
-        contact.setName("Contact name");
+        contact.setDescription("Contact name");
         contact.setNumber("12345");
         contact.setExplanation("Contact explanation");
         CourtContact courtContact = mock(CourtContact.class);
@@ -83,7 +83,7 @@ class CourtForDownloadTest {
         courtEntity.setCourtContacts(asList(courtContact));
         CourtOpeningTime courtOpeningTime = mock(CourtOpeningTime.class);
         OpeningTime openingTime = new OpeningTime();
-        openingTime.setType("A description");
+        openingTime.setDescription("A description");
         openingTime.setHours("Some opening hours");
         when(courtOpeningTime.getOpeningTime()).thenReturn(openingTime);
         courtEntity.setCourtOpeningTimes(asList(courtOpeningTime));
