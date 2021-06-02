@@ -18,8 +18,8 @@ public class Contact {
     private boolean fax;
 
     public Contact(uk.gov.hmcts.dts.fact.entity.Contact contact) {
-        if (contact.getContactType() != null) {
-            this.typeId = contact.getContactType().getId();
+        if (contact.getAdminType() != null) {
+            this.typeId = contact.getAdminType().getId();
         }
         this.number = contact.getNumber();
         this.explanation = contact.getExplanation();

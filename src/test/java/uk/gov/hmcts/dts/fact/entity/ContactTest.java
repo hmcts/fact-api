@@ -30,7 +30,7 @@ public class ContactTest {
         ContactType contactType = new ContactType(1, TYPE, TYPE_CY);
         Contact contact = new Contact(contactType, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY, true);
 
-        assertThat(contact.getContactType()).isEqualTo(contactType);
+        assertThat(contact.getAdminType()).isEqualTo(contactType);
         assertThat(contact.getNumber()).isEqualTo(CONTACT_NUMBER);
         assertThat(contact.getExplanation()).isEqualTo(EXPLANATION);
         assertThat(contact.getExplanationCy()).isEqualTo(EXPLANATION_CY);
@@ -42,7 +42,7 @@ public class ContactTest {
         ContactType contactType = new ContactType(1, TYPE, TYPE_CY);
         Contact contact = new Contact(contactType, CONTACT_NUMBER, EXPLANATION, EXPLANATION_CY);
 
-        assertThat(contact.getContactType()).isEqualTo(contactType);
+        assertThat(contact.getAdminType()).isEqualTo(contactType);
         assertThat(contact.getNumber()).isEqualTo(CONTACT_NUMBER);
         assertThat(contact.getExplanation()).isEqualTo(EXPLANATION);
         assertThat(contact.getExplanationCy()).isEqualTo(EXPLANATION_CY);

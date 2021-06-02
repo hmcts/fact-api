@@ -123,7 +123,7 @@ class CourtServiceTest {
         final OpeningTime openingTime = new OpeningTime();
         openingTime.setDescription(typeInOpeningTimeTable);
         if (typeInAdminTable != null) {
-            openingTime.setOpeningType(new OpeningType(1, typeInAdminTable, null));
+            openingTime.setAdminType(new OpeningType(1, typeInAdminTable, null));
         }
 
         final CourtOpeningTime courtOpeningTime = mock(CourtOpeningTime.class);
@@ -147,7 +147,7 @@ class CourtServiceTest {
         final Contact contact = new Contact();
         contact.setDescription(typeInContactTable);
         if (typeInAdminTable != null) {
-            contact.setContactType(new ContactType(1, typeInAdminTable, null));
+            contact.setAdminType(new ContactType(1, typeInAdminTable, null));
         }
 
         final CourtContact courtContact = mock(CourtContact.class);
