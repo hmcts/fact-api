@@ -57,7 +57,7 @@ class ContactTest {
 
         entity.setDescription(description);
         entity.setDescriptionCy(descriptionCy);
-        entity.setAdminType(null);
+        entity.setContactType(null);
         entity.setFax(isFax);
 
         final Contact contact = new Contact(entity);
@@ -86,7 +86,7 @@ class ContactTest {
         }
 
         final ContactType contactType = new ContactType(1, DESCRIPTION_IN_ADMIN_TABLE, DESCRIPTION_CY_IN_ADMIN_TABLE);
-        entity.setAdminType(contactType);
+        entity.setContactType(contactType);
         entity.setFax(isFax);
 
         Contact contact = new Contact(entity);

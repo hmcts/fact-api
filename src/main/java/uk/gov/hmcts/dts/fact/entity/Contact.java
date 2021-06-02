@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.Locale;
 import javax.persistence.*;
 
 @Entity
@@ -35,15 +33,14 @@ public class Contact extends Element {
 
     @OneToOne()
     @JoinColumn(name = "contact_type_id")
-    private ContactType adminType;
+    private ContactType contactType;
 
-    public Contact(final ContactType adminType, final String number, final String explanation, final String explanationCy) {
-        this(adminType, number, explanation, explanationCy, false);
+    public Contact(final ContactType contactType, final String number, final String explanation, final String explanationCy) {
+        this(contactType, number, explanation, explanationCy, false);
     }
 
-    public Contact(final ContactType adminType, final String number, final String explanation, final String explanationCy, final boolean fax) {
-        super();
-        this.adminType = adminType;
+    public Contact(final ContactType contactType, final String number, final String explanation, final String explanationCy, final boolean fax) {
+        this.contactType = contactType;
         this.number = number;
         this.explanation = explanation;
         this.explanationCy = explanationCy;
@@ -82,5 +79,10 @@ public class Contact extends Element {
             }
         }
         return description;
+    }
+
+    @Override
+    public ElementType getAdminType() {
+        return contactType;
     }
 }

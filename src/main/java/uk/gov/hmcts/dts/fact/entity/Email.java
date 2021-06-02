@@ -24,9 +24,9 @@ public class Email extends Element {
 
     @OneToOne()
     @JoinColumn(name = "admin_email_type_id")
-    private EmailType adminType;
+    private EmailType adminEmailType;
 
-    public Email(String address, String explanation, String explanationCy, EmailType adminType) {
+    public Email(String address, String explanation, String explanationCy, EmailType emailType) {
         super();
         this.address = address;
         // Cater for the frontend not allowing null values
@@ -35,6 +35,11 @@ public class Email extends Element {
         }
         this.explanation = explanation;
         this.explanationCy = explanationCy;
-        this.adminType = adminType;
+        this.adminEmailType = emailType;
+    }
+
+    @Override
+    public ElementType getAdminType() {
+        return adminEmailType;
     }
 }

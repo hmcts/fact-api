@@ -23,7 +23,7 @@ public class OpeningTime extends Element {
     private String hours;
     @OneToOne()
     @JoinColumn(name = "opening_type_id")
-    private OpeningType adminType;
+    private OpeningType openingType;
 
     public OpeningTime(final String type, final String typeCy, final String hours) {
         super();
@@ -32,9 +32,14 @@ public class OpeningTime extends Element {
         this.hours = hours;
     }
 
-    public OpeningTime(final OpeningType adminType, final String hours) {
+    public OpeningTime(final OpeningType openingType, final String hours) {
         super();
-        this.adminType = adminType;
+        this.openingType = openingType;
         this.hours = hours;
+    }
+
+    @Override
+    public ElementType getAdminType() {
+        return openingType;
     }
 }
