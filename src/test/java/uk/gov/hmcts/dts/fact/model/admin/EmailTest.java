@@ -36,7 +36,7 @@ public class EmailTest {
      */
     @Test
     void testEmailConstructorNoEmailTypeFound() {
-        ENT_EMAIL.setAdminEmailType(null);
+        ENT_EMAIL.setAdminType(null);
         Email email = new Email(ENT_EMAIL);
 
         assertEquals(email.getExplanation(), "expl");

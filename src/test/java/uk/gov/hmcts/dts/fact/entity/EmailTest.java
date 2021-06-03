@@ -26,7 +26,7 @@ public class EmailTest {
         EmailType emailType = new EmailType(1, "desc", "desc cy");
         Email email = new Email(
             "address", "expl", "expl cy", emailType);
-        assertEquals(email.getAdminEmailType(), emailType);
+        assertEquals(email.getAdminType(), emailType);
         assertEquals(email.getExplanation(), "expl");
         assertEquals(email.getExplanationCy(), "expl cy");
         assertEquals(email.getAddress(), "address");
