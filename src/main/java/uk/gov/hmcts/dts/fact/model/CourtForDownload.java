@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Facility;
+import uk.gov.hmcts.dts.fact.entity.util.ElementFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -84,7 +85,7 @@ public class CourtForDownload {
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtEmail::getEmail)
-            .map(this::formatEmail)
+            .map(ElementFormatter::formatEmail)
             .collect(joining(lineSeparator()));
         final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = ofNullable(courtEntity.getCourtContacts())
             .map(Collection::stream)
@@ -93,17 +94,17 @@ public class CourtForDownload {
             .collect(toList());
         this.contacts = contacts.stream()
             .filter(NAME_IS_NOT_DX)
-            .map(this::formatContact)
+            .map(ElementFormatter::formatContact)
             .collect(joining(lineSeparator()));
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtOpeningTime::getOpeningTime)
-            .map(this::formatOpeningTime)
+            .map(ElementFormatter::formatOpeningTime)
             .collect(joining(lineSeparator()));
         this.dxNumber = contacts.stream()
             .filter(NAME_IS_DX)
-            .map(this::formatContact)
+            .map(ElementFormatter::formatContact)
             .collect(joining(lineSeparator()));
     }
 
@@ -119,33 +120,5 @@ public class CourtForDownload {
             courtAddress.getTownName(),
             courtAddress.getPostcode()
         );
-    }
-
-    private String formatEmail(uk.gov.hmcts.dts.fact.entity.Email email) {
-        StringBuffer formatted = new StringBuffer(format(
-            "Address: %s, Description: %s",
-            email.getAddress(),
-            email.getDescription()
-        ));
-        if (email.getExplanation() != null && !email.getExplanation().isBlank()) {
-            formatted.append(format(", Explanation: %s", email.getExplanation()));
-        }
-        return formatted.toString();
-    }
-
-    private String formatContact(uk.gov.hmcts.dts.fact.entity.Contact contact) {
-        StringBuffer formatted = new StringBuffer(format("Number: %s", contact.getNumber()));
-        if (!DX.equalsIgnoreCase(contact.getName())) {
-            formatted.append(format(", Description: %s", contact.getName()));
-        }
-        if (contact.getExplanation() != null && !contact.getExplanation().isBlank()) {
-            formatted.append(format(", Explanation: %s", contact.getExplanation()));
-        }
-        return formatted.toString();
-    }
-
-    private String formatOpeningTime(uk.gov.hmcts.dts.fact.entity.OpeningTime openingTime) {
-        final String openingType = openingTime.getOpeningType() == null ? openingTime.getType() : openingTime.getOpeningType().getName();
-        return format("Description: %s, Hours: %s", openingType, openingTime.getHours());
     }
 }

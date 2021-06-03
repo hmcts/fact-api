@@ -57,7 +57,7 @@ class CourtTest {
         courtEntity.setCourtEmails(singletonList(courtEmailEntity));
 
         final Contact contactEntity = new Contact();
-        contactEntity.setName("DX");
+        contactEntity.setDescription("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
         final CourtContact courtContactEntity = new CourtContact();
@@ -75,8 +75,8 @@ class CourtTest {
         courtEntity.setCourtTypes(singletonList(courtTypeEntity));
 
         final OpeningTime openingTimeEntity = new OpeningTime();
-        openingTimeEntity.setType("opening time type");
-        openingTimeEntity.setTypeCy("opening time type in Welsh");
+        openingTimeEntity.setDescription("opening time type");
+        openingTimeEntity.setDescriptionCy("opening time type in Welsh");
         openingTimeEntity.setHours("opening times");
         final CourtOpeningTime courtOpeningTime = new CourtOpeningTime();
         courtOpeningTime.setOpeningTime(openingTimeEntity);
@@ -115,7 +115,7 @@ class CourtTest {
         assertFalse(court.getAccessScheme());
         assertEquals(courtEntity.getCourtOpeningTimes().size(), court.getOpeningTimes().size());
         assertEquals(
-            courtEntity.getCourtOpeningTimes().get(0).getOpeningTime().getType(),
+            courtEntity.getCourtOpeningTimes().get(0).getOpeningTime().getDescription(),
             court.getOpeningTimes().get(0).getType()
         );
         assertEquals(

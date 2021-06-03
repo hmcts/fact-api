@@ -8,10 +8,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "search_email")
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class Email {
+public class Email extends Element {
     @Id
     @SequenceGenerator(name = "seq-gen", sequenceName = "search_email_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
@@ -24,10 +24,10 @@ public class Email {
 
     @OneToOne()
     @JoinColumn(name = "admin_email_type_id")
-    private EmailType adminEmailType;
+    private EmailType adminType;
 
-    public Email(String address, String explanation,
-                 String explanationCy, EmailType emailType) {
+    public Email(String address, String explanation, String explanationCy, EmailType adminType) {
+        super();
         this.address = address;
         // Cater for the frontend not allowing null values
         if (description == null) {
@@ -35,6 +35,6 @@ public class Email {
         }
         this.explanation = explanation;
         this.explanationCy = explanationCy;
-        this.adminEmailType = emailType;
+        this.adminType = adminType;
     }
 }

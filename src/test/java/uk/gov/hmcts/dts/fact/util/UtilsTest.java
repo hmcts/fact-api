@@ -22,12 +22,12 @@ class UtilsTest {
     @Test
     void testDxExtractContacts() {
         Contact contact1 = new Contact();
-        contact1.setName("DX");
+        contact1.setDescription("DX");
         contact1.setNumber("123");
         contact1.setExplanation(EXPLANATION_OF_CONTACT);
 
         Contact contact2 = new Contact();
-        contact2.setName("Name of contact");
+        contact2.setDescription("Name of contact");
         contact2.setNumber("456");
         contact2.setExplanation(EXPLANATION_OF_CONTACT);
 
@@ -45,12 +45,12 @@ class UtilsTest {
     @Test
     void testRemoveDxContacts() {
         Contact contact1 = new Contact();
-        contact1.setName("DX");
+        contact1.setDescription("DX");
         contact1.setNumber("123");
         contact1.setExplanation(EXPLANATION_OF_CONTACT);
 
         Contact contact2 = new Contact();
-        contact2.setName("Name of contact");
+        contact2.setDescription("Name of contact");
         contact2.setNumber("456");
         contact2.setExplanation(EXPLANATION_OF_CONTACT);
 
@@ -59,7 +59,7 @@ class UtilsTest {
         contacts.add(contact2);
 
         List<Contact> contactsWithoutDx = contacts.stream().filter(Utils.NAME_IS_NOT_DX).collect(toList());
-        assertEquals(contactsWithoutDx.get(0).getName(), contact2.getName());
+        assertEquals(contactsWithoutDx.get(0).getDescription(), contact2.getDescription());
         assertThat(contactsWithoutDx.size()).isEqualTo(1);
     }
 

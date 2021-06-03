@@ -66,7 +66,7 @@ class CourtTest {
         courtEntity.setCourtEmails(singletonList(courtEmailEntity));
 
         final Contact contactEntity = new Contact();
-        contactEntity.setName("DX");
+        contactEntity.setDescription("DX");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
         CourtContact courtContactEntity = mock(CourtContact.class);
@@ -84,7 +84,7 @@ class CourtTest {
         courtEntity.setCourtTypes(singletonList(courtTypeEntity));
 
         final OpeningTime openingTimeEntity = new OpeningTime();
-        openingTimeEntity.setType("opening time type");
+        openingTimeEntity.setDescription("opening time type");
         openingTimeEntity.setHours("opening times");
         final CourtOpeningTime courtOpeningTimeEntity = new CourtOpeningTime();
         courtOpeningTimeEntity.setOpeningTime(openingTimeEntity);
