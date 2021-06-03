@@ -16,10 +16,11 @@ import javax.persistence.Table;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OpeningType {
+public class OpeningType extends ElementType {
     @Id
     private Integer id;
-    private String name;
+    @Column(name = "name")
+    private String description;
     @Column(name = "name_cy")
-    private String nameCy;
+    private String descriptionCy;
 }

@@ -25,8 +25,8 @@ class ContactTest {
     @BeforeAll
     static void setUp() {
         entity = new uk.gov.hmcts.dts.fact.entity.Contact();
-        entity.setName(DESCRIPTION_IN_CONTACT_TABLE);
-        entity.setNameCy(DESCRIPTION_CY_IN_CONTACT_TABLE);
+        entity.setDescription(DESCRIPTION_IN_CONTACT_TABLE);
+        entity.setDescriptionCy(DESCRIPTION_CY_IN_CONTACT_TABLE);
         entity.setNumber("A number");
         entity.setExplanation("An explanation.");
         entity.setExplanationCy("An explanation in Welsh.");
@@ -55,9 +55,9 @@ class ContactTest {
             LocaleContextHolder.setLocale(locale);
         }
 
-        entity.setName(description);
-        entity.setNameCy(descriptionCy);
-        entity.setContactType(null);
+        entity.setDescription(description);
+        entity.setDescriptionCy(descriptionCy);
+        entity.setAdminType(null);
         entity.setFax(isFax);
 
         final Contact contact = new Contact(entity);
@@ -86,7 +86,7 @@ class ContactTest {
         }
 
         final ContactType contactType = new ContactType(1, DESCRIPTION_IN_ADMIN_TABLE, DESCRIPTION_CY_IN_ADMIN_TABLE);
-        entity.setContactType(contactType);
+        entity.setAdminType(contactType);
         entity.setFax(isFax);
 
         Contact contact = new Contact(entity);

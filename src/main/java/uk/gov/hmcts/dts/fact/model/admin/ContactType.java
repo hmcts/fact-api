@@ -18,7 +18,7 @@ public class ContactType {
 
     public ContactType(final uk.gov.hmcts.dts.fact.entity.ContactType contactType) {
         this.id = contactType.getId();
-        this.type = contactType.getName();
-        this.typeCy = contactType.getNameCy();
+        this.type = contactType.getDescription();
+        this.typeCy = contactType.getDescriptionCy();
     }
 }

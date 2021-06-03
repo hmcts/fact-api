@@ -14,8 +14,8 @@ public class OpeningTime {
     private String hours;
 
     public OpeningTime(uk.gov.hmcts.dts.fact.entity.OpeningTime openingTime) {
-        if (openingTime.getOpeningType() != null) {
-            this.typeId = openingTime.getOpeningType().getId();
+        if (openingTime.getAdminType() != null) {
+            this.typeId = openingTime.getAdminType().getId();
         }
         this.hours = openingTime.getHours();
     }

@@ -127,7 +127,7 @@ public class AdminCourtContactServiceTest {
         when(court.getCourtContacts()).thenReturn(COURT_CONTACTS);
 
         final List<CourtContact> courtContactsWithoutDX = new ArrayList<>(COURT_CONTACTS);
-        courtContactsWithoutDX.removeIf(c -> c.getContact().getName().equals(DX));
+        courtContactsWithoutDX.removeIf(c -> c.getContact().getDescription().equals(DX));
         when(courtContactRepository.saveAll(any())).thenReturn(courtContactsWithoutDX);
 
         assertThat(adminService.updateCourtContacts(COURT_SLUG, EXPECTED_CONTACTS))
