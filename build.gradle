@@ -103,6 +103,7 @@ task integration(type: Test) {
 
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
+  group = "Verification"
   testClassesDirs = sourceSets.smokeTest.output.classesDirs
   classpath = sourceSets.smokeTest.runtimeClasspath
 }
@@ -251,6 +252,8 @@ dependencies {
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured'
 
   smokeTestImplementation sourceSets.main.runtimeClasspath
+  smokeTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+  smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured'
 }
 
 mainClassName = 'uk.gov.hmcts.dts.fact.Application'
