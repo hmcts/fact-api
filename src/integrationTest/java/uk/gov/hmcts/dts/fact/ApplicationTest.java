@@ -12,9 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -44,12 +42,5 @@ public class ApplicationTest {
         final MvcResult response = mockMvc.perform(get("/")).andExpect(status().isOk()).andReturn();
 
         assertThat(response.getResponse().getContentAsString()).startsWith("Welcome");
-    }
-
-    @Test
-    public void healthEndpointWithCustomMapitServiceHealthCheck() throws Exception {
-        mockMvc.perform(get("/health"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("\"mapit\":{\"status\":\"UP\"")));
     }
 }
