@@ -29,14 +29,14 @@ public class AdminCourtPostcodeController {
 
     @GetMapping(path = "/{slug}/postcodes")
     @ApiOperation("Find court postcodes by slug")
-    @Role(FACT_SUPER_ADMIN)
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<String>> getCourtPostcodes(@PathVariable String slug) {
         return ok(adminService.getCourtPostcodesBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/postcodes")
     @ApiOperation("Update court postcodes")
-    @Role(FACT_SUPER_ADMIN)
+    @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<List<String>> updateCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
         return ok(adminService.updateCourtPostcodes(slug, postcodes));
     }
