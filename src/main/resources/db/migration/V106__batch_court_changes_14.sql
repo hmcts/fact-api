@@ -2,9 +2,11 @@
 DO $$
 	DECLARE temp_id integer;
 	BEGIN
-		INSERT INTO public.search_contact(id, number, explanation,explanation_cy, in_leaflet, contact_type_id, fax)
+		INSERT INTO public.search_contact(id, name, name_cy, number, explanation,explanation_cy, in_leaflet, contact_type_id, fax)
 		VALUES(
 			      DEFAULT,
+			      '',
+			      '',
 			      '0191 201 2964',
 			      'Accessibility needs',
 			      '',
