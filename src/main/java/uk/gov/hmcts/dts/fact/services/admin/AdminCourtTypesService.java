@@ -73,6 +73,11 @@ public class AdminCourtTypesService {
             courtEntity.getCourtTypes().addAll(courtTypeEntity);
         }
 
+        //remove existing code entries for court.
+        courtEntity.setMagistrateCode(0);
+        courtEntity.setCciCode(0);
+        courtEntity.setNumber(0);
+
         final Court amendedCourtEntity = mapCourtCode.mapCourtCodesForCourtEntity(courtTypes, courtEntity);
 
         final Court courtWithUpdatedCourtTypes = courtRepository.save(amendedCourtEntity);
