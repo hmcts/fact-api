@@ -27,8 +27,17 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Test
-    public void shouldRetrieveCourtPostcodes() {
+    public void adminShouldRetrieveCourtPostcodes() {
         final var response = doGetRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<String> results = response.body().jsonPath().getList(".", String.class);
+        assertThat(results).hasSizeGreaterThan(1);
+    }
+
+    @Test
+    public void superAdminShouldRetrieveCourtPostcodes() {
+        final var response = doGetRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<String> results = response.body().jsonPath().getList(".", String.class);
@@ -48,12 +57,21 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateCourtPostcodes() throws JsonProcessingException {
+    public void adminShouldUpdateBeForbiddenFromUpdatingCourtPostcodes() throws JsonProcessingException {
+        final List<String> currentPostcodes = getCurrentPostcodes();
+        // Add a new postcode
+        final String json = getPostcodeJson(addNewPostcode(currentPostcodes));
+        final var response = doPutRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void superAdminShouldUpdateCourtPostcodes() throws JsonProcessingException {
         final List<String> currentPostcodes = getCurrentPostcodes();
 
         // Add a new postcode
         String json = getPostcodeJson(addNewPostcode(currentPostcodes));
-        var response = doPutRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        var response = doPutRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken), json);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         List<String> updatedPostcodes = response.body().jsonPath().getList(".", String.class);
@@ -61,7 +79,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
         // Remove the added postcode
         json = getPostcodeJson(removePostcode(updatedPostcodes));
-        response = doPutRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        response = doPutRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken), json);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         updatedPostcodes = response.body().jsonPath().getList(".", String.class);
@@ -69,13 +87,13 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingContacts() throws JsonProcessingException {
+    public void shouldRequireATokenWhenUpdatingCourtPostcodes() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_COURT_POSTCODES_PATH, getPostcodeJson(getCurrentPostcodes()));
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingContacts() throws JsonProcessingException {
+    public void shouldBeForbiddenForUpdatingCourtPostcodes() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getPostcodeJson(getCurrentPostcodes()));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
