@@ -1,0 +1,17 @@
+[
+  {
+    "areaOfLawId": 1,
+    "courtId": 2,
+    "localAuthorityId": 3
+  },
+  {
+    "areaOfLawId": 4,
+    "courtId": 5,
+    "localAuthorityId": 6
+  },
+  {
+    "areaOfLawId": 7,
+    "courtId": 8,
+    "localAuthorityId": 9
+  }
+]
