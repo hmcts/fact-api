@@ -54,6 +54,7 @@ mapit:
   url: https://mapit.mysociety.org
   endpoint:
     postcode-search: /postcode
+    area-search: /areas
     quota: /quota
 
 launchDarkly:

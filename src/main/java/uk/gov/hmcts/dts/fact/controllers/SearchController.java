@@ -75,6 +75,22 @@ public class SearchController {
         return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
     }
 
+    @GetMapping(path = "/test/{postcode}")
+    @ApiOperation("test")
+    @Description("test")
+    public ResponseEntity<Boolean> test(
+        @PathVariable String postcode) {
+        return ok(courtService.postcodeDataExists(postcode));
+    }
+
+    @GetMapping(path = "/test2/{area}")
+    @ApiOperation("test")
+    @Description("test")
+    public ResponseEntity<Boolean> test2(
+        @PathVariable String area) {
+        return ok(courtService.localAuthorityExists(area));
+    }
+
     @GetMapping(path = "/results")
     @ApiOperation("Find courts by postcode and Service Area")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")

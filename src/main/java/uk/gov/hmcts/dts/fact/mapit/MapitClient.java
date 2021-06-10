@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,5 +10,10 @@ public interface MapitClient {
 
     @GetMapping("${mapit.endpoint.postcode-search}/{postcode}")
     MapitData getMapitData(@PathVariable("postcode") String postcode);
-}
 
+    @GetMapping("${mapit.endpoint.postcode-search}/partial/{postcode}")
+    MapitData getMapitDataWithPartial(@PathVariable("postcode") String postcode);
+
+    @GetMapping("${mapit.endpoint.area-search}/{area}")
+    JsonNode getMapitDataWithArea(@PathVariable("area") String area);
+}
