@@ -1,12 +1,15 @@
 package uk.gov.hmcts.dts.fact.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.file.Matcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
+import uk.gov.hmcts.dts.fact.mapit.MapitDataArea;
+import uk.gov.hmcts.dts.fact.mapit.MapitDataAreaDetails;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
@@ -93,6 +96,32 @@ public class CourtService {
                 .map(CourtWithDistance::new)
                 .collect(toList()))
             .orElseThrow(() -> new InvalidPostcodeException(postcode));
+    }
+
+    public boolean postcodeDataExists(final String postcode) {
+
+        // If we have a full postcode
+        if (postcode.matches("([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]"
+                              + "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
+                              + "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})")) {
+            log.info("Full postcode search of mapit data for {}", postcode);
+            return mapitService.getMapitData(postcode).isPresent();
+        }
+
+        // else partial search
+        log.info("Partial postcode search of mapit data for {}", postcode);
+        return mapitService.getMapitDataWithPartial(postcode).isPresent();
+    }
+
+    public boolean localAuthorityExists(final String area){
+
+        Optional<List<MapitDataAreaDetails>> mapitData = mapitService.getMapitDataWithArea(area);
+
+        if(mapitData.isPresent()) {
+            return mapitData.get().stream().anyMatch(details -> area.equals(details.getName()));
+        }
+        log.warn("No mapit data found for provided area: {}", area);
+        return false;
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
