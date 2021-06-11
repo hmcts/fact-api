@@ -15,8 +15,6 @@ public class LocalAuthority {
     public LocalAuthority(uk.gov.hmcts.dts.fact.entity.LocalAuthority localAuthority) {
         this.id = localAuthority.getId();
         this.name = localAuthority.getName();
-
     }
-
 
 }
