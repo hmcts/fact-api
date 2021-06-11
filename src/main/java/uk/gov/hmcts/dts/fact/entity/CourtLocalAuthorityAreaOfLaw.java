@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourtLocalAuthority {
+public class CourtLocalAuthorityAreaOfLaw {
 
     @Id
     private Integer id;
@@ -28,8 +28,7 @@ public class CourtLocalAuthority {
     @JoinColumn(name = "local_authority_id")
     private LocalAuthority localAuthority;
 
-    public CourtLocalAuthority(final Integer id, final AreaOfLaw areaOfLaw, final Court court, LocalAuthority localAuthority) {
-        this.id = id;
+    public CourtLocalAuthorityAreaOfLaw(final AreaOfLaw areaOfLaw, final Court court, LocalAuthority localAuthority) {
         this.areaOfLaw = areaOfLaw;
         this.court = court;
         this.localAuthority = localAuthority;

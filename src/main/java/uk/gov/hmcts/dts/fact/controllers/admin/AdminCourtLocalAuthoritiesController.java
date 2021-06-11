@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.model.admin.CourtLocalAuthority;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLocalAuthoritiesService;
 
@@ -37,19 +36,20 @@ public class AdminCourtLocalAuthoritiesController {
         return ok(adminCourtLocalAuthoritiesService.getAllLocalAuthorities());
     }
 
-    //returns local authorities for a court by passing in a court slug and returning local authorities list
-    @GetMapping(path = "/{slug}/courtLocalAuthorities")
+    //returns local authorities for a court by passing in a court slug ,area of law and returning local authorities list
+    @GetMapping(path = "/{slug}/{areaOfLaw}/localAuthorities")
     @ApiOperation("Find a courts local authorities by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<CourtLocalAuthority>> getCourtLocalAuthorities(@PathVariable String slug) {
-        return ok(adminCourtLocalAuthoritiesService.getCourtLocalAuthoritiesBySlug(slug));
+    public ResponseEntity<List<LocalAuthority>> getCourtLocalAuthorities(@PathVariable String slug, @PathVariable String areaOfLaw) {
+        return ok(adminCourtLocalAuthoritiesService.getCourtLocalAuthoritiesBySlugAndAreaOfLaw(slug, areaOfLaw));
     }
 
-    //updates local authorities for a court by passing in a court slug ,local authorities list and returning updated local authorities list
-    @PutMapping(path = "/{slug}/courtLocalAuthorities")
-    @ApiOperation("Update a courts local authorities")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<CourtLocalAuthority>> updateCourtLocalAuthorities(@PathVariable String slug, @RequestBody List<CourtLocalAuthority> courtLocalAuthorities) {
-        return ok(adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(slug, courtLocalAuthorities));
+    //updates local authorities for a court by passing in a court slug ,area of law, local authorities list and returning updated local authorities
+    // list by super admin user only
+    @PutMapping(path = "/{slug}/{areaOfLaw}/localAuthorities")
+    @ApiOperation("Update a courts local authorities for a area of law by super admin")
+    @Role({FACT_SUPER_ADMIN})
+    public ResponseEntity<List<LocalAuthority>> updateCourtLocalAuthorities(@PathVariable String slug, @PathVariable String areaOfLaw, @RequestBody List<LocalAuthority> localAuthorities) {
+        return ok(adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(slug, areaOfLaw, localAuthorities));
     }
 }

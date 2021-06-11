@@ -15,23 +15,19 @@ public class AdminCourtAreasOfLawService {
 
     private final CourtRepository courtRepository;
 
-
     @Autowired
     public AdminCourtAreasOfLawService(final CourtRepository courtRepository) {
         this.courtRepository = courtRepository;
     }
 
     public List<AreaOfLaw> getCourtAreasOfLawBySlug(final String slug) {
-
         return courtRepository.findBySlug(slug)
             .map(c -> c.getAreasOfLaw()
             .stream()
             .map(AreaOfLaw::new)
             .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
-
     }
-
 
 }
 

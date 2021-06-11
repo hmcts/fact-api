@@ -3,11 +3,12 @@ package uk.gov.hmcts.dts.fact.services.admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtLocalAuthorityAreaOfLaw;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.admin.CourtLocalAuthority;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
-import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
 
@@ -20,14 +21,14 @@ public class AdminCourtLocalAuthoritiesService {
 
     private final LocalAuthorityRepository localAuthorityRepository;
     private final CourtRepository courtRepository;
-    private final CourtLocalAuthorityRepository courtLocalAuthorityRepository;
+    private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
 
 
     @Autowired
-    public AdminCourtLocalAuthoritiesService(final LocalAuthorityRepository localAuthorityRepository, final CourtRepository courtRepository, final CourtLocalAuthorityRepository courtLocalAuthorityRepository) {
+    public AdminCourtLocalAuthoritiesService(final LocalAuthorityRepository localAuthorityRepository, final CourtRepository courtRepository, final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository) {
         this.localAuthorityRepository = localAuthorityRepository;
         this.courtRepository = courtRepository;
-        this.courtLocalAuthorityRepository = courtLocalAuthorityRepository;
+        this.courtLocalAuthorityAreaOfLawRepository = courtLocalAuthorityAreaOfLawRepository;
     }
 
     public List<LocalAuthority> getAllLocalAuthorities() {
@@ -37,47 +38,59 @@ public class AdminCourtLocalAuthoritiesService {
             .collect(toList());
     }
 
-    public List<CourtLocalAuthority> getCourtLocalAuthoritiesBySlug(final String slug) {
+    public List<LocalAuthority> getCourtLocalAuthoritiesBySlugAndAreaOfLaw(final String slug, final String areaOfLaw) {
 
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        return courtLocalAuthorityRepository.findByCourtId(courtEntity.getId())
+        return courtLocalAuthorityAreaOfLawRepository.findByCourtId(courtEntity.getId())
                 .stream()
-                .map(CourtLocalAuthority::new)
+                .filter(c -> c.getAreaOfLaw().getName().equals(areaOfLaw))
+                .map(la -> new LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
                 .collect(toList());
-
     }
 
     @Transactional(rollbackFor = {RuntimeException.class})
-    public List<CourtLocalAuthority> updateCourtLocalAuthority(final String slug, final List<CourtLocalAuthority> localAuthorities) {
+    public List<LocalAuthority> updateCourtLocalAuthority(final String slug, final String areaOfLaw, final List<LocalAuthority> localAuthorities) {
+
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        return saveNewCourtLocalAuthorities(courtEntity, localAuthorities);
 
-    }
-
-    protected List<CourtLocalAuthority> saveNewCourtLocalAuthorities(final Court courtEntity, final List<CourtLocalAuthority> localAuthorities) {
-
-        final List<uk.gov.hmcts.dts.fact.entity.CourtLocalAuthority> courtLocalAuthorityEntities = getNewCourtLocalAuthority(localAuthorities);
-        final List<uk.gov.hmcts.dts.fact.entity.CourtLocalAuthority> existingCourtLocalAuthorities = courtLocalAuthorityRepository.findByCourtId(courtEntity.getId());
-
-        //delete existing Court Local Authorities
-        courtLocalAuthorityRepository.deleteAll(existingCourtLocalAuthorities);
-
-        return courtLocalAuthorityRepository
-            .saveAll(courtLocalAuthorityEntities)
+        final AreaOfLaw areaOfLawEntity = courtEntity.getAreasOfLaw()
             .stream()
-            .map(CourtLocalAuthority::new)
+            .filter(al -> al.getName().equals(areaOfLaw)).findFirst()
+            .orElseThrow(() -> new NotFoundException(areaOfLaw));
+
+        return saveNewCourtLocalAuthorities(courtEntity, areaOfLawEntity, localAuthorities);
+    }
+
+    protected List<LocalAuthority> saveNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw, final List<LocalAuthority> localAuthorities) {
+
+        final List<CourtLocalAuthorityAreaOfLaw> courtLocalAuthorityAreaOfLawEntities = getNewCourtLocalAuthorities(courtEntity, areaOflaw, localAuthorities);
+        final List<CourtLocalAuthorityAreaOfLaw> existingCourtLocalAuthorities = getExistingCourtLocalAuthorities(courtEntity, areaOflaw);
+
+        //delete existing Court Local Authorities for Area of Law
+        courtLocalAuthorityAreaOfLawRepository.deleteAll(existingCourtLocalAuthorities);
+
+        return courtLocalAuthorityAreaOfLawRepository
+            .saveAll(courtLocalAuthorityAreaOfLawEntities)
+            .stream()
+            .map(la -> new LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
             .collect(toList());
 
     }
 
-    private List<uk.gov.hmcts.dts.fact.entity.CourtLocalAuthority> getNewCourtLocalAuthority(final List<CourtLocalAuthority> localAuthorities) {
+    private List<CourtLocalAuthorityAreaOfLaw> getNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw, final List<LocalAuthority> localAuthorities) {
         return localAuthorities.stream()
-            .map(o -> new uk.gov.hmcts.dts.fact.entity.CourtLocalAuthority())
+            .map(o -> new CourtLocalAuthorityAreaOfLaw(areaOflaw, courtEntity, new uk.gov.hmcts.dts.fact.entity.LocalAuthority(o.getId(), o.getName())))
             .collect(toList());
     }
 
+    private List<CourtLocalAuthorityAreaOfLaw> getExistingCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw) {
+        return courtLocalAuthorityAreaOfLawRepository.findByCourtId(courtEntity.getId())
+            .stream()
+            .filter(c -> c.getAreaOfLaw().equals(areaOflaw))
+            .collect(toList());
+    }
 
 }
