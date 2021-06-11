@@ -1,14 +1,12 @@
 package uk.gov.hmcts.dts.fact.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.file.Matcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
-import uk.gov.hmcts.dts.fact.mapit.MapitDataArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitDataAreaDetails;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -28,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -108,9 +108,25 @@ public class CourtService {
             return mapitService.getMapitData(postcode).isPresent();
         }
 
-        // else partial search
-        log.info("Partial postcode search of mapit data for {}", postcode);
-        return mapitService.getMapitDataWithPartial(postcode).isPresent();
+        // If we do not have a full postcode, check if we have the outcode specified (2-4 characters)
+        // and if we do, check if we have a part of the second half (i.e 1 digit, normally followed by 1-2 characters)
+        // If so, then strip out the last half and perform a partial search
+        Pattern p = Pattern.compile("([Gg][Ii][Rr] 0)|([A-Za-z][0-9]{1,3})|([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})\\s?[0-9]?");
+        Matcher m = p.matcher(postcode);
+
+        // If we have a postcode with an outcode, and not a complete unit, and there is a match
+        if (postcode.length() < 6 && m.find())
+        {
+            // We are only looking for the group with the outcode
+            String outcode = m.group(3);
+
+            log.info("Partial postcode search of mapit data for {}, for postcode of: {}", outcode, postcode);
+            return mapitService.getMapitDataWithPartial(outcode).isPresent();
+        }
+
+        // If no match, or failed above based on there being an incomplete postcode
+        log.info("Skipping partial and full search for: {}", postcode);
+        return false;
     }
 
     public boolean localAuthorityExists(final String area){
