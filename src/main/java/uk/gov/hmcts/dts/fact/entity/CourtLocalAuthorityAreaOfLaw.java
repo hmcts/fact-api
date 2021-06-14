@@ -14,6 +14,8 @@ import javax.persistence.*;
 public class CourtLocalAuthorityAreaOfLaw {
 
     @Id
+    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtlocalauthorityareaoflaw_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
 
     @OneToOne()

@@ -1,12 +1,11 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +30,9 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
 
     private static final String AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH = ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG
         + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_AREAS_OF_LAW + LOCAL_AUTHORITIES_PATH;
-    private static final String TEST = "Ashwini Testing";
-    private static final int TEST_ID = 175;
+    //changed local authority to existing one on database.
+    private static final String TEST = "Barnet Borough Council";
+    private static final int TEST_ID = 397_243;
 
 
     //"/{slug}/{areaOfLaw}/localAuthorities")
