@@ -23,9 +23,9 @@ public class AdminCourtAreasOfLawService {
     public List<AreaOfLaw> getCourtAreasOfLawBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getAreasOfLaw()
-            .stream()
-            .map(AreaOfLaw::new)
-            .collect(toList()))
+                .stream()
+                .map(AreaOfLaw::new)
+                .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
