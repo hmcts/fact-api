@@ -98,48 +98,6 @@ public class CourtService {
             .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
-    public boolean postcodeDataExists(final String postcode) {
-
-        // If we have a full postcode
-        if (postcode.matches("([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]"
-                              + "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
-                              + "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})")) {
-            log.info("Full postcode search of mapit data for {}", postcode);
-            return mapitService.getMapitData(postcode).isPresent();
-        }
-
-        // If we do not have a full postcode, check if we have the outcode specified (2-4 characters)
-        // and if we do, check if we have a part of the second half (i.e 1 digit, normally followed by 1-2 characters)
-        // If so, then strip out the last half and perform a partial search
-        Pattern p = Pattern.compile("([Gg][Ii][Rr] 0)|([A-Za-z][0-9]{1,3})|([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})\\s?[0-9]?");
-        Matcher m = p.matcher(postcode);
-
-        // If we have a postcode with an outcode, and not a complete unit, and there is a match
-        if (postcode.length() < 6 && m.find())
-        {
-            // We are only looking for the group with the outcode
-            String outcode = m.group(3);
-
-            log.info("Partial postcode search of mapit data for {}, for postcode of: {}", outcode, postcode);
-            return mapitService.getMapitDataWithPartial(outcode).isPresent();
-        }
-
-        // If no match, or failed above based on there being an incomplete postcode
-        log.info("Skipping partial and full search for: {}", postcode);
-        return false;
-    }
-
-    public boolean localAuthorityExists(final String area){
-
-        Optional<List<MapitDataAreaDetails>> mapitData = mapitService.getMapitDataWithArea(area);
-
-        if(mapitData.isPresent()) {
-            return mapitData.get().stream().anyMatch(details -> area.equals(details.getName()));
-        }
-        log.warn("No mapit data found for provided area: {}", area);
-        return false;
-    }
-
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
         if (filterResultByPostcode(postcode, areaOfLaw)) {
             return emptyList();
