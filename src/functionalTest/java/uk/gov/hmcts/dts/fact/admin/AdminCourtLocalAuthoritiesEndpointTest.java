@@ -35,8 +35,6 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     private static final int TEST_ID = 397_243;
 
 
-    //"/{slug}/{areaOfLaw}/localAuthorities")
-
 
     @Test
     public void returnAllLocalAuthorities() {
