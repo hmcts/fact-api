@@ -134,7 +134,7 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     private List<LocalAuthority> getCurrentLocalAuthorities() {
         final var response = doGetRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
-            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
+            Map.of(AUTHORIZATION, BEARER + superAdminToken)
         );
         return response.body().jsonPath().getList(".", LocalAuthority.class);
     }
