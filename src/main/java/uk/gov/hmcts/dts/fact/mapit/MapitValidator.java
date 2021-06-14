@@ -36,7 +36,7 @@ public class MapitValidator {
         // If so, then strip out the last half and perform a partial search (which is group 3 below from the regex)
         Matcher m = Pattern.compile(partialPostCodeRegex).matcher(postcode);
 
-        if (m.find()) {
+        if (postcode.length() < 6 && m.find()) {
 
             String partialPostcode = m.group(3);
 
