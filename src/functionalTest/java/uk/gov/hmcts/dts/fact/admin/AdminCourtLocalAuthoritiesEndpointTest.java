@@ -96,7 +96,7 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     }
 
     @Test
-    public void shouldUpdateCourtLocalAuthoritis() throws JsonProcessingException {
+    public void shouldUpdateCourtLocalAuthorities() throws JsonProcessingException {
         final List<LocalAuthority> currentCourtLocalAuthorities = getCurrentLocalAuthorities();
         final List<LocalAuthority> expectedCourtLocalAuthorities = updateLocalAuthorities(currentCourtLocalAuthorities);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtLocalAuthorities);
@@ -128,6 +128,17 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
             LocalAuthority.class
         );
         assertThat(cleanCourtLocalAuthorities).containsExactlyElementsOf(currentCourtLocalAuthorities);
+    }
+
+    @Test
+    public void adminShouldBeForbiddenForUpdatingLocalAuthoritiesForAreasOfLaw() throws JsonProcessingException {
+
+        final var response = doPutRequest(
+            AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken), getTestLocalAuthorityJson()
+
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
 
