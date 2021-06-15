@@ -65,7 +65,7 @@ public class MapItService {
      */
     public String[] validatePostcodes(String[] postcodes) {
         return Arrays.stream(postcodes)
-            .filter(postcode -> !mapitValidater.postcodeDataExists(postcode))
+            .filter(postcode -> !mapitValidater.postcodeDataExists(postcode.trim().replaceAll("\\s+","")))
             .toArray(String[]::new);
     }
 }

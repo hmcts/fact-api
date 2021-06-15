@@ -1,10 +1,12 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 
+import javax.validation.ValidationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,8 +18,10 @@ public class MapitValidator {
     private static final String fullPostCodeRegex = "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]"
         + "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
         + "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})";
-    private static final String partialPostCodeRegex = "([Gg][Ii][Rr] 0)|([A-Za-z][0-9]{1,3})|" +
-        "([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})\\s?[0-9]?";
+    private static final String partialPostcodeSearch = "[A-Za-z]{2}";
+    private static final String partialPostCodeRegexNumeric = "(^[A-Za-z]{1,2}([0-9]{1,3}))$";
+    private static final String partialPostCodeRegexEdgeCase = "(^[A-Za-z][0-9]{1,2}[A-Za-z][0-9]?$)|" +
+        "(^[A-Za-z]{2}([0-9]{1}[A-Za-z][0-9]?)$)";
 
     @Autowired
     public MapitValidator(MapitService mapitService) {
@@ -26,33 +30,38 @@ public class MapitValidator {
 
     public boolean postcodeDataExists(final String postcode) {
 
+        // Base validation for postcode
+        if (postcode.length() < 2 || StringUtils.isEmpty(postcode))
+            return false;
+
         // If we have a full postcode
-        if (postcode.matches(fullPostCodeRegex)) {
-            return fullPostCodeDataExists(postcode);
+        boolean fullResultFound = postcode.matches(fullPostCodeRegex) && fullPostCodeDataExists(postcode);
+
+        if (fullResultFound) {
+            log.info("Full postcode search result was successful for: {}", postcode);
+            return true;
         }
 
-        // If we do not have a full postcode, check if we have the outcode specified (2-4 characters)
-        // and if we do, check if we have a part of the second half (i.e 1 digit, normally followed by 1-2 characters)
-        // If so, then strip out the last half and perform a partial search (which is group 3 below from the regex)
-        Matcher m = Pattern.compile(partialPostCodeRegex).matcher(postcode);
-
-        if (postcode.length() < 6 && m.find()) {
-
-            String partialPostcode = m.group(3);
-
-            // If we send across the partial postcode to mapit and no data is found, try with
-            // the first three characters instead, as it may still be valid
-            return partialPostCodeDataExists(partialPostcode) ||
-                partialPostCodeDataExists(partialPostcode.substring(0, 3));
-        }
-
-        // If no match, or failed above based on there being an incomplete postcode
-        log.info("Postcode did not match full or partial regex, skipping: {}", postcode);
-        return false;
+        // Partial postcode search criteria:
+        // One or two letters at the start, two or three digits
+        // If the starting is one letter:
+        //  - Sub part can be one number or two numbers or three numbers
+        //  - Or sub part can be one number, and one letter
+        //  - Or two numbers with one letter
+        //  - Or sub part can be one number, and one letter, and one number
+        //  - Or two numbers with one letter, and one number
+        // If the starting is two letters:
+        //  - sub part can be one number or two numbers or three numbers
+        //  - Or sub part can be one number, and one letter
+        //  - Or sub part can be one number, and one letter, and one number
+        return (partialPostcodeValid(partialPostCodeRegexNumeric, postcode, 1) ||
+            // Check first two characters of the postcode, which will determine the result group we need
+            (!postcode.substring(0, 2).matches(partialPostcodeSearch) ?
+                partialPostcodeValid(partialPostCodeRegexEdgeCase, postcode, 1):    // if one letter proceeds
+                partialPostcodeValid(partialPostCodeRegexEdgeCase, postcode, 2)));  // if two letters proceed
     }
 
     private boolean fullPostCodeDataExists(String postcode) {
-        // If we have a full postcode
         log.info("Full postcode search of mapit data for {}", postcode);
         boolean mapitDataExists = mapitService.getMapitData(postcode).isPresent();
 
@@ -64,16 +73,38 @@ public class MapitValidator {
         }
     }
 
+    private boolean partialPostcodeValid(String regex, String postcode, int resultGroup) {
+        Matcher m = Pattern.compile(regex).matcher(postcode);
+
+        if (m.find()) {
+            String partialPostcode = m.group(resultGroup);
+            log.debug("Partial postcode found based on regex was {}, result group was {}",
+                     partialPostcode, resultGroup);
+
+            if (StringUtils.isEmpty(partialPostcode)) {
+                log.warn("No partial postcode was extracted from the match based on the provided group of {}",
+                         resultGroup);
+                return false;
+            }
+
+            // If we send across the partial postcode to mapit and no data is found, try with
+            // the letters and remove the last number, as it may still be valid
+            return partialPostCodeDataExists(partialPostcode) ||
+                partialPostCodeDataExists(partialPostcode.substring(0, partialPostcode.length()-1));
+        }
+
+        log.info("Match failed for partial postcode search for: {}, based on regex {}", postcode, regex);
+        return false;
+    }
+
     private boolean partialPostCodeDataExists(String postcode) {
         // We are only looking for the group with the outcode
-        log.info("Partial postcode search of mapit data for {}", postcode);
-        boolean mapitDataExists = mapitService.getMapitDataWithPartial(postcode).isPresent();
-
-        if(mapitDataExists)
+        if(mapitService.getMapitDataWithPartial(postcode).isPresent()) {
+            log.info("Partial postcode search of mapit data for {} was found", postcode);
             return true;
-        else {
-            log.info("No mapit data exists for partial postcode specified for: {}", postcode);
-            return false;
         }
+
+        log.info("No mapit data exists for partial postcode specified for: {}", postcode);
+        return false;
     }
 }
