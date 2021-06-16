@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+@CrossOrigin()
 @RestController
 @RequestMapping(
     path = "/validate",
@@ -28,11 +29,11 @@ public class ValidationController {
 
     @PostMapping(path = "/postcodes")
     @ApiOperation("Validation of postcodes")
-    @Description("Accepts an array of postcodes and determines if geographical information exists for each. If it " +
-        "does not, the postcode is marked as not being valid. A response will indicate which postcode(s) need further " +
-        "consideration by the end user and will be displayed on the admin portal.")
+    @Description("Accepts an array of postcodes and determines if geographical information exists for each. If it "
+        + "does not, the postcode is marked as not being valid. A response will indicate which postcode(s) need further "
+        + "consideration by the end user and will be displayed on the admin portal.")
     public ResponseEntity<String[]> validatePostcodes(
-        @RequestBody @NotEmpty String[] postcodes) {
+        @RequestBody @NotEmpty String... postcodes) {
         return ok(mapItService.validatePostcodes(postcodes));
     }
 }
