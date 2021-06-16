@@ -18,13 +18,6 @@ public class MapItService {
     private static final String LIMIT = "limit";
     private static final String CURRENT = "current";
 
-    private final MapitValidator mapitValidater;
-
-    @Autowired
-    public MapItService(MapitValidator mapitValidater) {
-        this.mapitValidater = mapitValidater;
-    }
-
     @Value("${mapit.url}")
     private String mapitUrl;
 
@@ -33,6 +26,13 @@ public class MapItService {
 
     @Value("${mapit.key}")
     private String mapitKey;
+
+    private final MapitValidator mapitValidater;
+
+    @Autowired
+    public MapItService(MapitValidator mapitValidater) {
+        this.mapitValidater = mapitValidater;
+    }
 
     public boolean isUp() throws IOException {
         final String fullPath = mapitUrl + mapitQuotaPath + "?api_key=" + mapitKey;
@@ -60,10 +60,9 @@ public class MapItService {
     /**
      * Accepts an array of strings and checks for each if mapit data exists.
      * @param postcodes An array of strings which are postcodes
-     * @return An array of strings which indicate which postcodes have failed to return
-     * geographical information
+     * @return An array of strings which indicate which postcodes have failed to return geographical information
      */
-    public String[] validatePostcodes(String[] postcodes) {
+    public String[] validatePostcodes(String... postcodes) {
         return Arrays.stream(postcodes)
             .filter(postcode -> !mapitValidater.postcodeDataExists(postcode.trim().replaceAll("\\s+","")))
             .toArray(String[]::new);
