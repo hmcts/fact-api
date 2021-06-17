@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class MapitValidatorTest {
 
     private static final MapitService MOCK_MAPIT_SERVICE = Mockito.mock(MapitService.class);
