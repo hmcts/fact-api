@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 
 import java.util.Optional;
