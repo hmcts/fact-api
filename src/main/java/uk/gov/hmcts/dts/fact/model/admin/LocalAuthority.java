@@ -7,16 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class CourtType {
+public class LocalAuthority {
 
     private Integer id;
     private String name;
-    private Integer code;
 
-    public CourtType(uk.gov.hmcts.dts.fact.entity.CourtType courtType) {
-        this.id = courtType.getId();
-        this.name = courtType.getName();
+    public LocalAuthority(uk.gov.hmcts.dts.fact.entity.LocalAuthority localAuthority) {
+        this.id = localAuthority.getId();
+        this.name = localAuthority.getName();
     }
 
 }
