@@ -22,9 +22,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/*").authenticated()
             )
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-        // Allow POST requests that retrieve but not create anything
-        // to accept a request without a bearer token
-        http.csrf().ignoringAntMatchers("/validate/postcodes");
     }
 
     @Bean

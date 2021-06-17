@@ -20,6 +20,35 @@ class MapitClientTest {
 
     @Test
     @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
+    void shouldReturnPartialPostcodeDataSuccess() {
+        final MapitData mapitData = mapitClient.getMapitDataWithPartial("OX1");
+        assertThat(mapitData.hasLatAndLonValues()).isEqualTo(true);
+        assertThat(mapitData.getLat()).isEqualTo(51.74635358455572);
+        assertThat(mapitData.getLon()).isEqualTo(-1.2622551316454051);
+    }
+
+    @Test
+    void shouldFailForNonExistingPartialPostcode() {
+        try {
+            mapitClient.getMapitDataWithPartial("AA1");
+            fail("Did not expect to find a result for the invalid partial postcode of AA1");
+        } catch (final FeignException ex) {
+            assertThat(ex.status()).isEqualTo(404);
+        }
+    }
+
+    @Test
+    void shouldFailForBadPartialPostcode() {
+        try {
+            mapitClient.getMapitDataWithPartial("OX1 2B");
+            fail("Did not expect to find a result for the invalid partial postcode of OX1 2B");
+        } catch (final FeignException ex) {
+            assertThat(ex.status()).isEqualTo(400);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
     void shouldReturnExpectedCoordinatesForPostcode() {
         final MapitData mapitData = mapitClient.getMapitData("OX1 1RZ");
         assertThat(mapitData.hasLatAndLonValues()).isEqualTo(true);
