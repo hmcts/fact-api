@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 
 import java.util.Optional;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 public class MapitValidatorTest {
 
     private static final MapitService MOCK_MAPIT_SERVICE = Mockito.mock(MapitService.class);
