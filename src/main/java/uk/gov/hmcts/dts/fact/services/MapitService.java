@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
-import uk.gov.hmcts.dts.fact.services.validation.PostcodeValidator;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -17,14 +15,11 @@ public class MapitService {
 
     private final Logger logger;
     private final MapitClient mapitClient;
-    private final PostcodeValidator mapitPostcodeValidator;
 
     @Autowired
-    public MapitService(final Logger logger, final MapitClient mapitClient,
-                        final PostcodeValidator mapitPostcodeValidator) {
+    public MapitService(final Logger logger, final MapitClient mapitClient) {
         this.logger = logger;
         this.mapitClient = mapitClient;
-        this.mapitPostcodeValidator = mapitPostcodeValidator;
     }
 
     public Optional<MapitData> getMapitData(final String postcode) {
@@ -59,16 +54,5 @@ public class MapitService {
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * Accepts an array of strings and checks for each if mapit data exists.
-     * @param postcodes An array of strings which are postcodes
-     * @return An array of strings which indicate which postcodes have failed to return geographical information
-     */
-    public String[] validatePostcodes(String... postcodes) {
-        return Arrays.stream(postcodes)
-            .filter(postcode -> !mapitPostcodeValidator.postcodeDataExists(postcode.replaceAll("\\s+","")))
-            .toArray(String[]::new);
     }
 }

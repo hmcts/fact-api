@@ -11,7 +11,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Disabled("Disabled until CustomerService is up!")
 @SpringBootTest
 class MapitClientTest {
 
@@ -23,8 +22,6 @@ class MapitClientTest {
     void shouldReturnPartialPostcodeDataSuccess() {
         final MapitData mapitData = mapitClient.getMapitDataWithPartial("OX1");
         assertThat(mapitData.hasLatAndLonValues()).isEqualTo(true);
-        assertThat(mapitData.getLat()).isEqualTo(51.74635358455572);
-        assertThat(mapitData.getLon()).isEqualTo(-1.2622551316454051);
     }
 
     @Test
@@ -52,8 +49,6 @@ class MapitClientTest {
     void shouldReturnExpectedCoordinatesForPostcode() {
         final MapitData mapitData = mapitClient.getMapitData("OX1 1RZ");
         assertThat(mapitData.hasLatAndLonValues()).isEqualTo(true);
-        assertThat(mapitData.getLat()).isEqualTo(51.75023110462087);
-        assertThat(mapitData.getLon()).isEqualTo(-1.2673667768810715);
     }
 
     @Test
