@@ -10,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
-import uk.gov.hmcts.dts.fact.services.validation.PostcodeValidator;
 
 import java.util.Optional;
 
