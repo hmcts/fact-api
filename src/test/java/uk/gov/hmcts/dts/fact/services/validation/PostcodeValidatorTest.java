@@ -1,8 +1,9 @@
-package uk.gov.hmcts.dts.fact.mapit;
+package uk.gov.hmcts.dts.fact.services.validation;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 
 import java.util.Optional;
@@ -11,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-public class MapitValidatorTest {
+public class PostcodeValidatorTest {
 
     private static final MapitService MOCK_MAPIT_SERVICE = Mockito.mock(MapitService.class);
-    private final MapitValidator mapitValidator = new MapitValidator(MOCK_MAPIT_SERVICE);
+    private final PostcodeValidator mapitValidator = new PostcodeValidator(MOCK_MAPIT_SERVICE);
 
     @BeforeAll
     public static void beforeAll() {

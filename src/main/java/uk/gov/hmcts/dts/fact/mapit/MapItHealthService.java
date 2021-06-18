@@ -1,7 +1,6 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +9,9 @@ import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.dts.fact.exception.MapitUsageException;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @Component
-public class MapItService {
+public class MapItHealthService {
     private static final String QUOTA = "quota";
     private static final String LIMIT = "limit";
     private static final String CURRENT = "current";
@@ -26,13 +24,6 @@ public class MapItService {
 
     @Value("${mapit.key}")
     private String mapitKey;
-
-    private final MapitValidator mapitValidater;
-
-    @Autowired
-    public MapItService(MapitValidator mapitValidater) {
-        this.mapitValidater = mapitValidater;
-    }
 
     public boolean isUp() throws IOException {
         final String fullPath = mapitUrl + mapitQuotaPath + "?api_key=" + mapitKey;
@@ -55,16 +46,5 @@ public class MapItService {
         if (limit != 0 && limit <= quota.get(CURRENT).asInt()) {
             throw new MapitUsageException();
         }
-    }
-
-    /**
-     * Accepts an array of strings and checks for each if mapit data exists.
-     * @param postcodes An array of strings which are postcodes
-     * @return An array of strings which indicate which postcodes have failed to return geographical information
-     */
-    public String[] validatePostcodes(String... postcodes) {
-        return Arrays.stream(postcodes)
-            .filter(postcode -> !mapitValidater.postcodeDataExists(postcode.replaceAll("\\s+","")))
-            .toArray(String[]::new);
     }
 }

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class MapitHealthIndicatorTest {
     private static final String MAPIT_USAGE_ERROR = "Usage limit reached.";
     @Mock
-    private MapItService mapItService;
+    private MapItHealthService mapItService;
 
     @InjectMocks
     private MapitHealthIndicator healthIndicator;

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.mapit;
+package uk.gov.hmcts.dts.fact.services.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -11,19 +11,19 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Component
-public class MapitValidator {
+public class PostcodeValidator {
 
     private final MapitService mapitService;
     private static final String FULL_POSTCODE = "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]"
         + "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
         + "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})";
     private static final String PARTIAL_POSTCODE_SEARCH = "[A-Za-z]{2}";
-    private static final String PARTIAL_POSTCODE_NUMERIC = "(^[A-Za-z]{1,2}([0-9]{1,3}))$";
+    private static final String PARTIAL_POSTCODE_NUMERIC = "(^[A-Za-z]{1,2}[0-9]{1,3}$)";
     private static final String PARTIAL_POSTCODE_EDGECASE = "(^[A-Za-z][0-9]{1,2}[A-Za-z][0-9]?$)|"
         + "(^[A-Za-z]{2}([0-9]{1}[A-Za-z][0-9]?)$)";
 
     @Autowired
-    public MapitValidator(MapitService mapitService) {
+    public PostcodeValidator(MapitService mapitService) {
         this.mapitService = mapitService;
     }
 

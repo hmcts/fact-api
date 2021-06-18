@@ -11,7 +11,7 @@ import java.io.IOException;
 @Component
 public class MapitHealthIndicator implements HealthIndicator {
     @Autowired
-    private MapItService mapItService;
+    private MapItHealthService mapItService;
 
     @Override
     // Mapit health will be marked as 'down' if the 'quota' endpoint can't be reached or the usage limit reached
