@@ -1,8 +1,13 @@
 package uk.gov.hmcts.dts.fact.services.validation;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 
@@ -12,16 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = PostcodeValidator.class)
 public class PostcodeValidatorTest {
 
-    private static final MapitService MOCK_MAPIT_SERVICE = Mockito.mock(MapitService.class);
-    private final PostcodeValidator mapitValidator = new PostcodeValidator(MOCK_MAPIT_SERVICE);
+    @MockBean
+    private MapitService mockMapitService;
 
-    @BeforeAll
-    public static void beforeAll() {
-        when(MOCK_MAPIT_SERVICE.getMapitData(Mockito.anyString()))
+    @Autowired
+    private PostcodeValidator mapitValidator;
+
+    @BeforeEach
+    public void beforeEach() {
+        when(mockMapitService.getMapitData(Mockito.anyString()))
             .thenReturn(Optional.of(new MapitData()));
-        when(MOCK_MAPIT_SERVICE.getMapitDataWithPartial(Mockito.anyString()))
+        when(mockMapitService.getMapitDataWithPartial(Mockito.anyString()))
             .thenReturn(Optional.of(new MapitData()));
     }
 
