@@ -11,7 +11,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @ExtendWith({SpringExtension.class})
 public class ServiceEndpointTest extends FunctionalTestBase {

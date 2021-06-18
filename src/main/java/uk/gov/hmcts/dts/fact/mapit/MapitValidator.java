@@ -67,10 +67,10 @@ public class MapitValidator {
 
         if (mapitDataExists) {
             return true;
-        } else {
-            log.info("No mapit data exists for full postcode provided: {}", postcode);
-            return false;
         }
+
+        log.info("No mapit data exists for full postcode provided: {}", postcode);
+        return false;
     }
 
     private boolean partialPostcodeValid(String regex, String postcode, int resultGroup) {
