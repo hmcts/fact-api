@@ -16,9 +16,8 @@ import uk.gov.hmcts.dts.fact.services.admin.AdminCourtPostcodeService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,6 +27,7 @@ public class AdminCourtPostcodeControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String POSTCODE_PATH = "/postcodes";
     private static final String TEST_SLUG = "test-slug";
+    private static final String NOT_FOUND_PREFIX ="Not found: ";
     private static final List<String> TEST_POSTCODES = Arrays.asList("M11AA", "M11BB", "M11CC");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -59,30 +59,53 @@ public class AdminCourtPostcodeControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + POSTCODE_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
     }
 
     @Test
-    void updatePostcodesShouldReturnUpdatedCourtPostcodes() throws Exception {
-        when(adminService.updateCourtPostcodes(TEST_SLUG, TEST_POSTCODES)).thenReturn(TEST_POSTCODES);
+    void addPostcodesShouldReturnCreatedStatus() throws Exception {
+        when(adminService.addCourtPostcodes(TEST_SLUG, TEST_POSTCODES)).thenReturn(TEST_POSTCODES);
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
+        mockMvc.perform(post(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
                             .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andExpect(content().json(expectedJson));
     }
 
     @Test
-    void updatePostcodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
-        when(adminService.updateCourtPostcodes(TEST_SLUG, TEST_POSTCODES)).thenThrow(new NotFoundException(TEST_SLUG));
+    void addPostcodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
+        doThrow(new NotFoundException(TEST_SLUG)).when(adminService).addCourtPostcodes(TEST_SLUG, TEST_POSTCODES);
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
+        mockMvc.perform(post(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
                             .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
+    }
+
+    @Test
+    void deletePostcodesShouldReturnOkStatus() throws Exception {
+       doNothing().when(adminService).deleteCourtPostcodes(TEST_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(delete(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
+                            .content(expectedJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void deletePostcodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
+        doThrow(new NotFoundException(TEST_SLUG)).when(adminService).deleteCourtPostcodes(TEST_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(delete(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
+                            .content(expectedJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
     }
 }
