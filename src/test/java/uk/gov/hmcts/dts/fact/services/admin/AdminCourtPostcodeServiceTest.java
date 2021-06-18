@@ -74,27 +74,38 @@ public class AdminCourtPostcodeServiceTest {
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 
-    @Test
-    void shouldUpdateCourtPostcodes() {
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(court.getCourtPostcodes()).thenReturn(courtPostcodes);
-
-        when(courtPostcodeRepository.saveAll(any())).thenReturn(courtPostcodes);
-
-        assertThat(adminService.updateCourtPostcodes(COURT_SLUG, POSTCODES))
-            .hasSize(POSTCODE_COUNT)
-            .containsExactlyElementsOf(POSTCODES);
-
-        verify(courtPostcodeRepository).deleteAll(courtPostcodes);
-        verify(courtPostcodeRepository).saveAll(any());
-    }
-
-    @Test
-    void shouldReturnNotFoundWhenUpdatingPostcodesForNonExistentCourt() {
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> adminService.updateCourtPostcodes(COURT_SLUG, any()))
-            .isInstanceOf(NotFoundException.class)
-            .hasMessage(NOT_FOUND + COURT_SLUG);
-    }
+//    @Test
+//    void shouldAddCourtPostcodes() {
+//        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+//        when(court.getCourtPostcodes()).thenReturn(courtPostcodes);
+//        for (int i = 0; i < courtPostcodes.size(); i++) {
+//            when(courtPostcodeRepository.save(courtPostcodes.get(i))).thenReturn(courtPostcodes.get(i));
+//        }
+//        adminService.addCourtPostcodes(COURT_SLUG, POSTCODES);
+//        verify(courtPostcodeRepository, times(POSTCODE_COUNT)).save(any());
+//    }
+//
+//    @Test
+//    void shouldReturnNotFoundWhenAddingPostcodesForNonExistentCourt() {
+//        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+//
+//        assertThatThrownBy(() -> adminService.addCourtPostcodes(COURT_SLUG, POSTCODES))
+//            .isInstanceOf(NotFoundException.class)
+//            .hasMessage(NOT_FOUND + COURT_SLUG);
+//    }
+//
+//    @Test
+//    void shouldDeleteCourtPostcodes() {
+//        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+//        when(court.getId()).thenReturn(1);
+//        when(courtPostcodeRepository.findByCourtIdAndPostcode(1, POSTCODES.get(0))).thenReturn(courtPostcodes.get(0));
+//        when(court.getCourtPostcodes()).thenReturn(courtPostcodes);
+//
+//        for (int i = 0; i < courtPostcodes.size(); i++) {
+//            when(courtPostcodeRepository.save(courtPostcodes.get(i))).thenReturn(courtPostcodes.get(i));
+//        }
+//
+//        adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES.get(0));
+//        verify(courtPostcodeRepository, times(POSTCODE_COUNT)).save(any());
+//    }
 }

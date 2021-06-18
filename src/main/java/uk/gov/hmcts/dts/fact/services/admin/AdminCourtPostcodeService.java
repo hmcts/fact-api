@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtPostcodeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -34,23 +35,37 @@ public class AdminCourtPostcodeService {
     }
 
     @Transactional()
-    public List<String> updateCourtPostcodes(final String slug, final List<String> postcodes) {
-        final Court courtEntity = courtRepository.findBySlug(slug)
-            .orElseThrow(() -> new NotFoundException(slug));
-
-        final List<CourtPostcode> newCourtPostcodes = getNewCourtPostcodes(courtEntity, postcodes);
-
-        courtPostcodeRepository.deleteAll(courtEntity.getCourtPostcodes());
-
-        return courtPostcodeRepository.saveAll(newCourtPostcodes)
-            .stream()
+    public List<String> addCourtPostcodes(final String slug, final List<String> postcodes) {
+        return createNewCourtPostcodesEntity(slug, postcodes).stream()
+            .map(courtPostcodeRepository::save)
             .map(CourtPostcode::getPostcode)
             .collect(toList());
     }
 
-    private List<CourtPostcode> getNewCourtPostcodes(final Court court, final List<String> postcodes) {
-        return postcodes.stream()
-            .map(p -> new CourtPostcode(p, court))
+    @Transactional()
+    public void deleteCourtPostcodes(final String slug, final List<String> postcodes) {
+        final List<CourtPostcode> courtPostcodesToBeDeleted = postcodes.stream()
+            .map(p -> getCourtPostcodeEntity(slug, p))
             .collect(toList());
+        courtPostcodeRepository.deleteAll(courtPostcodesToBeDeleted);
+    }
+
+    private CourtPostcode getCourtPostcodeEntity(final String slug, final String postcode) {
+        final CourtPostcode courtPostcode = courtPostcodeRepository.findByCourtIdAndPostcode(getCourtEntity(slug).getId(), postcode);
+        if (courtPostcode == null) {
+            throw new NotFoundException(postcode);
+        }
+        return courtPostcode;
+    }
+
+    private List<CourtPostcode> createNewCourtPostcodesEntity(final String slug, final List<String> postcodes) {
+        return postcodes.stream()
+            .map(p -> new CourtPostcode(p, getCourtEntity(slug)))
+            .collect(toList());
+    }
+
+    private Court getCourtEntity(final String slug) {
+        return courtRepository.findBySlug(slug)
+            .orElseThrow(() -> new NotFoundException(slug));
     }
 }
