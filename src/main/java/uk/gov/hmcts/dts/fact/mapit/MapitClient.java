@@ -9,5 +9,7 @@ public interface MapitClient {
 
     @GetMapping("${mapit.endpoint.postcode-search}/{postcode}")
     MapitData getMapitData(@PathVariable("postcode") String postcode);
-}
 
+    @GetMapping("${mapit.endpoint.postcode-search}/partial/{postcode}")
+    MapitData getMapitDataWithPartial(@PathVariable("postcode") String postcode);
+}

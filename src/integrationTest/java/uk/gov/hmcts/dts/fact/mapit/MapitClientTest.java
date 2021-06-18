@@ -1,7 +1,6 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
 import feign.FeignException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +10,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Disabled("Disabled until CustomerService is up!")
 @SpringBootTest
 class MapitClientTest {
 
@@ -20,11 +18,36 @@ class MapitClientTest {
 
     @Test
     @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
+    void shouldReturnPartialPostcodeDataSuccess() {
+        final MapitData mapitData = mapitClient.getMapitDataWithPartial("OX1");
+        assertThat(mapitData.hasLatAndLonValues()).isEqualTo(true);
+    }
+
+    @Test
+    void shouldFailForNonExistingPartialPostcode() {
+        try {
+            mapitClient.getMapitDataWithPartial("AA1");
+            fail("Did not expect to find a result for the invalid partial postcode of AA1");
+        } catch (final FeignException ex) {
+            assertThat(ex.status()).isEqualTo(404);
+        }
+    }
+
+    @Test
+    void shouldFailForBadPartialPostcode() {
+        try {
+            mapitClient.getMapitDataWithPartial("OX1 2B");
+            fail("Did not expect to find a result for the invalid partial postcode of OX1 2B");
+        } catch (final FeignException ex) {
+            assertThat(ex.status()).isEqualTo(400);
+        }
+    }
+
+    @Test
+    @SuppressWarnings("PMD.UseUnderscoresInNumericLiterals")
     void shouldReturnExpectedCoordinatesForPostcode() {
         final MapitData mapitData = mapitClient.getMapitData("OX1 1RZ");
         assertThat(mapitData.hasLatAndLonValues()).isEqualTo(true);
-        assertThat(mapitData.getLat()).isEqualTo(51.75023110462087);
-        assertThat(mapitData.getLon()).isEqualTo(-1.2673667768810715);
     }
 
     @Test
