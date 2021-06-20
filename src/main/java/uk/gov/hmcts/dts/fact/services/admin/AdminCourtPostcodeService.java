@@ -10,7 +10,6 @@ import uk.gov.hmcts.dts.fact.repositories.CourtPostcodeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -43,24 +42,25 @@ public class AdminCourtPostcodeService {
     }
 
     @Transactional()
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public void deleteCourtPostcodes(final String slug, final List<String> postcodes) {
+        final Court courtEntity = getCourtEntity(slug);
         final List<CourtPostcode> courtPostcodesToBeDeleted = postcodes.stream()
-            .map(p -> getCourtPostcodeEntity(slug, p))
+            .map(p -> getCourtPostcodeEntity(courtEntity, p))
             .collect(toList());
         courtPostcodeRepository.deleteAll(courtPostcodesToBeDeleted);
     }
 
-    private CourtPostcode getCourtPostcodeEntity(final String slug, final String postcode) {
-        final CourtPostcode courtPostcode = courtPostcodeRepository.findByCourtIdAndPostcode(getCourtEntity(slug).getId(), postcode);
-        if (courtPostcode == null) {
-            throw new NotFoundException(postcode);
-        }
-        return courtPostcode;
+    private CourtPostcode getCourtPostcodeEntity(final Court court, final String postcode) {
+        return courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), postcode)
+            .orElseThrow(() -> new NotFoundException(postcode));
     }
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<CourtPostcode> createNewCourtPostcodesEntity(final String slug, final List<String> postcodes) {
+        final Court courtEntity = getCourtEntity(slug);
         return postcodes.stream()
-            .map(p -> new CourtPostcode(p, getCourtEntity(slug)))
+            .map(p -> new CourtPostcode(p, courtEntity))
             .collect(toList());
     }
 
