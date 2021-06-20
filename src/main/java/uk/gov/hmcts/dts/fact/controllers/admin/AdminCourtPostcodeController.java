@@ -46,6 +46,8 @@ public class AdminCourtPostcodeController {
     @ApiOperation("Add new court postcodes")
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<String>> addCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
+        final List<String> postcodeCreated = adminService.addCourtPostcodes(slug, postcodes);
+        return created(URI.create(StringUtils.EMPTY)).body(postcodeCreated);
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             final List<String> postcodeCreated = adminService.addCourtPostcodes(slug, postcodes);
