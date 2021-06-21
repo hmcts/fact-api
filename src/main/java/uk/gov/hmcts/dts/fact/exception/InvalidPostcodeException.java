@@ -12,11 +12,11 @@ public class InvalidPostcodeException extends RuntimeException {
     private List<String> invalidPostcodes = new ArrayList<>();
 
     public InvalidPostcodeException(final String postcode) {
-        super("Postcode '" + postcode + "' is not valid");
+        super("Invalid postcode: " + postcode);
     }
 
     public InvalidPostcodeException(final List<String> postcodes) {
-        super("Postcode '" + postcodes + "' is not valid");
+        super("Invalid postcodes: " + postcodes);
         invalidPostcodes.addAll(postcodes);
     }
 }
