@@ -11,10 +11,11 @@ import uk.gov.hmcts.dts.fact.exception.MapitUsageException;
 import java.io.IOException;
 
 @Component
+@SuppressWarnings("PMD.ImmutableField")
 public class MapItHealthService {
-    private static final String QUOTA = "quota";
-    private static final String LIMIT = "limit";
-    private static final String CURRENT = "current";
+    static final String QUOTA = "quota";
+    static final String LIMIT = "limit";
+    static final String CURRENT = "current";
 
     @Value("${mapit.url}")
     private String mapitUrl;
@@ -25,9 +26,11 @@ public class MapItHealthService {
     @Value("${mapit.key}")
     private String mapitKey;
 
+    private RestTemplate restTemplate = new RestTemplate();
+
     public boolean isUp() throws IOException {
         final String fullPath = mapitUrl + mapitQuotaPath + "?api_key=" + mapitKey;
-        final ResponseEntity<JsonNode> response = new RestTemplate().getForEntity(fullPath, JsonNode.class);
+        final ResponseEntity<JsonNode> response = restTemplate.getForEntity(fullPath, JsonNode.class);
 
         final JsonNode responseBody = response.getBody();
         if (responseBody != null) {
