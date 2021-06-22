@@ -11,7 +11,7 @@ import uk.gov.hmcts.dts.fact.exception.MapitUsageException;
 import java.io.IOException;
 
 @Component
-public class MapItService {
+public class MapItHealthService {
     private static final String QUOTA = "quota";
     private static final String LIMIT = "limit";
     private static final String CURRENT = "current";
