@@ -52,6 +52,34 @@ public class FunctionalTestBase {
             .thenReturn();
     }
 
+    protected Response doPostRequest(final String path, final String body) {
+        return doPutRequest(path, null, body);
+    }
+
+    protected Response doPostRequest(final String path, final Map<String, String> additionalHeaders, final String body) {
+        return given()
+            .relaxedHTTPSValidation()
+            .headers(getRequestHeaders(additionalHeaders))
+            .body(body)
+            .when()
+            .post(path)
+            .thenReturn();
+    }
+
+    protected Response doDeleteRequest(final String path, final String body) {
+        return doPutRequest(path, null, body);
+    }
+
+    protected Response doDeleteRequest(final String path, final Map<String, String> additionalHeaders, final String body) {
+        return given()
+            .relaxedHTTPSValidation()
+            .headers(getRequestHeaders(additionalHeaders))
+            .body(body)
+            .when()
+            .delete(path)
+            .thenReturn();
+    }
+
     private static Map<String, String> getRequestHeaders(final Map<String, String> additionalHeaders) {
         final Map<String, String> headers = new ConcurrentHashMap<>(Map.of(CONTENT_TYPE, CONTENT_TYPE_VALUE));
         if (!CollectionUtils.isEmpty(additionalHeaders)) {
