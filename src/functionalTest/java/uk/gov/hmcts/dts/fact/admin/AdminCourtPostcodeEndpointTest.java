@@ -5,14 +5,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith(SpringExtension.class)
 public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_POSTCODES_PATH = "/postcodes";
@@ -22,13 +25,12 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         + COURT_POSTCODES_PATH;
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT
         + "birmingham-civil-and-fay-justice-centre" + COURT_POSTCODES_PATH;
-    private static final List<String> postcodesValid = Arrays.asList("B14 4BH", "B14 4JS");
-    private static final List<String> postcodesInValid = Arrays.asList("ba62rt345435435", "da163rtgghg", "B1414545657");
-    private static final List<String> postcodesAlreadyThere = Arrays.asList("B139", "B144");
-    private static final List<String> postcodesDoNotExist = Arrays.asList("B140", "B141", "B142");
+    private static final List<String> POSTCODES_VALID = Arrays.asList("B14 4BH", "B14 4JS");
+    private static final List<String> POSTCODES_INVALID = Arrays.asList("ba62rt345435435", "da163rtgghg", "B1414545657");
+    private static final List<String> POSTCODES_ALREADY_THERE = Arrays.asList("B139", "B144");
+    private static final List<String> POSTCODES_DO_NOT_EXIST = Arrays.asList("B140", "B141", "B142");
 
-
-    /************************************************************* GET request tests section ***************************************************************/
+    /************************************************************* GET request tests section. ***************************************************************/
     @Test
     public void adminShouldRetrieveCourtPostcodes() {
         final var response = doGetRequest(
@@ -58,12 +60,12 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-    /************************************************************* POST request tests section ***************************************************************/
+    /************************************************************* POST request tests section. ***************************************************************/
     @Test
     public void shouldCreateValidPostcodes() throws JsonProcessingException {
 
         final List<String> currentPostcodes = getCurrentPostcodes();
-        final String updatedJson = objectMapper().writeValueAsString(postcodesValid);
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_VALID);
         final var response = doPostRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
@@ -74,7 +76,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             ".",
             String.class
         );
-        assertThat(updatedCourtPostcodes).containsExactlyElementsOf(postcodesValid);
+        assertThat(updatedCourtPostcodes).containsExactlyElementsOf(POSTCODES_VALID);
 
         //clean up by removing added record
         final var cleanUpResponse = doDeleteRequest(
@@ -83,7 +85,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
-        assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(postcodesValid.size());
+        assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(POSTCODES_VALID.size());
 
         final var responseAfterClean = doGetRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -100,7 +102,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldNotCreateInvalidPostcodes() throws JsonProcessingException {
 
-        final String updatedJson = objectMapper().writeValueAsString(postcodesInValid);
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
 
         final var response = doPostRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -141,7 +143,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void adminShouldNotBeAbleToCreateDuplicatePostcodes() throws JsonProcessingException {
 
-        final String updatedJson = objectMapper().writeValueAsString(postcodesAlreadyThere);
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_ALREADY_THERE);
 
         final var response = doPostRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -164,11 +166,11 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         return objectMapper().writeValueAsString(postcodes);
     }
 
-    /************************************************************* Delete request tests section ***************************************************************/
+    /************************************************************* Delete request tests section. ***************************************************************/
     @Test
     public void shouldNotDeleteInvalidPostcodes() throws JsonProcessingException {
 
-        final String updatedJson = objectMapper().writeValueAsString(postcodesInValid);
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
 
         final var response = doDeleteRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -197,7 +199,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void adminDeletePostcodesDoNotExist() throws JsonProcessingException {
 
-        final String updatedJson = objectMapper().writeValueAsString(postcodesDoNotExist);
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DO_NOT_EXIST);
 
         final var response = doPostRequest(
             COURT_NOT_FIND_PATH,
