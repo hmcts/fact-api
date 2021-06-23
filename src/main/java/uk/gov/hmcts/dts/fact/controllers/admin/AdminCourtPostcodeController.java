@@ -76,9 +76,9 @@ public class AdminCourtPostcodeController {
     })
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<String>> addCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
-        adminService.checkPostcodesDoNotExist(slug, postcodes);
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
+            adminService.checkPostcodesDoNotExist(slug, postcodes);
             final List<String> postcodeCreated = adminService.addCourtPostcodes(slug, postcodes);
             return created(URI.create(StringUtils.EMPTY)).body(postcodeCreated);
         }
@@ -104,9 +104,9 @@ public class AdminCourtPostcodeController {
     })
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity deleteCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
-        adminService.checkPostcodesExist(slug, postcodes);
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
+            adminService.checkPostcodesExist(slug, postcodes);
             return ok(adminService.deleteCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);

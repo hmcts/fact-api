@@ -96,6 +96,7 @@ public class AdminCourtPostcodeControllerTest {
 
     @Test
     void addPostcodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
+        when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(Collections.emptyList());
         doThrow(new NotFoundException(TEST_SLUG)).when(adminService).checkPostcodesDoNotExist(TEST_SLUG, TEST_POSTCODES);
 
         mockMvc.perform(post(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
@@ -105,7 +106,6 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
 
-        verifyNoInteractions(validationService);
         verify(adminService, never()).addCourtPostcodes(any(), any());
     }
 
@@ -125,6 +125,7 @@ public class AdminCourtPostcodeControllerTest {
 
     @Test
     void addPostcodesShouldReturnConflictForExistedPostcodes() throws Exception {
+        when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(Collections.emptyList());
         doThrow(new PostcodeExistedException(EXISTED_POSTCODE)).when(adminService).checkPostcodesDoNotExist(TEST_SLUG, TEST_POSTCODES);
 
         mockMvc.perform(post(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
@@ -134,7 +135,6 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isConflict())
             .andExpect(content().json(expectedExistedPostcodesJson));
 
-        verifyNoInteractions(validationService);
         verify(adminService, never()).addCourtPostcodes(any(), any());
     }
 
@@ -162,7 +162,6 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
 
-        verifyNoInteractions(validationService);
         verify(adminService, never()).deleteCourtPostcodes(any(), any());
     }
 
@@ -182,6 +181,7 @@ public class AdminCourtPostcodeControllerTest {
 
     @Test
     void deletePostcodesShouldReturnNotFoundForNonExistentPostcodes() throws Exception {
+        when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(Collections.emptyList());
         doThrow(new PostcodeNotFoundException(NOT_FOUND_POSTCODE)).when(adminService).checkPostcodesExist(TEST_SLUG, TEST_POSTCODES);
 
         mockMvc.perform(delete(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
@@ -191,7 +191,6 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().json(expectedNotFoundPostcodesJson));
 
-        verifyNoInteractions(validationService);
         verify(adminService, never()).deleteCourtPostcodes(any(), any());
     }
 }
