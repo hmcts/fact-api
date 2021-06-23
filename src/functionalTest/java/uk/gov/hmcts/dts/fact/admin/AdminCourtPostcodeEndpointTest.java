@@ -23,7 +23,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT
         + "birmingham-civil-and-fay-justice-centre" + COURT_POSTCODES_PATH;
     private static final List<String> postcodesValid = Arrays.asList("B14 4BH", "B14 4JS");
-    private static final List<String> postcodesInValid = Arrays.asList("ba62rt", "da163rtgghg", "B141");
+    private static final List<String> postcodesInValid = Arrays.asList("ba62rt345435435", "da163rtgghg", "B1414545657");
     private static final List<String> postcodesAlreadyThere = Arrays.asList("B139", "B144");
     private static final List<String> postcodesDoNotExist = Arrays.asList("B140", "B141", "B142");
 
@@ -146,7 +146,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         final var response = doPostRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            getTestPostcodesJson()
+            updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
     }
@@ -202,7 +202,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         final var response = doPostRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            getTestPostcodesJson()
+            updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
