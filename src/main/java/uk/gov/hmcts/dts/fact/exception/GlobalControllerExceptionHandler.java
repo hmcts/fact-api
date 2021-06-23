@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.List;
+
 import static org.springframework.http.ResponseEntity.badRequest;
 
 @ControllerAdvice
@@ -25,5 +27,15 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     ResponseEntity<String> illegalArgumentExceptionHandler(final IllegalArgumentException ex) {
         return badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PostcodeExistedException.class)
+    ResponseEntity<List<String>> postcodeExistedExceptionHandler(final PostcodeExistedException ex) {
+        return new ResponseEntity<>(ex.getInvalidPostcodes(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(PostcodeNotFoundException.class)
+    ResponseEntity<List<String>> postcodeNotFoundExceptionHandler(final PostcodeNotFoundException ex) {
+        return new ResponseEntity<>(ex.getInvalidPostcodes(), HttpStatus.NOT_FOUND);
     }
 }

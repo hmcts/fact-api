@@ -11,6 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.exception.PostcodeExistedException;
+import uk.gov.hmcts.dts.fact.exception.PostcodeNotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.CourtPostcodeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
@@ -19,8 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -115,11 +116,10 @@ public class AdminCourtPostcodeServiceTest {
     void shouldDeleteCourtPostcodes() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(court.getId()).thenReturn(TEST_COURT_ID);
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE2)).thenReturn(Optional.of(courtPostcodes.get(1)));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE3)).thenReturn(Optional.of(courtPostcodes.get(2)));
+        when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
+        when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE3)).thenReturn(Collections.singletonList(courtPostcodes.get(2)));
 
-        adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_DELETED);
-        verify(courtPostcodeRepository).deleteAll(any());
+        assertThat(adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_DELETED)).isEqualTo(2);
     }
 
     @Test
@@ -134,15 +134,66 @@ public class AdminCourtPostcodeServiceTest {
     }
 
     @Test
-    void shouldReturnNotFoundWhenDeletingANonExistentPostcode() {
+    void shouldCheckPostcodesExistForCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE1)).thenReturn(Optional.of(mock(CourtPostcode.class)));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE2)).thenReturn(Optional.empty());
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.singletonList(courtPostcodes.get(2)));
 
-        assertThatThrownBy(() -> adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+        assertThatCode(() -> adminService.checkPostcodesExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+            .doesNotThrowAnyException();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenCheckingPostcodesExistForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.checkPostcodesExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
             .isInstanceOf(NotFoundException.class)
-            .hasMessage(NOT_FOUND + TEST_POSTCODE2);
+            .hasMessage(NOT_FOUND + COURT_SLUG);
 
-        verify(courtPostcodeRepository, never()).findByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE3);
+        verifyNoInteractions(courtPostcodeRepository);
+    }
+
+    @Test
+    void shouldReturnPostcodesNotFoundWhenTheyDoNotExist() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> adminService.checkPostcodesExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+            .isInstanceOf(PostcodeNotFoundException.class)
+            .hasMessage("Postcodes do not exist: [" + TEST_POSTCODE3 + "]");
+    }
+
+    @Test
+    void shouldCheckPostcodesDoNotExistForCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.emptyList());
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.emptyList());
+
+        assertThatCode(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+            .doesNotThrowAnyException();
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenCheckingPostcodesDoNotExistForNonExistentCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
+
+        verifyNoInteractions(courtPostcodeRepository);
+    }
+
+    @Test
+    void shouldReturnPostcodesExistedWhenTheyExist() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
+        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+            .isInstanceOf(PostcodeExistedException.class)
+            .hasMessage("Postcodes already exist: [" + TEST_POSTCODE2 + "]");
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.exception.PostcodeExistedException;
+import uk.gov.hmcts.dts.fact.exception.PostcodeNotFoundException;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtPostcodeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
@@ -30,8 +32,13 @@ public class AdminCourtPostcodeControllerTest {
     private static final String POSTCODE_PATH = "/postcodes";
     private static final String TEST_SLUG = "test-slug";
     private static final String NOT_FOUND_PREFIX = "Not found: ";
-    private static final List<String> TEST_POSTCODES = Arrays.asList("M11AA", "M11BB", "M11CC");
-    private static final List<String> INVALID_POSTCODE = Collections.singletonList("M11CC");
+    private static final String TEST_POSTCODE1 = "M11AA";
+    private static final String TEST_POSTCODE2 = "M11BB";
+    private static final String TEST_POSTCODE3 = "M11CC";
+    private static final List<String> TEST_POSTCODES = Arrays.asList(TEST_POSTCODE1, TEST_POSTCODE2, TEST_POSTCODE3);
+    private static final List<String> INVALID_POSTCODE = Collections.singletonList(TEST_POSTCODE3);
+    private static final List<String> EXISTED_POSTCODE = Collections.singletonList(TEST_POSTCODE2);
+    private static final List<String> NOT_FOUND_POSTCODE = Collections.singletonList(TEST_POSTCODE1);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -45,11 +52,15 @@ public class AdminCourtPostcodeControllerTest {
 
     private static String expectedPostcodeJson;
     private static String expectedInvalidPostcodesJson;
+    private static String expectedExistedPostcodesJson;
+    private static String expectedNotFoundPostcodesJson;
 
     @BeforeAll
     static void setUp() throws JsonProcessingException {
         expectedPostcodeJson = OBJECT_MAPPER.writeValueAsString(TEST_POSTCODES);
         expectedInvalidPostcodesJson = OBJECT_MAPPER.writeValueAsString(INVALID_POSTCODE);
+        expectedExistedPostcodesJson = OBJECT_MAPPER.writeValueAsString(EXISTED_POSTCODE);
+        expectedNotFoundPostcodesJson = OBJECT_MAPPER.writeValueAsString(NOT_FOUND_POSTCODE);
     }
 
     @Test
@@ -85,8 +96,7 @@ public class AdminCourtPostcodeControllerTest {
 
     @Test
     void addPostcodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
-        when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(Collections.emptyList());
-        doThrow(new NotFoundException(TEST_SLUG)).when(adminService).addCourtPostcodes(TEST_SLUG, TEST_POSTCODES);
+        doThrow(new NotFoundException(TEST_SLUG)).when(adminService).checkPostcodesDoNotExist(TEST_SLUG, TEST_POSTCODES);
 
         mockMvc.perform(post(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
                             .content(expectedPostcodeJson)
@@ -94,6 +104,9 @@ public class AdminCourtPostcodeControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
+
+        verifyNoInteractions(validationService);
+        verify(adminService, never()).addCourtPostcodes(any(), any());
     }
 
     @Test
@@ -107,25 +120,40 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(content().json(expectedInvalidPostcodesJson));
 
-        verifyNoInteractions(adminService);
+        verify(adminService, never()).addCourtPostcodes(any(), any());
+    }
+
+    @Test
+    void addPostcodesShouldReturnConflictForExistedPostcodes() throws Exception {
+        doThrow(new PostcodeExistedException(EXISTED_POSTCODE)).when(adminService).checkPostcodesDoNotExist(TEST_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(post(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict())
+            .andExpect(content().json(expectedExistedPostcodesJson));
+
+        verifyNoInteractions(validationService);
+        verify(adminService, never()).addCourtPostcodes(any(), any());
     }
 
     @Test
     void deletePostcodesShouldReturnOkStatus() throws Exception {
         when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(Collections.emptyList());
-        doNothing().when(adminService).deleteCourtPostcodes(TEST_SLUG, TEST_POSTCODES);
+        when(adminService.deleteCourtPostcodes(TEST_SLUG, TEST_POSTCODES)).thenReturn(3);
 
         mockMvc.perform(delete(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
                             .content(expectedPostcodeJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(content().string("3"));
     }
 
     @Test
     void deletePostcodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
-        when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(Collections.emptyList());
-        doThrow(new NotFoundException(TEST_SLUG)).when(adminService).deleteCourtPostcodes(TEST_SLUG, TEST_POSTCODES);
+        doThrow(new NotFoundException(TEST_SLUG)).when(adminService).checkPostcodesExist(TEST_SLUG, TEST_POSTCODES);
 
         mockMvc.perform(delete(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
                             .content(expectedPostcodeJson)
@@ -133,6 +161,9 @@ public class AdminCourtPostcodeControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
+
+        verifyNoInteractions(validationService);
+        verify(adminService, never()).deleteCourtPostcodes(any(), any());
     }
 
     @Test
@@ -146,6 +177,21 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(content().json(expectedInvalidPostcodesJson));
 
-        verifyNoInteractions(adminService);
+        verify(adminService, never()).deleteCourtPostcodes(any(), any());
+    }
+
+    @Test
+    void deletePostcodesShouldReturnNotFoundForNonExistentPostcodes() throws Exception {
+        doThrow(new PostcodeNotFoundException(NOT_FOUND_POSTCODE)).when(adminService).checkPostcodesExist(TEST_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(delete(BASE_PATH + TEST_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().json(expectedNotFoundPostcodesJson));
+
+        verifyNoInteractions(validationService);
+        verify(adminService, never()).deleteCourtPostcodes(any(), any());
     }
 }

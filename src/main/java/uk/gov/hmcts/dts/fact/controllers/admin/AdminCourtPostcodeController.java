@@ -27,6 +27,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
     path = "/admin/courts",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class AdminCourtPostcodeController {
     private final AdminCourtPostcodeService adminService;
     private final ValidationService validationService;
@@ -38,7 +39,7 @@ public class AdminCourtPostcodeController {
     }
 
     /**
-     * Retrieves postcodes handled by the court for civil service type
+     * Retrieves postcodes handled by the court for civil service type.
      * @param slug Court slug
      * @return A list of postcodes
      */
@@ -47,8 +48,8 @@ public class AdminCourtPostcodeController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message="Forbidden"),
-        @ApiResponse(code = 404, message = "Not Found")
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<String>> getCourtPostcodes(@PathVariable String slug) {
@@ -56,10 +57,12 @@ public class AdminCourtPostcodeController {
     }
 
     /**
-     * Adds new postcodes to be handled by the court for civil service type (
+     * Adds new postcodes to be handled by the court for civil service type.
      * @param slug Court slug
      * @param postcodes a list of postcodes to be added
-     * @return A list of postcodes created if successful, else return a list of invalid postcodes and a '400' response
+     * @return A list of postcodes created if successful.
+     *         If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
+     *         If one of more input postcodes already exist in the database, return the existed postcodes and a '409' response.
      */
     @PostMapping(path = "/{slug}/postcodes")
     @ApiOperation("Add new court postcodes")
@@ -67,11 +70,13 @@ public class AdminCourtPostcodeController {
         @ApiResponse(code = 201, message = "Postcodes created", response = String.class, responseContainer = "List"),
         @ApiResponse(code = 400, message = "Invalid postcodes", response = String.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message="Forbidden"),
-        @ApiResponse(code = 404, message = "Not Found")
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Court not Found"),
+        @ApiResponse(code = 409, message = "Postcodes already exist", response = String.class, responseContainer = "List")
     })
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<String>> addCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
+        adminService.checkPostcodesDoNotExist(slug, postcodes);
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             final List<String> postcodeCreated = adminService.addCourtPostcodes(slug, postcodes);
@@ -81,26 +86,28 @@ public class AdminCourtPostcodeController {
     }
 
     /**
-     * Deletes existing postcodes currently handled by the court for civil service type
+     * Deletes existing postcodes currently handled by the court for civil service type.
      * @param slug Court slug
      * @param postcodes a list of postcodes to be deleted
-     * @return Nothing if successful, else return a list of invalid postcodes and a '400' response
+     * @return The number of postcodes deleted if successful
+     *         If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
+     *         If one of more input postcodes do not exist in the database, return the not found postcodes and a '404' response.
      */
     @DeleteMapping(path = "/{slug}/postcodes")
     @ApiOperation("Delete existing court postcodes")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = int.class),
         @ApiResponse(code = 400, message = "Invalid postcodes", response = String.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message="Forbidden"),
-        @ApiResponse(code = 404, message = "Not Found")
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Postcodes do not exist", response = String.class, responseContainer = "List")
     })
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity deleteCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
+        adminService.checkPostcodesExist(slug, postcodes);
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
-            adminService.deleteCourtPostcodes(slug, postcodes);
-            return ok().build();
+            return ok(adminService.deleteCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }
