@@ -28,7 +28,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final List<String> POSTCODES_INVALID = Arrays.asList("ba62rt345435435", "da163rtgghg", "B144JS");
     private static final List<String> POSTCODES_ALREADY_THERE = Arrays.asList("B139", "B144");
     private static final List<String> POSTCODES_DO_NOT_EXIST = Arrays.asList("SE91AA", "SE91AB", "SE91AD");
-    private static final List<String> POSTCODES_DUPLICATE = Arrays.asList("DA163RT", "DA16 3RT", "DA16 2RT");
+    private static final List<String> POSTCODES_DUPLICATE = Arrays.asList("B144JS", "B144BH", "B14 4JS");
 
     /************************************************************* GET request tests section. ***************************************************************/
     @Test
