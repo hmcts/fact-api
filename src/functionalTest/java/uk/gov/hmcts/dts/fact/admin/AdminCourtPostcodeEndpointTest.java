@@ -6,9 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -25,10 +24,11 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         + COURT_POSTCODES_PATH;
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT
         + "birmingham-civil-and-fay-justice-centre" + COURT_POSTCODES_PATH;
-    private static final List<String> POSTCODES_VALID = Arrays.asList("B14 4BH", "B14 4JS");
-    private static final List<String> POSTCODES_INVALID = Arrays.asList("ba62rt345435435", "da163rtgghg", "B1414545657");
+    private static final List<String> POSTCODES_VALID = Arrays.asList("B14 4BH", "B144JS");
+    private static final List<String> POSTCODES_INVALID = Arrays.asList("ba62rt345435435", "da163rtgghg", "B144JS");
     private static final List<String> POSTCODES_ALREADY_THERE = Arrays.asList("B139", "B144");
-    private static final List<String> POSTCODES_DO_NOT_EXIST = Arrays.asList("B140", "B141", "B142");
+    private static final List<String> POSTCODES_DO_NOT_EXIST = Arrays.asList("SE91AA", "SE91AB", "SE91AD");
+    private static final List<String> POSTCODES_DUPLICATE = Arrays.asList("DA163RT", "DA16 3RT", "DA16 2RT");
 
     /************************************************************* GET request tests section. ***************************************************************/
     @Test
@@ -76,7 +76,9 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             ".",
             String.class
         );
-        assertThat(updatedCourtPostcodes).containsExactlyElementsOf(POSTCODES_VALID);
+        List<String> trimmedPostcodes = POSTCODES_VALID.stream().map(x -> x.replaceAll(" ", "")).collect(Collectors.toList());
+
+        assertThat(updatedCourtPostcodes).containsExactlyElementsOf(trimmedPostcodes);
 
         //clean up by removing added record
         final var cleanUpResponse = doDeleteRequest(
@@ -86,6 +88,51 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
         assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(POSTCODES_VALID.size());
+
+        final var responseAfterClean = doGetRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
+        );
+
+        final List<String> cleanCourtPostcodes = responseAfterClean.body().jsonPath().getList(
+            ".",
+            String.class
+        );
+        assertThat(cleanCourtPostcodes).containsExactlyElementsOf(currentPostcodes);
+    }
+
+    @Test
+    public void shouldNotCreateDuplicatePostcodes() throws JsonProcessingException {
+
+        final List<String> currentPostcodes = getCurrentPostcodes();
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DUPLICATE);
+        final var response = doPostRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+        final List<String> updatedCourtPostcodes = response.body().jsonPath().getList(
+            ".",
+            String.class
+        );
+
+        //Checking only unique values updated in database
+
+        List<String> trimmedPostcodes = POSTCODES_DUPLICATE.stream().map(x -> x.replaceAll(" ", "")).collect(Collectors.toList());
+        Set<String> set = new TreeSet<>(trimmedPostcodes);
+        assertThat(updatedCourtPostcodes.size()).isEqualTo(set.size());
+        assertThat(trimmedPostcodes).containsAll(updatedCourtPostcodes);
+
+
+        //clean up by removing added record
+        final var cleanUpResponse = doDeleteRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+        assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(set.size());
 
         final var responseAfterClean = doGetRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -139,7 +186,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
-    //409
+
     @Test
     public void adminShouldNotBeAbleToCreateDuplicatePostcodes() throws JsonProcessingException {
 
