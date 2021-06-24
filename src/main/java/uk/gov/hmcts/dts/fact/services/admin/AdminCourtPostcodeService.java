@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.util.Utils.upperCaseAndStripAllSpaces;
 
 @Service
 @Slf4j
@@ -34,7 +35,7 @@ public class AdminCourtPostcodeService {
     public void checkPostcodesExist(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
         final List<String> invalidPostcodes = postcodes.stream()
-            .filter(postcode -> courtPostcodeRepository.findByCourtIdAndPostcode(courtEntity.getId(), postcode).isEmpty())
+            .filter(p -> !postcodeExists(courtEntity, p))
             .collect(toList());
         if (!CollectionUtils.isEmpty(invalidPostcodes)) {
             log.warn("Postcodes do not exist in database: {}", invalidPostcodes);
@@ -45,7 +46,7 @@ public class AdminCourtPostcodeService {
     public void checkPostcodesDoNotExist(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
         final List<String> invalidPostcodes = postcodes.stream()
-            .filter(postcode -> !courtPostcodeRepository.findByCourtIdAndPostcode(courtEntity.getId(), postcode).isEmpty())
+            .filter(p -> postcodeExists(courtEntity, p))
             .collect(toList());
         if (!CollectionUtils.isEmpty(invalidPostcodes)) {
             log.warn("Postcodes already exist in database: {}", invalidPostcodes);
@@ -64,7 +65,9 @@ public class AdminCourtPostcodeService {
 
     @Transactional()
     public List<String> addCourtPostcodes(final String slug, final List<String> postcodes) {
-        return createNewCourtPostcodesEntity(slug, postcodes).stream()
+        final Court courtEntity = getCourtEntity(slug);
+        return createNewCourtPostcodesEntity(courtEntity, postcodes).stream()
+            .filter(p -> !postcodeExists(courtEntity, p.getPostcode())) // If the same valid postcode entered more than once, we only add a single one
             .map(courtPostcodeRepository::save)
             .map(CourtPostcode::getPostcode)
             .collect(toList());
@@ -74,15 +77,18 @@ public class AdminCourtPostcodeService {
     public int deleteCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
         return postcodes.stream()
-            .map(p -> courtPostcodeRepository.deleteByCourtIdAndPostcode(courtEntity.getId(), p))
+            .map(p -> courtPostcodeRepository.deleteByCourtIdAndPostcode(courtEntity.getId(), upperCaseAndStripAllSpaces(p)))
             .mapToInt(List::size)
             .sum();
     }
 
-    private List<CourtPostcode> createNewCourtPostcodesEntity(final String slug, final List<String> postcodes) {
-        final Court courtEntity = getCourtEntity(slug);
+    private boolean postcodeExists(final Court court, final String postcode) {
+        return !courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), upperCaseAndStripAllSpaces(postcode)).isEmpty();
+    }
+
+    private List<CourtPostcode> createNewCourtPostcodesEntity(final Court court, final List<String> postcodes) {
         return postcodes.stream()
-            .map(p -> new CourtPostcode(p, courtEntity))
+            .map(p -> new CourtPostcode(upperCaseAndStripAllSpaces(p), court))
             .collect(toList());
     }
 

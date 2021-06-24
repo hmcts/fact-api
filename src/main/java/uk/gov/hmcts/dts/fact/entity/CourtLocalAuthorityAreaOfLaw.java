@@ -35,5 +35,4 @@ public class CourtLocalAuthorityAreaOfLaw {
         this.court = court;
         this.localAuthority = localAuthority;
     }
-
 }

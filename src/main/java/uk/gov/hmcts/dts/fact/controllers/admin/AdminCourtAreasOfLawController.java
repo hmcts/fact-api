@@ -34,5 +34,4 @@ public class AdminCourtAreasOfLawController {
     public ResponseEntity<List<AreaOfLaw>> getCourtAreasOfLaw(@PathVariable String slug) {
         return ok(adminCourtAreasOfLawService.getCourtAreasOfLawBySlug(slug));
     }
-
 }
