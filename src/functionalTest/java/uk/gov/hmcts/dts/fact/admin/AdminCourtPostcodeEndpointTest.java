@@ -76,7 +76,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             ".",
             String.class
         );
-        List<String> trimmedPostcodes = POSTCODES_VALID.stream().map(x -> x.replaceAll(" ", "")).collect(Collectors.toList());
+        final List<String> trimmedPostcodes = POSTCODES_VALID.stream().map(x -> x.replaceAll(" ", "")).collect(Collectors.toList());
 
         assertThat(updatedCourtPostcodes).containsExactlyElementsOf(trimmedPostcodes);
 
@@ -118,12 +118,10 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         );
 
         //Checking only unique values updated in database
-
-        List<String> trimmedPostcodes = POSTCODES_DUPLICATE.stream().map(x -> x.replaceAll(" ", "")).collect(Collectors.toList());
-        Set<String> set = new TreeSet<>(trimmedPostcodes);
+        final List<String> trimmedPostcodes = POSTCODES_DUPLICATE.stream().map(x -> x.replaceAll(" ", "")).collect(Collectors.toList());
+        final Set<String> set = new TreeSet<>(trimmedPostcodes);
         assertThat(updatedCourtPostcodes.size()).isEqualTo(set.size());
         assertThat(trimmedPostcodes).containsAll(updatedCourtPostcodes);
-
 
         //clean up by removing added record
         final var cleanUpResponse = doDeleteRequest(
