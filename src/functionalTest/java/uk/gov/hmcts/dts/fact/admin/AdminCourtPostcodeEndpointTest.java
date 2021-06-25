@@ -186,7 +186,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void adminShouldNotBeAbleToCreateDuplicatePostcodes() throws JsonProcessingException {
+    public void shouldNotBeAbleToCreatePostcodesAlreadyExist() throws JsonProcessingException {
 
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_ALREADY_THERE);
 
