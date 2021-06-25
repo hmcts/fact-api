@@ -37,7 +37,7 @@ public class PostcodeValidatorTest {
 
     @Test
     public void testIfPostcodesAreInvalid() {
-        for (String testPostcode : new String[]{"M", "", "P$11&PY", ".@£*$&,)@*&!@£,",
+        for (String testPostcode : new String[]{"P$11&PY", ".@£*$&,)@*&!@£,",
             "ReEeEeeEaAaAllLlYLlLlLoOoOnNnG", "MM", "M1111", "M223J", "", "  "}) {
             assertFalse(mapitValidator.postcodeDataExists(testPostcode));
         }
@@ -45,7 +45,7 @@ public class PostcodeValidatorTest {
 
     @Test
     public void testIfPostcodesAreValid() {
-        for (String testPostcode : new String[]{"M0", "M00", "M000", "M0S", "M05H", "M0S5", "M05H3",
+        for (String testPostcode : new String[]{"M", "M0", "M00", "M000", "M0S", "M05H", "M0S5", "M05H3",
             "MO5", "MO53", "MO533", "MO5H", "MO5H3", "EC1W",
             "W1J 7NT", "DE12 8HJ", "SW1A 1AA", "HD7 5UZ", "CH5 3QW",
             "SA63", "W2 1JB", "PL7 1RF", "GIR 0AA", "JE3 1EP", "JE2 3XP",

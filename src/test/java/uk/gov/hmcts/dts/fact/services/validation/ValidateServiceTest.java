@@ -7,7 +7,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,9 +28,9 @@ public class ValidateServiceTest {
     @Test
     public void testValidatePostcodesSuccess() {
         // Expect no strings to be returned if all checks have passed
-        String[] testPostcodesArray = {"M0", "MO5", "MO53", "MO533"};
+        final List<String> testPostcodes = Arrays.asList("M0", "MO5", "MO53", "MO533");
         when(postcodeValidator.postcodeDataExists(anyString())).thenReturn(true);
-        assertThat(validationService.validatePostcodes(testPostcodesArray)).isEmpty();
+        assertThat(validationService.validatePostcodes(testPostcodes)).isEmpty();
     }
 
     @Test
@@ -38,11 +41,9 @@ public class ValidateServiceTest {
         when(postcodeValidator.postcodeDataExists("aninvalidpostcode")).thenReturn(false);
         when(postcodeValidator.postcodeDataExists("anotherinvalidpostcode")).thenReturn(false);
 
-        String[] testPostcodesArray = {"a valid postcode", "an invalid postcode", "another invalid postcode"};
-        assertThat(validationService.validatePostcodes(testPostcodesArray)).containsExactly(
-            testPostcodesArray[1],
-            testPostcodesArray[2]
-        );
+        final List<String> testPostcodes = Arrays.asList("a valid postcode", "an invalid postcode", "another invalid postcode");
+        assertThat(validationService.validatePostcodes(testPostcodes))
+            .containsExactly("an invalid postcode", "another invalid postcode");
 
         verify(postcodeValidator).postcodeDataExists("avalidpostcode");
         verify(postcodeValidator).postcodeDataExists("aninvalidpostcode");

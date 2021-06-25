@@ -12,6 +12,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static uk.gov.hmcts.dts.fact.util.Utils.upperCaseAndStripAllSpaces;
 
 class UtilsTest {
 
@@ -106,5 +107,8 @@ class UtilsTest {
         LocaleContextHolder.resetLocaleContext();
     }
 
-
+    @Test
+    void testUpperCaseAndStripAllSpaces() {
+        assertThat(upperCaseAndStripAllSpaces(" b 1 7Pt ")).isEqualTo("B17PT");
+    }
 }
