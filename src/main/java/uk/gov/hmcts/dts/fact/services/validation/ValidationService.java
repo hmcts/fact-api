@@ -3,7 +3,9 @@ package uk.gov.hmcts.dts.fact.services.validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ValidationService {
@@ -16,13 +18,13 @@ public class ValidationService {
     }
 
     /**
-     * Accepts an array of strings and checks for each if mapit data exists.
-     * @param postcodes An array of strings which are postcodes
-     * @return An array of strings which indicate which postcodes have failed to return geographical information
+     * Accepts an list of strings and checks for each if mapit data exists.
+     * @param postcodes An list of strings which are postcodes
+     * @return An list of strings which indicate which postcodes have failed to return geographical information
      */
-    public String[] validatePostcodes(String... postcodes) {
-        return Arrays.stream(postcodes)
+    public List<String> validatePostcodes(List<String> postcodes) {
+        return postcodes.stream()
             .filter(postcode -> !mapitPostcodeValidator.postcodeDataExists(postcode.replaceAll("\\s+","")))
-            .toArray(String[]::new);
+            .collect(toList());
     }
 }

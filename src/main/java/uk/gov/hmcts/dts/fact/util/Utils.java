@@ -48,4 +48,8 @@ public final class Utils {
     public static boolean isNorthernIrishPostcode(final String postcode) {
         return postcode.toUpperCase(Locale.getDefault()).startsWith(NORTHERN_IRISH_POSTCODE_AREA);
     }
+
+    public static String upperCaseAndStripAllSpaces(final String input) {
+        return input.replaceAll("\\s+","").toUpperCase(Locale.getDefault());
+    }
 }

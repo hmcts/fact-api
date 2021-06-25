@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.dts.fact.services.MapitService;
+import uk.gov.hmcts.dts.fact.util.PostcodeArea;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,21 +30,16 @@ public class PostcodeValidator {
 
     public boolean postcodeDataExists(final String postcode) {
 
-        // Base validation for postcode
-        if (postcode.length() < 2 || StringUtils.isEmpty(postcode)) {
+        if (StringUtils.isBlank(postcode)) {
             return false;
-        }
-
-        // If we have a full postcode
-        boolean fullResultFound = postcode.matches(FULL_POSTCODE) && fullPostCodeDataExists(postcode);
-
-        if (fullResultFound) {
+        } else if (postcode.matches(FULL_POSTCODE) && fullPostCodeDataExists(postcode)) { // If we have a full postcode
             log.info("Full postcode search result was successful for: {}", postcode);
             return true;
         }
 
         // Partial postcode search criteria:
-        // One or two letters at the start, two or three digits
+        //  - One of two letters only. We check against a valid postcode area list
+        //  - One or two letters at the start, two or three digits
         // If the starting is one letter:
         //  - Sub part can be one number or two numbers or three numbers
         //  - Or sub part can be one number, and one letter
@@ -54,7 +50,8 @@ public class PostcodeValidator {
         //  - sub part can be one number or two numbers or three numbers
         //  - Or sub part can be one number, and one letter
         //  - Or sub part can be one number, and one letter, and one number
-        return partialPostcodeValid(PARTIAL_POSTCODE_NUMERIC, postcode, 1)
+        return PostcodeArea.isValidArea(postcode)
+            || partialPostcodeValid(PARTIAL_POSTCODE_NUMERIC, postcode, 1)
             // Check first two characters of the postcode, which will determine the result group we need
             || (postcode.substring(0, 2).matches(PARTIAL_POSTCODE_SEARCH)
                 ? partialPostcodeValid(PARTIAL_POSTCODE_EDGECASE, postcode, 2) : // if two letter proceed
