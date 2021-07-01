@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.exception.PostcodeExistedException;
 import uk.gov.hmcts.dts.fact.exception.PostcodeNotFoundException;
@@ -67,7 +68,10 @@ public class AdminCourtPostcodeService {
     public List<String> addCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
         return createNewCourtPostcodesEntity(courtEntity, postcodes).stream()
-            .filter(p -> !postcodeExists(courtEntity, p.getPostcode())) // If the same valid postcode entered more than once, we only add a single one
+            .filter(p -> !postcodeExists(
+                courtEntity,
+                p.getPostcode()
+            )) // If the same valid postcode entered more than once, we only add a single one
             .map(courtPostcodeRepository::save)
             .map(CourtPostcode::getPostcode)
             .collect(toList());
@@ -77,13 +81,19 @@ public class AdminCourtPostcodeService {
     public int deleteCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
         return postcodes.stream()
-            .map(p -> courtPostcodeRepository.deleteByCourtIdAndPostcode(courtEntity.getId(), upperCaseAndStripAllSpaces(p)))
+            .map(p -> courtPostcodeRepository.deleteByCourtIdAndPostcode(
+                courtEntity.getId(),
+                upperCaseAndStripAllSpaces(p)
+            ))
             .mapToInt(List::size)
             .sum();
     }
 
     private boolean postcodeExists(final Court court, final String postcode) {
-        return !courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), upperCaseAndStripAllSpaces(postcode)).isEmpty();
+        return !courtPostcodeRepository.findByCourtIdAndPostcode(
+            court.getId(),
+            upperCaseAndStripAllSpaces(postcode)
+        ).isEmpty();
     }
 
     private List<CourtPostcode> createNewCourtPostcodesEntity(final Court court, final List<String> postcodes) {
@@ -99,5 +109,43 @@ public class AdminCourtPostcodeService {
         }
         log.warn("Court slug {} not found", slug);
         throw new NotFoundException(slug);
+    }
+
+    public boolean movePostcodes(String sourceSlug, String destinationSlug, List<String> postcodes) {
+
+        // Check that the postcodes for the source court exists in the database, and retrieve the court id back
+        List<CourtPostcode> sourceCourtPostcodes = getCourtPostcodes(sourceSlug, postcodes);
+        if (postcodes.size() != sourceCourtPostcodes.size()) {
+            log.error("The postcodes sent through to the move endpoint do not match those collected " +
+                          "from the database, for {} to {}", sourceSlug, destinationSlug);
+            throw new InvalidPostcodeException("Postcodes sent do not match");
+        }
+
+        // As a part of the above, check that the court where the postcodes will be moved to, do not already
+        // contain one or more postcodes from the source court
+        List<CourtPostcode> destCourtPostcodes = getCourtPostcodes(destinationSlug, postcodes);
+        List<String> duplicatedPostcodes =
+            destCourtPostcodes.stream().map(CourtPostcode::getPostcode).filter(postcodes::contains).collect(toList());
+        if (duplicatedPostcodes.size() > 0) {
+            log.error("One or more postcodes sent through to the move endpoint are already on the " +
+                          "destination court, for {} to {}", sourceSlug, destinationSlug);
+            throw new PostcodeExistedException(duplicatedPostcodes);
+        }
+
+        // Move the postcodes from the source court, to the destination court, based on the
+        // destination courts court id
+        final Court destCourt = getCourtEntity(destinationSlug);
+        for (CourtPostcode courtPostcode : sourceCourtPostcodes) {
+            // TODO: make sure that the update works as expected. ATM it is not updating
+            log.info("Setting the court");
+            courtPostcode.setCourt(destCourt);
+        }
+
+        return true;
+    }
+
+    private List<CourtPostcode> getCourtPostcodes(String slug, List<String> postcodes) {
+        final Court courtEntity = getCourtEntity(slug);
+        return courtPostcodeRepository.findByCourtIdAndPostcodeIn(courtEntity.getId(), postcodes);
     }
 }
