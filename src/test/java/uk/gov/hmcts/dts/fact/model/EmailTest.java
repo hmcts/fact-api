@@ -37,5 +37,4 @@ class EmailTest {
 
         LocaleContextHolder.resetLocaleContext();
     }
-
 }
