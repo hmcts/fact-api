@@ -118,8 +118,9 @@ public class AdminCourtPostcodeController {
      * @param destinationSlug The slug of the court where the postcodes will be moved to
      * @param postcodes a list of postcodes to be moved
      * @return A successful response if the courts have been moved from the source court to the destination court
+     * and also return a list of strings that have been updated
      */
-    @PostMapping(path = "/{sourceSlug}/{destinationSlug}/postcodes")
+    @PutMapping(path = "/{sourceSlug}/{destinationSlug}/postcodes")
     @ApiOperation("Move postcodes from one court to another")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = int.class),

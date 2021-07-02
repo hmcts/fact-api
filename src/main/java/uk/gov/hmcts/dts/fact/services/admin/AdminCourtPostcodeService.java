@@ -111,13 +111,11 @@ public class AdminCourtPostcodeService {
         throw new NotFoundException(slug);
     }
 
-    public boolean movePostcodes(String sourceSlug, String destinationSlug, List<String> postcodes) {
+    public List<String> movePostcodes(String sourceSlug, String destinationSlug, List<String> postcodes) {
 
         // Check that the postcodes for the source court exists in the database, and retrieve the court id back
         List<CourtPostcode> sourceCourtPostcodes = getCourtPostcodes(sourceSlug, postcodes);
         if (postcodes.size() != sourceCourtPostcodes.size()) {
-            log.error("The postcodes sent through to the move endpoint do not match those collected " +
-                          "from the database, for {} to {}", sourceSlug, destinationSlug);
             throw new InvalidPostcodeException("Postcodes sent do not match");
         }
 
@@ -127,8 +125,6 @@ public class AdminCourtPostcodeService {
         List<String> duplicatedPostcodes =
             destCourtPostcodes.stream().map(CourtPostcode::getPostcode).filter(postcodes::contains).collect(toList());
         if (duplicatedPostcodes.size() > 0) {
-            log.error("One or more postcodes sent through to the move endpoint are already on the " +
-                          "destination court, for {} to {}", sourceSlug, destinationSlug);
             throw new PostcodeExistedException(duplicatedPostcodes);
         }
 
@@ -136,12 +132,9 @@ public class AdminCourtPostcodeService {
         // destination courts court id
         final Court destCourt = getCourtEntity(destinationSlug);
         for (CourtPostcode courtPostcode : sourceCourtPostcodes) {
-            // TODO: make sure that the update works as expected. ATM it is not updating
-            log.info("Setting the court");
             courtPostcode.setCourt(destCourt);
         }
-
-        return true;
+        return courtPostcodeRepository.saveAll(sourceCourtPostcodes).stream().map(CourtPostcode::getPostcode).collect(toList());
     }
 
     private List<CourtPostcode> getCourtPostcodes(String slug, List<String> postcodes) {
