@@ -113,12 +113,12 @@ public class AdminCourtPostcodeController {
     }
 
     /**
-     * This endpoint moves a list of postcodes from one court to another
+     * This endpoint moves a list of postcodes from one court to another.
      * @param sourceSlug The source slug is the court where the postcodes currently are
      * @param destinationSlug The slug of the court where the postcodes will be moved to
      * @param postcodes a list of postcodes to be moved
      * @return A successful response if the courts have been moved from the source court to the destination court
-     * and also return a list of strings that have been updated
+     *         and also return a list of strings that have been updated
      */
     @PutMapping(path = "/{sourceSlug}/{destinationSlug}/postcodes")
     @ApiOperation("Move postcodes from one court to another")
@@ -129,12 +129,13 @@ public class AdminCourtPostcodeController {
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Postcodes do not exist", response = String.class, responseContainer = "List")
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity movePostcodes(@PathVariable String sourceSlug,
-                                        @PathVariable String destinationSlug, @RequestBody List<String> postcodes) {
+    @Role(FACT_SUPER_ADMIN)
+    public ResponseEntity<List<String>> movePostcodes(@PathVariable String sourceSlug,
+                                                      @PathVariable String destinationSlug,
+                                                      @RequestBody List<String> postcodes) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
-            return ok(adminService.movePostcodes(sourceSlug, destinationSlug, postcodes));
+            return ok(adminService.moveCourtPostcodes(sourceSlug, destinationSlug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }

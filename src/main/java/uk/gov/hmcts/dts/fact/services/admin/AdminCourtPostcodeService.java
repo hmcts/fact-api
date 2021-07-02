@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
-import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.exception.PostcodeExistedException;
 import uk.gov.hmcts.dts.fact.exception.PostcodeNotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.CourtPostcodeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,24 +34,32 @@ public class AdminCourtPostcodeService {
     }
 
     public void checkPostcodesExist(final String slug, final List<String> postcodes) {
-        final Court courtEntity = getCourtEntity(slug);
+        checkPostcodesExist(getCourtPostcodes(slug, postcodes), postcodes);
+    }
+
+    private void checkPostcodesExist(List<CourtPostcode> sourceCourtPostcodes, List<String> postcodes) {
+        final List<String> sourcePostcodes = sourceCourtPostcodes.stream()
+            .map(CourtPostcode::getPostcode)
+            .collect(toList());
         final List<String> invalidPostcodes = postcodes.stream()
-            .filter(p -> !postcodeExists(courtEntity, p))
+            .filter(p -> !sourcePostcodes.contains(upperCaseAndStripAllSpaces(p)))
             .collect(toList());
         if (!CollectionUtils.isEmpty(invalidPostcodes)) {
-            log.warn("Postcodes do not exist in database: {}", invalidPostcodes);
+            log.warn("Postcodes do not exist in source table: {}", invalidPostcodes);
             throw new PostcodeNotFoundException(invalidPostcodes);
         }
     }
 
-    public void checkPostcodesDoNotExist(final String slug, final List<String> postcodes) {
-        final Court courtEntity = getCourtEntity(slug);
-        final List<String> invalidPostcodes = postcodes.stream()
-            .filter(p -> postcodeExists(courtEntity, p))
+    public void checkPostcodesDoNotExist(final String destinationSlug, final List<String> postcodes) {
+        final List<String> destPostcodes = getCourtPostcodes(destinationSlug, postcodes).stream()
+            .map(CourtPostcode::getPostcode)
             .collect(toList());
-        if (!CollectionUtils.isEmpty(invalidPostcodes)) {
-            log.warn("Postcodes already exist in database: {}", invalidPostcodes);
-            throw new PostcodeExistedException(invalidPostcodes);
+        final List<String> duplicatedPostcodes = postcodes.stream()
+            .filter(p -> destPostcodes.contains(upperCaseAndStripAllSpaces(p)))
+            .collect(toList());
+        if (!CollectionUtils.isEmpty(duplicatedPostcodes)) {
+            log.warn("Postcodes already exist in destination table: {}", duplicatedPostcodes);
+            throw new PostcodeExistedException(duplicatedPostcodes);
         }
     }
 
@@ -89,6 +97,28 @@ public class AdminCourtPostcodeService {
             .sum();
     }
 
+    @Transactional()
+    public List<String> moveCourtPostcodes(String sourceSlug, String destinationSlug, List<String> postcodes) {
+        // Check that the postcodes for the source court exists in the database, and retrieve the court id back
+        List<CourtPostcode> sourceCourtPostcodes = getCourtPostcodes(sourceSlug, postcodes);
+        checkPostcodesExist(sourceCourtPostcodes, postcodes);
+
+        // As a part of the above, check that the court where the postcodes will be moved to, do not already
+        // contain one or more postcodes from the source court
+        checkPostcodesDoNotExist(destinationSlug, postcodes);
+
+        // Move the postcodes from the source court, to the destination court, based on the
+        // destination courts court id
+        final Court destCourt = getCourtEntity(destinationSlug);
+        for (CourtPostcode courtPostcode : sourceCourtPostcodes) {
+            courtPostcode.setCourt(destCourt);
+        }
+        return courtPostcodeRepository.saveAll(sourceCourtPostcodes)
+            .stream()
+            .map(CourtPostcode::getPostcode)
+            .collect(toList());
+    }
+
     private boolean postcodeExists(final Court court, final String postcode) {
         return !courtPostcodeRepository.findByCourtIdAndPostcode(
             court.getId(),
@@ -111,34 +141,11 @@ public class AdminCourtPostcodeService {
         throw new NotFoundException(slug);
     }
 
-    public List<String> movePostcodes(String sourceSlug, String destinationSlug, List<String> postcodes) {
-
-        // Check that the postcodes for the source court exists in the database, and retrieve the court id back
-        List<CourtPostcode> sourceCourtPostcodes = getCourtPostcodes(sourceSlug, postcodes);
-        if (postcodes.size() != sourceCourtPostcodes.size()) {
-            throw new InvalidPostcodeException("Postcodes sent do not match");
-        }
-
-        // As a part of the above, check that the court where the postcodes will be moved to, do not already
-        // contain one or more postcodes from the source court
-        List<CourtPostcode> destCourtPostcodes = getCourtPostcodes(destinationSlug, postcodes);
-        List<String> duplicatedPostcodes =
-            destCourtPostcodes.stream().map(CourtPostcode::getPostcode).filter(postcodes::contains).collect(toList());
-        if (duplicatedPostcodes.size() > 0) {
-            throw new PostcodeExistedException(duplicatedPostcodes);
-        }
-
-        // Move the postcodes from the source court, to the destination court, based on the
-        // destination courts court id
-        final Court destCourt = getCourtEntity(destinationSlug);
-        for (CourtPostcode courtPostcode : sourceCourtPostcodes) {
-            courtPostcode.setCourt(destCourt);
-        }
-        return courtPostcodeRepository.saveAll(sourceCourtPostcodes).stream().map(CourtPostcode::getPostcode).collect(toList());
-    }
-
     private List<CourtPostcode> getCourtPostcodes(String slug, List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
-        return courtPostcodeRepository.findByCourtIdAndPostcodeIn(courtEntity.getId(), postcodes);
+        final List<String> postcodesToRetrieve = postcodes.stream()
+            .map(Utils::upperCaseAndStripAllSpaces)
+            .collect(toList());
+        return courtPostcodeRepository.findByCourtIdAndPostcodeIn(courtEntity.getId(), postcodesToRetrieve);
     }
 }

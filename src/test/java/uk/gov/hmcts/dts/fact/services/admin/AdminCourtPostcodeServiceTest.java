@@ -16,19 +16,22 @@ import uk.gov.hmcts.dts.fact.exception.PostcodeNotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.CourtPostcodeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtPostcodeService.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtPostcodeServiceTest {
     private static final String COURT_SLUG = "test-slug";
+    private static final String SOURCE_COURT_SLUG = "source-slug";
+    private static final String DESTINATION_COURT_SLUG = "destination-slug";
     private static final String NOT_FOUND = "Not found: ";
 
     private static final int TEST_COURT_ID = 1;
@@ -38,17 +41,18 @@ public class AdminCourtPostcodeServiceTest {
     private static final String TEST_POSTCODE4 = "M47ER";
     private static final String NEW_POSTCODE = "M5";
 
-    private static final List<String> POSTCODES = Arrays.asList(
+    private static final List<String> POSTCODES = asList(
         TEST_POSTCODE1,
         TEST_POSTCODE2,
         TEST_POSTCODE3,
         TEST_POSTCODE4
     );
-    private static final List<String> POSTCODES_TO_BE_DELETED = Arrays.asList(
+    private static final List<String> POSTCODES_TO_BE_DELETED = asList(
         TEST_POSTCODE2,
         TEST_POSTCODE3
     );
-    private static final List<String> POSTCODES_TO_BE_ADDED = Collections.singletonList(NEW_POSTCODE);
+    private static final List<String> POSTCODES_TO_BE_ADDED = POSTCODES_TO_BE_DELETED;
+    private static final List<String> POSTCODES_TO_BE_MOVED = POSTCODES_TO_BE_DELETED;
     private static final int POSTCODE_COUNT = POSTCODES.size();
 
     @Autowired
@@ -63,7 +67,7 @@ public class AdminCourtPostcodeServiceTest {
     @Mock
     private Court court;
 
-    private final List<CourtPostcode> courtPostcodes = Arrays.asList(
+    private final List<CourtPostcode> courtPostcodes = asList(
         new CourtPostcode(TEST_POSTCODE1, court),
         new CourtPostcode(TEST_POSTCODE2, court),
         new CourtPostcode(TEST_POSTCODE3, court),
@@ -96,7 +100,7 @@ public class AdminCourtPostcodeServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtPostcodeRepository.save(any())).thenReturn(new CourtPostcode(NEW_POSTCODE, court));
 
-        assertThat(adminService.addCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_ADDED))
+        assertThat(adminService.addCourtPostcodes(COURT_SLUG, singletonList(NEW_POSTCODE)))
             .hasSize(1)
             .containsExactly(NEW_POSTCODE);
     }
@@ -116,8 +120,8 @@ public class AdminCourtPostcodeServiceTest {
     void shouldDeleteCourtPostcodes() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(court.getId()).thenReturn(TEST_COURT_ID);
-        when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
-        when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE3)).thenReturn(Collections.singletonList(courtPostcodes.get(2)));
+        when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE2)).thenReturn(singletonList(courtPostcodes.get(1)));
+        when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE3)).thenReturn(singletonList(courtPostcodes.get(2)));
 
         assertThat(adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_DELETED)).isEqualTo(2);
     }
@@ -134,10 +138,100 @@ public class AdminCourtPostcodeServiceTest {
     }
 
     @Test
+    void shouldMoveCourtPostcodes() {
+        final Court sourceCourt = mock(Court.class);
+        when(sourceCourt.getId()).thenReturn(1);
+        when(courtRepository.findBySlug(SOURCE_COURT_SLUG)).thenReturn(Optional.of(sourceCourt));
+        final List<CourtPostcode> courtPostcodes = asList(
+            new CourtPostcode(TEST_POSTCODE2, sourceCourt),
+            new CourtPostcode(TEST_POSTCODE3, sourceCourt)
+        );
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(1, POSTCODES_TO_BE_MOVED)).thenReturn(courtPostcodes);
+
+        final Court destinationCourt = mock(Court.class);
+        when(destinationCourt.getId()).thenReturn(2);
+        when(courtRepository.findBySlug(DESTINATION_COURT_SLUG)).thenReturn(Optional.of(destinationCourt));
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(2, POSTCODES_TO_BE_MOVED)).thenReturn(emptyList());
+
+        courtPostcodes.get(0).setCourt(destinationCourt);
+        courtPostcodes.get(1).setCourt(destinationCourt);
+        when(courtPostcodeRepository.saveAll(courtPostcodes)).thenReturn(courtPostcodes);
+
+        assertThat(adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
+            .hasSize(2)
+            .containsExactlyInAnyOrderElementsOf(POSTCODES_TO_BE_MOVED);
+    }
+
+    @Test
+    void shouldReturnErrorWhenPostcodesNotInSourceCourt() {
+        final Court sourceCourt = mock(Court.class);
+        when(sourceCourt.getId()).thenReturn(1);
+        when(courtRepository.findBySlug(SOURCE_COURT_SLUG)).thenReturn(Optional.of(sourceCourt));
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(1, POSTCODES_TO_BE_MOVED)).thenReturn(emptyList());
+
+        assertThatThrownBy(() -> adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
+            .isInstanceOf(PostcodeNotFoundException.class)
+            .hasMessage("Postcodes do not exist: " + POSTCODES_TO_BE_MOVED);
+    }
+
+    @Test
+    void shouldReturnErrorWhenPostcodesExistedInDestinationCourt() {
+        final Court sourceCourt = mock(Court.class);
+        when(sourceCourt.getId()).thenReturn(1);
+        when(courtRepository.findBySlug(SOURCE_COURT_SLUG)).thenReturn(Optional.of(sourceCourt));
+        final List<CourtPostcode> courtPostcodes = asList(
+            new CourtPostcode(TEST_POSTCODE2, sourceCourt),
+            new CourtPostcode(TEST_POSTCODE3, sourceCourt)
+        );
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(1, POSTCODES_TO_BE_MOVED)).thenReturn(courtPostcodes);
+
+        final Court destinationCourt = mock(Court.class);
+        when(destinationCourt.getId()).thenReturn(2);
+        when(courtRepository.findBySlug(DESTINATION_COURT_SLUG)).thenReturn(Optional.of(destinationCourt));
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(2, POSTCODES_TO_BE_MOVED)).thenReturn(courtPostcodes);
+
+        assertThatThrownBy(() -> adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
+            .isInstanceOf(PostcodeExistedException.class)
+            .hasMessage("Postcodes already exist: " + POSTCODES_TO_BE_MOVED);
+
+        verify(courtPostcodeRepository, never()).saveAll(any());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenMovingPostcodesForNonExistentSourceCourt() {
+        when(courtRepository.findBySlug(SOURCE_COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + SOURCE_COURT_SLUG);
+
+        verifyNoInteractions(courtPostcodeRepository);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenMovingPostcodesForNonExistentDestinationCourt() {
+        when(courtRepository.findBySlug(SOURCE_COURT_SLUG)).thenReturn(Optional.of(court));
+        final List<CourtPostcode> courtPostcodesInSource = asList(
+            new CourtPostcode(TEST_POSTCODE2, court),
+            new CourtPostcode(TEST_POSTCODE3, court),
+            new CourtPostcode(TEST_POSTCODE3, court)
+        );
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(court.getId(), POSTCODES_TO_BE_MOVED)).thenReturn(courtPostcodesInSource);
+        when(courtRepository.findBySlug(DESTINATION_COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + DESTINATION_COURT_SLUG);
+    }
+
+    @Test
     void shouldCheckPostcodesExistForCourt() {
+        final List<CourtPostcode> courtPostcodes = asList(
+            new CourtPostcode(TEST_POSTCODE2, court),
+            new CourtPostcode(TEST_POSTCODE3, court));
+
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.singletonList(courtPostcodes.get(2)));
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(court.getId(), POSTCODES_TO_BE_DELETED)).thenReturn(courtPostcodes);
 
         assertThatCode(() -> adminService.checkPostcodesExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
             .doesNotThrowAnyException();
@@ -156,9 +250,9 @@ public class AdminCourtPostcodeServiceTest {
 
     @Test
     void shouldReturnPostcodesNotFoundWhenTheyDoNotExist() {
+        final List<CourtPostcode> courtPostcodesFound = singletonList(new CourtPostcode(TEST_POSTCODE2, court));
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.emptyList());
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(court.getId(), POSTCODES_TO_BE_DELETED)).thenReturn(courtPostcodesFound);
 
         assertThatThrownBy(() -> adminService.checkPostcodesExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
             .isInstanceOf(PostcodeNotFoundException.class)
@@ -168,10 +262,9 @@ public class AdminCourtPostcodeServiceTest {
     @Test
     void shouldCheckPostcodesDoNotExistForCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.emptyList());
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.emptyList());
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(court.getId(), POSTCODES_TO_BE_ADDED)).thenReturn(emptyList());
 
-        assertThatCode(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+        assertThatCode(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_ADDED))
             .doesNotThrowAnyException();
     }
 
@@ -179,7 +272,7 @@ public class AdminCourtPostcodeServiceTest {
     void shouldReturnNotFoundWhenCheckingPostcodesDoNotExistForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+        assertThatThrownBy(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_ADDED))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
 
@@ -188,11 +281,11 @@ public class AdminCourtPostcodeServiceTest {
 
     @Test
     void shouldReturnPostcodesExistedWhenTheyExist() {
+        final List<CourtPostcode> duplicatedPostcodes = singletonList(new CourtPostcode(TEST_POSTCODE2, court));
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE2)).thenReturn(Collections.singletonList(courtPostcodes.get(1)));
-        when(courtPostcodeRepository.findByCourtIdAndPostcode(court.getId(), TEST_POSTCODE3)).thenReturn(Collections.emptyList());
+        when(courtPostcodeRepository.findByCourtIdAndPostcodeIn(court.getId(), POSTCODES_TO_BE_ADDED)).thenReturn(duplicatedPostcodes);
 
-        assertThatThrownBy(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_DELETED))
+        assertThatThrownBy(() -> adminService.checkPostcodesDoNotExist(COURT_SLUG, POSTCODES_TO_BE_ADDED))
             .isInstanceOf(PostcodeExistedException.class)
             .hasMessage("Postcodes already exist: [" + TEST_POSTCODE2 + "]");
     }
