@@ -5,13 +5,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
+import uk.gov.hmcts.dts.fact.entity.FacilityType;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 
@@ -83,7 +90,7 @@ class CourtTest {
         openingTimeEntity.setHours("opening times");
         final CourtOpeningTime courtOpeningTimeEntity = new CourtOpeningTime();
         courtOpeningTimeEntity.setOpeningTime(openingTimeEntity);
-        courtEntity.setCourtOpeningTimes(singletonList(courtOpeningTimeEntity));;
+        courtEntity.setCourtOpeningTimes(singletonList(courtOpeningTimeEntity));
 
         courtEntity.setCourtApplicationUpdates(singletonList(createCourtApplicationUpdateEntity()));
 

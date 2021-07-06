@@ -3,12 +3,17 @@ package uk.gov.hmcts.dts.fact.model;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
@@ -30,6 +35,7 @@ class CourtForDownloadTest {
     private static Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
     @BeforeAll
+    @SuppressWarnings("PMD.NcssCount")
     static void setUp() {
         courtEntity = new Court();
         courtEntity.setName("Name");
