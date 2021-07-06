@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
@@ -24,6 +25,9 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final String BIRMINGHAM_COURT_POSTCODES_PATH = ADMIN_COURTS_ENDPOINT
         + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG
         + COURT_POSTCODES_PATH;
+    private static final String WOLVERHAMPTON_COURT_POSTCODES_PATH = ADMIN_COURTS_ENDPOINT
+        + WOLVERHAMPTON_COMBINED_COURT_CENTRE_SLUG
+        + COURT_POSTCODES_PATH;
     private static final String BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH = ADMIN_COURTS_ENDPOINT
         + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG
         + "/" + WOLVERHAMPTON_COMBINED_COURT_CENTRE_SLUG
@@ -35,6 +39,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT
         + "birmingham-civil-and-fay-justice-centre" + COURT_POSTCODES_PATH;
     private static final String NOT_FOUND_POSTCODE = "B119";
+    private static final String CONFLICT_POSTCODE = "B75";
 
     private static final List<String> POSTCODES_VALID = Arrays.asList(
         "B14 4BH",
@@ -44,6 +49,10 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         "ba62rt345435435",
         "da163rtgghg",
         "B144JS"
+    );
+    private static final List<String> POSTCODES_INVALID_RESPONSE = Arrays.asList(
+        "ba62rt345435435",
+        "da163rtgghg"
     );
     private static final List<String> POSTCODES_ALREADY_THERE = Arrays.asList(
         "B139",
@@ -145,7 +154,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldNotCreateDuplicatePostcodes() throws JsonProcessingException {
 
-        final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_COURT_POSTCODES_PATH);
+        final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DUPLICATE);
         final var response = doPostRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -195,6 +204,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
     }
 
     @Test
@@ -250,6 +261,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
     }
 
     @Test
@@ -296,8 +309,10 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
         List<String> movedPostcodes = response.body().jsonPath().getList(".", String.class);
         softly.assertThat(movedPostcodes).containsExactlyElementsOf(POSTCODES_TO_MOVE);
-        softly.assertThat(getCurrentPostcodes(BIRMINGHAM_COURT_POSTCODES_PATH)).doesNotContainAnyElementsOf(POSTCODES_TO_MOVE);
-        softly.assertThat(getCurrentPostcodes(WOLVERHAMPTON_COMBINED_COURT_CENTRE_SLUG)).containsAnyElementsOf(POSTCODES_TO_MOVE);
+        softly.assertThat(getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG))
+            .doesNotContainAnyElementsOf(POSTCODES_TO_MOVE);
+        softly.assertThat(getCurrentPostcodes(WOLVERHAMPTON_COMBINED_COURT_CENTRE_SLUG))
+            .containsAnyElementsOf(POSTCODES_TO_MOVE);
 
         // Clean up by moving the postcodes back to its original court
         response = doPutRequest(
@@ -310,20 +325,11 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         movedPostcodes = response.body().jsonPath().getList(".", String.class);
 
         softly.assertThat(movedPostcodes).containsExactlyElementsOf(POSTCODES_TO_MOVE);
-        softly.assertThat(getCurrentPostcodes(WOLVERHAMPTON_COMBINED_COURT_CENTRE_SLUG)).doesNotContainAnyElementsOf(POSTCODES_TO_MOVE);
-        softly.assertThat(getCurrentPostcodes(BIRMINGHAM_COURT_POSTCODES_PATH)).containsAnyElementsOf(POSTCODES_TO_MOVE);
-
+        softly.assertThat(getCurrentPostcodes(WOLVERHAMPTON_COMBINED_COURT_CENTRE_SLUG))
+            .doesNotContainAnyElementsOf(POSTCODES_TO_MOVE);
+        softly.assertThat(getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG))
+            .containsAnyElementsOf(POSTCODES_TO_MOVE);
         softly.assertAll();
-    }
-
-    @Test
-    public void test() throws JsonProcessingException {
-        final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
-        var response = doPutRequest(
-            WOLVERHAMPTON_TO_BIRMINGHAM_COURT_POSTCODES_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            postcodesToMoveJson
-        );
     }
 
     @Test
@@ -349,7 +355,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     public void shouldNotMovePostcodesIfNotInSourceCourts() throws JsonProcessingException {
         final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND);
         var response = doPutRequest(
-            WOLVERHAMPTON_TO_BIRMINGHAM_COURT_POSTCODES_PATH,
+            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             postcodesToMoveJson
         );
@@ -362,14 +368,43 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() {
+    public void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JsonProcessingException {
+        // Add a conflicting postcode to the Wolverhampton court before moving from Birmingham court
+        final String postcodesToAddJson = objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE));
+        final var responseAfterAdd = doPostRequest(
+            WOLVERHAMPTON_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            postcodesToAddJson
+        );
+        assertThat(responseAfterAdd.statusCode()).isEqualTo(CONFLICT.value());
+
+        final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
+        final var responseAfterMove = doPutRequest(
+            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            postcodesToMoveJson
+        );
+
+        assertThat(responseAfterMove.statusCode()).isEqualTo(CONFLICT.value());
+        final List<String> duplicatedPostcodes = responseAfterMove.body().jsonPath().getList(".", String.class);
+        assertThat(duplicatedPostcodes).containsExactly(CONFLICT_POSTCODE);
     }
 
     @Test
-    public void shouldNotMoveInvalidPostcodes() {
+    public void shouldNotMoveInvalidPostcodes() throws JsonProcessingException {
+        final String invalidPostcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
+        final var response = doPutRequest(
+            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            invalidPostcodesToMoveJson
+        );
+
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
     }
 
-    /************************************************************* Shared utility methods ***************************************************************/
+    /************************************************************* Shared utility methods. ***************************************************************/
 
     private List<String> getCurrentPostcodes(final String courtSlug) {
         final var response = doGetRequest(
