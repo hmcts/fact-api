@@ -121,8 +121,8 @@ VALUES ((SELECT id FROM public.search_court WHERE slug = 'social-security-and-ch
        );
 
 INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
-VALUES ('Scottish enquiries',
-        'Ymholiadau Albanaidd',
+VALUES ('Get an update (Scottish)',
+        'Cael diweddariad (Albanaidd)',
         'SSCSA-Glasgow@justice.gov.uk',
         '',
         '',
