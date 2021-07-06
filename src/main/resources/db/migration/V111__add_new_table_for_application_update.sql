@@ -40,7 +40,7 @@ ALTER TABLE ONLY public.search_courtapplicationupdate ALTER COLUMN id SET DEFAUL
 
 INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
 VALUES ('Online money claims',
-        'hawliadau arian ar-lein',
+        'Hawliadau arian ar-lein',
         '',
         'https://money-claim-queries.form.service.justice.gov.uk',
         'Contact HMCTS about a money claim',
@@ -76,7 +76,7 @@ VALUES ((SELECT id FROM public.search_court WHERE slug = 'county-court-money-cla
 
 INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
 VALUES ('Money claims online',
-        'hawliadau arian ar-lein',
+        'Hawliadau arian ar-lein',
         'CCBC@Justice.gov.uk',
         '',
         '',
