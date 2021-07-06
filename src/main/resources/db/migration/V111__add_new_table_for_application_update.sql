@@ -88,3 +88,214 @@ VALUES ((SELECT id FROM public.search_court WHERE slug = 'county-court-money-cla
         (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
         2
        );
+
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'sjs@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'single-justice-procedures-service-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'contactsscs@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'social-security-and-child-support-appeals-service-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Scottish enquiries',
+        'Ymholiadau Albanaidd',
+        'SSCSA-Glasgow@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'social-security-and-child-support-appeals-service-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        1
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Fee paid applications',
+        'Ceisiadau am dâl ffioedd',
+        'ccbcfees@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'county-court-business-centre-ccbc'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Centralised Attachment of Earnings (CAPS)',
+        'System Ganolog Atafaelu Enillion (CAPS)',
+        'caps@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'county-court-business-centre-ccbc'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        1
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Traffic Enforcement Centre (TEC)',
+        'Canolfan Gorfodi Rheoliadau Traffig (TEC)',
+        'tec@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'county-court-business-centre-ccbc'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        2
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('County Court Business Centre (CCBC)',
+        'Canolfan Fusnes y Llys Sirol (CCBC)',
+        'ccbc@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'county-court-business-centre-ccbc'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        3
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'newportdivorce@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'newport-south-wales-regional-divorce-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'NWRegionalDivorce@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'north-west-regional-divorce-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'sw-region-divorce@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'south-west-regional-divorce-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'divorceunitbse@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'bury-st-edmunds-regional-divorce-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'divorcecase@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'divorce-service-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'contactia@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'immigration-and-asylum-appeals-service-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
+
+INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
+VALUES ('Get an update',
+        'Cael diweddariad',
+        'contactprobate@justice.gov.uk',
+        '',
+        '',
+        ''
+       );
+
+INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
+VALUES ((SELECT id FROM public.search_court WHERE slug = 'probate-service-centre'),
+        (SELECT id FROM public.search_applicationupdate ORDER BY id DESC LIMIT 1),
+        0
+       );
