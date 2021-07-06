@@ -44,7 +44,7 @@ VALUES ('Online money claims',
         '',
         'https://money-claim-queries.form.service.justice.gov.uk',
         'Contact HMCTS about a money claim',
-        'Contact HMCTS about a money claim'
+        'Cysylltwch â HMCTS ynghylch hawliad arian'
        );
 
 INSERT INTO public.search_courtapplicationupdate(court_id, application_update_id, sort)
@@ -121,8 +121,8 @@ VALUES ((SELECT id FROM public.search_court WHERE slug = 'social-security-and-ch
        );
 
 INSERT INTO public.search_applicationupdate(type, type_cy, email, external_link, external_link_desc, external_link_desc_cy)
-VALUES ('Get an update (Scottish)',
-        'Cael diweddariad (Albanaidd)',
+VALUES ('Get an update (Scotland)',
+        'Cael diweddariad (Yr Alban)',
         'SSCSA-Glasgow@justice.gov.uk',
         '',
         '',
