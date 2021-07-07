@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
@@ -35,8 +36,8 @@ import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "image_file", "lat", "lon", "urgent_message",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
-    "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs", "dx_number", "service_area",
-    "in_person"})
+    "types", "emails", "contacts", "opening_times", "application_updates", "facilities", "addresses", "gbs", "dx_number",
+    "service_area", "in_person"})
 public class Court {
     private String name;
     private String slug;
@@ -57,6 +58,8 @@ public class Court {
     private List<Email> emails;
     private List<Contact> contacts;
     private List<OpeningTime> openingTimes;
+    @JsonProperty("application_updates")
+    private List<ApplicationUpdate> applicationUpdates;
     private List<Facility> facilities;
     private List<CourtAddress> addresses;
     private String gbs;
@@ -103,12 +106,20 @@ public class Court {
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtEmail::getEmail)
-            .map(Email::new).collect(toList());
+            .map(Email::new)
+            .collect(toList());
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtOpeningTime::getOpeningTime)
-            .map(OpeningTime::new).collect(toList());
+            .map(OpeningTime::new)
+            .collect(toList());
+        this.applicationUpdates = ofNullable(courtEntity.getCourtApplicationUpdates())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtApplicationUpdate::getApplicationUpdate)
+            .map(ApplicationUpdate::new)
+            .collect(toList());
         this.facilities = courtEntity
             .getFacilities()
             .stream()

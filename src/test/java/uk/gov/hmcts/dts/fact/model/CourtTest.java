@@ -6,9 +6,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
+import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
@@ -90,6 +92,8 @@ class CourtTest {
         courtOpeningTimeEntity.setOpeningTime(openingTimeEntity);
         courtEntity.setCourtOpeningTimes(singletonList(courtOpeningTimeEntity));
 
+        courtEntity.setCourtApplicationUpdates(singletonList(createCourtApplicationUpdateEntity()));
+
         courtEntity.setFacilities(createFacilities());
 
         courtEntity.setInfo("<p>Info on court</p>");
@@ -120,6 +124,12 @@ class CourtTest {
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
         assertEquals(courtEntity.getCourtContacts().get(0).getContact().getNumber(), court.getDxNumbers().get(0));
+
+        assertEquals(welsh ? courtEntity.getCourtApplicationUpdates().get(0).getApplicationUpdate().getTypeCy()
+                         : courtEntity.getCourtApplicationUpdates().get(0).getApplicationUpdate().getType(),
+                     court.getApplicationUpdates().get(0).getType());
+        assertEquals(courtEntity.getCourtApplicationUpdates().get(0).getApplicationUpdate().getEmail(),
+                     court.getApplicationUpdates().get(0).getEmail());
 
         final uk.gov.hmcts.dts.fact.model.Facility facility = court.getFacilities().get(0);
         assertEquals(
@@ -189,5 +199,16 @@ class CourtTest {
         facility.setName("Facility");
         facility.setFacilityType(facilityType);
         return facility;
+    }
+
+    private static CourtApplicationUpdate createCourtApplicationUpdateEntity() {
+        final ApplicationUpdate applicationUpdateEntity = new ApplicationUpdate();
+        applicationUpdateEntity.setType("application update type");
+        applicationUpdateEntity.setTypeCy("application update type cy");
+        applicationUpdateEntity.setEmail("test@test.com");
+        final CourtApplicationUpdate courtApplicationUpdateEntity = new CourtApplicationUpdate();
+        courtApplicationUpdateEntity.setApplicationUpdate(applicationUpdateEntity);
+        courtApplicationUpdateEntity.setSort(1);
+        return courtApplicationUpdateEntity;
     }
 }
