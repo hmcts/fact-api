@@ -38,4 +38,17 @@ public final class ElementFormatter {
     public static String formatOpeningTime(OpeningTime openingTime) {
         return format("Description: %s, Hours: %s", openingTime.getDescription(openingTime), openingTime.getHours());
     }
+
+    public static String formatApplicationUpdate(final ApplicationUpdate applicationUpdate) {
+        final StringBuffer formatted = new StringBuffer(format("Type: %s, ", applicationUpdate.getType()));
+        if (StringUtils.isNotBlank(applicationUpdate.getEmail())) {
+            return formatted.append(format("Email: %s", applicationUpdate.getEmail()))
+                .toString();
+        }
+        return formatted
+            .append(format("External link: %s, External link description: %s",
+                           applicationUpdate.getExternalLink(),
+                           applicationUpdate.getExternalLinkDescription()))
+            .toString();
+    }
 }

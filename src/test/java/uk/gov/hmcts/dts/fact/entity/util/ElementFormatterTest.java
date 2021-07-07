@@ -39,11 +39,21 @@ public class ElementFormatterTest {
     private static final String TEST_OPENING_ADMIN_DESCRIPTION_CY = "Opening admin description cy";
     private static final OpeningType TEST_OPENING_ADMIN_TYPE = new OpeningType(1, TEST_OPENING_ADMIN_DESCRIPTION, TEST_OPENING_ADMIN_DESCRIPTION_CY);
 
+    private static final String TEST_APPLICATION_UPDATE_TYPE = "Application update type";
+    private static final String TEST_APPLICATION_UPDATE_TYPE_CY = "Application update type cy";
+    private static final String TEST_EXTERNAL_LINK = "http://test.com/";
+    private static final String TEST_EXTERNAL_LINK_DESCRIPTION = "External link description";
+    private static final String TEST_EXTERNAL_LINK_DESCRIPTION_CY = "External link description cy";
+
     private static final String DESCRIPTION_PREFIX = "Description: ";
     private static final String EXPLANATION_PREFIX = "Explanation: ";
     private static final String NUMBER_PREFIX = "Number: ";
     private static final String ADDRESS_PREFIX = "Address: ";
     private static final String HOURS_PREFIX = "Hours: ";
+    private static final String TYPE_PREFIX = "Type: ";
+    private static final String EMAIL_PREFIX = "Email: ";
+    private static final String EXTERNAL_LINK_PREFIX = "External link: ";
+    private static final String EXTERNAL_LINK_DESCRIPTION_PREFIX = "External link description: ";
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForFormatContact() {
@@ -103,5 +113,32 @@ public class ElementFormatterTest {
 
         final String expectedResult = DESCRIPTION_PREFIX + TEST_OPENING_ADMIN_DESCRIPTION + ", " + HOURS_PREFIX + TEST_OPENING_HOURS;
         assertThat(ElementFormatter.formatOpeningTime(openingTime)).isEqualTo(expectedResult);
+    }
+
+    @Test
+    void testFormatApplicationUpdatesWithEmail() {
+        final ApplicationUpdate applicationUpdate = new ApplicationUpdate();
+        applicationUpdate.setType(TEST_APPLICATION_UPDATE_TYPE);
+        applicationUpdate.setTypeCy(TEST_APPLICATION_UPDATE_TYPE_CY);
+        applicationUpdate.setEmail(TEST_EMAIL_ADDRESS);
+
+        final String expectedResult = TYPE_PREFIX + TEST_APPLICATION_UPDATE_TYPE + ", "
+            + EMAIL_PREFIX + TEST_EMAIL_ADDRESS;
+        assertThat(ElementFormatter.formatApplicationUpdate(applicationUpdate)).isEqualTo(expectedResult);
+    }
+
+    @Test
+    void testFormatApplicationUpdatesWithExternalLink() {
+        final ApplicationUpdate applicationUpdate = new ApplicationUpdate();
+        applicationUpdate.setType(TEST_APPLICATION_UPDATE_TYPE);
+        applicationUpdate.setTypeCy(TEST_APPLICATION_UPDATE_TYPE_CY);
+        applicationUpdate.setExternalLink(TEST_EXTERNAL_LINK);
+        applicationUpdate.setExternalLinkDescription(TEST_EXTERNAL_LINK_DESCRIPTION);
+        applicationUpdate.setExternalLinkDescriptionCy(TEST_EXTERNAL_LINK_DESCRIPTION_CY);
+
+        final String expectedResult = TYPE_PREFIX + TEST_APPLICATION_UPDATE_TYPE + ", "
+            + EXTERNAL_LINK_PREFIX + TEST_EXTERNAL_LINK + ", "
+            + EXTERNAL_LINK_DESCRIPTION_PREFIX + TEST_EXTERNAL_LINK_DESCRIPTION;
+        assertThat(ElementFormatter.formatApplicationUpdate(applicationUpdate)).isEqualTo(expectedResult);
     }
 }
