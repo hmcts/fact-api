@@ -66,6 +66,15 @@ class CourtRepositoryTest {
     }
 
     @Test
+    void shouldFindApplicationUpdatesFromNotInPersonCourt() {
+        final Optional<Court> result = courtRepository.findBySlug("county-court-money-claims-centre-ccmcc");
+        assertThat(result).isPresent();
+        final List<CourtApplicationUpdate> courtApplicationUpdates = result.get().getCourtApplicationUpdates();
+        assertThat(courtApplicationUpdates).hasSizeGreaterThan(1);
+        assertThat(courtApplicationUpdates.get(0).getApplicationUpdate()).isNotNull();
+    }
+
+    @Test
     void shouldHandleEmptyString() {
         final Optional<Court> court = courtRepository.findBySlug("");
         assertThat(court).isEmpty();

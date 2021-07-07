@@ -72,6 +72,10 @@ public class Court {
     @OrderBy("sort")
     private List<CourtOpeningTime> courtOpeningTimes;
 
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
+    @OrderBy("sort")
+    private List<CourtApplicationUpdate> courtApplicationUpdates;
+
     @ManyToMany
     @JoinTable(
         name = "search_courtfacility",
