@@ -75,6 +75,15 @@ class CourtRepositoryTest {
     }
 
     @Test
+    void shouldFindAdditionalLinkInCourt() {
+        final Optional<Court> result = courtRepository.findBySlug("west-london-family-court");
+        assertThat(result).isPresent();
+        final List<CourtAdditionalLink> courtAdditionalLinks = result.get().getCourtAdditionalLinks();
+        assertThat(courtAdditionalLinks).isNotEmpty();
+        assertThat(courtAdditionalLinks.get(0).getAdditionalLink()).isNotNull();
+    }
+
+    @Test
     void shouldHandleEmptyString() {
         final Optional<Court> court = courtRepository.findBySlug("");
         assertThat(court).isEmpty();

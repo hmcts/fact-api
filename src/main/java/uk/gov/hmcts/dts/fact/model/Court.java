@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
 import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
@@ -37,7 +38,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "image_file", "lat", "lon", "urgent_message",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "application_updates", "facilities", "addresses", "gbs", "dx_number",
-    "service_area", "in_person"})
+    "service_area", "in_person", "access_scheme", "additional_links"})
 public class Court {
     private String name;
     private String slug;
@@ -69,6 +70,8 @@ public class Court {
     private List<String> serviceAreas;
     private Boolean inPerson;
     private Boolean accessScheme;
+    @JsonProperty("additional_links")
+    private List<AdditionalLink> additionalLinks;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
@@ -83,8 +86,25 @@ public class Court {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = courtEntity
-            .getAreasOfLaw()
+        this.areasOfLaw = getAreasOfLaw(courtEntity);
+        final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = getContactEntities(courtEntity);
+        this.contacts = getContacts(contacts);
+        this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
+        this.emails = getEmails(courtEntity);
+        this.openingTimes = getOpeningTimes(courtEntity);
+        this.applicationUpdates = getApplicationUpdates(courtEntity);
+        this.facilities = getFacilities(courtEntity);
+        this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
+        this.gbs = courtEntity.getGbs();
+        this.dxNumbers = getDxNumbers(contacts);
+        this.serviceAreas = courtEntity.getServiceAreas() == null ? null : getServiceAreas(courtEntity);
+        this.inPerson = courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
+        this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
+        this.additionalLinks = getAdditionalLink(courtEntity);
+    }
+
+    private List<AreaOfLaw> getAreasOfLaw(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return courtEntity.getAreasOfLaw()
             .stream()
             .map(areaOfLaw -> {
                 AreaOfLaw areaOfLawObj = new AreaOfLaw(areaOfLaw);
@@ -92,36 +112,59 @@ public class Court {
                 return areaOfLawObj;
             })
             .collect(toList());
-        final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = ofNullable(courtEntity.getCourtContacts())
+    }
+
+    private List<Contact> getContacts(final List<uk.gov.hmcts.dts.fact.entity.Contact> contactEntities) {
+        return contactEntities.stream()
+            .filter(NAME_IS_NOT_DX)
+            .map(Contact::new)
+            .collect(toList());
+    }
+
+    private List<String> getDxNumbers(final List<uk.gov.hmcts.dts.fact.entity.Contact> contactEntities) {
+        return contactEntities.stream()
+            .filter(NAME_IS_DX)
+            .map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
+            .collect(toList());
+    }
+
+    private List<uk.gov.hmcts.dts.fact.entity.Contact> getContactEntities(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return ofNullable(courtEntity.getCourtContacts())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtContact::getContact)
             .collect(toList());
-        this.contacts = contacts.stream()
-            .filter(NAME_IS_NOT_DX)
-            .map(Contact::new)
-            .collect(toList());
-        this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
-        this.emails = ofNullable(courtEntity.getCourtEmails())
+    }
+
+    private List<Email> getEmails(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return ofNullable(courtEntity.getCourtEmails())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtEmail::getEmail)
             .map(Email::new)
             .collect(toList());
-        this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
+    }
+
+    private List<OpeningTime> getOpeningTimes(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return ofNullable(courtEntity.getCourtOpeningTimes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtOpeningTime::getOpeningTime)
             .map(OpeningTime::new)
             .collect(toList());
-        this.applicationUpdates = ofNullable(courtEntity.getCourtApplicationUpdates())
+    }
+
+    private List<ApplicationUpdate> getApplicationUpdates(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return ofNullable(courtEntity.getCourtApplicationUpdates())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtApplicationUpdate::getApplicationUpdate)
             .map(ApplicationUpdate::new)
             .collect(toList());
-        this.facilities = courtEntity
-            .getFacilities()
+    }
+
+    private List<Facility> getFacilities(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return courtEntity.getFacilities()
             .stream()
             .map(facility -> {
                 final Facility facilityObj = new Facility(facility);
@@ -130,17 +173,21 @@ public class Court {
             })
             .sorted(comparingInt(Facility::getOrder))
             .collect(toList());
-        this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
-        this.gbs = courtEntity.getGbs();
-        this.dxNumbers = contacts.stream()
-            .filter(NAME_IS_DX)
-            .map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
-            .collect(toList());
-        this.serviceAreas = courtEntity.getServiceAreas() == null ? null : courtEntity.getServiceAreas()
+    }
+
+    private List<String> getServiceAreas(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return courtEntity.getServiceAreas()
             .stream()
             .map(ServiceArea::getName)
             .collect(toList());
-        this.inPerson = courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
-        this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
+    }
+
+    private List<AdditionalLink> getAdditionalLink(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return ofNullable(courtEntity.getCourtAdditionalLinks())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtAdditionalLink::getAdditionalLink)
+            .map(AdditionalLink::new)
+            .collect(toList());
     }
 }
