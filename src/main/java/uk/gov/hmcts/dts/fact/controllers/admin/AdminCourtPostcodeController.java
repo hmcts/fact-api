@@ -111,4 +111,36 @@ public class AdminCourtPostcodeController {
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }
+
+    /**
+     * This endpoint moves a list of postcodes from one court to another.
+     * @param sourceSlug The source slug is the court where the postcodes currently are
+     * @param destinationSlug The slug of the court where the postcodes will be moved to
+     * @param postcodes a list of postcodes to be moved
+     * @return A successful response if the courts have been moved from the source court to the destination court
+     *         and also return a list of strings that have been updated.
+     *         If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
+     *         If one of more input postcodes do not exist in the source court, return the not found postcodes and a '404' response.
+     *         If one of more input postcodes already exist in the destination court, return the conflicting postcodes and a '409' response.
+     */
+    @PutMapping(path = "/{sourceSlug}/{destinationSlug}/postcodes")
+    @ApiOperation("Move postcodes from one court to another")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = int.class),
+        @ApiResponse(code = 400, message = "Invalid postcodes", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Postcodes do not exist", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 409, message = "Postcodes already exist", response = String.class, responseContainer = "List")
+    })
+    @Role(FACT_SUPER_ADMIN)
+    public ResponseEntity<List<String>> movePostcodes(@PathVariable String sourceSlug,
+                                                      @PathVariable String destinationSlug,
+                                                      @RequestBody List<String> postcodes) {
+        final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
+        if (CollectionUtils.isEmpty(invalidPostcodes)) {
+            return ok(adminService.moveCourtPostcodes(sourceSlug, destinationSlug, postcodes));
+        }
+        throw new InvalidPostcodeException(invalidPostcodes);
+    }
 }

@@ -8,5 +8,7 @@ import java.util.List;
 public interface CourtPostcodeRepository extends JpaRepository<CourtPostcode, Integer> {
     List<CourtPostcode> findByCourtIdAndPostcode(Integer courtId, String postcode);
 
+    List<CourtPostcode> findByCourtIdAndPostcodeIn(Integer courtId, List<String> postcodes);
+
     List<CourtPostcode> deleteByCourtIdAndPostcode(Integer courtId, String postcode);
 }

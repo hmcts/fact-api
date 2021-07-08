@@ -10,8 +10,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -20,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CourtPostcodeRepositoryTest {
     private static final String TEST_MANCHESTER_COURT_SLUG = "manchester-civil-justice-centre-civil-and-family-courts";
     private static final String TEST_MANCHESTER_POSTCODE = "M11";
+    private static final String TEST_MANCHESTER_POSTCODE2 = "M12";
     private static final String TEST_BIRMINGHAM_POSTCODE = "B11";
     private static final String TEST_POSTCODE = "Z11AA";
 
@@ -43,6 +47,22 @@ public class CourtPostcodeRepositoryTest {
     void shouldRetrieveCourtPostcodeUsingAValidPostcodeOnly() {
         assertThat(courtPostcodeRepository.findByCourtIdAndPostcode(courtId, TEST_MANCHESTER_POSTCODE)).isNotEmpty();
         assertThat(courtPostcodeRepository.findByCourtIdAndPostcode(courtId, TEST_BIRMINGHAM_POSTCODE)).isEmpty();
+    }
+
+    @Test
+    void shouldRetrieveCourtPostcodeUsingAListOfValidPostcodes() {
+        final List<String> postcodesToCheck = asList(TEST_MANCHESTER_POSTCODE, TEST_MANCHESTER_POSTCODE2);
+        final List<CourtPostcode> results = courtPostcodeRepository.findByCourtIdAndPostcodeIn(courtId, postcodesToCheck);
+        assertThat(results.stream().map(CourtPostcode::getPostcode).collect(Collectors.toList()))
+            .containsExactlyInAnyOrderElementsOf(postcodesToCheck);
+    }
+
+    @Test
+    void shouldRetrieveValidCourtPostcodeOnlyUsingBothValidAndInvalidPostcodes() {
+        final List<String> postcodesToCheck = asList(TEST_MANCHESTER_POSTCODE, TEST_BIRMINGHAM_POSTCODE);
+        final List<CourtPostcode> results = courtPostcodeRepository.findByCourtIdAndPostcodeIn(courtId, postcodesToCheck);
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).getPostcode()).isEqualTo(TEST_MANCHESTER_POSTCODE);
     }
 
     @Test
