@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CourtReferenceTest {
     static Court courtEntity;
-    private static final Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+    private static final Timestamp CURRENT_TIME = new Timestamp(System.currentTimeMillis());
 
     @BeforeAll
     static void setUp() {
@@ -22,7 +22,7 @@ class CourtReferenceTest {
         courtEntity.setName("Name");
         courtEntity.setSlug("name-slug");
         courtEntity.setNameCy("Name in Welsh");
-        courtEntity.setUpdatedAt(currentTime);
+        courtEntity.setUpdatedAt(CURRENT_TIME);
         courtEntity.setDisplayed(true);
     }
 
@@ -38,7 +38,7 @@ class CourtReferenceTest {
         assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
         assertEquals("name-slug", court.getSlug());
         assertEquals(
-            new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(currentTime), court.getUpdatedAt());
+            new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(CURRENT_TIME), court.getUpdatedAt());
 
         LocaleContextHolder.resetLocaleContext();
     }
