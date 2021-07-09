@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -97,7 +98,7 @@ public class Court {
         this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.gbs = courtEntity.getGbs();
         this.dxNumbers = getDxNumbers(contacts);
-        this.serviceAreas = courtEntity.getServiceAreas() == null ? null : getServiceAreas(courtEntity);
+        this.serviceAreas = courtEntity.getServiceAreas() == null ? emptyList() : getServiceAreas(courtEntity);
         this.inPerson = courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
         this.additionalLinks = getAdditionalLink(courtEntity);

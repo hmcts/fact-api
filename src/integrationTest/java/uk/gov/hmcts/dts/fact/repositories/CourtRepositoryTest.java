@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +78,20 @@ class CourtRepositoryTest {
     @Test
     void shouldFindAdditionalLinkInCourt() {
         final Optional<Court> result = courtRepository.findBySlug("west-london-family-court");
-        assertThat(result).isPresent();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result).isPresent();
+
         final List<CourtAdditionalLink> courtAdditionalLinks = result.get().getCourtAdditionalLinks();
-        assertThat(courtAdditionalLinks).isNotEmpty();
-        assertThat(courtAdditionalLinks.get(0).getAdditionalLink()).isNotNull();
+        softly.assertThat(courtAdditionalLinks).isNotEmpty();
+
+        final AdditionalLink additionalLink = courtAdditionalLinks.get(0).getAdditionalLink();
+        softly.assertThat(additionalLink).isNotNull();
+        softly.assertThat(additionalLink.getUrl()).isNotNull();
+        softly.assertThat(additionalLink.getDescription()).isNotNull();
+        softly.assertThat(additionalLink.getDescriptionCy()).isNotNull();
+
+        softly.assertAll();
     }
 
     @Test

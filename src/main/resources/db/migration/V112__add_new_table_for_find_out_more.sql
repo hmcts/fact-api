@@ -1,7 +1,7 @@
 CREATE TABLE public.search_additionallink (
     id integer PRIMARY KEY NOT NULL,
-    url character varying(255),
-    description character varying(255),
+    url character varying(255) NOT NULL,
+    description character varying(255) NOT NULL,
     description_cy character varying(255)
 );
 
