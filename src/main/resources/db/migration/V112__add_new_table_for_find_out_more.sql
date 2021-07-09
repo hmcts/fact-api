@@ -38,7 +38,7 @@ ALTER TABLE ONLY public.search_courtadditionallink ALTER COLUMN id SET DEFAULT n
 INSERT INTO public.search_additionallink(url, description, description_cy)
 VALUES ('https://www.supportthroughcourt.org',
         'Support through court (Independent charity)',
-        'Support through court (Independent charity)'
+        'Support through court (Elusen annibynnol)'
        );
 
 INSERT INTO public.search_courtadditionallink(court_id, additional_link_id, sort)
