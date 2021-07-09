@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CourtReferenceTest {
     static Court courtEntity;
-    private static Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+    private static final Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
     @BeforeAll
     static void setUp() {
@@ -23,6 +23,7 @@ class CourtReferenceTest {
         courtEntity.setSlug("name-slug");
         courtEntity.setNameCy("Name in Welsh");
         courtEntity.setUpdatedAt(currentTime);
+        courtEntity.setDisplayed(true);
     }
 
     @ParameterizedTest
