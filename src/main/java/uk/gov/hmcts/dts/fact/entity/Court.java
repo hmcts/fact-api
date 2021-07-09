@@ -106,6 +106,10 @@ public class Court {
     @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
     private List<CourtPostcode> courtPostcodes;
 
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
+    @OrderBy("sort")
+    private List<CourtAdditionalLink> courtAdditionalLinks;
+
     public List<AreaOfLaw> getAreasOfLaw() {
         return ofNullable(areasOfLaw)
             .map(Collection::stream)
