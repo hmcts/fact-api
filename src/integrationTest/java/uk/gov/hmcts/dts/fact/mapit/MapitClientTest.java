@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
-//@Disabled("Need to investigate why Mapit Key not getting picked up")
+@Disabled("Need to investigate why Mapit Key not getting picked up")
 class MapitClientTest {
 
     @Autowired
