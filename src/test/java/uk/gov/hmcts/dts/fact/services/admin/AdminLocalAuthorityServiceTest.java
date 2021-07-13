@@ -66,8 +66,8 @@ public class AdminLocalAuthorityServiceTest {
     void updateShouldThrowNotFoundExceptionWhenLocalAuthorityDoesNotExist() {
         when(localAuthorityRepository.findById(900)).thenReturn(Optional.empty());
 
-        final LocalAuthority localAuthority = new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(900, "Test City Council");
-        assertThatThrownBy(() -> localAuthorityService.updateLocalAuthority(900, localAuthority))
+        assertThatThrownBy(() -> localAuthorityService
+            .updateLocalAuthority(900, new LocalAuthority(900, "Test City Council")))
             .isInstanceOf(NotFoundException.class);
 
         verify(localAuthorityRepository, never()).save(any());

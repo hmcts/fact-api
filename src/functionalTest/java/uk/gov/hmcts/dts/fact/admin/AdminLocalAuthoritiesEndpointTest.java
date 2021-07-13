@@ -21,6 +21,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
 
     private static final String LOCAL_AUTHORITIES_ENDPOINT = "/admin/localauthorities";
     private static final String GET_ALL_LOCAL_AUTHORITIES_ENDPOINT = LOCAL_AUTHORITIES_ENDPOINT + "/all";
+    private static final String BIRMINGHAM_CITY_COUNCIL = "Birmingham City Council";
 
     @Test
     public void shouldGetAllLocalAuthorities() {
@@ -61,7 +62,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldBeNotFoundForUpdateWhereLocalAuthorityDoesNotExist() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(9999999, "Birmingham City Council"));
+        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(9_999_999, BIRMINGHAM_CITY_COUNCIL));
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/9999999", Map.of(AUTHORIZATION, BEARER + superAdminToken), localAuthority);
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
@@ -83,21 +84,21 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenUpdatingLocalAuthority() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54321, "Birmingham City Council"));
+        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54_321, BIRMINGHAM_CITY_COUNCIL));
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321", localAuthority);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForUpdatingLocalAuthority() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54321, "Birmingham City Council"));
+        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54_321, BIRMINGHAM_CITY_COUNCIL));
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/12345", Map.of(AUTHORIZATION, BEARER + forbiddenToken), localAuthority);
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
     public void shouldBeForbiddenForAdminUpdatingLocalAuthority() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54321, "Birmingham City Council"));
+        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54_321, BIRMINGHAM_CITY_COUNCIL));
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321",  Map.of(AUTHORIZATION, BEARER + authenticatedToken), localAuthority);
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }

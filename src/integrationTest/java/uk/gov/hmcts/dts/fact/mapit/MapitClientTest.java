@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,14 +88,15 @@ class MapitClientTest {
 
     @Test
     void shouldReturnAreaInformationForValidLocalAuthorityName() {
-        final var mapitAreaInfo =
+        final Map<String, MapitArea> mapitAreaInfo =
             mapitClient.getMapitDataForLocalAuthorities("Birmingham City Council");
         assertThat(mapitAreaInfo.values().size()).isGreaterThan(0);
     }
 
     @Test
     void shouldReturnNoAreaInformationForInvalidLocalAuthorityName() {
-        final var mapitAreaInfo = mapitClient.getMapitDataForLocalAuthorities("Birm Council City");
+        final Map<String, MapitArea> mapitAreaInfo =
+            mapitClient.getMapitDataForLocalAuthorities("Birm Council City");
         assertThat(mapitAreaInfo.isEmpty()).isTrue();
     }
 }
