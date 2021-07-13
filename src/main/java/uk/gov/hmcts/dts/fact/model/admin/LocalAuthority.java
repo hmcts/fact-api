@@ -16,5 +16,4 @@ public class LocalAuthority {
         this.id = localAuthority.getId();
         this.name = localAuthority.getName();
     }
-
 }

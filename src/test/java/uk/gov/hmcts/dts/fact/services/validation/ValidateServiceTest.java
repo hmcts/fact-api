@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,6 +22,9 @@ public class ValidateServiceTest {
 
     @MockBean
     private PostcodeValidator postcodeValidator;
+
+    @MockBean
+    private LocalAuthorityValidator localAuthorityValidator;
 
     @Autowired
     private ValidationService validationService;
@@ -48,5 +52,17 @@ public class ValidateServiceTest {
         verify(postcodeValidator).postcodeDataExists("avalidpostcode");
         verify(postcodeValidator).postcodeDataExists("aninvalidpostcode");
         verify(postcodeValidator).postcodeDataExists("anotherinvalidpostcode");
+    }
+
+    @Test
+    public void testValidateWhenLocalAuthorityExists() {
+        when(localAuthorityValidator.localAuthorityExists(any())).thenReturn(true);
+        assertThat(validationService.validateLocalAuthority("Birmingham City Council")).isTrue();
+    }
+
+    @Test
+    public void testValidateWhenLocalAuthorityDoesNotExist() {
+        when(localAuthorityValidator.localAuthorityExists(any())).thenReturn(false);
+        assertThat(validationService.validateLocalAuthority("Brmgham Council")).isFalse();
     }
 }
