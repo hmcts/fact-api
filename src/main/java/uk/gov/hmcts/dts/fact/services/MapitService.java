@@ -56,7 +56,7 @@ public class MapitService {
         return Optional.empty();
     }
 
-    public Boolean LocalAuthorityExists(final String localAuthorityName) {
+    public Boolean localAuthorityExists(final String localAuthorityName) {
 
         if (StringUtils.isNotBlank(localAuthorityName)) {
             try {
