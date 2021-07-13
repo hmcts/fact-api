@@ -145,7 +145,8 @@ class MapitServiceTest {
     void localAuthorityExistsShouldReturnFalseForEmptyLocalAuthorityNames(String name) {
         assertThat(mapitService.localAuthorityExists(name)).isFalse();
 
-        // We shouldn't call the client if the name is null, empty or whitespace
+        // We don't need to call the client to validate the name if the name is
+        // null, empty or whitespace
         verify(mapitClient, never()).getMapitDataForLocalAuthorities(any());
     }
 
@@ -153,5 +154,17 @@ class MapitServiceTest {
     void localAuthorityExistsShouldReturnFalseForInvalidLocalAuthorityName() {
         when(mapitClient.getMapitDataForLocalAuthorities(any())).thenReturn(new LinkedHashMap<>());
         assertThat(mapitService.localAuthorityExists("Non existent")).isFalse();
+    }
+
+    @Test
+    void localAuthorityExistsShouldReturnFalseIfFeignExceptionThrown() {
+        final FeignException feignException = mock(FeignException.class);
+
+        when(mapitClient.getMapitDataForLocalAuthorities(any())).thenThrow(feignException);
+        when(feignException.status()).thenReturn(400);
+        when(feignException.getMessage()).thenReturn(RESPONSE_MESSAGE);
+
+        assertThat(mapitService.localAuthorityExists("Test Council")).isFalse();
+        verify(logger).warn("HTTP Status: {} Message: {}", 400, RESPONSE_MESSAGE, feignException);
     }
 }
