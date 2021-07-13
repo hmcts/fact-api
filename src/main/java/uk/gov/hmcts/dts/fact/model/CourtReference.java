@@ -18,11 +18,13 @@ public class CourtReference {
     private String slug;
     @JsonProperty("updated_at")
     private String updatedAt;
+    private boolean displayed;
 
     public CourtReference(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
         this.updatedAt = courtEntity.getUpdatedAt() == null
             ? null : new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
+        this.displayed = courtEntity.getDisplayed();
     }
 }
