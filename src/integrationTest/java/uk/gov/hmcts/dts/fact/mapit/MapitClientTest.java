@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
-@Disabled("Need to investigate why Mapit Key not getting picked up")
+//@Disabled("Need to investigate why Mapit Key not getting picked up")
 class MapitClientTest {
 
     @Autowired
@@ -83,5 +83,18 @@ class MapitClientTest {
         final Optional<String> localAuthority = mapitData.getLocalAuthority();
         assertThat(localAuthority.isPresent()).isEqualTo(true);
         assertThat(localAuthority.get()).isEqualTo("Pembrokeshire Council");
+    }
+
+    @Test
+    void shouldReturnAreaInformationForValidLocalAuthorityName() {
+        final var mapitAreaInfo =
+            mapitClient.getMapitDataForLocalAuthorities("Birmingham City Council");
+        assertThat(mapitAreaInfo.values().size()).isGreaterThan(0);
+    }
+
+    @Test
+    void shouldReturnNoAreaInformationForInvalidLocalAuthorityName() {
+        final var mapitAreaInfo = mapitClient.getMapitDataForLocalAuthorities("Birm Council City");
+        assertThat(mapitAreaInfo.isEmpty()).isTrue();
     }
 }

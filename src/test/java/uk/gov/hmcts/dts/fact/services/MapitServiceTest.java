@@ -3,14 +3,19 @@ package uk.gov.hmcts.dts.fact.services;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.mapit.MapitArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
+import java.util.LinkedHashMap;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -123,5 +128,30 @@ class MapitServiceTest {
 
         assertThat(result).isNotPresent();
         verifyNoInteractions(mapitClient);
+    }
+
+    @Test
+    void localAuthorityExistsShouldReturnTrueForValidLocalAuthorityNames() {
+        LinkedHashMap<String, MapitArea> mockAreaData = new LinkedHashMap<>();
+        mockAreaData.put("100", new MapitArea("100", "Birmingham City Council", "MTD"));
+        when(mapitClient.getMapitDataForLocalAuthorities(any())).thenReturn(mockAreaData);
+
+        assertThat(mapitService.LocalAuthorityExists("Birmingham City Council")).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", " " })
+    @NullSource
+    void localAuthorityExistsShouldReturnFalseForEmptyLocalAuthorityNames(String name) {
+        assertThat(mapitService.LocalAuthorityExists(name)).isFalse();
+
+        // We shouldn't call the client if the name is null, empty or whitespace
+        verify(mapitClient, never()).getMapitDataForLocalAuthorities(any());
+    }
+
+    @Test
+    void localAuthorityExistsShouldReturnFalseForInvalidLocalAuthorityName() {
+        when(mapitClient.getMapitDataForLocalAuthorities(any())).thenReturn(new LinkedHashMap<>());
+        assertThat(mapitService.LocalAuthorityExists("Non existent")).isFalse();
     }
 }
