@@ -22,4 +22,7 @@ public class AdditionalLink {
     private String description;
     @Column(name = "description_cy")
     private String descriptionCy;
+    @OneToOne()
+    @JoinColumn(name = "location_id")
+    private SidebarLocation location;
 }

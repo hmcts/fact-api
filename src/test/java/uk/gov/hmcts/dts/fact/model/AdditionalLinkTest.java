@@ -1,13 +1,13 @@
 package uk.gov.hmcts.dts.fact.model;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import uk.gov.hmcts.dts.fact.entity.SidebarLocation;
 
 import java.util.Locale;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AdditionalLinkTest {
     private static uk.gov.hmcts.dts.fact.entity.AdditionalLink entity = new uk.gov.hmcts.dts.fact.entity.AdditionalLink();
@@ -17,6 +17,7 @@ public class AdditionalLinkTest {
         entity.setUrl("https://test.com");
         entity.setDescription("Description");
         entity.setDescriptionCy("Description cy");
+        entity.setLocation(new SidebarLocation(1, "Find out more about"));
     }
 
     @ParameterizedTest
@@ -27,8 +28,12 @@ public class AdditionalLinkTest {
             LocaleContextHolder.setLocale(locale);
         }
         AdditionalLink additionalLink = new AdditionalLink(entity);
-        assertThat(additionalLink.getUrl()).isEqualTo(entity.getUrl());
-        assertThat(additionalLink.getDescription()).isEqualTo(welsh ? entity.getDescriptionCy() : entity.getDescription());
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(additionalLink.getUrl()).isEqualTo(entity.getUrl());
+        softly.assertThat(additionalLink.getDescription()).isEqualTo(welsh ? entity.getDescriptionCy() : entity.getDescription());
+        softly.assertThat(additionalLink.getLocation()).isEqualTo(entity.getLocation().getName());
+        softly.assertAll();
 
         LocaleContextHolder.resetLocaleContext();
     }
