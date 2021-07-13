@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,18 +28,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminCourtPostcodeController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtPostcodeControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String POSTCODE_PATH = "/postcodes";
     private static final String TEST_SLUG = "test-slug";
+    private static final String SOURCE_SLUG = "source-slug";
+    private static final String DESTINATION_SLUG = "destination-slug";
     private static final String NOT_FOUND_PREFIX = "Not found: ";
     private static final String TEST_POSTCODE1 = "M11AA";
     private static final String TEST_POSTCODE2 = "M11BB";
     private static final String TEST_POSTCODE3 = "M11CC";
     private static final List<String> TEST_POSTCODES = Arrays.asList(TEST_POSTCODE1, TEST_POSTCODE2, TEST_POSTCODE3);
-    private static final List<String> INVALID_POSTCODE = Collections.singletonList(TEST_POSTCODE3);
-    private static final List<String> EXISTED_POSTCODE = Collections.singletonList(TEST_POSTCODE2);
-    private static final List<String> NOT_FOUND_POSTCODE = Collections.singletonList(TEST_POSTCODE1);
+    private static final List<String> INVALID_POSTCODE = singletonList(TEST_POSTCODE3);
+    private static final List<String> EXISTED_POSTCODE = singletonList(TEST_POSTCODE2);
+    private static final List<String> NOT_FOUND_POSTCODE = singletonList(TEST_POSTCODE1);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -192,5 +196,84 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(content().json(expectedNotFoundPostcodesJson));
 
         verify(adminService, never()).deleteCourtPostcodes(any(), any());
+    }
+
+    @Test
+    void movePostcodesShouldReturnOkStatus() throws Exception {
+        when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(Collections.emptyList());
+        when(adminService.moveCourtPostcodes(SOURCE_SLUG, DESTINATION_SLUG, TEST_POSTCODES)).thenReturn(TEST_POSTCODES);
+
+        mockMvc.perform(put(BASE_PATH + "/" + SOURCE_SLUG + "/" + DESTINATION_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedPostcodeJson));
+    }
+
+    @Test
+    void movePostcodesShouldReturnNotFoundForUnknownSourceCourt() throws Exception {
+        doThrow(new NotFoundException(SOURCE_SLUG))
+            .when(adminService).moveCourtPostcodes(SOURCE_SLUG, DESTINATION_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(put(BASE_PATH + "/" + SOURCE_SLUG + "/" + DESTINATION_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string(NOT_FOUND_PREFIX + SOURCE_SLUG));
+    }
+
+    @Test
+    void movePostcodesShouldReturnNotFoundForUnknownDestinationCourt() throws Exception {
+        doThrow(new NotFoundException(DESTINATION_SLUG))
+            .when(adminService).moveCourtPostcodes(SOURCE_SLUG, DESTINATION_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(put(BASE_PATH + "/" + SOURCE_SLUG + "/" + DESTINATION_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string(NOT_FOUND_PREFIX + DESTINATION_SLUG));
+    }
+
+    @Test
+    void movePostcodesShouldReturnBadRequestForInvalidPostcodes() throws Exception {
+        when(validationService.validatePostcodes(TEST_POSTCODES)).thenReturn(INVALID_POSTCODE);
+
+        mockMvc.perform(put(BASE_PATH + "/" + SOURCE_SLUG + "/" + DESTINATION_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().json(expectedInvalidPostcodesJson));
+
+        verify(adminService, never()).moveCourtPostcodes(SOURCE_SLUG, DESTINATION_SLUG, TEST_POSTCODES);
+    }
+
+    @Test
+    void movePostcodesShouldReturnNotFoundIfPostcodeDoesNotExistInSourceCourt() throws Exception {
+        doThrow(new PostcodeNotFoundException(NOT_FOUND_POSTCODE))
+            .when(adminService).moveCourtPostcodes(SOURCE_SLUG, DESTINATION_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(put(BASE_PATH + "/" + SOURCE_SLUG + "/" + DESTINATION_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().json(expectedNotFoundPostcodesJson));
+    }
+
+    @Test
+    void movePostcodesShouldReturnConflictIfPostcodeExistedInDestinationCourt() throws Exception {
+        doThrow(new PostcodeExistedException(EXISTED_POSTCODE))
+            .when(adminService).moveCourtPostcodes(SOURCE_SLUG, DESTINATION_SLUG, TEST_POSTCODES);
+
+        mockMvc.perform(put(BASE_PATH + "/" + SOURCE_SLUG + "/" + DESTINATION_SLUG + POSTCODE_PATH)
+                            .content(expectedPostcodeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict())
+            .andExpect(content().json(expectedExistedPostcodesJson));
     }
 }
