@@ -17,7 +17,7 @@ public class LocalAuthorityValidator {
     }
 
     public boolean localAuthorityExists(final String localAuthorityName) {
-        Boolean localAuthorityExists = this.mapitService.LocalAuthorityExists(localAuthorityName);
+        Boolean localAuthorityExists = this.mapitService.localAuthorityExists(localAuthorityName);
 
         log.info((localAuthorityExists
                      ? "Mapit data exists for local authority: "

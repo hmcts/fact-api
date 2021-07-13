@@ -136,14 +136,14 @@ class MapitServiceTest {
         mockAreaData.put("100", new MapitArea("100", "Birmingham City Council", "MTD"));
         when(mapitClient.getMapitDataForLocalAuthorities(any())).thenReturn(mockAreaData);
 
-        assertThat(mapitService.LocalAuthorityExists("Birmingham City Council")).isTrue();
+        assertThat(mapitService.localAuthorityExists("Birmingham City Council")).isTrue();
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "", " " })
     @NullSource
     void localAuthorityExistsShouldReturnFalseForEmptyLocalAuthorityNames(String name) {
-        assertThat(mapitService.LocalAuthorityExists(name)).isFalse();
+        assertThat(mapitService.localAuthorityExists(name)).isFalse();
 
         // We shouldn't call the client if the name is null, empty or whitespace
         verify(mapitClient, never()).getMapitDataForLocalAuthorities(any());
@@ -152,6 +152,6 @@ class MapitServiceTest {
     @Test
     void localAuthorityExistsShouldReturnFalseForInvalidLocalAuthorityName() {
         when(mapitClient.getMapitDataForLocalAuthorities(any())).thenReturn(new LinkedHashMap<>());
-        assertThat(mapitService.LocalAuthorityExists("Non existent")).isFalse();
+        assertThat(mapitService.localAuthorityExists("Non existent")).isFalse();
     }
 }
