@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import uk.gov.hmcts.dts.fact.entity.AdditionalLink;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
@@ -93,7 +95,7 @@ class CourtTest {
         courtEntity.setCourtOpeningTimes(singletonList(courtOpeningTimeEntity));
 
         courtEntity.setCourtApplicationUpdates(singletonList(createCourtApplicationUpdateEntity()));
-
+        courtEntity.setCourtAdditionalLinks(createCourtAdditionalLinks());
         courtEntity.setFacilities(createFacilities());
 
         courtEntity.setInfo("<p>Info on court</p>");
@@ -108,6 +110,7 @@ class CourtTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
+    @SuppressWarnings("PMD.NPathComplexity")
     void testCreationOfCourt(boolean welsh) {
         if (welsh) {
             Locale locale = new Locale("cy");
@@ -130,6 +133,14 @@ class CourtTest {
                      court.getApplicationUpdates().get(0).getType());
         assertEquals(courtEntity.getCourtApplicationUpdates().get(0).getApplicationUpdate().getEmail(),
                      court.getApplicationUpdates().get(0).getEmail());
+
+        assertEquals(2, court.getAdditionalLinks().size());
+        assertEquals(courtEntity.getCourtAdditionalLinks().get(0).getAdditionalLink().getUrl(),
+                     court.getAdditionalLinks().get(0).getUrl());
+        assertEquals(welsh ? courtEntity.getCourtAdditionalLinks().get(0).getAdditionalLink().getDescriptionCy()
+                         : courtEntity.getCourtAdditionalLinks().get(0).getAdditionalLink().getDescription(),
+                     court.getAdditionalLinks().get(0).getDescription());
+
 
         final uk.gov.hmcts.dts.fact.model.Facility facility = court.getFacilities().get(0);
         assertEquals(
@@ -210,5 +221,27 @@ class CourtTest {
         courtApplicationUpdateEntity.setApplicationUpdate(applicationUpdateEntity);
         courtApplicationUpdateEntity.setSort(1);
         return courtApplicationUpdateEntity;
+    }
+
+    private static List<CourtAdditionalLink> createCourtAdditionalLinks() {
+        final AdditionalLink additionalLink1 = new AdditionalLink();
+        additionalLink1.setUrl("tester.com");
+        additionalLink1.setDescription("tester");
+        additionalLink1.setDescriptionCy("tester cy");
+
+        final CourtAdditionalLink courtAdditionalLink1 = new CourtAdditionalLink();
+        courtAdditionalLink1.setAdditionalLink(additionalLink1);
+        courtAdditionalLink1.setSort(0);
+
+        final AdditionalLink additionalLink2 = new AdditionalLink();
+        additionalLink2.setUrl("developer.com");
+        additionalLink2.setDescription("developer");
+        additionalLink2.setDescriptionCy("developer cy");
+
+        final CourtAdditionalLink courtAdditionalLink2 = new CourtAdditionalLink();
+        courtAdditionalLink2.setAdditionalLink(additionalLink2);
+        courtAdditionalLink2.setSort(0);
+
+        return asList(courtAdditionalLink1, courtAdditionalLink2);
     }
 }
