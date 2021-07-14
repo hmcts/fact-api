@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.model;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -17,7 +18,6 @@ public class AdditionalLinkTest {
         entity.setUrl("https://test.com");
         entity.setDescription("Description");
         entity.setDescriptionCy("Description cy");
-        entity.setLocation(new SidebarLocation(1, "Find out more about"));
     }
 
     @ParameterizedTest
@@ -27,6 +27,7 @@ public class AdditionalLinkTest {
             Locale locale = new Locale("cy");
             LocaleContextHolder.setLocale(locale);
         }
+        entity.setLocation(new SidebarLocation(1, "Find out more about"));
         AdditionalLink additionalLink = new AdditionalLink(entity);
 
         final SoftAssertions softly = new SoftAssertions();
@@ -36,5 +37,30 @@ public class AdditionalLinkTest {
         softly.assertAll();
 
         LocaleContextHolder.resetLocaleContext();
+    }
+
+    @Test
+    void testCreationWhenSidebarLocationIsNull() {
+        entity.setLocation(null);
+        AdditionalLink additionalLink = new AdditionalLink(entity);
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(additionalLink.getUrl()).isEqualTo(entity.getUrl());
+        softly.assertThat(additionalLink.getDescription()).isEqualTo(entity.getDescription());
+        softly.assertThat(additionalLink.getLocation()).isEmpty();
+        softly.assertAll();
+    }
+
+    @Test
+    void testCreationWhenSidebarLocationNameIsEmpty() {
+        entity.setLocation(new SidebarLocation(1, ""));
+        AdditionalLink additionalLink = new AdditionalLink(entity);
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(additionalLink.getUrl()).isEqualTo(entity.getUrl());
+        softly.assertThat(additionalLink.getDescription()).isEqualTo(entity.getDescription());
+        softly.assertThat(additionalLink.getLocation()).isEmpty();
+        softly.assertAll();
+
     }
 }
