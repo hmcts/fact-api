@@ -19,10 +19,6 @@ public class AdditionalLink {
         this.description = chooseString(additionalLink.getDescriptionCy(), additionalLink.getDescription());
 
         final SidebarLocation location = additionalLink.getLocation();
-        if (location != null && StringUtils.isNotBlank(location.getName())) {
-            this.location = location.getName();
-        } else {
-            this.location = "";
-        }
+        this.location = StringUtils.isBlank(location.getName()) ? "" : location.getName();
     }
 }

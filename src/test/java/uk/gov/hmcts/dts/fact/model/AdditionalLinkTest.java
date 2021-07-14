@@ -40,18 +40,6 @@ public class AdditionalLinkTest {
     }
 
     @Test
-    void testCreationWhenSidebarLocationIsNull() {
-        entity.setLocation(null);
-        AdditionalLink additionalLink = new AdditionalLink(entity);
-
-        final SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(additionalLink.getUrl()).isEqualTo(entity.getUrl());
-        softly.assertThat(additionalLink.getDescription()).isEqualTo(entity.getDescription());
-        softly.assertThat(additionalLink.getLocation()).isEmpty();
-        softly.assertAll();
-    }
-
-    @Test
     void testCreationWhenSidebarLocationNameIsEmpty() {
         entity.setLocation(new SidebarLocation(1, ""));
         AdditionalLink additionalLink = new AdditionalLink(entity);
@@ -61,6 +49,5 @@ public class AdditionalLinkTest {
         softly.assertThat(additionalLink.getDescription()).isEqualTo(entity.getDescription());
         softly.assertThat(additionalLink.getLocation()).isEmpty();
         softly.assertAll();
-
     }
 }
