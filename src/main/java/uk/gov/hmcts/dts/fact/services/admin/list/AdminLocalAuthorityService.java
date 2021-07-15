@@ -1,8 +1,9 @@
-package uk.gov.hmcts.dts.fact.services.admin;
+package uk.gov.hmcts.dts.fact.services.admin.list;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
@@ -30,7 +31,7 @@ public class AdminLocalAuthorityService {
     }
 
     @Transactional(rollbackFor = {RuntimeException.class})
-    public LocalAuthority updateLocalAuthority(final Integer localAuthorityId, final LocalAuthority localAuthorityDetails) {
+    public LocalAuthority updateLocalAuthority(final Integer localAuthorityId, final String name) {
 
         // Ensure entity with given ID exists
         final Optional<uk.gov.hmcts.dts.fact.entity.LocalAuthority> localAuthorityEntity = localAuthorityRepository.findById(localAuthorityId);
@@ -38,9 +39,24 @@ public class AdminLocalAuthorityService {
             throw new NotFoundException(localAuthorityId.toString());
         }
 
+        // Ensure local authority does not already exist
+        if (localAuthorityAlreadyExists(localAuthorityId, name)) {
+            throw new DuplicatedListItemException("Local Authority already exists: " + name);
+        }
+
         // Change local authority entity name
         final uk.gov.hmcts.dts.fact.entity.LocalAuthority existingEntity = localAuthorityEntity.get();
-        existingEntity.setName(localAuthorityDetails.getName());
+        existingEntity.setName(name);
         return new LocalAuthority(localAuthorityRepository.save(existingEntity));
+    }
+
+    private Boolean localAuthorityAlreadyExists(final Integer localAuthorityId, final String localAuthorityName) {
+        List<uk.gov.hmcts.dts.fact.entity.LocalAuthority> existingLocalAuthorities = localAuthorityRepository.findByName(localAuthorityName);
+
+        if (!existingLocalAuthorities.isEmpty()) {
+            return existingLocalAuthorities.stream().anyMatch(la -> la.getId() != localAuthorityId);
+        }
+
+        return false;
     }
 }

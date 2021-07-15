@@ -1,17 +1,16 @@
-package uk.gov.hmcts.dts.fact.controllers.admin;
+package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.dts.fact.config.security.Role;
+import uk.gov.hmcts.dts.fact.exception.IllegalListItemException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
-import uk.gov.hmcts.dts.fact.services.admin.AdminLocalAuthorityService;
+import uk.gov.hmcts.dts.fact.services.admin.list.AdminLocalAuthorityService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
 import java.util.List;
@@ -49,15 +48,15 @@ public class AdminLocalAuthoritiesController {
         @ApiResponse(code = 400, message = "Invalid Local Authority", response = String.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Local Authority not found")
+        @ApiResponse(code = 404, message = "Local Authority not found"),
+        @ApiResponse(code = 409, message = "Local Authority already exists")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity<LocalAuthority> updateLocalAuthority(@PathVariable Integer localAuthorityId, @RequestBody LocalAuthority localAuthority) {
-        if (localAuthority != null && validationService.validateLocalAuthority(localAuthority.getName())) {
-            return ok(adminLocalAuthorityService.updateLocalAuthority(localAuthorityId, localAuthority));
-        } else {
-            String error = "Invalid Local Authority: " + ((localAuthority == null) ? "null" : localAuthority.getName());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, error);
+    public ResponseEntity<LocalAuthority> updateLocalAuthority(@PathVariable Integer localAuthorityId, @RequestBody String name) {
+        if (name == null || !validationService.validateLocalAuthority(name)) {
+            throw new IllegalListItemException("Invalid Local Authority: " + ((name == null) ? "null" : name));
         }
+
+        return ok(adminLocalAuthorityService.updateLocalAuthority(localAuthorityId, name));
     }
 }

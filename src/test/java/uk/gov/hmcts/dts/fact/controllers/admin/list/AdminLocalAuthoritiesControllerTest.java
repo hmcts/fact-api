@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.controllers.admin;
+package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -8,9 +8,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
-import uk.gov.hmcts.dts.fact.services.admin.AdminLocalAuthorityService;
+import uk.gov.hmcts.dts.fact.services.admin.list.AdminLocalAuthorityService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
 import java.util.Arrays;
@@ -29,6 +30,7 @@ public class AdminLocalAuthoritiesControllerTest {
 
     private static final String BASE_PATH = "/admin/localauthorities";
     private static final String GET_ALL_PATH = "/all";
+    private static final String BIRMINGHAM_CITY_COUNCIL = "Birmingham City Council";
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -59,35 +61,30 @@ public class AdminLocalAuthoritiesControllerTest {
 
     @Test
     void shouldUpdateLocalAuthorityWhenLocalAuthorityNameIsValid() throws Exception {
-        final LocalAuthority localAuthority = new LocalAuthority(1234, "Birmingham City Council");
-
-        when(localAuthorityService.updateLocalAuthority(eq(1234), any(LocalAuthority.class))).thenReturn(localAuthority);
+        final LocalAuthority responseLocalAuthority = new LocalAuthority(1234, BIRMINGHAM_CITY_COUNCIL);
+        when(localAuthorityService.updateLocalAuthority(eq(1234), anyString())).thenReturn(responseLocalAuthority);
         when(validationService.validateLocalAuthority(any())).thenReturn(true);
 
-        final String requestJson = new ObjectMapper().writeValueAsString(localAuthority);
+        final String expectedResponseJson = new ObjectMapper().writeValueAsString(responseLocalAuthority);
 
         mockMvc.perform(put(BASE_PATH + "/1234")
-                            .content(requestJson)
+                            .content(BIRMINGHAM_CITY_COUNCIL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().json(requestJson));
+            .andExpect(content().json(expectedResponseJson));
 
-        verify(localAuthorityService, times(1))
-            .updateLocalAuthority(1234, localAuthority);
+        verify(localAuthorityService, times(1)).updateLocalAuthority(1234, BIRMINGHAM_CITY_COUNCIL);
     }
 
     @Test
     void updateShouldReturnNotFoundIfLocalAuthorityDoesNotExist() throws Exception {
-        when(localAuthorityService.updateLocalAuthority(eq(321), any(LocalAuthority.class)))
+        when(localAuthorityService.updateLocalAuthority(eq(321), anyString()))
             .thenThrow(new NotFoundException("Local Authority Not Found"));
         when(validationService.validateLocalAuthority(any())).thenReturn(true);
 
-        final String requestJson = new ObjectMapper()
-            .writeValueAsString(new LocalAuthority(321, "Birmingham City Council"));
-
         mockMvc.perform(put(BASE_PATH + "/321")
-                            .content(requestJson)
+                            .content(BIRMINGHAM_CITY_COUNCIL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
@@ -95,16 +92,27 @@ public class AdminLocalAuthoritiesControllerTest {
 
     @Test
     void updateShouldReturnBadRequestIfLocalAuthorityNameInvalid() throws Exception {
-        when(localAuthorityService.updateLocalAuthority(eq(321), any(LocalAuthority.class))).thenReturn(new LocalAuthority());
+        when(localAuthorityService.updateLocalAuthority(eq(321), anyString()))
+            .thenReturn(new LocalAuthority(1234, BIRMINGHAM_CITY_COUNCIL));
         when(validationService.validateLocalAuthority(any())).thenReturn(false);
 
-        final String requestJson = new ObjectMapper()
-            .writeValueAsString(new LocalAuthority(321, "Brimgham Council"));
-
         mockMvc.perform(put(BASE_PATH + "/321")
-                            .content(requestJson)
+                            .content("Brimgham Council")
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateShouldReturnConflictIfLocalAuthorityAlreadyExists() throws Exception {
+        when(localAuthorityService.updateLocalAuthority(eq(321), anyString()))
+            .thenThrow(new DuplicatedListItemException("Local authority already exists."));
+        when(validationService.validateLocalAuthority(any())).thenReturn(true);
+
+        mockMvc.perform(put(BASE_PATH + "/321")
+                            .content(BIRMINGHAM_CITY_COUNCIL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
     }
 }

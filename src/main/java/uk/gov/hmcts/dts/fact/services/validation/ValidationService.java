@@ -36,6 +36,6 @@ public class ValidationService {
      * @return A boolean indicating if the local authority name is valid or not
      */
     public boolean validateLocalAuthority(String localAuthorityName) {
-        return mapitlocalAuthorityValidator.localAuthorityExists(localAuthorityName);
+        return mapitlocalAuthorityValidator.localAuthorityNameIsValid(localAuthorityName);
     }
 }
