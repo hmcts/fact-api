@@ -15,7 +15,8 @@ import uk.gov.hmcts.dts.fact.mapit.MapitArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
-import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -132,9 +133,8 @@ class MapitServiceTest {
 
     @Test
     void localAuthorityExistsShouldReturnTrueForValidLocalAuthorityNames() {
-        LinkedHashMap<String, MapitArea> mockAreaData = new LinkedHashMap<>();
-        mockAreaData.put("100", new MapitArea("100", "Birmingham City Council", "MTD"));
-        when(mapitClient.getMapitDataForLocalAuthorities(any())).thenReturn(mockAreaData);
+        when(mapitClient.getMapitDataForLocalAuthorities(any(), any())).thenReturn(
+            Map.of("100", new MapitArea("100", "Birmingham City Council", "MTD")));
 
         assertThat(mapitService.localAuthorityExists("Birmingham City Council")).isTrue();
     }
@@ -147,12 +147,12 @@ class MapitServiceTest {
 
         // We don't need to call the client to validate the name if the name is
         // null, empty or whitespace
-        verify(mapitClient, never()).getMapitDataForLocalAuthorities(any());
+        verifyNoInteractions(mapitClient);
     }
 
     @Test
     void localAuthorityExistsShouldReturnFalseForInvalidLocalAuthorityName() {
-        when(mapitClient.getMapitDataForLocalAuthorities(any())).thenReturn(new LinkedHashMap<>());
+        when(mapitClient.getMapitDataForLocalAuthorities(any(), any())).thenReturn(Collections.emptyMap());
         assertThat(mapitService.localAuthorityExists("Non existent")).isFalse();
     }
 
@@ -160,11 +160,11 @@ class MapitServiceTest {
     void localAuthorityExistsShouldReturnFalseIfFeignExceptionThrown() {
         final FeignException feignException = mock(FeignException.class);
 
-        when(mapitClient.getMapitDataForLocalAuthorities(any())).thenThrow(feignException);
+        when(mapitClient.getMapitDataForLocalAuthorities(any(), any())).thenThrow(feignException);
         when(feignException.status()).thenReturn(400);
         when(feignException.getMessage()).thenReturn(RESPONSE_MESSAGE);
 
         assertThat(mapitService.localAuthorityExists("Test Council")).isFalse();
-        verify(logger).warn("HTTP Status: {} Message: {}", 400, RESPONSE_MESSAGE, feignException);
+        verify(logger).warn("Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}", 400, RESPONSE_MESSAGE, feignException);
     }
 }

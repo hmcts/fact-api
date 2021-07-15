@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Disabled("Need to investigate why Mapit Key not getting picked up")
 class MapitClientTest {
 
+    private static final String MAPIT_AREA_TYPE_PARAMS = "MTD,UTA,LBO,CTY";
+
     @Autowired
     private MapitClient mapitClient;
 
@@ -89,14 +91,14 @@ class MapitClientTest {
     @Test
     void shouldReturnAreaInformationForValidLocalAuthorityName() {
         final Map<String, MapitArea> mapitAreaInfo =
-            mapitClient.getMapitDataForLocalAuthorities("Birmingham City Council");
-        assertThat(mapitAreaInfo.values().size()).isGreaterThan(0);
+            mapitClient.getMapitDataForLocalAuthorities("Birmingham City Council", MAPIT_AREA_TYPE_PARAMS);
+        assertThat(mapitAreaInfo).isNotEmpty();
     }
 
     @Test
     void shouldReturnNoAreaInformationForInvalidLocalAuthorityName() {
         final Map<String, MapitArea> mapitAreaInfo =
-            mapitClient.getMapitDataForLocalAuthorities("Birm Council City");
-        assertThat(mapitAreaInfo.isEmpty()).isTrue();
+            mapitClient.getMapitDataForLocalAuthorities("Birm Council City", MAPIT_AREA_TYPE_PARAMS);
+        assertThat(mapitAreaInfo).isEmpty();
     }
 }

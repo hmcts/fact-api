@@ -30,7 +30,7 @@ public class AdminLocalAuthorityService {
             .collect(toList());
     }
 
-    @Transactional(rollbackFor = {RuntimeException.class})
+    @Transactional
     public LocalAuthority updateLocalAuthority(final Integer localAuthorityId, final String name) {
 
         // Ensure entity with given ID exists
@@ -39,10 +39,8 @@ public class AdminLocalAuthorityService {
             throw new NotFoundException(localAuthorityId.toString());
         }
 
-        // Ensure local authority does not already exist
-        if (localAuthorityAlreadyExists(localAuthorityId, name)) {
-            throw new DuplicatedListItemException("Local Authority already exists: " + name);
-        }
+        // Ensure we are not going to create a duplicate of an existing local authority
+        checkIfLocalAuthorityAlreadyExists(localAuthorityId, name);
 
         // Change local authority entity name
         final uk.gov.hmcts.dts.fact.entity.LocalAuthority existingEntity = localAuthorityEntity.get();
@@ -50,13 +48,12 @@ public class AdminLocalAuthorityService {
         return new LocalAuthority(localAuthorityRepository.save(existingEntity));
     }
 
-    private Boolean localAuthorityAlreadyExists(final Integer localAuthorityId, final String localAuthorityName) {
+    private void checkIfLocalAuthorityAlreadyExists(final Integer localAuthorityId, final String localAuthorityName) {
         List<uk.gov.hmcts.dts.fact.entity.LocalAuthority> existingLocalAuthorities = localAuthorityRepository.findByName(localAuthorityName);
 
-        if (!existingLocalAuthorities.isEmpty()) {
-            return existingLocalAuthorities.stream().anyMatch(la -> la.getId() != localAuthorityId);
+        if (!existingLocalAuthorities.isEmpty()
+            && existingLocalAuthorities.stream().anyMatch(la -> la.getId() != localAuthorityId)) {
+            throw new DuplicatedListItemException("Local Authority already exists: " + localAuthorityName);
         }
-
-        return false;
     }
 }
