@@ -74,7 +74,7 @@ public class AdminLocalAuthoritiesControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(expectedResponseJson));
 
-        verify(localAuthorityService, times(1)).updateLocalAuthority(1234, BIRMINGHAM_CITY_COUNCIL);
+        verify(localAuthorityService).updateLocalAuthority(1234, BIRMINGHAM_CITY_COUNCIL);
     }
 
     @Test

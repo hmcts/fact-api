@@ -60,12 +60,12 @@ public class MapitService {
 
         if (StringUtils.isNotBlank(localAuthorityName)) {
             try {
-                return mapitClient.getMapitDataForLocalAuthorities(localAuthorityName)
+                return mapitClient.getMapitDataForLocalAuthorities(localAuthorityName, "MTD,UTA,LBO,CTY")
                     .values()
                     .stream()
                     .anyMatch(la -> la.getName().equalsIgnoreCase(localAuthorityName));
             } catch (final FeignException ex) {
-                logger.warn("HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
+                logger.warn("Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
                 return false;
             }
         }
