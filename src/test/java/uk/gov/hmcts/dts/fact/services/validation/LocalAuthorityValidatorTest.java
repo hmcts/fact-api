@@ -26,12 +26,12 @@ public class LocalAuthorityValidatorTest {
     @Test
     public void testWhenLocalAuthorityIsValid() {
         when(mockMapitService.localAuthorityExists(Mockito.anyString())).thenReturn(true);
-        assertTrue(localAuthorityValidator.localAuthorityExists("Birmingham City Council"));
+        assertTrue(localAuthorityValidator.localAuthorityNameIsValid("Birmingham City Council"));
     }
 
     @Test
-    public void testIfPostcodesAreValid() {
+    public void testWhenLocalAuthorityIsInvalid() {
         when(mockMapitService.localAuthorityExists(Mockito.anyString())).thenReturn(false);
-        assertFalse(localAuthorityValidator.localAuthorityExists("Brnimgham City Councl"));
+        assertFalse(localAuthorityValidator.localAuthorityNameIsValid("Brnimgham City Councl"));
     }
 }

@@ -1,6 +1,5 @@
-package uk.gov.hmcts.dts.fact.admin;
+package uk.gov.hmcts.dts.fact.admin.list;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +21,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     private static final String LOCAL_AUTHORITIES_ENDPOINT = "/admin/localauthorities";
     private static final String GET_ALL_LOCAL_AUTHORITIES_ENDPOINT = LOCAL_AUTHORITIES_ENDPOINT + "/all";
     private static final String BIRMINGHAM_CITY_COUNCIL = "Birmingham City Council";
+    private static final String NON_EXISTENT_LOCAL_AUTHORITY = "Briminghm Council";
 
     @Test
     public void shouldGetAllLocalAuthorities() {
@@ -45,7 +45,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateExistingLocalAuthority() throws JsonProcessingException {
+    public void shouldUpdateExistingLocalAuthority() {
         // Get all local authorities
         final Response getResponse = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         final List<LocalAuthority> localAuthorities = getResponse.body().jsonPath().getList(".", LocalAuthority.class);
@@ -54,52 +54,69 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
         // Edit second local authority
         final LocalAuthority secondLocalAuthority = localAuthorities.get(1);
         final String path = LOCAL_AUTHORITIES_ENDPOINT + "/" + secondLocalAuthority.getId();
-        final Response response = doPutRequest(path, Map.of(AUTHORIZATION, BEARER + superAdminToken), objectMapper().writeValueAsString(secondLocalAuthority));
+        final Response response = doPutRequest(path, Map.of(AUTHORIZATION, BEARER + superAdminToken), secondLocalAuthority.getName());
         final LocalAuthority updatedLocalAuthority = response.as(LocalAuthority.class);
         assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedLocalAuthority.getName()).isEqualTo(secondLocalAuthority.getName());
     }
 
     @Test
-    public void shouldBeNotFoundForUpdateWhereLocalAuthorityDoesNotExist() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(9_999_999, BIRMINGHAM_CITY_COUNCIL));
-        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/9999999", Map.of(AUTHORIZATION, BEARER + superAdminToken), localAuthority);
+    public void shouldBeConflictForUpdateWhenLocalAuthorityAlreadyExists() {
+        // Get all local authorities
+        final Response getResponse = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken));
+        final List<LocalAuthority> localAuthorities = getResponse.body().jsonPath().getList(".", LocalAuthority.class);
+        assertThat(localAuthorities).hasSizeGreaterThan(1);
+
+        // Attempt to edit second local authority to be same as first local authority
+        final LocalAuthority firstLocalAuthority = localAuthorities.get(0);
+        final LocalAuthority secondLocalAuthority = localAuthorities.get(1);
+
+        final String path = LOCAL_AUTHORITIES_ENDPOINT + "/" + secondLocalAuthority.getId();
+        final Response response = doPutRequest(path, Map.of(AUTHORIZATION, BEARER + superAdminToken), firstLocalAuthority.getName());
+
+        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
+    }
+
+    @Test
+    public void shouldBeNotFoundForUpdateWhereLocalAuthorityDoesNotExist() {
+        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/9999999",
+                                               Map.of(AUTHORIZATION, BEARER + superAdminToken),
+                                               BIRMINGHAM_CITY_COUNCIL);
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
     @Test
-    public void shouldBeBadRequestForUpdateLocalAuthorityToInvalidName() throws JsonProcessingException {
+    public void shouldBeBadRequestForUpdateLocalAuthorityToInvalidName() {
         // Get all local authorities
         final Response getResponse = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         final List<LocalAuthority> localAuthorities = getResponse.body().jsonPath().getList(".", LocalAuthority.class);
         assertThat(localAuthorities).hasSizeGreaterThan(1);
 
         // Attempt to edit existing valid local authority to have an invalid name
-        final LocalAuthority secondLocalAuthority = localAuthorities.get(1);
-        final String invalidRequestBody = objectMapper().writeValueAsString(new LocalAuthority(secondLocalAuthority.getId(), "Briminghm Council"));
-        final String path = String.format("%s/%s", LOCAL_AUTHORITIES_ENDPOINT, secondLocalAuthority.getId());
-        final Response response = doPutRequest(path, Map.of(AUTHORIZATION, BEARER + superAdminToken), invalidRequestBody);
+        final String path = String.format("%s/%s", LOCAL_AUTHORITIES_ENDPOINT, localAuthorities.get(1).getId());
+        final Response response = doPutRequest(path, Map.of(AUTHORIZATION, BEARER + superAdminToken), NON_EXISTENT_LOCAL_AUTHORITY);
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingLocalAuthority() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54_321, BIRMINGHAM_CITY_COUNCIL));
-        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321", localAuthority);
+    public void shouldRequireATokenWhenUpdatingLocalAuthority() {
+        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321", BIRMINGHAM_CITY_COUNCIL);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingLocalAuthority() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54_321, BIRMINGHAM_CITY_COUNCIL));
-        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/12345", Map.of(AUTHORIZATION, BEARER + forbiddenToken), localAuthority);
+    public void shouldBeForbiddenForUpdatingLocalAuthority() {
+        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/12345",
+                                               Map.of(AUTHORIZATION, BEARER + forbiddenToken),
+                                               BIRMINGHAM_CITY_COUNCIL);
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldBeForbiddenForAdminUpdatingLocalAuthority() throws JsonProcessingException {
-        final String localAuthority = objectMapper().writeValueAsString(new LocalAuthority(54_321, BIRMINGHAM_CITY_COUNCIL));
-        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321",  Map.of(AUTHORIZATION, BEARER + authenticatedToken), localAuthority);
+    public void shouldBeForbiddenForAdminUpdatingLocalAuthority() {
+        final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321",
+                                               Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                               BIRMINGHAM_CITY_COUNCIL);
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 }

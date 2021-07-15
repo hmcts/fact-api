@@ -1,4 +1,4 @@
-package uk.gov.hmcts.dts.fact.services.admin;
+package uk.gov.hmcts.dts.fact.services.admin.list;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +59,7 @@ public class AdminLocalAuthorityServiceTest {
         when(localAuthorityRepository.save(any(uk.gov.hmcts.dts.fact.entity.LocalAuthority.class)))
             .thenAnswer((Answer<uk.gov.hmcts.dts.fact.entity.LocalAuthority>) invocation -> invocation.getArgument(0));
 
-        assertThat(localAuthorityService.updateLocalAuthority(localAuthority.getId(), localAuthority)).isEqualTo(localAuthority);
+        assertThat(localAuthorityService.updateLocalAuthority(localAuthority.getId(), localAuthority.getName())).isEqualTo(localAuthority);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class AdminLocalAuthorityServiceTest {
         when(localAuthorityRepository.findById(900)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> localAuthorityService
-            .updateLocalAuthority(900, new LocalAuthority(900, "Test City Council")))
+            .updateLocalAuthority(900,"Test City Council"))
             .isInstanceOf(NotFoundException.class);
 
         verify(localAuthorityRepository, never()).save(any());

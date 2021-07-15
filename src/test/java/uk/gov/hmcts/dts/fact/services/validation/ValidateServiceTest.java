@@ -55,14 +55,14 @@ public class ValidateServiceTest {
     }
 
     @Test
-    public void testValidateWhenLocalAuthorityExists() {
-        when(localAuthorityValidator.localAuthorityExists(any())).thenReturn(true);
+    public void testValidateWhenLocalAuthorityIsValid() {
+        when(localAuthorityValidator.localAuthorityNameIsValid(any())).thenReturn(true);
         assertThat(validationService.validateLocalAuthority("Birmingham City Council")).isTrue();
     }
 
     @Test
-    public void testValidateWhenLocalAuthorityDoesNotExist() {
-        when(localAuthorityValidator.localAuthorityExists(any())).thenReturn(false);
+    public void testValidateWhenLocalAuthorityIsInvalid() {
+        when(localAuthorityValidator.localAuthorityNameIsValid(any())).thenReturn(false);
         assertThat(validationService.validateLocalAuthority("Brmgham Council")).isFalse();
     }
 }

@@ -15,8 +15,6 @@ public interface MapitClient {
     @GetMapping("${mapit.endpoint.postcode-search}/partial/{postcode}")
     MapitData getMapitDataWithPartial(@PathVariable("postcode") String postcode);
 
-    // This can be narrowed to specific types using 'type' query parameter in future e.g. ?types=MTD,MTW
-    // https://mapit.mysociety.org/docs/#api-multiple_areas
-    @GetMapping("${mapit.endpoint.area-search}/{area}")
+    @GetMapping("${mapit.endpoint.area-search}/{area}?types=MTD,UTA,LBO,CTY")
     Map<String, MapitArea> getMapitDataForLocalAuthorities(@PathVariable("area") String namePrefix);
 }

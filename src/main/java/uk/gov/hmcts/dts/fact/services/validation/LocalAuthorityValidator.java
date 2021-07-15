@@ -16,12 +16,12 @@ public class LocalAuthorityValidator {
         this.mapitService = mapitService;
     }
 
-    public boolean localAuthorityExists(final String localAuthorityName) {
+    public boolean localAuthorityNameIsValid(final String localAuthorityName) {
         Boolean localAuthorityExists = this.mapitService.localAuthorityExists(localAuthorityName);
 
         log.info((localAuthorityExists
-                     ? "Mapit data exists for local authority: "
-                     : "Mapit data does not exist for local authority: ") + localAuthorityName);
+            ? "Mapit data exists for local authority: "
+            : "Mapit data does not exist for local authority: ") + localAuthorityName);
 
         return localAuthorityExists;
     }
