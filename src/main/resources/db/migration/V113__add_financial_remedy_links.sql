@@ -32,7 +32,7 @@ WHERE description = 'Support through court (Independent charity)';
 -- Not-in-person courts
 INSERT INTO public.search_additionallink(url, description, location_id)
 VALUES ('https://www.gov.uk/money-property-when-relationship-ends',
-        'Financial Remedy',
+        'If you are making an application to settle your finances following a divorce (Financial Remedy), please refer to the guidance found here',
         (SELECT id FROM public.admin_sidebarlocation where name = 'Find out more about')
        );
 
