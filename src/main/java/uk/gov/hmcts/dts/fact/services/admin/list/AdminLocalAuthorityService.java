@@ -52,7 +52,7 @@ public class AdminLocalAuthorityService {
         List<uk.gov.hmcts.dts.fact.entity.LocalAuthority> existingLocalAuthorities = localAuthorityRepository.findByName(localAuthorityName);
 
         if (!existingLocalAuthorities.isEmpty()
-            && existingLocalAuthorities.stream().anyMatch(la -> la.getId() != localAuthorityId)) {
+            && existingLocalAuthorities.stream().anyMatch(la -> !la.getId().equals(localAuthorityId))) {
             throw new DuplicatedListItemException("Local Authority already exists: " + localAuthorityName);
         }
     }
