@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 @SpringBootTest
 @Disabled("Need to investigate why Mapit Key not getting picked up")
 class MapitClientTest {
+
+    private static final String MAPIT_AREA_TYPE_PARAMS = "MTD,UTA,LBO,CTY";
 
     @Autowired
     private MapitClient mapitClient;
@@ -83,5 +86,19 @@ class MapitClientTest {
         final Optional<String> localAuthority = mapitData.getLocalAuthority();
         assertThat(localAuthority.isPresent()).isEqualTo(true);
         assertThat(localAuthority.get()).isEqualTo("Pembrokeshire Council");
+    }
+
+    @Test
+    void shouldReturnAreaInformationForValidLocalAuthorityName() {
+        final Map<String, MapitArea> mapitAreaInfo =
+            mapitClient.getMapitDataForLocalAuthorities("Birmingham City Council", MAPIT_AREA_TYPE_PARAMS);
+        assertThat(mapitAreaInfo).isNotEmpty();
+    }
+
+    @Test
+    void shouldReturnNoAreaInformationForInvalidLocalAuthorityName() {
+        final Map<String, MapitArea> mapitAreaInfo =
+            mapitClient.getMapitDataForLocalAuthorities("Birm Council City", MAPIT_AREA_TYPE_PARAMS);
+        assertThat(mapitAreaInfo).isEmpty();
     }
 }
