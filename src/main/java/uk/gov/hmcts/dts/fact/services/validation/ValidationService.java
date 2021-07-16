@@ -11,10 +11,12 @@ import static java.util.stream.Collectors.toList;
 public class ValidationService {
 
     private final PostcodeValidator mapitPostcodeValidator;
+    private final LocalAuthorityValidator mapitlocalAuthorityValidator;
 
     @Autowired
-    public ValidationService(PostcodeValidator mapitPostcodeValidator) {
+    public ValidationService(PostcodeValidator mapitPostcodeValidator, LocalAuthorityValidator mapitLocalAuthorityValidator) {
         this.mapitPostcodeValidator = mapitPostcodeValidator;
+        this.mapitlocalAuthorityValidator = mapitLocalAuthorityValidator;
     }
 
     /**
@@ -26,5 +28,14 @@ public class ValidationService {
         return postcodes.stream()
             .filter(postcode -> !mapitPostcodeValidator.postcodeDataExists(postcode.replaceAll("\\s+","")))
             .collect(toList());
+    }
+
+    /**
+     * Validates that the given local authority name exists as a local authority.
+     * @param localAuthorityName The local authority name
+     * @return A boolean indicating if the local authority name is valid or not
+     */
+    public boolean validateLocalAuthority(final String localAuthorityName) {
+        return mapitlocalAuthorityValidator.localAuthorityNameIsValid(localAuthorityName);
     }
 }

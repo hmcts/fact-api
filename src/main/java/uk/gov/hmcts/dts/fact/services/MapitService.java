@@ -55,4 +55,21 @@ public class MapitService {
 
         return Optional.empty();
     }
+
+    public Boolean localAuthorityExists(final String localAuthorityName) {
+
+        if (StringUtils.isNotBlank(localAuthorityName)) {
+            try {
+                return mapitClient.getMapitDataForLocalAuthorities(localAuthorityName, "MTD,UTA,LBO,CTY")
+                    .values()
+                    .stream()
+                    .anyMatch(la -> la.getName().equalsIgnoreCase(localAuthorityName));
+            } catch (final FeignException ex) {
+                logger.warn("Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
+                return false;
+            }
+        }
+
+        return false;
+    }
 }
