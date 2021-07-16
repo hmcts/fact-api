@@ -30,9 +30,10 @@ SET description = 'Support Through Court (Independent charity)',
 WHERE description = 'Support through court (Independent charity)';
 
 -- Not-in-person courts
-INSERT INTO public.search_additionallink(url, description, location_id)
+INSERT INTO public.search_additionallink(url, description, description_cy, location_id)
 VALUES ('https://www.gov.uk/money-property-when-relationship-ends',
         'If you are making an application to settle your finances following a divorce (Financial Remedy), please refer to the guidance found here',
+        'Os ydych chi’n gwneud cais i setlo eich materion ariannol yn dilyn ysgariad (Rhwymedi Ariannol), cyfeiriwch at y cyfarwyddyd sydd ar gael yma',
         (SELECT id FROM public.admin_sidebarlocation where name = 'Find out more about')
        );
 
@@ -59,9 +60,10 @@ VALUES ((SELECT id FROM public.search_court WHERE slug = 'bury-st-edmunds-region
        );
 
 -- In-person courts
-INSERT INTO public.search_additionallink(url, description, location_id)
+INSERT INTO public.search_additionallink(url, description, description_cy, location_id)
 VALUES ('https://www.gov.uk/money-property-when-relationship-ends',
         'Financial Remedy',
+        'Rhwymedi Ariannol',
         (SELECT id FROM public.admin_sidebarlocation where name = 'This location handles')
        );
 
