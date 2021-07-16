@@ -175,7 +175,7 @@ dependencyManagement {
       entry 'guava'
     }
     //CVE-2021-29425
-    dependencySet(group: 'commons-io', version: '2.10.0') {
+    dependencySet(group: 'commons-io', version: '2.11.0') {
       entry 'commons-io'
     }
   }
@@ -206,6 +206,16 @@ ext.libraries = [
 ]
 
 dependencies {
+  implementation('org.apache.tomcat.embed:tomcat-embed-core') {
+    version {
+      strictly '9.0.48'
+    }
+  }
+  implementation('org.apache.tomcat.embed:tomcat-embed-websocket') {
+    version {
+      strictly '9.0.48'
+    }
+  }
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'

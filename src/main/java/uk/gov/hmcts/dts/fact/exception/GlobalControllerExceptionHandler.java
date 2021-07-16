@@ -38,4 +38,14 @@ public class GlobalControllerExceptionHandler {
     ResponseEntity<List<String>> postcodeNotFoundExceptionHandler(final PostcodeNotFoundException ex) {
         return new ResponseEntity<>(ex.getInvalidPostcodes(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(DuplicatedListItemException.class)
+    ResponseEntity<String> duplicateListItemExceptionHandler(final DuplicatedListItemException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(IllegalListItemException.class)
+    ResponseEntity<String> illegalListItemExceptionHandler(final IllegalListItemException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

@@ -3,14 +3,20 @@ package uk.gov.hmcts.dts.fact.services;
 import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.mapit.MapitArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -123,5 +129,42 @@ class MapitServiceTest {
 
         assertThat(result).isNotPresent();
         verifyNoInteractions(mapitClient);
+    }
+
+    @Test
+    void localAuthorityExistsShouldReturnTrueForValidLocalAuthorityNames() {
+        when(mapitClient.getMapitDataForLocalAuthorities(any(), any())).thenReturn(
+            Map.of("100", new MapitArea("100", "Birmingham City Council", "MTD")));
+
+        assertThat(mapitService.localAuthorityExists("Birmingham City Council")).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", " " })
+    @NullSource
+    void localAuthorityExistsShouldReturnFalseForEmptyLocalAuthorityNames(String name) {
+        assertThat(mapitService.localAuthorityExists(name)).isFalse();
+
+        // We don't need to call the client to validate the name if the name is
+        // null, empty or whitespace
+        verifyNoInteractions(mapitClient);
+    }
+
+    @Test
+    void localAuthorityExistsShouldReturnFalseForInvalidLocalAuthorityName() {
+        when(mapitClient.getMapitDataForLocalAuthorities(any(), any())).thenReturn(Collections.emptyMap());
+        assertThat(mapitService.localAuthorityExists("Non existent")).isFalse();
+    }
+
+    @Test
+    void localAuthorityExistsShouldReturnFalseIfFeignExceptionThrown() {
+        final FeignException feignException = mock(FeignException.class);
+
+        when(mapitClient.getMapitDataForLocalAuthorities(any(), any())).thenThrow(feignException);
+        when(feignException.status()).thenReturn(400);
+        when(feignException.getMessage()).thenReturn(RESPONSE_MESSAGE);
+
+        assertThat(mapitService.localAuthorityExists("Test Council")).isFalse();
+        verify(logger).warn("Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}", 400, RESPONSE_MESSAGE, feignException);
     }
 }
