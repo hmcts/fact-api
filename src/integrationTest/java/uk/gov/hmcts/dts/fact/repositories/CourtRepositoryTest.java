@@ -90,6 +90,7 @@ class CourtRepositoryTest {
         softly.assertThat(additionalLink.getUrl()).isNotNull();
         softly.assertThat(additionalLink.getDescription()).isNotNull();
         softly.assertThat(additionalLink.getDescriptionCy()).isNotNull();
+        softly.assertThat(additionalLink.getLocation().getName()).isNotNull();
 
         softly.assertAll();
     }
