@@ -23,6 +23,7 @@ import uk.gov.hmcts.dts.fact.entity.FacilityType;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.entity.SidebarLocation;
 
 import java.util.List;
 import java.util.Locale;
@@ -110,14 +111,13 @@ class CourtTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
-    @SuppressWarnings("PMD.NPathComplexity")
     void testCreationOfCourt(boolean welsh) {
         if (welsh) {
             Locale locale = new Locale("cy");
             LocaleContextHolder.setLocale(locale);
         }
 
-        Court court = new Court(courtEntity);
+        final Court court = new Court(courtEntity);
         assertEquals(welsh ? "Name in Welsh" : "Name", court.getName());
         assertEquals(welsh ? "<p>Info on court in Welsh</p>" : "<p>Info on court</p>", court.getInfo());
         assertEquals(welsh ? "Directions in Welsh" : "Directions", court.getDirections());
@@ -134,13 +134,7 @@ class CourtTest {
         assertEquals(courtEntity.getCourtApplicationUpdates().get(0).getApplicationUpdate().getEmail(),
                      court.getApplicationUpdates().get(0).getEmail());
 
-        assertEquals(2, court.getAdditionalLinks().size());
-        assertEquals(courtEntity.getCourtAdditionalLinks().get(0).getAdditionalLink().getUrl(),
-                     court.getAdditionalLinks().get(0).getUrl());
-        assertEquals(welsh ? courtEntity.getCourtAdditionalLinks().get(0).getAdditionalLink().getDescriptionCy()
-                         : courtEntity.getCourtAdditionalLinks().get(0).getAdditionalLink().getDescription(),
-                     court.getAdditionalLinks().get(0).getDescription());
-
+        verifyAdditionalLinks(court.getAdditionalLinks(), courtEntity, welsh);
 
         final uk.gov.hmcts.dts.fact.model.Facility facility = court.getFacilities().get(0);
         assertEquals(
@@ -188,6 +182,22 @@ class CourtTest {
         assertEquals("Visit us", court.getAddresses().get(0).getAddressType());
     }
 
+    private void verifyAdditionalLinks(final List<uk.gov.hmcts.dts.fact.model.AdditionalLink> additionalLinks, final uk.gov.hmcts.dts.fact.entity.Court courtEntity, final boolean welsh) {
+        assertEquals(2, additionalLinks.size());
+
+        final AdditionalLink entityAdditionalLinks1 = courtEntity.getCourtAdditionalLinks().get(0).getAdditionalLink();
+        assertEquals(entityAdditionalLinks1.getUrl(), additionalLinks.get(0).getUrl());
+        assertEquals(welsh ? entityAdditionalLinks1.getDescriptionCy() : entityAdditionalLinks1.getDescription(),
+                     additionalLinks.get(0).getDescription());
+        assertEquals(entityAdditionalLinks1.getLocation().getName(), additionalLinks.get(0).getLocation());
+
+        final AdditionalLink entityAdditionalLinks2 = courtEntity.getCourtAdditionalLinks().get(1).getAdditionalLink();
+        assertEquals(entityAdditionalLinks2.getUrl(), additionalLinks.get(1).getUrl());
+        assertEquals(welsh ? entityAdditionalLinks2.getDescriptionCy() : entityAdditionalLinks2.getDescription(),
+                     additionalLinks.get(1).getDescription());
+        assertEquals(entityAdditionalLinks2.getLocation().getName(), additionalLinks.get(1).getLocation());
+    }
+
     private static List<Facility> createFacilities() {
         return asList(
             createFacilityWithOrderOf(10),
@@ -228,6 +238,7 @@ class CourtTest {
         additionalLink1.setUrl("tester.com");
         additionalLink1.setDescription("tester");
         additionalLink1.setDescriptionCy("tester cy");
+        additionalLink1.setLocation(new SidebarLocation(1, "location 1"));
 
         final CourtAdditionalLink courtAdditionalLink1 = new CourtAdditionalLink();
         courtAdditionalLink1.setAdditionalLink(additionalLink1);
@@ -237,6 +248,7 @@ class CourtTest {
         additionalLink2.setUrl("developer.com");
         additionalLink2.setDescription("developer");
         additionalLink2.setDescriptionCy("developer cy");
+        additionalLink2.setLocation(new SidebarLocation(1, "location 2"));
 
         final CourtAdditionalLink courtAdditionalLink2 = new CourtAdditionalLink();
         courtAdditionalLink2.setAdditionalLink(additionalLink2);
