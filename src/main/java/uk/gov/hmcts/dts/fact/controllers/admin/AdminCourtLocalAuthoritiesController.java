@@ -28,14 +28,6 @@ public class AdminCourtLocalAuthoritiesController {
         this.adminCourtLocalAuthoritiesService = adminService;
     }
 
-    //returns all local authorities
-    @GetMapping(path = "/localAuthorities")
-    @ApiOperation("Return all local authorities")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<LocalAuthority>> getAllLocalAuthorities() {
-        return ok(adminCourtLocalAuthoritiesService.getAllLocalAuthorities());
-    }
-
     //returns local authorities for a court by passing in a court slug ,area of law and returning local authorities list
     @GetMapping(path = "/{slug}/{areaOfLaw}/localAuthorities")
     @ApiOperation("Find a courts local authorities by slug")

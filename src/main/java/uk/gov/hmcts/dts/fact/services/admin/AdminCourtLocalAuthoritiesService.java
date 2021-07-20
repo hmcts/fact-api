@@ -10,7 +10,6 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
-import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
 
 import java.util.List;
 
@@ -19,23 +18,13 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class AdminCourtLocalAuthoritiesService {
 
-    private final LocalAuthorityRepository localAuthorityRepository;
     private final CourtRepository courtRepository;
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
 
-
     @Autowired
-    public AdminCourtLocalAuthoritiesService(final LocalAuthorityRepository localAuthorityRepository, final CourtRepository courtRepository, final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository) {
-        this.localAuthorityRepository = localAuthorityRepository;
+    public AdminCourtLocalAuthoritiesService(final CourtRepository courtRepository, final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository) {
         this.courtRepository = courtRepository;
         this.courtLocalAuthorityAreaOfLawRepository = courtLocalAuthorityAreaOfLawRepository;
-    }
-
-    public List<LocalAuthority> getAllLocalAuthorities() {
-        return localAuthorityRepository.findAll()
-            .stream()
-            .map(LocalAuthority::new)
-            .collect(toList());
     }
 
     public List<LocalAuthority> getCourtLocalAuthoritiesBySlugAndAreaOfLaw(final String slug, final String areaOfLaw) {
