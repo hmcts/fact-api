@@ -13,7 +13,6 @@ import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
-import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = AdminCourtLocalAuthoritiesService.class)
 public class AdminCourtLocalAuthoritiesServiceTest {
 
-
     private static final int LOCAL_AUTHORITIES_COUNT = 3;
     private static final List<CourtLocalAuthorityAreaOfLaw> COURT_LOCAL_AUTHORITIES = new ArrayList<>();
     private static final List<AreaOfLaw> COURT_AREAS_OF_LAW = new ArrayList<>();
@@ -39,21 +37,10 @@ public class AdminCourtLocalAuthoritiesServiceTest {
     private static final String NON_EXISTENT_AREA_OF_LAW = "Non existent area of law";
     private static final String NOT_FOUND = "Not found: ";
 
-    private static final List<LocalAuthority> EXPECTED_LOCAL_AUTHORITIES_ENTITY = Arrays.asList(
-        new LocalAuthority(1,"test1"),
-        new LocalAuthority(2,"test2"),
-        new LocalAuthority(3,"test3")
-    );
-
-
     private static final List<uk.gov.hmcts.dts.fact.model.admin.LocalAuthority> EXPECTED_COURT_LOCAL_AUTHORITIES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(1,"localAuthority1"),
         new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(2,"localAuthority2"),
         new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(3,"localAuthority3"));
-
-
-    @MockBean
-    private LocalAuthorityRepository localAuthorityRepository;
 
     @MockBean
     private CourtRepository courtRepository;
@@ -106,17 +93,6 @@ public class AdminCourtLocalAuthoritiesServiceTest {
         COURT_LOCAL_AUTHORITIES.add(courtLocalAuthorityAreaOfLaw1);
         COURT_LOCAL_AUTHORITIES.add(courtLocalAuthorityAreaOfLaw2);
         COURT_LOCAL_AUTHORITIES.add(courtLocalAuthorityAreaOfLaw3);
-
-    }
-
-    @Test
-    void shouldReturnAllLocalAuthorities() {
-        when(localAuthorityRepository.findAll()).thenReturn(EXPECTED_LOCAL_AUTHORITIES_ENTITY);
-
-        assertThat(adminCourtLocalAuthoritiesService.getAllLocalAuthorities())
-            .hasSize(LOCAL_AUTHORITIES_COUNT)
-            .first()
-            .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.LocalAuthority.class);
     }
 
     @Test
@@ -130,7 +106,6 @@ public class AdminCourtLocalAuthoritiesServiceTest {
             .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.LocalAuthority.class);
     }
 
-
     @Test
     void shouldReturnNotFoundWhenRetrievingCourtLocalAuthoritiesForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
@@ -139,7 +114,6 @@ public class AdminCourtLocalAuthoritiesServiceTest {
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
-
 
     @Test
     void shouldUpdateCourtLocalAuthorities() {
@@ -174,7 +148,4 @@ public class AdminCourtLocalAuthoritiesServiceTest {
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + NON_EXISTENT_AREA_OF_LAW);
     }
-
-
-
 }
