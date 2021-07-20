@@ -27,10 +27,8 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 public class AdminCourtLocalAuthoritiesControllerTest {
 
-
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/localAuthorities";
-    private static final String CHILD_PATH_ALL = "localAuthorities";
     private static final String TEST_SLUG = "unknownSlug";
     private static final String TEST_AREA_OF_LAW = "AreaOfLaw";
     private static final String SLASH = "/";
@@ -44,18 +42,6 @@ public class AdminCourtLocalAuthoritiesControllerTest {
 
     @MockBean
     private AdminCourtLocalAuthoritiesService adminService;
-
-    @Test
-    void shouldReturnAllLocalAuthorities() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_LOCAL_AUTHORITIES_PATH);
-        final List<LocalAuthority> localAuthorities = asList(OBJECT_MAPPER.readValue(expectedJson, LocalAuthority[].class));
-
-        when(adminService.getAllLocalAuthorities()).thenReturn(localAuthorities);
-
-        mockMvc.perform(get(BASE_PATH + CHILD_PATH_ALL))
-            .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson));
-    }
 
     @Test
     void shouldReturnCourtLocalAuthorities() throws Exception {
@@ -146,6 +132,4 @@ public class AdminCourtLocalAuthoritiesControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(content().string(TEST_UNKNOWN_COURT_TYPE_MESSAGE));
     }
-
-
 }
