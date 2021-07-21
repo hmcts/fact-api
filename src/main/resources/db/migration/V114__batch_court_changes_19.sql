@@ -1,20 +1,14 @@
---- FACT-751 ---
+--- FACT-751, FAC-752, FACT-823 ---
 INSERT INTO public.search_courtareaoflaw(area_of_law_id, court_id, single_point_of_entry)
 VALUES((SELECT id FROM public.search_areaoflaw WHERE name = 'Money claims'),
        (SELECT id FROM public.search_court WHERE slug = 'peterborough-combined-court-centre'),
        false
-      );
-
---- FACT-752 ---
-INSERT INTO public.search_courtareaoflaw(area_of_law_id, court_id, single_point_of_entry)
-VALUES((SELECT id FROM public.search_areaoflaw WHERE name = 'Money claims'),
+      ),
+      ((SELECT id FROM public.search_areaoflaw WHERE name = 'Money claims'),
        (SELECT id FROM public.search_court WHERE slug = 'staines-county-court-and-family-court'),
        false
-      );
-
---- FACT-823 ---
-INSERT INTO public.search_courtareaoflaw(area_of_law_id, court_id, single_point_of_entry)
-VALUES((SELECT id FROM public.search_areaoflaw WHERE name = 'Money claims'),
+      ),
+      ((SELECT id FROM public.search_areaoflaw WHERE name = 'Money claims'),
        (SELECT id FROM public.search_court WHERE slug = 'middlesbrough-county-court-at-teesside-combined-court'),
        false
       );
