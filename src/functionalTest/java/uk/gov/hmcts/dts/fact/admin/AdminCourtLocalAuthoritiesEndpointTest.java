@@ -24,7 +24,6 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String LOCAL_AUTHORITIES_PATH = "localAuthorities";
-    private static final String ALL_LOCAL_AUTHORITIES_FULL_PATH = ADMIN_COURTS_ENDPOINT + LOCAL_AUTHORITIES_PATH;
     private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court/";
     private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_AREAS_OF_LAW = "Money claims/";
 
@@ -33,37 +32,6 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     //changed local authority to existing one on database.
     private static final String TEST = "Barnet Borough Council";
     private static final int TEST_ID = 397_243;
-
-
-
-    @Test
-    public void returnAllLocalAuthorities() {
-        final var response = doGetRequest(
-            ALL_LOCAL_AUTHORITIES_FULL_PATH,
-            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
-        );
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
-        final List<LocalAuthority> localAuthorities = response.body().jsonPath().getList(".", LocalAuthority.class);
-        assertThat(localAuthorities).hasSizeGreaterThan(1);
-
-    }
-
-    @Test
-    public void shouldRequireATokenWhenGettingLocalAuthorities() {
-        final var response = doGetRequest(ALL_LOCAL_AUTHORITIES_FULL_PATH);
-        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    }
-
-    @Test
-    public void shouldBeForbiddenForGettingLocalAuthorities() {
-        final var response = doGetRequest(
-            ALL_LOCAL_AUTHORITIES_FULL_PATH,
-            Map.of(AUTHORIZATION, BEARER + forbiddenToken)
-        );
-        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
-    }
-
 
     @Test
     public void returnLocalAuthoritiesForTheCourtAsPerTheAreasOfLaw() {
@@ -75,7 +43,6 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
 
         final List<LocalAuthority> localAuthorities = response.body().jsonPath().getList(".", LocalAuthority.class);
         assertThat(localAuthorities).hasSizeGreaterThan(1);
-
     }
 
     @Test
@@ -139,7 +106,6 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-
     private List<LocalAuthority> getCurrentLocalAuthorities() {
         final var response = doGetRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
@@ -167,6 +133,4 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
         );
         return objectMapper().writeValueAsString(localAuthorities);
     }
-
-
 }
