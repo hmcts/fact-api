@@ -28,11 +28,15 @@ public class PostcodeValidator {
         this.mapitService = mapitService;
     }
 
+    public static boolean isFullPostcodeFormat(final String postcode) {
+        return postcode.matches(FULL_POSTCODE);
+    }
+
     public boolean postcodeDataExists(final String postcode) {
 
         if (StringUtils.isBlank(postcode)) {
             return false;
-        } else if (postcode.matches(FULL_POSTCODE) && fullPostCodeDataExists(postcode)) { // If we have a full postcode
+        } else if (isFullPostcodeFormat(postcode) && fullPostCodeDataExists(postcode)) { // If we have a full postcode
             log.info("Full postcode search result was successful for: {}", postcode);
             return true;
         }
