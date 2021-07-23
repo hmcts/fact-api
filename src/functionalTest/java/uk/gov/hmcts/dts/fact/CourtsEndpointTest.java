@@ -56,6 +56,19 @@ public class CourtsEndpointTest extends FunctionalTestBase {
     }
 
     @Test
+    public void shouldRetrieveCourtReferenceWithTypoAndMissingPunctuation() {
+        final String name = "Sheffield Magistrates' Court";
+        final String slug = "sheffield-magistrates-court";
+
+        final var response = doGetRequest(COURT_SEARCH_ENDPOINT + "?q=Sheffid Magistrates");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
+        assertThat(courts.get(0).getName()).isEqualTo(name);
+        assertThat(courts.get(0).getSlug()).isEqualTo(slug);
+    }
+
+    @Test
     public void shouldRetrieveCourtReferenceByFullQuery() {
         final String name = "Oxford Combined Court Centre";
         final String slug = "oxford-combined-court-centre";
