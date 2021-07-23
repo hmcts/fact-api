@@ -12,6 +12,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.OpeningTypeRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ public class AdminCourtOpeningTimeService {
         return openingTypeRepository.findAll()
             .stream()
             .map(OpeningType::new)
+            .sorted(Comparator.comparing(OpeningType::getType))
             .collect(toList());
     }
 

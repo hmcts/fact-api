@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.EmailTypeRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +93,7 @@ public class AdminCourtEmailService {
         return emailTypeRepository.findAll()
             .stream()
             .map(EmailType::new)
+            .sorted(Comparator.comparing(EmailType::getDescription))
             .collect(toList());
     }
 }
