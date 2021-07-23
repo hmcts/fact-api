@@ -44,9 +44,9 @@ public class AdminCourtEmailServiceTest {
     private static final String TEST_EMAIL_EXPLANATION2 = "explanation2";
     private static final String TEST_EMAIL_EXPLANATION3 = "explanation3";
 
-    private static final String TEST_EMAIL_DESCRIPTION = "description";
-    private static final String TEST_EMAIL_DESCRIPTION2 = "description2";
-    private static final String TEST_EMAIL_DESCRIPTION3 = "description3";
+    private static final String TEST_EMAIL_DESCRIPTION = "Enquiries";
+    private static final String TEST_EMAIL_DESCRIPTION2 = "Finances";
+    private static final String TEST_EMAIL_DESCRIPTION3 = "Crown court";
 
     private static final String TEST_EMAIL_DESCRIPTION_CY = "description cy";
     private static final String TEST_EMAIL_DESCRIPTION_CY2 = "description cy2";
@@ -159,19 +159,19 @@ public class AdminCourtEmailServiceTest {
     }
 
     @Test
-    void shouldReturnAllEmailTypes() {
+    void shouldReturnAllEmailTypesInAlphabeticalOrder() {
         when(emailTypeRepository.findAll()).thenReturn(EMAIL_TYPES);
 
         final List<EmailType> results = adminService.getAllEmailTypes();
         assertThat(results).hasSize(EMAIL_TYPES.size());
-        assertThat(results.get(0).getId()).isEqualTo(TEST_EMAIL_TYPE);
-        assertThat(results.get(0).getDescription()).isEqualTo(TEST_EMAIL_DESCRIPTION);
-        assertThat(results.get(0).getDescriptionCy()).isEqualTo(TEST_EMAIL_DESCRIPTION_CY);
-        assertThat(results.get(1).getId()).isEqualTo(TEST_EMAIL_TYPE2);
-        assertThat(results.get(1).getDescription()).isEqualTo(TEST_EMAIL_DESCRIPTION2);
-        assertThat(results.get(1).getDescriptionCy()).isEqualTo(TEST_EMAIL_DESCRIPTION_CY2);
-        assertThat(results.get(2).getId()).isEqualTo(TEST_EMAIL_TYPE3);
-        assertThat(results.get(2).getDescription()).isEqualTo(TEST_EMAIL_DESCRIPTION3);
-        assertThat(results.get(2).getDescriptionCy()).isEqualTo(TEST_EMAIL_DESCRIPTION_CY3);
+        assertThat(results.get(0).getId()).isEqualTo(TEST_EMAIL_TYPE3);
+        assertThat(results.get(0).getDescription()).isEqualTo(TEST_EMAIL_DESCRIPTION3);
+        assertThat(results.get(0).getDescriptionCy()).isEqualTo(TEST_EMAIL_DESCRIPTION_CY3);
+        assertThat(results.get(1).getId()).isEqualTo(TEST_EMAIL_TYPE);
+        assertThat(results.get(1).getDescription()).isEqualTo(TEST_EMAIL_DESCRIPTION);
+        assertThat(results.get(1).getDescriptionCy()).isEqualTo(TEST_EMAIL_DESCRIPTION_CY);
+        assertThat(results.get(2).getId()).isEqualTo(TEST_EMAIL_TYPE2);
+        assertThat(results.get(2).getDescription()).isEqualTo(TEST_EMAIL_DESCRIPTION2);
+        assertThat(results.get(2).getDescriptionCy()).isEqualTo(TEST_EMAIL_DESCRIPTION_CY2);
     }
 }
