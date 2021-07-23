@@ -36,12 +36,12 @@ public class AdminCourtOpeningTimeServiceTest {
     private static final int TEST_TYPE_ID2 = 2;
     private static final int TEST_TYPE_ID3 = 3;
     private static final String TEST_HOURS = "testHours";
-    private static final String ENGLISH_TYPE1 = "test1";
-    private static final String WELSH_TYPE1 = "test2";
-    private static final String ENGLISH_TYPE2 = "test3";
-    private static final String WELSH_TYPE2 = "test4";
-    private static final String ENGLISH_TYPE3 = "test5";
-    private static final String WELSH_TYPE3 = "test6";
+    private static final String ENGLISH_TYPE1 = "Telephone enquiries answered";
+    private static final String WELSH_TYPE1 = ENGLISH_TYPE1 + " cy";
+    private static final String ENGLISH_TYPE2 = "Court open";
+    private static final String WELSH_TYPE2 = ENGLISH_TYPE2 + " cy";
+    private static final String ENGLISH_TYPE3 = "Counter open";
+    private static final String WELSH_TYPE3 = ENGLISH_TYPE3 + " cy";
     private static final String NOT_FOUND = "Not found: ";
 
     private static final int OPENING_TIME_COUNT = 3;
@@ -122,16 +122,16 @@ public class AdminCourtOpeningTimeServiceTest {
     }
 
     @Test
-    void shouldReturnAllOpeningTypes() {
+    void shouldReturnAllOpeningTypesInAlphabeticalOrder() {
         when(openingTypeRepository.findAll()).thenReturn(OPENING_TYPES);
 
         final List<OpeningType> results = adminService.getAllCourtOpeningTypes();
         assertThat(results).hasSize(OPENING_TYPES.size());
-        assertThat(results.get(0).getType()).isEqualTo(ENGLISH_TYPE1);
-        assertThat(results.get(0).getTypeCy()).isEqualTo(WELSH_TYPE1);
+        assertThat(results.get(0).getType()).isEqualTo(ENGLISH_TYPE3);
+        assertThat(results.get(0).getTypeCy()).isEqualTo(WELSH_TYPE3);
         assertThat(results.get(1).getType()).isEqualTo(ENGLISH_TYPE2);
         assertThat(results.get(1).getTypeCy()).isEqualTo(WELSH_TYPE2);
-        assertThat(results.get(2).getType()).isEqualTo(ENGLISH_TYPE3);
-        assertThat(results.get(2).getTypeCy()).isEqualTo(WELSH_TYPE3);
+        assertThat(results.get(2).getType()).isEqualTo(ENGLISH_TYPE1);
+        assertThat(results.get(2).getTypeCy()).isEqualTo(WELSH_TYPE1);
     }
 }
