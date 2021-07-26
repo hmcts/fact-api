@@ -73,6 +73,8 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
             + "  WHERE displayed = true AND ("
             + "    (:query <% c.name AND word_similarity(:query, c.name) > 0.6)"
             + "    OR (:query <% c.name_cy AND word_similarity(:query, c.name_cy) > 0.6)"
+            + "    OR (c.name ILIKE concat(split_part(:query, ' ' , 1), '%') AND word_similarity(:query, c.name) > 0.5)"
+            + "    OR (c.name_cy ILIKE concat(split_part(:query, ' ' , 1), '%') AND word_similarity(:query, c.name_cy) > 0.5)"
             + "    OR (:query <% ca.address AND word_similarity(:query, ca.address) > 0.6)"
             + "    OR (:query <% ca.address_cy AND word_similarity(:query, ca.address_cy) > 0.6)"
             + "    OR (length(ca.town_name) > 0 AND CAST((length(ca.town_name) - levenshtein(lower(ca.town_name), lower(:query))) AS float) / length(ca.town_name) > 0.79)"
@@ -81,6 +83,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
             + "    CASE WHEN word_similarity(:query, c.name) > 0.85 OR word_similarity(:query, c.name_cy) > 0.85 THEN 1 ELSE 0 END DESC,"
             + "    town_diff,"
             + "    CASE WHEN word_similarity(:query, ca.address) > 0.85 OR word_similarity(:query, ca.address_cy) > 0.85 THEN 1 ELSE 0 END DESC,"
+            + "    CASE WHEN COALESCE(c.name, '') ILIKE concat(split_part(:query, ' ' , 1), '%') OR COALESCE(c.name_cy, '') ILIKE concat(split_part(:query, ' ' , 1), '%') THEN 1 ELSE 0 END DESC,"
             + "    name")
     List<Court> findCourtByNameAddressOrTownFuzzyMatch(String query);
 
