@@ -50,6 +50,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
      * Searching by court name, town name or court address using fuzzy matching.
      * - The court name and court address are searched using Postgres trigram word similarity with a cut off threshold of 0.6. Any matches below
      *   the threshold will not be accepted.
+     * - For input where the first word matches the the start of the court name, we allow a lower trigram threshold of 0.5.
      * - The town name is searched using Levenshtein distance. The match rate is calculated using the length of town subtract the Levenshtein distance
      *   divided by the length of town. Only match rate above the cut-off threshold of 0.79 will be accepted. This means for a town of length 5-9, 1 typo will be accepted.
      *   For a town of length 10-14, 2 typos will be accepted, etc. Note that with Levenshtein distance, 2-letter transposition will be counted as 2 typos.
@@ -57,6 +58,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
      * - Good name match - Courts with good court name match (word similarity more than 0.85) will be sorted next.
      * - Good town match - Courts with lower town name levenshtein distance will be sorted next.
      * - Good address match - Courts with good court address match (word similarity more than 0.85) will be sorted next.
+     * - Court name match where the first word on input matches the start of the court name.
      * - Close match - The remaining courts will be sorted in alphabetical order.
      *
      * @param query the search string
