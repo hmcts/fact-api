@@ -11,8 +11,7 @@ import java.util.Locale;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
-import static uk.gov.hmcts.dts.fact.util.Utils.upperCaseAndStripAllSpaces;
+import static uk.gov.hmcts.dts.fact.util.Utils.*;
 
 class UtilsTest {
 
@@ -110,5 +109,21 @@ class UtilsTest {
     @Test
     void testUpperCaseAndStripAllSpaces() {
         assertThat(upperCaseAndStripAllSpaces(" b 1 7Pt ")).isEqualTo("B17PT");
+    }
+
+    @Test
+    void testGetAddressLines() {
+        final String address = "\r\n1 High Street\r\n\r\nLondon\r\n";
+        final List<String> addressLines = getAddressLines(address);
+        assertThat(addressLines).hasSize(2);
+        assertThat(addressLines.get(0)).isEqualTo("1 High Street");
+        assertThat(addressLines.get(1)).isEqualTo("London");
+    }
+
+    @Test
+    void testGetAddressLinesForNullAddress() {
+        assertThat(getAddressLines(null))
+            .isNotNull()
+            .isEmpty();
     }
 }

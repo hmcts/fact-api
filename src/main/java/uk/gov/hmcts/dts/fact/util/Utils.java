@@ -4,9 +4,14 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.emptyList;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
 
 public final class Utils {
 
@@ -51,5 +56,13 @@ public final class Utils {
 
     public static String upperCaseAndStripAllSpaces(final String input) {
         return input.replaceAll("\\s+","").toUpperCase(Locale.getDefault());
+    }
+
+    public static List<String> getAddressLines(final String address) {
+        return address == null
+            ? emptyList()
+            : address.lines()
+                .filter(not(String::isEmpty))
+                .collect(toList());
     }
 }
