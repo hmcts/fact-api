@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.util.List;
 
-import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 
 @Data
 @NoArgsConstructor
@@ -30,7 +28,7 @@ public class CourtAddress {
             courtAddress.getAddressType().getNameCy(),
             courtAddress.getAddressType().getName()
         );
-        this.addressLines = Utils.getAddressLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
+        this.addressLines = constructAddressLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
     }

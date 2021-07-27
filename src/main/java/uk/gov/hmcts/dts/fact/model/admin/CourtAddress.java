@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.util.List;
+
+import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 
 @Data
 @AllArgsConstructor
@@ -26,12 +27,12 @@ public class CourtAddress {
     private String townNameCy;
     private String postcode;
 
-    public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
+    public CourtAddress(final uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         if (courtAddress.getAddressType() != null) {
             this.addressTypeId = courtAddress.getAddressType().getId();
         }
-        this.addressLines = Utils.getAddressLines(courtAddress.getAddress());
-        this.addressLines = Utils.getAddressLines(courtAddress.getAddressCy());
+        this.addressLines = constructAddressLines(courtAddress.getAddress());
+        this.addressLinesCy = constructAddressLines(courtAddress.getAddressCy());
         this.townName = courtAddress.getTownName();
         this.townNameCy = courtAddress.getTownNameCy();
         this.postcode = courtAddress.getPostcode();

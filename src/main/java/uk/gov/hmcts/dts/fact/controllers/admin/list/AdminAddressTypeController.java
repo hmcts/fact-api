@@ -31,13 +31,13 @@ public class AdminAddressTypeController {
     }
 
     /**
-     * Retrieves all address types
+     * Retrieves all address types.
      * @return A list of address types
      */
     @GetMapping()
     @ApiOperation("Retrieve all address types")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = AddressType.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden")
     })

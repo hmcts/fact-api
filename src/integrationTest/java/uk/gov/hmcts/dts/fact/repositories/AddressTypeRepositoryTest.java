@@ -18,7 +18,7 @@ public class AddressTypeRepositoryTest {
 
     @Test
     void shouldRetrieveAddressTypes() {
-        List<AddressType> results = addressTypeRepository.findAll();
+        final List<AddressType> results = addressTypeRepository.findAll();
         assertThat(results).hasSizeGreaterThan(1);
         assertThat(results.stream().map(r -> r.getName())).isNotEmpty();
         assertThat(results.stream().map(r -> r.getNameCy())).isNotEmpty();

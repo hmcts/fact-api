@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -43,28 +43,36 @@ public class AdminAddressTypeServiceTest {
     @Test
     void shouldReturnAllAddressTypes() {
         when(addressTypeRepository.findAll()).thenReturn(ADDRESS_TYPES);
-
         final List<AddressType> results = adminService.getAllAddressTypes();
-        assertThat(results).hasSize(ADDRESS_TYPES.size());
 
-        assertThat(results.get(0).getId()).isEqualTo(TEST_TYPE_ID1);
-        assertThat(results.get(0).getName()).isEqualTo(TEST_TYPE1);
-        assertThat(results.get(0).getNameCy()).isEqualTo(TEST_TYPE_CY1);
-        assertThat(results.get(1).getId()).isEqualTo(TEST_TYPE_ID2);
-        assertThat(results.get(1).getName()).isEqualTo(TEST_TYPE2);
-        assertThat(results.get(1).getNameCy()).isEqualTo(TEST_TYPE_CY2);
-        assertThat(results.get(2).getId()).isEqualTo(TEST_TYPE_ID3);
-        assertThat(results.get(2).getName()).isEqualTo(TEST_TYPE3);
-        assertThat(results.get(2).getNameCy()).isEqualTo(TEST_TYPE_CY3);
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(results).hasSize(ADDRESS_TYPES.size());
+
+        softly.assertThat(results.get(0).getId()).isEqualTo(TEST_TYPE_ID1);
+        softly.assertThat(results.get(0).getName()).isEqualTo(TEST_TYPE1);
+        softly.assertThat(results.get(0).getNameCy()).isEqualTo(TEST_TYPE_CY1);
+
+        softly.assertThat(results.get(1).getId()).isEqualTo(TEST_TYPE_ID2);
+        softly.assertThat(results.get(1).getName()).isEqualTo(TEST_TYPE2);
+        softly.assertThat(results.get(1).getNameCy()).isEqualTo(TEST_TYPE_CY2);
+
+        softly.assertThat(results.get(2).getId()).isEqualTo(TEST_TYPE_ID3);
+        softly.assertThat(results.get(2).getName()).isEqualTo(TEST_TYPE3);
+        softly.assertThat(results.get(2).getNameCy()).isEqualTo(TEST_TYPE_CY3);
+
+        softly.assertAll();
     }
 
     @Test
     void shouldRetrieveAddressTypeMap() {
         when(addressTypeRepository.findAll()).thenReturn(ADDRESS_TYPES);
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> results = adminService.getAddressTypeMap();
-        assertThat(results).hasSize(3);
-        assertThat(results.get(TEST_TYPE_ID1)).isEqualTo(ADDRESS_TYPE1);
-        assertThat(results.get(TEST_TYPE_ID2)).isEqualTo(ADDRESS_TYPE2);
-        assertThat(results.get(TEST_TYPE_ID3)).isEqualTo(ADDRESS_TYPE3);
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(results).hasSize(3);
+        softly.assertThat(results.get(TEST_TYPE_ID1)).isEqualTo(ADDRESS_TYPE1);
+        softly.assertThat(results.get(TEST_TYPE_ID2)).isEqualTo(ADDRESS_TYPE2);
+        softly.assertThat(results.get(TEST_TYPE_ID3)).isEqualTo(ADDRESS_TYPE3);
+        softly.assertAll();
     }
 }

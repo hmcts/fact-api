@@ -16,7 +16,7 @@ public class AddressType {
     @JsonProperty("name_cy")
     private String nameCy;
 
-    public AddressType(uk.gov.hmcts.dts.fact.entity.AddressType addressType) {
+    public AddressType(final uk.gov.hmcts.dts.fact.entity.AddressType addressType) {
         this.id = addressType.getId();
         this.name = addressType.getName();
         this.nameCy = addressType.getNameCy();

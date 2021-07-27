@@ -5,14 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import java.util.Collection;
 import java.util.List;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_courtaddress")
@@ -20,7 +14,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class CourtAddress {
-    @Id
+    @Id()
+    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtaddress_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")

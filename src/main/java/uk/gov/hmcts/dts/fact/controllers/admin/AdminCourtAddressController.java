@@ -38,7 +38,7 @@ public class AdminCourtAddressController {
     @GetMapping(path = "/{slug}/addresses")
     @ApiOperation("Find court addresses by slug")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = CourtAddress.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found")
@@ -49,7 +49,7 @@ public class AdminCourtAddressController {
     }
 
     /**
-     * Replace the existing addresses with the new ones for a specific court
+     * Replace the existing addresses with the new ones for a specific court.
      * @param slug Court slug
      * @param courtAddresses a list of court addresses to be updated
      * @return A list of updated court addresses
@@ -57,7 +57,7 @@ public class AdminCourtAddressController {
     @PutMapping(path = "/{slug}/addresses")
     @ApiOperation("Update addresses for a provided court")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = CourtAddress.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found")

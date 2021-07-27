@@ -58,7 +58,7 @@ public final class Utils {
         return input.replaceAll("\\s+","").toUpperCase(Locale.getDefault());
     }
 
-    public static List<String> getAddressLines(final String address) {
+    public static List<String> constructAddressLines(final String address) {
         return address == null
             ? emptyList()
             : address.lines()

@@ -7,9 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.dts.fact.controllers.admin.AdminCourtContactController;
 import uk.gov.hmcts.dts.fact.model.admin.AddressType;
-import uk.gov.hmcts.dts.fact.services.admin.AdminCourtContactService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
 
 import java.util.Arrays;
@@ -39,10 +37,10 @@ public class AdminAddressTypeControllerTest {
     @Test
     void shouldRetrieveAllAddressTypes() throws Exception {
         when(adminService.getAllAddressTypes()).thenReturn(EXPECTED_ADDRESS_TYPES);
-        final String json  = OBJECT_MAPPER.writeValueAsString(EXPECTED_ADDRESS_TYPES);
+        final String addressTypesJson  = OBJECT_MAPPER.writeValueAsString(EXPECTED_ADDRESS_TYPES);
 
         mockMvc.perform(get(PATH))
             .andExpect(status().isOk())
-            .andExpect(content().json(json));
+            .andExpect(content().json(addressTypesJson));
     }
 }

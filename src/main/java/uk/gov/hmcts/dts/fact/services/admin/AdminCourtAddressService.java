@@ -50,6 +50,7 @@ public class AdminCourtAddressService {
             .collect(toList());
     }
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         return courtAddresses.stream()

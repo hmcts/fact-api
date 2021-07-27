@@ -4,15 +4,16 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.dts.fact.util.AddressType.*;
 
 public class AddressTypeTest {
     @Test
     void testFindByName() {
         final SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(AddressType.findByName("Visit us")).isEqualTo(AddressType.VISIT_US);
-        softly.assertThat(AddressType.findByName("Write to us")).isEqualTo(AddressType.WRITE_TO_US);
-        softly.assertThat(AddressType.findByName("Visit or contact us")).isEqualTo(AddressType.VISIT_OR_CONTACT_US);
-        softly.assertThatThrownBy(() -> AddressType.findByName("unknown type"))
+        softly.assertThat(findByName("Visit us")).isEqualTo(VISIT_US);
+        softly.assertThat(findByName("Write to us")).isEqualTo(WRITE_TO_US);
+        softly.assertThat(findByName("Visit or contact us")).isEqualTo(VISIT_OR_CONTACT_US);
+        softly.assertThatThrownBy(() -> findByName("unknown type"))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Unknown address type: unknown type");
         softly.assertAll();
@@ -20,7 +21,7 @@ public class AddressTypeTest {
 
     @Test
     void testIsCourtAddress() {
-        assertThat(AddressType.isCourtAddress("Visit us")).isTrue();
-        assertThat(AddressType.isCourtAddress("Write to us")).isFalse();
+        assertThat(isCourtAddress("Visit us")).isTrue();
+        assertThat(isCourtAddress("Write to us")).isFalse();
     }
 }
