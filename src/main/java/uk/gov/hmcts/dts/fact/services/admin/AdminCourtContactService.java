@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,7 @@ public class AdminCourtContactService {
         return contactTypeRepository.findAll()
             .stream()
             .map(ContactType::new)
+            .sorted(Comparator.comparing(ContactType::getType))
             .collect(toList());
     }
 

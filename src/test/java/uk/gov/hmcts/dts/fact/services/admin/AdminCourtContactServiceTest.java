@@ -36,8 +36,8 @@ public class AdminCourtContactServiceTest {
     private static final int TEST_TYPE_ID2 = 2;
     private static final int TEST_TYPE_ID3 = 3;
     private static final String TEST_TYPE1 = "some type";
-    private static final String TEST_TYPE2 = "Another type";
-    private static final String TEST_TYPE3 = "Yet another type";
+    private static final String TEST_TYPE2 = "another type";
+    private static final String TEST_TYPE3 = "yet another type";
     private static final String TEST_TYPE_CY1 = TEST_TYPE1 + " cy";
     private static final String TEST_TYPE_CY2 = TEST_TYPE2 + " cy";
     private static final String TEST_TYPE_CY3 = TEST_TYPE3 + " cy";
@@ -47,8 +47,8 @@ public class AdminCourtContactServiceTest {
     private static final String TEST_NUMBER4 = "000";
     private static final String TEST_DX_NUMBER = "DX 99";
     private static final String TEST_EXPLANATION1 = "some explanation";
-    private static final String TEST_EXPLANATION2 = "Another explanation";
-    private static final String TEST_EXPLANATION3 = "Yet another explanation";
+    private static final String TEST_EXPLANATION2 = "another explanation";
+    private static final String TEST_EXPLANATION3 = "yet another explanation";
     private static final String DX = "DX";
     private static final String NOT_FOUND = "Not found: ";
 
@@ -148,18 +148,18 @@ public class AdminCourtContactServiceTest {
     }
 
     @Test
-    void shouldReturnAllContactTypes() {
+    void shouldReturnAllContactTypesInAlphabeticalOrder() {
         when(contactTypeRepository.findAll()).thenReturn(CONTACT_TYPES);
 
         final List<ContactType> results = adminService.getAllCourtContactTypes();
         assertThat(results).hasSize(CONTACT_TYPES.size());
 
-        assertThat(results.get(0).getId()).isEqualTo(TEST_TYPE_ID1);
-        assertThat(results.get(0).getType()).isEqualTo(TEST_TYPE1);
-        assertThat(results.get(0).getTypeCy()).isEqualTo(TEST_TYPE_CY1);
-        assertThat(results.get(1).getId()).isEqualTo(TEST_TYPE_ID2);
-        assertThat(results.get(1).getType()).isEqualTo(TEST_TYPE2);
-        assertThat(results.get(1).getTypeCy()).isEqualTo(TEST_TYPE_CY2);
+        assertThat(results.get(0).getId()).isEqualTo(TEST_TYPE_ID2);
+        assertThat(results.get(0).getType()).isEqualTo(TEST_TYPE2);
+        assertThat(results.get(0).getTypeCy()).isEqualTo(TEST_TYPE_CY2);
+        assertThat(results.get(1).getId()).isEqualTo(TEST_TYPE_ID1);
+        assertThat(results.get(1).getType()).isEqualTo(TEST_TYPE1);
+        assertThat(results.get(1).getTypeCy()).isEqualTo(TEST_TYPE_CY1);
         assertThat(results.get(2).getId()).isEqualTo(TEST_TYPE_ID3);
         assertThat(results.get(2).getType()).isEqualTo(TEST_TYPE3);
         assertThat(results.get(2).getTypeCy()).isEqualTo(TEST_TYPE_CY3);
