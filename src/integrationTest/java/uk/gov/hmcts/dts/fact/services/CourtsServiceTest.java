@@ -45,7 +45,7 @@ public class CourtsServiceTest {
     }
 
     @Test
-    void shouldFindCourtWhereOnlyFirstWordOFCourtNameMatches() {
+    void shouldFindCourtWhereOnlyFirstWordOfCourtNameMatches() {
         final List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch("bradford magistrat");
         assertThat(results).hasSizeGreaterThanOrEqualTo(1);
         assertThat(results.get(0).getName()).contains("Bradford");
