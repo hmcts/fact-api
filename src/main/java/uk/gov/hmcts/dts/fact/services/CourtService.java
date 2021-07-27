@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static uk.gov.hmcts.dts.fact.services.validation.PostcodeValidator.isFullPostcodeFormat;
 import static uk.gov.hmcts.dts.fact.util.Utils.isNorthernIrishPostcode;
 import static uk.gov.hmcts.dts.fact.util.Utils.isScottishPostcode;
 
@@ -77,8 +78,11 @@ public class CourtService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
-    public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTown(final String query) {
-        return getCourtByQuery(query, CourtReference::new);
+    public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(final String query) {
+        return getCourtsFromRepository(query)
+            .stream()
+            .map(CourtReference::new)
+            .collect(toList());
     }
 
     public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(final String query) {
@@ -186,6 +190,23 @@ public class CourtService {
             .map(function::apply)
             .collect(toList());
     }
+
+    private List<uk.gov.hmcts.dts.fact.entity.Court> getCourtsFromRepository(final String query) {
+        if (query.matches("^\\d+$")) {
+            return courtRepository.findCourtByCourtCode(Integer.valueOf(query));
+        } else if (isFullPostcodeFormat(query)) {
+            return courtRepository.findCourtByFullPostcode(query);
+        }
+
+        // For court name, address or town name search, we first search using exact match only (ignore punctuations and casing). If this
+        // doesn't return any result, fuzzy match searching will then be attempted.
+        List<uk.gov.hmcts.dts.fact.entity.Court> courts = courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(query.replaceAll("[^A-Za-z0-9]+", ""));
+        if (courts.isEmpty()) {
+            courts = courtRepository.findCourtByNameAddressOrTownFuzzyMatch(query);
+        }
+        return courts;
+    }
+
 
     private boolean filterResultByPostcode(final String postcode, final String areaOfLaw) {
         return isScottishPostcode(postcode)
