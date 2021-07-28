@@ -9,7 +9,9 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.repositories.CourtAddressRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
+import uk.gov.hmcts.dts.fact.util.AddressType;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ public class AdminCourtAddressService {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getAddresses()
                 .stream()
+                .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
                 .map(CourtAddress::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
@@ -44,8 +47,10 @@ public class AdminCourtAddressService {
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> newCourtAddressesEntity = constructCourtAddressesEntity(courtEntity, courtAddresses);
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
+
         return courtAddressRepository.saveAll(newCourtAddressesEntity)
             .stream()
+            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .map(CourtAddress::new)
             .collect(toList());
     }
