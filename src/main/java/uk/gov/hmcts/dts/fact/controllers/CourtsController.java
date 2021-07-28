@@ -51,7 +51,7 @@ public class CourtsController {
         if (query.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query));
+        return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query));
     }
 
     @GetMapping(path = "/{slug}")

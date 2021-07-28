@@ -7,6 +7,8 @@ java:
         COMMENT ON EXTENSION cube IS 'data type for multidimensional cubes';
         CREATE EXTENSION IF NOT EXISTS earthdistance WITH SCHEMA public;
         COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
+        CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
+        CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
     initdbUser: postgres
   environment:
     RUN_DB_MIGRATION_ON_STARTUP: true
