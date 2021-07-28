@@ -1,5 +1,5 @@
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
 
 CREATE INDEX IF NOT EXISTS trgm_idx_name ON public.search_court USING GIN (name gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS trgm_idx_name_cy ON public.search_court USING GIN (name_cy gin_trgm_ops);
