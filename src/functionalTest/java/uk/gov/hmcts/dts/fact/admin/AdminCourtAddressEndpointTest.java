@@ -19,7 +19,6 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-
 public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
@@ -29,11 +28,11 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         + PLYMOUTH_COMBINED_COURT_SLUG + COURT_ADDRESS_PATH;
 
     private static final String TEST_POSTCODE = "PL2 2ER";
-    private static final String TEST_TOWN_NAME = "testname";
-    private static final String TEST_TOWN_NAME_CY = "explanation cy";
+    private static final String TEST_TOWN_NAME = "town name";
+    private static final String TEST_TOWN_NAME_CY = "town name cy";
     private static final int TEST_TYPE_ID = 5881;
     private static final List<String> TEST_ADDRESS_LINES = Arrays.asList("The Law Courts", "10 Armada Way");
-    private static final List<String> TEST_ADDRESS_LINES_CY = Arrays.asList("abc","abc");
+    private static final List<String> TEST_ADDRESS_LINES_CY = Arrays.asList("abc", "abc");
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -68,7 +67,6 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateAddress() throws JsonProcessingException {
-
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> expectedCourtAddress = updateCourtAddress(currentCourtAddress);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
@@ -82,9 +80,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtAddress> updatedCourtAddress = response.body().jsonPath().getList(".", CourtAddress.class);
-
         assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress);
-
 
         //clean up by removing added record
         final Response cleanUpResponse = doPutRequest(
@@ -94,14 +90,12 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
 
-        final List<CourtAddress> cleanCourtAddress = cleanUpResponse.body().jsonPath().getList(".",CourtAddress.class);
-
+        final List<CourtAddress> cleanCourtAddress = cleanUpResponse.body().jsonPath().getList(".", CourtAddress.class);
         assertThat(cleanCourtAddress).containsExactlyElementsOf(currentCourtAddress);
-
     }
 
     @Test
-    public void adminShouldBeForbiddenForUpdatingCourtAddress() throws JsonProcessingException {
+    public void shouldBeForbiddenForUpdatingCourtAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -113,7 +107,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void adminShouldBeUnauthorisedForUpdatingCourtAddress() throws JsonProcessingException {
+    public void shouldRequireATokenWhenUpdatingCourtAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -130,11 +124,12 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         );
         return response.body().jsonPath().getList(".", CourtAddress.class);
     }
+
     /************************************************************* Shared utility methods. ***************************************************************/
 
     private List<CourtAddress> updateCourtAddress(final List<CourtAddress> courtAddresses) {
         final List<CourtAddress> updatedCourtAddress = new ArrayList<>(courtAddresses);
-        CourtAddress courtAddress = new CourtAddress();
+        final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setPostcode(TEST_POSTCODE);
         courtAddress.setTownName(TEST_TOWN_NAME);
         courtAddress.setTownNameCy(TEST_TOWN_NAME_CY);
@@ -146,5 +141,4 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
         return updatedCourtAddress;
     }
-
 }
