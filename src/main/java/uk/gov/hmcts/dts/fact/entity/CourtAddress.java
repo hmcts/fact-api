@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.*;
 
 @Entity
