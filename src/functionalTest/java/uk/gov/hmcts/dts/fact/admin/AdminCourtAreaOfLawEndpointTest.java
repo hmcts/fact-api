@@ -26,14 +26,11 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String AREAS_OF_LAW_PATH = "courtAreasOfLaw";
     private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court/";
-
     private static final String AYLESBURY_COURT_AREAS_OF_LAW_PATH = ADMIN_COURTS_ENDPOINT
         + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + AREAS_OF_LAW_PATH;
-
-    private static final String AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH = ADMIN_COURTS_ENDPOINT + "Not Found" + AREAS_OF_LAW_PATH;
-
-    private static final String TEST = "Employment";
-    private static final int TEST_ID = 34260;
+    private static final String AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH = ADMIN_COURTS_ENDPOINT + "NotFound" + AREAS_OF_LAW_PATH;
+    private static final String TEST_AREA_OF_LAW_NAME = "Employment";
+    private static final int TEST_AREA_OF_LAW_ID = 34260;
 
     /************************************************************* GET request tests section. ***************************************************************/
     @Test
@@ -67,7 +64,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     public void shouldBeNotFoundForGetWhereAreaOfLawDoesNotExist() throws JsonProcessingException {
         final Response response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken)
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
@@ -82,7 +79,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
         final var response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -96,7 +93,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             originalJson
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
@@ -126,7 +123,8 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldBeNotFoundForUpdateWhereAreaOfLawDoesNotExist() throws JsonProcessingException {
         final Response response = doPutRequest(AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
-                                               Map.of(AUTHORIZATION, BEARER + superAdminToken), getTestAreaOfLawJson()
+                                               Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                               getTestAreaOfLawJson()
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
@@ -135,7 +133,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     private List<AreaOfLaw> getCurrentCourtAreasOfLaw() {
         final var response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken)
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
         return response.body().jsonPath().getList(".", AreaOfLaw.class);
     }
@@ -144,8 +142,8 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     private List<AreaOfLaw> updateCourtAreasOfLaw(final List<AreaOfLaw> courtsAreaOfLaw) {
         List<AreaOfLaw> updatedAreaOfLawAuthorities = new ArrayList<>(courtsAreaOfLaw);
         AreaOfLaw areaOfLaw = new AreaOfLaw();
-        areaOfLaw.setName(TEST);
-        areaOfLaw.setId(TEST_ID);
+        areaOfLaw.setName(TEST_AREA_OF_LAW_NAME);
+        areaOfLaw.setId(TEST_AREA_OF_LAW_ID);
         updatedAreaOfLawAuthorities.add(areaOfLaw);
         return updatedAreaOfLawAuthorities;
     }
