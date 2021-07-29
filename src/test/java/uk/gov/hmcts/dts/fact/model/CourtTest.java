@@ -30,15 +30,18 @@ import java.util.Locale;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
+
+    private static final String VISIT_US_ADDRESS_TYPE_NAME = "Visit us";
+    private static final String WRITE_TO_US_ADDRESS_TYPE_NAME = "Write to us";
+    private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME = "Visit or contact us";
 
     @BeforeAll
     static void setUp() {
@@ -180,6 +183,41 @@ class CourtTest {
         courtEntity.setAddresses(singletonList(courtAddress));
         Court court = new Court(courtEntity);
         assertEquals("Visit us", court.getAddresses().get(0).getAddressType());
+    }
+
+    @Test
+    void testVisitUsOrVisitContactUsAddressesSortedFirst() {
+        final CourtAddress courtAddressEntity1 = new CourtAddress();
+        final AddressType addressType1 = new AddressType();
+        addressType1.setName(VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity1.setAddressType(addressType1);
+
+        final CourtAddress courtAddressEntity2 = new CourtAddress();
+        final AddressType addressType2 = new AddressType();
+        addressType2.setName(WRITE_TO_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity2.setAddressType(addressType2);
+
+        final CourtAddress courtAddressEntity3 = new CourtAddress();
+        final AddressType addressType3 = new AddressType();
+        addressType3.setName(WRITE_TO_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity3.setAddressType(addressType3);
+
+        final CourtAddress courtAddressEntity4 = new CourtAddress();
+        final AddressType addressType4 = new AddressType();
+        addressType4.setName(VISIT_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity4.setAddressType(addressType4);
+
+        final uk.gov.hmcts.dts.fact.entity.Court courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
+        courtEntity.setAddresses(asList(courtAddressEntity1, courtAddressEntity2, courtAddressEntity3, courtAddressEntity4));
+        courtEntity.setCourtTypes(emptyList());
+        courtEntity.setServiceAreas(emptyList());
+
+        final Court court = new Court(courtEntity);
+        final List<uk.gov.hmcts.dts.fact.model.CourtAddress> addresses = court.getAddresses();
+        assertEquals(VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME, addresses.get(0).getAddressType());
+        assertEquals(VISIT_US_ADDRESS_TYPE_NAME, addresses.get(1).getAddressType());
+        assertEquals(WRITE_TO_US_ADDRESS_TYPE_NAME, addresses.get(2).getAddressType());
+        assertEquals(WRITE_TO_US_ADDRESS_TYPE_NAME, addresses.get(3).getAddressType());
     }
 
     private void verifyAdditionalLinks(final List<uk.gov.hmcts.dts.fact.model.AdditionalLink> additionalLinks, final uk.gov.hmcts.dts.fact.entity.Court courtEntity, final boolean welsh) {
