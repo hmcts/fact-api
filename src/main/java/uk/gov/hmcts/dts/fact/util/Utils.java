@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.net.URLDecoder;
@@ -59,7 +60,7 @@ public final class Utils {
     }
 
     public static List<String> constructAddressLines(final String address) {
-        return address == null
+        return StringUtils.isBlank(address)
             ? emptyList()
             : address.lines()
                 .filter(not(String::isEmpty))

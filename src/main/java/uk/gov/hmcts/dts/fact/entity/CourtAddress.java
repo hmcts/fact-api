@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.*;
 
 @Entity
@@ -34,24 +35,21 @@ public class CourtAddress {
                         final String townName, final String townNameCy, final String postcode) {
         this.court = court;
         this.addressType = addressType;
-        this.address = convertAddressLines(addressLines);
-        this.addressCy = convertAddressLines(addressLinesCy);
+        this.address = CollectionUtils.isEmpty(addressLines) ? "" : convertAddressLines(addressLines);
+        this.addressCy = CollectionUtils.isEmpty(addressLinesCy) ? "" : convertAddressLines(addressLinesCy);
         this.townName = townName;
         this.townNameCy = townNameCy;
         this.postcode = postcode;
     }
 
     private String convertAddressLines(final List<String> addressLines) {
-        if (!CollectionUtils.isEmpty(addressLines)) {
-            final StringBuilder builder = new StringBuilder();
-            final int lastLine = addressLines.size() - 1;
-            for (int i = 0; i < lastLine; i++) {
-                builder.append(addressLines.get(i))
-                    .append(System.lineSeparator());
-            }
-            builder.append(addressLines.get(lastLine));
-            return builder.toString();
+        final StringBuilder builder = new StringBuilder();
+        final int lastLine = addressLines.size() - 1;
+        for (int i = 0; i < lastLine; i++) {
+            builder.append(addressLines.get(i))
+                .append(System.lineSeparator());
         }
-        return null;
+        builder.append(addressLines.get(lastLine));
+        return builder.toString();
     }
 }
