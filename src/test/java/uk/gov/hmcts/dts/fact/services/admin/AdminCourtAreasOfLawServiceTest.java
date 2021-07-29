@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,17 +11,27 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.model.admin.Email;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyIterable;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtAreasOfLawService.class)
@@ -28,15 +39,20 @@ public class AdminCourtAreasOfLawServiceTest {
 
     private static final String COURT_SLUG = "some slug";
     private static final int COURT_AREAS_OF_LAW_COUNT = 3;
-    private static final List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> COURT_AREAS_OF_LAW = new ArrayList<>();
+    private static final List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> AREAS_OF_LAW = new ArrayList<>();
     private static final String NOT_FOUND = "Not found: ";
-
+    private static final String TEST_COURT_AREAS_OF_LAW_PATH = "court-areas-of-law.json";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final List<CourtAreaOfLaw> COURT_AREA_OF_LAWS = new ArrayList<>();
 
     @MockBean
     private CourtRepository courtRepository;
 
+    @MockBean
+    private CourtAreaOfLawRepository courtAreaOfLawRepository;
+
     @Mock
-    private Court court;
+    private static Court court;
 
     @Autowired
     private AdminCourtAreasOfLawService adminCourtAreasOfLawService;
@@ -46,22 +62,26 @@ public class AdminCourtAreasOfLawServiceTest {
 
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawOne = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
         areaOfLawOne.setId(1);
-        areaOfLawOne.setName("Area of law one");
+        areaOfLawOne.setName("AreaOfLaw1");
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawTwo = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
         areaOfLawTwo.setId(2);
-        areaOfLawTwo.setName("Area of law two");
+        areaOfLawTwo.setName("AreaOfLaw2");
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawThree = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
         areaOfLawThree.setId(3);
-        areaOfLawThree.setName("Area of law three");
+        areaOfLawThree.setName("AreaOfLaw3");
 
-        COURT_AREAS_OF_LAW.add(areaOfLawOne);
-        COURT_AREAS_OF_LAW.add(areaOfLawTwo);
-        COURT_AREAS_OF_LAW.add(areaOfLawThree);
+        AREAS_OF_LAW.add(areaOfLawOne);
+        AREAS_OF_LAW.add(areaOfLawTwo);
+        AREAS_OF_LAW.add(areaOfLawThree);
+
+        COURT_AREA_OF_LAWS.add(new CourtAreaOfLaw(areaOfLawOne, court));
+        COURT_AREA_OF_LAWS.add(new CourtAreaOfLaw(areaOfLawTwo, court));
+        COURT_AREA_OF_LAWS.add(new CourtAreaOfLaw(areaOfLawThree, court));
     }
 
     @Test
     void shouldReturnCourtAreasOfLaw() {
-        when(court.getAreasOfLaw()).thenReturn(COURT_AREAS_OF_LAW);
+        when(court.getAreasOfLaw()).thenReturn(AREAS_OF_LAW);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
 
         assertThat(adminCourtAreasOfLawService.getCourtAreasOfLawBySlug(COURT_SLUG))
@@ -77,5 +97,22 @@ public class AdminCourtAreasOfLawServiceTest {
         assertThatThrownBy(() -> adminCourtAreasOfLawService.getCourtAreasOfLawBySlug(COURT_SLUG))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
+    void shouldUpdateCourtAreasOfLaw() throws IOException {
+        final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
+        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtAreaOfLawRepository.saveAll(any())).thenReturn(COURT_AREA_OF_LAWS);
+
+        List<AreaOfLaw> courtAreasOfLawResult = adminCourtAreasOfLawService.updateAreasOfLawForCourt(COURT_SLUG, areasOfLaw);
+        verify(courtAreaOfLawRepository).deleteCourtAreaOfLawByCourtId(court.getId());
+        verify(courtAreaOfLawRepository).saveAll(anyIterable());
+
+        assertThat(courtAreasOfLawResult)
+            .hasSize(COURT_AREAS_OF_LAW_COUNT)
+            .containsExactlyElementsOf(areasOfLaw);
     }
 }
