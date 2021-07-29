@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 @Table(name = "search_facility")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Facility {
 
     private static final String FACILITY_ID = "facility_id";
@@ -32,4 +34,11 @@ public class Facility {
         inverseJoinColumns = @JoinColumn(name = "facility_type_id")
     )
     private FacilityType facilityType;
+
+    public Facility(final String name, final String description, final String descriptionCy, final FacilityType facilityType) {
+        this.name = name;
+        this.description = description;
+        this.descriptionCy = descriptionCy;
+        this.facilityType = facilityType;
+    }
 }
