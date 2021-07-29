@@ -131,6 +131,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
+    /************************************************************* Shared utility methods. ***************************************************************/
     private List<AreaOfLaw> getCurrentCourtAreasOfLaw() {
         final var response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
@@ -146,7 +147,6 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
         areaOfLaw.setName(TEST);
         areaOfLaw.setId(TEST_ID);
         updatedAreaOfLawAuthorities.add(areaOfLaw);
-
         return updatedAreaOfLawAuthorities;
     }
 
@@ -157,5 +157,4 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
         );
         return objectMapper().writeValueAsString(courtsAreaOfLaw);
     }
-
 }
