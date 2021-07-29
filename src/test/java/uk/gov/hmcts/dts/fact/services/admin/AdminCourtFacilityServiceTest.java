@@ -65,7 +65,7 @@ public class AdminCourtFacilityServiceTest {
     private FacilityType facilityType;
 
     @BeforeEach
-     void init() {
+    void init() {
 
         final FacilityType facilityType1 = new FacilityType();
         facilityType1.setId(1);
@@ -214,7 +214,7 @@ public class AdminCourtFacilityServiceTest {
 
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> adminCourtFacilityService.addCourtFacility(COURT_SLUG,FACILITY))
+        assertThatThrownBy(() -> adminCourtFacilityService.deleteCourtFacility(COURT_SLUG,FACILITY))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
