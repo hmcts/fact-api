@@ -11,8 +11,7 @@ import java.util.Locale;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
-import static uk.gov.hmcts.dts.fact.util.Utils.upperCaseAndStripAllSpaces;
+import static uk.gov.hmcts.dts.fact.util.Utils.*;
 
 class UtilsTest {
 
@@ -35,7 +34,7 @@ class UtilsTest {
         List<Contact> contacts = new ArrayList<>();
         contacts.add(contact1);
         contacts.add(contact2);
-        List<String> dxNumbers = contacts.stream().filter(Utils.NAME_IS_DX).map(Contact::getNumber).collect(toList());
+        List<String> dxNumbers = contacts.stream().filter(NAME_IS_DX).map(Contact::getNumber).collect(toList());
 
         assertEquals("123", dxNumbers.get(0));
         assertThat(dxNumbers.size()).isEqualTo(1);
@@ -59,7 +58,7 @@ class UtilsTest {
         contacts.add(contact1);
         contacts.add(contact2);
 
-        List<Contact> contactsWithoutDx = contacts.stream().filter(Utils.NAME_IS_NOT_DX).collect(toList());
+        List<Contact> contactsWithoutDx = contacts.stream().filter(NAME_IS_NOT_DX).collect(toList());
         assertEquals(contactsWithoutDx.get(0).getDescription(), contact2.getDescription());
         assertThat(contactsWithoutDx.size()).isEqualTo(1);
     }
@@ -67,18 +66,18 @@ class UtilsTest {
     @Test
     void testHtmlFilter() {
         String text = "<p>Text that needs html stripping</p>";
-        assertEquals("Text that needs html stripping", Utils.stripHtmlFromString(text));
+        assertEquals("Text that needs html stripping", stripHtmlFromString(text));
     }
 
     @Test
     void testUrlDecoder() {
         String text = "https%3A//www.gov.uk/test-url";
-        assertEquals("https://www.gov.uk/test-url", Utils.decodeUrlFromString(text));
+        assertEquals("https://www.gov.uk/test-url", decodeUrlFromString(text));
     }
 
     @Test
     void shouldReturnEmptyIfUrlNull() {
-        assertEquals("", Utils.decodeUrlFromString(null));
+        assertEquals("", decodeUrlFromString(null));
     }
 
     @Test
@@ -110,5 +109,21 @@ class UtilsTest {
     @Test
     void testUpperCaseAndStripAllSpaces() {
         assertThat(upperCaseAndStripAllSpaces(" b 1 7Pt ")).isEqualTo("B17PT");
+    }
+
+    @Test
+    void testConstructAddressLines() {
+        final String address = "\r\n1 High Street\r\n\r\nLondon\r\n";
+        final List<String> addressLines = constructAddressLines(address);
+        assertThat(addressLines).hasSize(2);
+        assertThat(addressLines.get(0)).isEqualTo("1 High Street");
+        assertThat(addressLines.get(1)).isEqualTo("London");
+    }
+
+    @Test
+    void testConstructAddressLinesForNullAddress() {
+        assertThat(constructAddressLines(null))
+            .isNotNull()
+            .isEmpty();
     }
 }

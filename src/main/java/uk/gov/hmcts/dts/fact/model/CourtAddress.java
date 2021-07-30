@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 
 @Data
 @NoArgsConstructor
@@ -29,17 +28,8 @@ public class CourtAddress {
             courtAddress.getAddressType().getNameCy(),
             courtAddress.getAddressType().getName()
         );
-        this.addressLines = this.getLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
+        this.addressLines = constructAddressLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
-    }
-
-    private List<String> getLines(String address) {
-
-        return null == address ? null :
-            address
-                .lines()
-                .filter(not(String::isEmpty))
-                .collect(toList());
     }
 }

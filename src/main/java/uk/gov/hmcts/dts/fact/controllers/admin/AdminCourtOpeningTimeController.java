@@ -21,11 +21,11 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
     path = "/admin/courts",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
-public class AdminCourtOpeningTimesController {
+public class AdminCourtOpeningTimeController {
     private final AdminCourtOpeningTimeService adminService;
 
     @Autowired
-    public AdminCourtOpeningTimesController(AdminCourtOpeningTimeService adminService) {
+    public AdminCourtOpeningTimeController(AdminCourtOpeningTimeService adminService) {
         this.adminService = adminService;
     }
 
