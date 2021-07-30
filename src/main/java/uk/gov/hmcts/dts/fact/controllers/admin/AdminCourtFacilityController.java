@@ -1,8 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +28,6 @@ public class AdminCourtFacilityController {
         this.adminCourtFacilityService = adminService;
     }
 
-
     @GetMapping(path = "/{slug}/facilities")
     @ApiOperation("Find a court's facilities by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
@@ -38,28 +35,11 @@ public class AdminCourtFacilityController {
         return ok(adminCourtFacilityService.getCourtFacilitiesBySlug(slug));
     }
 
-    @PutMapping(path = "/{slug}/facility")
+    @PutMapping(path = "/{slug}/facilities")
     @ApiOperation("Update a court's facilities")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<Facility>> updateCourtFacility(@PathVariable String slug, @RequestBody Facility facility) {
-        return ok(adminCourtFacilityService.updateCourtFacility(slug, facility));
-    }
-
-    @PostMapping(path = "/{slug}/facility")
-    @ApiOperation("Add a new court's facilities")
-    @ApiResponses(value = {
-        @ApiResponse(code = 409, message = "Facility already exists")
-    })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<Facility>> addCourtFacility(@PathVariable String slug, @RequestBody Facility facility) {
-        return ok(adminCourtFacilityService.addCourtFacility(slug, facility));
-    }
-
-    @DeleteMapping(path = "/{slug}/facility")
-    @ApiOperation("Add a new court's facilities")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<Facility>> deleteCourtFacility(@PathVariable String slug, @RequestBody Facility facility) {
-        return ok(adminCourtFacilityService.deleteCourtFacility(slug, facility));
+    public ResponseEntity<List<Facility>> updateCourtFacility(@PathVariable String slug, @RequestBody List<Facility> courtFacilities) {
+        return ok(adminCourtFacilityService.updateCourtFacility(slug, courtFacilities));
     }
 }
 

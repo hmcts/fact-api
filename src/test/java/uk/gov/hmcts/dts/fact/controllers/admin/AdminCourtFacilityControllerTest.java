@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtFacilityService;
@@ -31,7 +30,6 @@ public class AdminCourtFacilityControllerTest {
     private static final String FACILITY_PATH = "/facility";
     private static final String TEST_SLUG = "unknownSlug";
     private static final String TEST_FACILITIES_PATH = "facilities.json";
-    private static final String TEST_FACILITY_PATH = "facility.json";
     private static final String NOT_FOUND = "Not found: ";
     private static final String TEST_UNKNOWN_COURT_MESSAGE = "Court not found";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -67,13 +65,12 @@ public class AdminCourtFacilityControllerTest {
     void updateCourtFacilityBySlugShouldReturnUpdatedCourtFacilities() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_FACILITIES_PATH);
         final List<Facility> facilities = asList(OBJECT_MAPPER.readValue(expectedJson, Facility[].class));
-        final String facilityJson = getResourceAsJson(TEST_FACILITY_PATH);
-        final Facility facility = OBJECT_MAPPER.readValue(facilityJson, Facility.class);
 
-        when(adminCourtFacilityService.updateCourtFacility(TEST_SLUG, facility)).thenReturn(facilities);
+
+        when(adminCourtFacilityService.updateCourtFacility(TEST_SLUG, facilities)).thenReturn(facilities);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + FACILITY_PATH)
-                            .content(facilityJson)
+                            .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -82,100 +79,19 @@ public class AdminCourtFacilityControllerTest {
 
     @Test
     void updateCourtAuthorityShouldReturnBadRequestForUnknownCourtSlug() throws Exception {
-        final String facilityJson = getResourceAsJson(TEST_FACILITY_PATH);
-        final Facility facility = OBJECT_MAPPER.readValue(facilityJson, Facility.class);
+        final String expectedJson = getResourceAsJson(TEST_FACILITIES_PATH);
+        final List<Facility> facilities = asList(OBJECT_MAPPER.readValue(expectedJson, Facility[].class));
 
-        when(adminCourtFacilityService.updateCourtFacility(TEST_SLUG,facility)).thenThrow(new IllegalArgumentException(
+        when(adminCourtFacilityService.updateCourtFacility(TEST_SLUG,facilities)).thenThrow(new IllegalArgumentException(
             TEST_UNKNOWN_COURT_MESSAGE));
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + FACILITY_PATH)
-                            .content(facilityJson)
+                            .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(content().string(TEST_UNKNOWN_COURT_MESSAGE));
     }
 
-    @Test
-    void addCourtFacilityBySlugShouldReturnUpdatedCourtFacilities() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_FACILITIES_PATH);
-        final List<Facility> facilities = asList(OBJECT_MAPPER.readValue(expectedJson, Facility[].class));
-        final String facilityJson = getResourceAsJson(TEST_FACILITY_PATH);
-        final Facility facility = OBJECT_MAPPER.readValue(facilityJson, Facility.class);
 
-        when(adminCourtFacilityService.addCourtFacility(TEST_SLUG, facility)).thenReturn(facilities);
-
-        mockMvc.perform(post(BASE_PATH + TEST_SLUG + FACILITY_PATH)
-                            .content(facilityJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson));
-    }
-
-    @Test
-    void addCourtAuthorityShouldReturnBadRequestForUnknownCourtSlug() throws Exception {
-        final String facilityJson = getResourceAsJson(TEST_FACILITY_PATH);
-        final Facility facility = OBJECT_MAPPER.readValue(facilityJson, Facility.class);
-
-        when(adminCourtFacilityService.addCourtFacility(TEST_SLUG,facility)).thenThrow(new IllegalArgumentException(
-            TEST_UNKNOWN_COURT_MESSAGE));
-
-        mockMvc.perform(post(BASE_PATH + TEST_SLUG + FACILITY_PATH)
-                            .content(facilityJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().string(TEST_UNKNOWN_COURT_MESSAGE));
-    }
-
-    @Test
-    void addCourtFacilityShouldReturnConflictIfFacilityAlreadyExists() throws Exception {
-        final String facilityJson = getResourceAsJson(TEST_FACILITY_PATH);
-        final Facility facility = OBJECT_MAPPER.readValue(facilityJson, Facility.class);
-
-        when(adminCourtFacilityService.addCourtFacility(TEST_SLUG,facility))
-            .thenThrow(new DuplicatedListItemException("Facility already exists."));
-
-        mockMvc.perform(post(BASE_PATH + TEST_SLUG + FACILITY_PATH)
-                            .content(facilityJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isConflict());
-    }
-
-
-    @Test
-    void deleteCourtFacilityBySlugShouldReturnUpdatedCourtFacilities() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_FACILITIES_PATH);
-        final List<Facility> facilities = asList(OBJECT_MAPPER.readValue(expectedJson, Facility[].class));
-        final String facilityJson = getResourceAsJson(TEST_FACILITY_PATH);
-        final Facility facility = OBJECT_MAPPER.readValue(facilityJson, Facility.class);
-
-        when(adminCourtFacilityService.deleteCourtFacility(TEST_SLUG, facility)).thenReturn(facilities);
-
-        mockMvc.perform(delete(BASE_PATH + TEST_SLUG + FACILITY_PATH)
-                            .content(facilityJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson));
-    }
-
-
-    @Test
-    void deleteCourtAuthorityShouldReturnBadRequestForUnknownCourtSlug() throws Exception {
-        final String facilityJson = getResourceAsJson(TEST_FACILITY_PATH);
-        final Facility facility = OBJECT_MAPPER.readValue(facilityJson, Facility.class);
-
-        when(adminCourtFacilityService.deleteCourtFacility(TEST_SLUG,facility)).thenThrow(new IllegalArgumentException(
-            TEST_UNKNOWN_COURT_MESSAGE));
-
-        mockMvc.perform(delete(BASE_PATH + TEST_SLUG + FACILITY_PATH)
-                            .content(facilityJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().string(TEST_UNKNOWN_COURT_MESSAGE));
-    }
 }

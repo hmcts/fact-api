@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -36,45 +35,10 @@ public class AdminCourtFacilityService {
     }
 
     @Transactional()
-    public List<Facility> updateCourtFacility(final String slug, final Facility facility) {
+    public List<Facility> updateCourtFacility(final String slug, final List<Facility> courtFacilities) {
 
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-
-        List<Facility> courtFacilities = getCourtFacilitiesBySlug(slug);
-
-        //remove the old court facility details and replace with latest
-        courtFacilities.removeIf(cf -> cf.getName().equals(facility.getName()));
-        courtFacilities.add(facility);
-
-        return saveCourtFacilities(courtEntity,courtFacilities);
-    }
-
-    @Transactional()
-    public List<Facility> addCourtFacility(final String slug, final Facility facility) {
-
-        final Court courtEntity = courtRepository.findBySlug(slug)
-            .orElseThrow(() -> new NotFoundException(slug));
-
-        List<Facility> courtFacilities = getCourtFacilitiesBySlug(slug);
-
-        checkIfCourtFacilityAlreadyExists(courtFacilities,facility);
-
-        courtFacilities.add(facility);
-
-        return saveCourtFacilities(courtEntity,courtFacilities);
-    }
-
-
-    @Transactional()
-    public List<Facility> deleteCourtFacility(final String slug, final Facility facility) {
-
-        final Court courtEntity = courtRepository.findBySlug(slug)
-            .orElseThrow(() -> new NotFoundException(slug));
-
-        List<Facility> courtFacilities = getCourtFacilitiesBySlug(slug);
-
-        courtFacilities.remove(facility);
 
         return saveCourtFacilities(courtEntity,courtFacilities);
     }
@@ -84,7 +48,7 @@ public class AdminCourtFacilityService {
 
         final List<uk.gov.hmcts.dts.fact.entity.Facility> courtFacilitiesEntities = getNewCourtFacilityEntity(courtFacilities);
 
-        if (courtEntity.getFacilities() == null) {
+        if (courtEntity.getFacilities().isEmpty()) {
             courtEntity.setFacilities(courtFacilitiesEntities);
         } else {
             courtEntity.getFacilities().clear();
@@ -107,11 +71,4 @@ public class AdminCourtFacilityService {
             .collect(toList());
     }
 
-    private void checkIfCourtFacilityAlreadyExists(final List<Facility> existingCourtFacilities, final Facility facility) {
-
-        if (!existingCourtFacilities.isEmpty()
-            && existingCourtFacilities.stream().anyMatch(cf -> cf.getName().equals(facility.getName()))) {
-            throw new DuplicatedListItemException("Facility already exists: " + facility.getName());
-        }
-    }
 }
