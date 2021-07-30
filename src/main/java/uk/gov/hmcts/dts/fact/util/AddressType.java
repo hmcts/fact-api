@@ -34,6 +34,14 @@ public enum AddressType {
         return LOOKUP.get(key);
     }
 
+    public static AddressType findById(final String name) {
+        final String key = name.toLowerCase(Locale.getDefault());
+        if (!LOOKUP.containsKey(key)) {
+            throw new IllegalArgumentException("Unknown address type: " + name);
+        }
+        return LOOKUP.get(key);
+    }
+
     public static boolean isCourtAddress(final String name) {
         return findByName(name).isCourtAddress;
     }

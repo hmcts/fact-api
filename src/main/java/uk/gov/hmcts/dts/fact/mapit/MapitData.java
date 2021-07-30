@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Optional;
@@ -13,6 +14,7 @@ import static java.util.Optional.ofNullable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class MapitData {
     private static final String COUNCIL = "council";
     private static final String COUNTY = "county";

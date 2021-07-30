@@ -2,17 +2,22 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.repositories.CourtAddressRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.services.MapitService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
+import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
 import java.util.*;
 
@@ -47,6 +52,11 @@ public class AdminCourtAddressServiceTest {
     private static final uk.gov.hmcts.dts.fact.entity.AddressType VISIT_OR_CONTACT_US_ADDRESS_TYPE = new uk.gov.hmcts.dts.fact.entity.AddressType(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID,
                                                                                                                                                   VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME,
                                                                                                                                                   VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY);
+    private static final Map<Integer, AddressType> ADDRESS_TYPE_MAP = Map.of(
+        VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
+        WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE,
+        VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE
+    );
 
     private static final List<String> TEST_ADDRESS1 = singletonList("1 High Street");
     private static final List<String> TEST_ADDRESS2 = asList(
@@ -61,6 +71,7 @@ public class AdminCourtAddressServiceTest {
     private static final String TEST_TOWN2 = "Manchester";
     private static final String TEST_POSTCODE1 = "EC1A 1AA";
     private static final String TEST_POSTCODE2 = "M1 2AA";
+    private static final String PARTIAL_POSTCODE = "EC1A";
 
     private static final int ADDRESS_COUNT = 2;
     private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, TEST_POSTCODE1);
@@ -71,6 +82,9 @@ public class AdminCourtAddressServiceTest {
     private static final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> COURT_ADDRESSES_ENTITY = asList(
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, TEST_POSTCODE1),
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, TEST_POSTCODE2));
+
+    private static final Double LATITUDE = 1.0;
+    private static final Double LONGITUDE = 2.0;
 
     private static final String NOT_FOUND = "Not found: ";
 
@@ -85,6 +99,18 @@ public class AdminCourtAddressServiceTest {
 
     @MockBean
     private AdminAddressTypeService adminAddressTypeService;
+
+    @MockBean
+    private AdminService adminService;
+
+    @MockBean
+    private MapitService mapitService;
+
+    @MockBean
+    private ValidationService validationService;
+
+    @Mock
+    private MapitData mapitData;
 
     @Test
     void shouldReturnAllCourtAddresses() {
@@ -149,5 +175,94 @@ public class AdminCourtAddressServiceTest {
         assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddresses(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+    }
+
+    @Test
+    void validateCourtPostcodesShouldReturnNothingForValidPostcodes() {
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(asList(TEST_POSTCODE1, TEST_POSTCODE2))).thenReturn(emptyList());
+        when(mapitService.getMapitData(TEST_POSTCODE2)).thenReturn(Optional.of(mapitData));
+        when(mapitData.getLat()).thenReturn(LATITUDE);
+        when(mapitData.getLon()).thenReturn(LONGITUDE);
+
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).isEmpty();
+        verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
+    }
+
+    @Test
+    void validateCourtPostcodesShouldReturnAllInvalidPostcodes() {
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(asList(TEST_POSTCODE1, TEST_POSTCODE2))).thenReturn(asList(TEST_POSTCODE1, TEST_POSTCODE2));
+        when(mapitService.getMapitData(TEST_POSTCODE2)).thenReturn(Optional.empty());
+
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(TEST_POSTCODE1, TEST_POSTCODE2);
+        verifyNoInteractions(mapitService);
+        verifyNoInteractions(adminService);
+    }
+
+    @Test
+    void validateCourtPostcodesShouldReturnInvalidVisitUsPostcodeOnly() {
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(asList(TEST_POSTCODE1, TEST_POSTCODE2))).thenReturn(singletonList(TEST_POSTCODE2));
+
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(TEST_POSTCODE2);
+        verifyNoInteractions(mapitService);
+        verifyNoInteractions(adminService);
+    }
+
+    @Test
+    void validateCourtPostcodesShouldReturnInvalidWriteToUsPostcodeOnly() {
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(asList(TEST_POSTCODE1, TEST_POSTCODE2))).thenReturn(singletonList(TEST_POSTCODE1));
+
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(TEST_POSTCODE1);
+        verifyNoInteractions(mapitService);
+        verifyNoInteractions(adminService);
+    }
+
+    @Test
+    void validateCourtPostcodesShouldReturnInvalidPartialPostcode() {
+        final List<CourtAddress> testAddresses = singletonList(new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, PARTIAL_POSTCODE));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(singletonList(PARTIAL_POSTCODE))).thenReturn(singletonList(PARTIAL_POSTCODE));
+
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).containsExactly(PARTIAL_POSTCODE);
+        verifyNoInteractions(mapitService);
+        verifyNoInteractions(adminService);
+    }
+
+    @Test
+    void validateCourtPostcodesShouldReturnNothingForEmptyAddress() {
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, emptyList())).isEmpty();
+
+        verifyNoInteractions(validationService);
+        verifyNoInteractions(mapitService);
+        verifyNoInteractions(adminService);
+    }
+
+    @Test
+    void validateCourtPostcodesShouldReturnNothingForAddressWithMissingPostcode() {
+        final List<CourtAddress> testAddresses = singletonList(new CourtAddress(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, ""));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).isEmpty();
+
+        verifyNoInteractions(validationService);
+        verifyNoInteractions(mapitService);
+        verify(adminService).updateCourtLatLon(COURT_SLUG, null, null);
+
+    }
+
+    @Test
+    void validateCourtPostcodesWithWriteToUsPostcodesOnly() {
+        final List<CourtAddress> testAddresses = asList(
+            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, ""),
+            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, "")
+        );
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(asList(TEST_POSTCODE1, TEST_POSTCODE2))).thenReturn(emptyList());
+
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).isEmpty();
+        verifyNoInteractions(mapitService);
+        verifyNoInteractions(adminService);
     }
 }

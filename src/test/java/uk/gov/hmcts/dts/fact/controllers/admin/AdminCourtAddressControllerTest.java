@@ -17,7 +17,9 @@ import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -37,6 +39,8 @@ public class AdminCourtAddressControllerTest {
     private static final String POSTCODE1 = "first postcode";
     private static final String POSTCODE2 = "second postcode";
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
         new CourtAddress(1, ADDRESS1, null, TOWN_NAME1, null, POSTCODE1),
         new CourtAddress(2, ADDRESS2, null, TOWN_NAME2, null, POSTCODE2)
@@ -51,7 +55,7 @@ public class AdminCourtAddressControllerTest {
 
     @BeforeAll
     static void setUp() throws JsonProcessingException {
-        courtAddressesJson = new ObjectMapper().writeValueAsString(COURT_ADDRESSES);
+        courtAddressesJson = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES);
     }
 
     @Test
@@ -74,6 +78,7 @@ public class AdminCourtAddressControllerTest {
 
     @Test
     void shouldUpdateCourtAddresses() throws Exception {
+        when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(emptyList());
         when(adminService.updateCourtAddresses(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
@@ -86,6 +91,7 @@ public class AdminCourtAddressControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForUnknownCourtSlug() throws Exception {
+        when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(emptyList());
         when(adminService.updateCourtAddresses(TEST_SLUG, COURT_ADDRESSES)).thenThrow(new NotFoundException(TEST_SLUG));
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
@@ -94,5 +100,21 @@ public class AdminCourtAddressControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().string("Not found: " + TEST_SLUG));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidPostcode() throws Exception {
+        final List<String> expectedResult = singletonList(POSTCODE2);
+        final String expectedResultJson = OBJECT_MAPPER.writeValueAsString(expectedResult);
+        when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
+
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
+                            .content(courtAddressesJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().json(expectedResultJson));
+
+        verify(adminService, never()).updateCourtAddresses(TEST_SLUG, COURT_ADDRESSES);
     }
 }

@@ -106,4 +106,13 @@ public class AdminService {
     public void updateMultipleCourtsInfo(CourtInfoUpdate info) {
         courtRepository.updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
     }
+
+    @Transactional
+    public void updateCourtLatLon(final String slug, final Double lat, final Double lon) {
+        final uk.gov.hmcts.dts.fact.entity.Court courtEntity = courtRepository.findBySlug(slug)
+            .orElseThrow(() -> new NotFoundException(slug));
+        courtEntity.setLat(lat);
+        courtEntity.setLon(lon);
+        courtRepository.save(courtEntity);
+    }
 }
