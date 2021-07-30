@@ -27,7 +27,6 @@ public class AdminCourtFacilityControllerTest {
 
     private static final String BASE_PATH = "/admin/courts/";
     private static final String FACILITIES_PATH = "/facilities";
-    private static final String FACILITY_PATH = "/facility";
     private static final String TEST_SLUG = "unknownSlug";
     private static final String TEST_FACILITIES_PATH = "facilities.json";
     private static final String NOT_FOUND = "Not found: ";
@@ -67,9 +66,9 @@ public class AdminCourtFacilityControllerTest {
         final List<Facility> facilities = asList(OBJECT_MAPPER.readValue(expectedJson, Facility[].class));
 
 
-        when(adminCourtFacilityService.updateCourtFacility(TEST_SLUG, facilities)).thenReturn(facilities);
+        when(adminCourtFacilityService.updateCourtFacility(TEST_SLUG,facilities)).thenReturn(facilities);
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + FACILITY_PATH)
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + FACILITIES_PATH)
                             .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -85,7 +84,7 @@ public class AdminCourtFacilityControllerTest {
         when(adminCourtFacilityService.updateCourtFacility(TEST_SLUG,facilities)).thenThrow(new IllegalArgumentException(
             TEST_UNKNOWN_COURT_MESSAGE));
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + FACILITY_PATH)
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + FACILITIES_PATH)
                             .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
