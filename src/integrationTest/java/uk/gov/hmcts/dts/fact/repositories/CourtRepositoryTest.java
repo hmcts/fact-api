@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -229,5 +230,82 @@ class CourtRepositoryTest {
         courtOptional = courtRepository.findBySlug(ACCRINGTON_COURT_SLUG);
         assertThat(courtOptional).isPresent();
         assertThat(courtOptional.get().getUpdatedAt().getTime()).isGreaterThan(currentUpdateTime);
+    }
+
+    @Test
+    void shouldSortResultByCourtNameMatchesFirstWithExactMatchSearching() {
+        final String query = "Manchester";
+        final List<Court> result = courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(query);
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result).hasSizeGreaterThan(1);
+
+        final List<Court> courtNameMatches = result.stream()
+            .filter(r -> r.getName().contains(query))
+            .collect(toList());
+        softly.assertThat(result).hasSizeGreaterThan(courtNameMatches.size());
+        softly.assertThat(result.subList(0, courtNameMatches.size()))
+            .containsExactlyElementsOf(courtNameMatches);
+        softly.assertAll();
+    }
+
+    @Test
+    void shouldNotFindCourtByMisspeltNameWithExactMatchSearching() {
+        final List<Court> result = courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch("birmingam");
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    void shouldFindCourtByMisspeltNameWithFuzzyMatchSortedByGoodMatchFirst() {
+        final String misspeltName = "nanchester";
+        final String expectedName = "Manchester";
+        final List<Court> result = courtRepository.findCourtByNameAddressOrTownFuzzyMatch(misspeltName);
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result).hasSizeGreaterThan(1);
+
+        final List<Court> goodCourtNameMatches = result.stream()
+            .filter(r -> r.getName().contains(expectedName))
+            .collect(toList());
+
+        final List<Court> goodTownNameMatches = result.stream()
+            .filter(r -> !r.getName().contains(expectedName))
+            .filter(r -> r.getAddresses().stream().noneMatch(a -> a.getAddress().contains(expectedName)))
+            .filter(r -> r.getAddresses().stream().anyMatch(a -> a.getTownName().contains(expectedName)))
+            .collect(toList());
+
+        final List<Court> goodAddressMatches = result.stream()
+            .filter(r -> !r.getName().contains(expectedName))
+            .filter(r -> r.getAddresses().stream().noneMatch(a -> a.getTownName().contains(expectedName)))
+            .filter(r -> r.getAddresses().stream().anyMatch(a -> a.getAddress().contains(expectedName)))
+            .collect(toList());
+
+        final List<Court> totalGoodMatches = new ArrayList<>(goodCourtNameMatches);
+        totalGoodMatches.addAll(goodTownNameMatches);
+        totalGoodMatches.addAll(goodAddressMatches);
+
+        softly.assertThat(result).hasSizeGreaterThan(totalGoodMatches.size());
+        softly.assertThat(result.subList(0, totalGoodMatches.size()))
+            .containsExactlyInAnyOrderElementsOf(totalGoodMatches);
+        softly.assertAll();
+    }
+
+    @Test
+    void shouldNotFindCourtByHighlyMisspeltNameWithFuzzyMatch() {
+        final List<Court> result = courtRepository.findCourtByNameAddressOrTownFuzzyMatch("birmingam magis court");
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void shouldFindCourtByCourtCode() {
+        final List<Court> result = courtRepository.findCourtByCourtCode(1450);
+        assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    void shouldFindCourtByFullPostcode() {
+        final List<Court> result = courtRepository.findCourtByFullPostcode("WC2A 2LL");
+        assertThat(result).isNotEmpty();
     }
 }

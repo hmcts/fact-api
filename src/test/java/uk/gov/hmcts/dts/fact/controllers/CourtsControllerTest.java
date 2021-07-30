@@ -78,7 +78,7 @@ class CourtsControllerTest {
         final List<CourtReference> courts = Arrays.asList(OBJECT_MAPPER.readValue(path.toFile(), CourtReference[].class));
         final String query = "london";
 
-        when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
+        when(courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query)).thenReturn(courts);
         mockMvc.perform(get(URL + "?q=" + query))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
@@ -91,7 +91,7 @@ class CourtsControllerTest {
         final List<CourtReference> courts = new ArrayList<>();
         final String query = "";
 
-        when(courtService.getCourtByNameOrAddressOrPostcodeOrTown(query)).thenReturn(courts);
+        when(courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query)).thenReturn(courts);
 
         mockMvc.perform(get(URL + "?q=" + query))
             .andExpect(status().isBadRequest());

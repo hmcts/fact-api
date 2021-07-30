@@ -172,17 +172,6 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnListOfCourtReferenceObject() {
-        final String query = LONDON;
-        final Court court = mock(Court.class);
-
-        when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
-        final List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTown(query);
-        assertThat(results.size()).isEqualTo(1);
-        assertThat(results.get(0)).isInstanceOf(CourtReference.class);
-    }
-
-    @Test
     void shouldReturnListOfCourts() {
         final String query = LONDON;
         final Court court = mock(Court.class);
@@ -194,8 +183,65 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnListOfTenCourts() {
+    void fuzzyMatchingShouldReturnListOfCourtsUsingExactName() {
+        final String query = LONDON;
+        when(courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(query)).thenReturn(singletonList(mock(Court.class)));
+        final List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query);
 
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isInstanceOf(CourtReference.class);
+
+        verify(courtRepository, never()).findCourtByCourtCode(anyInt());
+        verify(courtRepository, never()).findCourtByFullPostcode(query);
+        verify(courtRepository, never()).findCourtByNameAddressOrTownFuzzyMatch(query);
+    }
+
+    @Test
+    void shouldSearchByNameAddressOrTownFuzzyMatchUsingMisspeltName() {
+        final String query = "LONDN";
+        when(courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(query)).thenReturn(emptyList());
+        courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query);
+
+        verify(courtRepository).findCourtByNameAddressOrTownFuzzyMatch(query);
+        verify(courtRepository, never()).findCourtByCourtCode(anyInt());
+        verify(courtRepository, never()).findCourtByFullPostcode(query);
+    }
+
+    @Test
+    void fuzzyMatchingShouldSearchByCourtCodeUsingNumericInput() {
+        final String query = "1234";
+        final int expectedCourtCode = 1234;
+        courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query);
+
+        verify(courtRepository).findCourtByCourtCode(expectedCourtCode);
+        verify(courtRepository, never()).findCourtByFullPostcode(query);
+        verify(courtRepository, never()).findCourtByNameAddressTownOrPartialPostcodeExactMatch(query);
+        verify(courtRepository, never()).findCourtByNameAddressOrTownFuzzyMatch(query);
+    }
+
+    @Test
+    void fuzzyMatchingShouldSearchByPostcodeUsingFullPostcode() {
+        final String query = "M60 4JH";
+        courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query);
+
+        verify(courtRepository).findCourtByFullPostcode(query);
+        verify(courtRepository, never()).findCourtByCourtCode(anyInt());
+        verify(courtRepository, never()).findCourtByNameAddressTownOrPartialPostcodeExactMatch(query);
+        verify(courtRepository, never()).findCourtByNameAddressOrTownFuzzyMatch(query);
+    }
+
+    @Test
+    void fuzzyMatchingShouldSearchByNameAddressOrTownUsingPartialPostcode() {
+        final String query = "M60 4";
+        courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query);
+
+        verify(courtRepository, never()).findCourtByFullPostcode(query);
+        verify(courtRepository, never()).findCourtByCourtCode(anyInt());
+        verify(courtRepository).findCourtByNameAddressTownOrPartialPostcodeExactMatch("M604");
+    }
+
+    @Test
+    void shouldReturnListOfTenCourts() {
         final MapitData mapitData = mock(MapitData.class);
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
 
