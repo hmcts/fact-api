@@ -109,10 +109,11 @@ public class AdminService {
 
     @Transactional
     public void updateCourtLatLon(final String slug, final Double lat, final Double lon) {
-        final uk.gov.hmcts.dts.fact.entity.Court courtEntity = courtRepository.findBySlug(slug)
-            .orElseThrow(() -> new NotFoundException(slug));
-        courtEntity.setLat(lat);
-        courtEntity.setLon(lon);
-        courtRepository.save(courtEntity);
+        courtRepository.updateLatLonBySlug(slug, lat, lon);
+    }
+
+    @Transactional
+    public void removeCourtLatLon(final String slug) {
+        courtRepository.updateLatLonBySlug(slug, null, null);
     }
 }

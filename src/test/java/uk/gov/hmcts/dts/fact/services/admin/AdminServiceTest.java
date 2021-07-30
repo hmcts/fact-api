@@ -21,7 +21,6 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -148,19 +147,12 @@ class AdminServiceTest {
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
 
         adminService.updateMultipleCourtsInfo(info);
-
-        verify(courtRepository, times(1)).updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
+        verify(courtRepository).updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
     }
 
     @Test
     void shouldUpdateCourtLatLon() {
-        final Court courtEntity = mock(Court.class);
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(courtEntity));
-
-        assertThatCode(() -> adminService.updateCourtLatLon(SOME_SLUG, LATITUDE, LONGITUDE))
-            .doesNotThrowAnyException();
-        verify(courtEntity).setLat(LATITUDE);
-        verify(courtEntity).setLon(LONGITUDE);
-        verify(courtRepository).save(courtEntity);
+        adminService.updateCourtLatLon(SOME_SLUG, LATITUDE, LONGITUDE);
+        verify(courtRepository).updateLatLonBySlug(SOME_SLUG, LATITUDE, LONGITUDE);
     }
 }

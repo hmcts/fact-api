@@ -44,7 +44,6 @@ public class MapitData {
             .or(this::getCouncilNumberFromValue);
     }
 
-
     private Optional<String> getCouncilNumberFromValue() {
         return ofNullable(shortcuts)
             .map(s -> s.get(COUNCIL))

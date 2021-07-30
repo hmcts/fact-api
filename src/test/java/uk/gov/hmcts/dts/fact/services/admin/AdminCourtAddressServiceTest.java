@@ -236,28 +236,28 @@ public class AdminCourtAddressServiceTest {
     }
 
     @Test
-    void validateCourtPostcodesShouldReturnNothingForAddressWithMissingPostcode() {
+    void validateCourtPostcodesShouldRemoveLatLonForAddressWithMissingPostcode() {
         final List<CourtAddress> testAddresses = singletonList(new CourtAddress(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, ""));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).isEmpty();
 
         verifyNoInteractions(validationService);
         verifyNoInteractions(mapitService);
-        verify(adminService).updateCourtLatLon(COURT_SLUG, null, null);
+        verify(adminService).removeCourtLatLon(COURT_SLUG);
 
     }
 
     @Test
-    void validateCourtPostcodesWithWriteToUsPostcodesOnly() {
+    void validateCourtPostcodesShouldRemoveLatLonForWriteToUsAddressesOnly() {
         final List<CourtAddress> testAddresses = asList(
-            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, ""),
-            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, "")
+            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, TEST_POSTCODE1),
+            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, TEST_POSTCODE2)
         );
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         when(validationService.validateFullPostcodes(asList(TEST_POSTCODE1, TEST_POSTCODE2))).thenReturn(emptyList());
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).isEmpty();
         verifyNoInteractions(mapitService);
-        verifyNoInteractions(adminService);
+        verify(adminService).removeCourtLatLon(COURT_SLUG);
     }
 }

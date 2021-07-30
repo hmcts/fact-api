@@ -64,6 +64,7 @@ public class AdminCourtAddressService {
             .collect(toList());
     }
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<String> validateCourtAddressPostcodes(final String slug, final List<CourtAddress> courtAddresses) {
         final List<String> invalidPostcodes = new ArrayList<>();
 
@@ -75,8 +76,13 @@ public class AdminCourtAddressService {
                 invalidPostcodes.addAll(validationService.validateFullPostcodes(allPostcodes));
             }
 
-            if (invalidPostcodes.isEmpty() && !CollectionUtils.isEmpty(visitUsPostcodes)) {
-                setCourtLatLonUsingPrimaryPostcode(slug, visitUsPostcodes.get(0));
+            if (invalidPostcodes.isEmpty()) {
+                if (CollectionUtils.isEmpty(visitUsPostcodes)) {
+                    // Remove the coordinates if all postcodes are valid but no 'visit us' postcode
+                    adminService.removeCourtLatLon(slug);
+                } else {
+                    updateCourtLatLonUsingPrimaryPostcode(slug, visitUsPostcodes.get(0));
+                }
             }
         }
         return invalidPostcodes;
@@ -95,6 +101,7 @@ public class AdminCourtAddressService {
         return courtAddresses.stream()
             .filter(a -> AddressType.isCourtAddress(getAddressTypeFromId(addressTypeMap, a.getAddressTypeId())))
             .map(CourtAddress::getPostcode)
+            .filter(StringUtils::isNotBlank)
             .collect(toList());
     }
 
@@ -105,22 +112,16 @@ public class AdminCourtAddressService {
         return map.get(addressTypeId).getName();
     }
 
-    private void setCourtLatLonUsingPrimaryPostcode(final String slug, final String postcode) {
-        if (postcode.isBlank()) {
-            // Remove the coordinates if the primary postcode is blank
-            adminService.updateCourtLatLon(slug, null, null);
-        } else {
-            final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
-            if (mapitData.isPresent()) {
-                adminService.updateCourtLatLon(slug, mapitData.get().getLat(), mapitData.get().getLon());
-            }
+    private void updateCourtLatLonUsingPrimaryPostcode(final String slug, final String postcode) {
+        final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
+        if (mapitData.isPresent()) {
+            adminService.updateCourtLatLon(slug, mapitData.get().getLat(), mapitData.get().getLon());
         }
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
-
         return courtAddresses.stream()
             .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
                                                                     addressTypeMap.get(a.getAddressTypeId()),
