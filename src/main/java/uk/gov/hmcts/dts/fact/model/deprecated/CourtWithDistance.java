@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.entity.Contact;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
@@ -44,7 +43,7 @@ public class CourtWithDistance {
     private String slug;
     @JsonProperty("types")
     private List<String> courtTypes;
-    private uk.gov.hmcts.dts.fact.model.CourtAddress address;
+    private List<uk.gov.hmcts.dts.fact.model.CourtAddress> addresses;
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
     private Boolean hideAols;
@@ -61,7 +60,7 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.slug = courtEntity.getSlug();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtEntity.getAddresses());
+        this.addresses = courtEntity.getAddresses().stream().map(uk.gov.hmcts.dts.fact.model.CourtAddress::new).collect(toList());
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
@@ -82,7 +81,7 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtWithDistanceEntity.getMagistrateCode();
         this.slug = courtWithDistanceEntity.getSlug();
         this.courtTypes = courtWithDistanceEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtWithDistanceEntity.getAddresses());
+        this.addresses = courtWithDistanceEntity.getAddresses().stream().map(uk.gov.hmcts.dts.fact.model.CourtAddress::new).collect(toList());
         this.areasOfLaw = courtWithDistanceEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtWithDistanceEntity.getDisplayed();
         this.hideAols = courtWithDistanceEntity.getHideAols();
@@ -96,20 +95,5 @@ public class CourtWithDistance {
             .map(Contact::getNumber)
             .findFirst()
             .orElse(null);
-    }
-
-    private uk.gov.hmcts.dts.fact.model.CourtAddress mapAddress(List<CourtAddress> courtAddresses) {
-        return courtAddresses
-            .stream()
-            .filter(a -> "Postal".equals(a.getAddressType().getName()))
-            .findFirst()
-            .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
-            .orElse(
-                courtAddresses
-                    .stream()
-                    .findFirst()
-                    .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
-                    .orElse(null)
-            );
     }
 }
