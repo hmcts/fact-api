@@ -23,9 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
-@WebMvcTest(AdminCourtOpeningTimesController.class)
+@WebMvcTest(AdminCourtOpeningTimeController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtOpeningTimesControllerTest {
+public class AdminCourtOpeningTimeControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
     private static final String OPENING_TYPES_PATH = "openingTypes";
