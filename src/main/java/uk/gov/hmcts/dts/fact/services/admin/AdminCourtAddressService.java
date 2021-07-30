@@ -13,7 +13,6 @@ import uk.gov.hmcts.dts.fact.repositories.CourtAddressRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
-import uk.gov.hmcts.dts.fact.services.validation.PostcodeValidator;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 import uk.gov.hmcts.dts.fact.util.AddressType;
 
@@ -90,6 +89,7 @@ public class AdminCourtAddressService {
             .collect(toList());
     }
 
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<String> getVisitUsPostcodes(final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         return courtAddresses.stream()

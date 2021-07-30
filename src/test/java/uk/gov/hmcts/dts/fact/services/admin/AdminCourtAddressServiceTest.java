@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtAddressService.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtAddressServiceTest {
     private static final String COURT_SLUG = "court-slug";
     private static final int VISIT_US_ADDRESS_TYPE_ID = 5880;
@@ -43,15 +44,9 @@ public class AdminCourtAddressServiceTest {
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME_CY = WRITE_TO_US_ADDRESS_TYPE_NAME + " cy";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY = VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME + " cy";
 
-    private static final uk.gov.hmcts.dts.fact.entity.AddressType VISIT_US_ADDRESS_TYPE = new uk.gov.hmcts.dts.fact.entity.AddressType(VISIT_US_ADDRESS_TYPE_ID,
-                                                                                                                                       VISIT_US_ADDRESS_TYPE_NAME,
-                                                                                                                                       VISIT_US_ADDRESS_TYPE_NAME_CY);
-    private static final uk.gov.hmcts.dts.fact.entity.AddressType WRITE_TO_US_ADDRESS_TYPE = new uk.gov.hmcts.dts.fact.entity.AddressType(WRITE_TO_US_ADDRESS_TYPE_ID,
-                                                                                                                                          WRITE_TO_US_ADDRESS_TYPE_NAME,
-                                                                                                                                          WRITE_TO_US_ADDRESS_TYPE_NAME_CY);
-    private static final uk.gov.hmcts.dts.fact.entity.AddressType VISIT_OR_CONTACT_US_ADDRESS_TYPE = new uk.gov.hmcts.dts.fact.entity.AddressType(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID,
-                                                                                                                                                  VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME,
-                                                                                                                                                  VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY);
+    private static final AddressType VISIT_US_ADDRESS_TYPE = new AddressType(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE_NAME, VISIT_US_ADDRESS_TYPE_NAME_CY);
+    private static final AddressType WRITE_TO_US_ADDRESS_TYPE = new AddressType(WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE_NAME, WRITE_TO_US_ADDRESS_TYPE_NAME_CY);
+    private static final AddressType VISIT_OR_CONTACT_US_ADDRESS_TYPE = new AddressType(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME, VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY);
     private static final Map<Integer, AddressType> ADDRESS_TYPE_MAP = Map.of(
         VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
         WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE,
