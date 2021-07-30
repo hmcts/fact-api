@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.model.CourtAddress;
 import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.math.BigDecimal;
@@ -43,7 +45,7 @@ public class CourtWithDistance {
     private String slug;
     @JsonProperty("types")
     private List<String> courtTypes;
-    private List<uk.gov.hmcts.dts.fact.model.CourtAddress> addresses;
+    private List<CourtAddress> addresses;
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
     private Boolean hideAols;
@@ -51,7 +53,7 @@ public class CourtWithDistance {
     private BigDecimal distance;
 
 
-    public CourtWithDistance(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    public CourtWithDistance(final Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -60,7 +62,7 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.slug = courtEntity.getSlug();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.addresses = courtEntity.getAddresses().stream().map(uk.gov.hmcts.dts.fact.model.CourtAddress::new).collect(toList());
+        this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
@@ -81,7 +83,7 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtWithDistanceEntity.getMagistrateCode();
         this.slug = courtWithDistanceEntity.getSlug();
         this.courtTypes = courtWithDistanceEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.addresses = courtWithDistanceEntity.getAddresses().stream().map(uk.gov.hmcts.dts.fact.model.CourtAddress::new).collect(toList());
+        this.addresses = courtWithDistanceEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.areasOfLaw = courtWithDistanceEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
         this.displayed = courtWithDistanceEntity.getDisplayed();
         this.hideAols = courtWithDistanceEntity.getHideAols();
