@@ -1,6 +1,8 @@
 package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,11 @@ public class AdminFacilitiesController {
     @GetMapping(path = "")
     @ApiOperation("Return all facility types")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = FacilityType.class),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+    })
     public ResponseEntity<List<FacilityType>> getAllFacilityTypes() {
         return ok(adminFacilityService.getAllFacilityTypes());
     }
