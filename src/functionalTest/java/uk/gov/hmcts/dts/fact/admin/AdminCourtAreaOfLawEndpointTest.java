@@ -24,8 +24,8 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
-    private static final String AREAS_OF_LAW_PATH = "courtAreasOfLaw";
-    private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court/";
+    private static final String AREAS_OF_LAW_PATH = "/courtAreasOfLaw";
+    private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court";
     private static final String AYLESBURY_COURT_AREAS_OF_LAW_PATH = ADMIN_COURTS_ENDPOINT
         + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + AREAS_OF_LAW_PATH;
     private static final String AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH = ADMIN_COURTS_ENDPOINT + "NotFound" + AREAS_OF_LAW_PATH;
@@ -61,7 +61,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeNotFoundForGetWhereAreaOfLawDoesNotExist() throws JsonProcessingException {
+    public void getRequestShouldReturnNotFoundWhenCourtDoesNotExist() {
         final Response response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -107,7 +107,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
-        final var response = doPutRequest(AYLESBURY_COURT_AREAS_OF_LAW_PATH, getTestAreaOfLawJson());
+        final var response = doPutRequest(AYLESBURY_COURT_AREAS_OF_LAW_PATH, getTestAreasOfLawJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
@@ -115,16 +115,17 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     public void shouldBeForbiddenForUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
         final var response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
-            Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestAreaOfLawJson()
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestAreasOfLawJson()
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldBeNotFoundForUpdateWhereAreaOfLawDoesNotExist() throws JsonProcessingException {
-        final Response response = doPutRequest(AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
-                                               Map.of(AUTHORIZATION, BEARER + authenticatedToken),
-                                               getTestAreaOfLawJson()
+    public void putRequestShouldReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
+        final Response response = doPutRequest(
+            AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            getTestAreasOfLawJson()
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
@@ -139,20 +140,18 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private List<AreaOfLaw> updateCourtAreasOfLaw(final List<AreaOfLaw> courtsAreaOfLaw) {
-        List<AreaOfLaw> updatedAreaOfLawAuthorities = new ArrayList<>(courtsAreaOfLaw);
-        AreaOfLaw areaOfLaw = new AreaOfLaw();
-        areaOfLaw.setName(TEST_AREA_OF_LAW_NAME);
-        areaOfLaw.setId(TEST_AREA_OF_LAW_ID);
-        updatedAreaOfLawAuthorities.add(areaOfLaw);
-        return updatedAreaOfLawAuthorities;
+    private List<AreaOfLaw> updateCourtAreasOfLaw(final List<AreaOfLaw> courtAreaOfLaw) {
+        List<AreaOfLaw> updatedAreaOfLaw = new ArrayList<>(courtAreaOfLaw);
+        AreaOfLaw areaOfLaw = new AreaOfLaw(TEST_AREA_OF_LAW_ID, TEST_AREA_OF_LAW_NAME);
+        updatedAreaOfLaw.add(areaOfLaw);
+        return updatedAreaOfLaw;
     }
 
-    private static String getTestAreaOfLawJson() throws JsonProcessingException {
-        final List<AreaOfLaw> courtsAreaOfLaw = Arrays.asList(
+    private static String getTestAreasOfLawJson() throws JsonProcessingException {
+        final List<AreaOfLaw> courtAreaOfLaw = Arrays.asList(
             new AreaOfLaw(1, "test1"),
             new AreaOfLaw(2, "test2")
         );
-        return objectMapper().writeValueAsString(courtsAreaOfLaw);
+        return objectMapper().writeValueAsString(courtAreaOfLaw);
     }
 }

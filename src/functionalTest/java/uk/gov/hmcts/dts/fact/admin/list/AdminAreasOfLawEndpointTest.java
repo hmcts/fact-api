@@ -18,7 +18,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_AREAS_OF_LAW_ENDPOINT = "/admin/courtAreasOfLaw";
 
     @Test
-    public void shouldGetAllCourtAreasOfLaw() {
+    public void shouldGetAllAreasOfLaw() {
         final Response response = doGetRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
