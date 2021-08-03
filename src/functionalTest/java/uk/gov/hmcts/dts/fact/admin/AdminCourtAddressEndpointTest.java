@@ -41,7 +41,6 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private static final String POSTCODE_VALID = "PL6 5DQ";
     private static final String POSTCODES_INVALID = "PL2 56ERR";
 
-
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
@@ -164,12 +163,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         final Double originalLon = court.getLon();
 
         // Get the current court addresses and update the first address with a new postcode
-        response = doGetRequest(
-            PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
-            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
-        );
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-        final List<CourtAddress> originalCourtAddresses = response.body().jsonPath().getList(".", CourtAddress.class);
+        final List<CourtAddress> originalCourtAddresses = getCurrentCourtAddress();
         final String originalCourtAddressesJson = objectMapper().writeValueAsString(originalCourtAddresses);
         final List<CourtAddress> expectedCourtAddresses = updateCourtAddressesWithNewPostcode(originalCourtAddresses, POSTCODE_VALID);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddresses);
@@ -180,6 +174,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         final List<CourtAddress> updatedCourtAddresses = response.body().jsonPath().getList(".", CourtAddress.class);
         assertThat(updatedCourtAddresses).hasSize(1);
         assertThat(updatedCourtAddresses.get(0).getPostcode()).isEqualTo(POSTCODE_VALID);
@@ -189,8 +184,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             PLYMOUTH_COMBINED_COURT_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
-
         assertThat(response.statusCode()).isEqualTo(OK.value());
+
         court = response.as(Court.class);
         assertThat(court.getLat()).isNotEqualTo(originalLat);
         assertThat(court.getLon()).isNotEqualTo(originalLon);
