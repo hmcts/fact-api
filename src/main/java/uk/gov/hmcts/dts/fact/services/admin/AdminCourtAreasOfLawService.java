@@ -10,8 +10,11 @@ import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
+import javax.swing.text.html.Option;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,15 +31,14 @@ public class AdminCourtAreasOfLawService {
     }
 
     public List<AreaOfLaw> getCourtAreasOfLawBySlug(final String slug) {
-        return courtRepository.findBySlug(slug)
-            .map(c -> c.getAreasOfLaw()
-                .stream()
-                .map(AreaOfLaw::new)
-                .collect(toList()))
-            .orElseThrow(() -> new NotFoundException(slug));
+
+        Court court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
+        List<CourtAreaOfLaw> courtAreaOfLawList = courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(court.getId());
+        return courtAreaOfLawList.stream()
+            .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry())).collect(toList());
     }
 
-    @Transactional(rollbackFor = {RuntimeException.class})
+    @Transactional()
     public List<AreaOfLaw> updateAreasOfLawForCourt(final String slug, final List<AreaOfLaw> areasOfLaw) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
@@ -48,8 +50,7 @@ public class AdminCourtAreasOfLawService {
         return courtAreaOfLawRepository
             .saveAll(newCourtAreasOfLawList)
             .stream()
-            .map(CourtAreaOfLaw::getAreaOfLaw)
-            .map(AreaOfLaw::new)
+            .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry()))
             .collect(toList());
     }
 
