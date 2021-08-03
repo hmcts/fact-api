@@ -142,15 +142,15 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<AreaOfLaw> updateCourtAreasOfLaw(final List<AreaOfLaw> courtAreaOfLaw) {
         List<AreaOfLaw> updatedAreaOfLaw = new ArrayList<>(courtAreaOfLaw);
-        AreaOfLaw areaOfLaw = new AreaOfLaw(TEST_AREA_OF_LAW_ID, TEST_AREA_OF_LAW_NAME);
+        AreaOfLaw areaOfLaw = new AreaOfLaw(TEST_AREA_OF_LAW_ID, TEST_AREA_OF_LAW_NAME, false);
         updatedAreaOfLaw.add(areaOfLaw);
         return updatedAreaOfLaw;
     }
 
     private static String getTestAreasOfLawJson() throws JsonProcessingException {
         final List<AreaOfLaw> courtAreaOfLaw = Arrays.asList(
-            new AreaOfLaw(1, "test1"),
-            new AreaOfLaw(2, "test2")
+            new AreaOfLaw(1, "test1", false),
+            new AreaOfLaw(2, "test2", false)
         );
         return objectMapper().writeValueAsString(courtAreaOfLaw);
     }

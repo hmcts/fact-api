@@ -31,8 +31,7 @@ public class CourtAreaOfLaw {
     @OneToOne()
     @JoinColumn(name = "court_id")
     private Court court;
-
-    private Boolean single_point_of_entry;
+    private Boolean singlePointOfEntry;
 
     public CourtAreaOfLaw(final AreaOfLaw areaOfLaw, final Court court) {
         this.areaOfLaw = areaOfLaw;
@@ -40,7 +39,7 @@ public class CourtAreaOfLaw {
 
 //      Single point of entry needs to be set.
 //      This will be looked at in another story but will be set to false by default for now.
-        this.single_point_of_entry = false;
+        this.singlePointOfEntry = getSinglePointOfEntry();
     }
 
 }
