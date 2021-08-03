@@ -43,7 +43,7 @@ public class Facility {
     )
     private FacilityType facilityType;
 
-    public Facility(final String name, final String description, final String descriptionCy, FacilityType facilityType) {
+    public Facility(final String name, final String description, final String descriptionCy,final FacilityType facilityType) {
         this.name = name;
         this.nameCy = facilityType.getNameCy();
         this.description = description;

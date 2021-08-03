@@ -48,19 +48,19 @@ public class AdminFacilitiesControllerTest {
         facilityType3.setOrder(3);
 
 
-        final List<FacilityType> mockFacilites = Arrays.asList(
+        final List<FacilityType> mockFacilityTypes = Arrays.asList(
             new FacilityType(facilityType1),
             new FacilityType(facilityType2),
             new FacilityType(facilityType3)
         );
 
-        when(adminFacilityService.getAllFacilityTypes()).thenReturn(mockFacilites);
+        when(adminFacilityService.getAllFacilityTypes()).thenReturn(mockFacilityTypes);
 
-        final String allLocalAuthoritiesJson = new ObjectMapper().writeValueAsString(mockFacilites);
+        final String allFacilityTypesJson = new ObjectMapper().writeValueAsString(mockFacilityTypes);
 
         mockMvc.perform(get(BASE_PATH).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().json(allLocalAuthoritiesJson));
+            .andExpect(content().json(allFacilityTypesJson));
     }
 
 }
