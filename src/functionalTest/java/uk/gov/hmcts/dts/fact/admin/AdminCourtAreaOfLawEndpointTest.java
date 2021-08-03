@@ -61,7 +61,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void getRequestShouldReturnNotFoundWhenCourtDoesNotExist() {
+    public void shouldReturnNotFoundWhenCourtDoesNotExist() {
         final Response response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -121,7 +121,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void putRequestShouldReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
+    public void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
         final Response response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),
