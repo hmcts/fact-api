@@ -43,7 +43,6 @@ public class AdminCourtFacilityService {
         return saveCourtFacilities(courtEntity,courtFacilities);
     }
 
-
     protected List<Facility> saveCourtFacilities(final Court courtEntity, final List<Facility> courtFacilities) {
 
         final List<uk.gov.hmcts.dts.fact.entity.Facility> courtFacilitiesEntities = getNewCourtFacilityEntity(courtFacilities);
@@ -65,8 +64,7 @@ public class AdminCourtFacilityService {
     private List<uk.gov.hmcts.dts.fact.entity.Facility> getNewCourtFacilityEntity(final List<Facility> facilities) {
 
         return facilities.stream()
-            .map(f -> new uk.gov.hmcts.dts.fact.entity.Facility(f.getName(),f.getDescription(),
-                                                                f.getDescriptionCy(),
+            .map(f -> new uk.gov.hmcts.dts.fact.entity.Facility(f.getName(),f.getDescription(), f.getDescriptionCy(),
                                                                 facilityTypeRepository.findByName(f.getName()).orElse(null)))
             .collect(toList());
     }
