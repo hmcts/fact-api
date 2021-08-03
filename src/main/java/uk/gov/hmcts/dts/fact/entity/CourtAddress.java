@@ -1,21 +1,22 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import java.util.List;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_courtaddress")
 @Getter
 @Setter
+@NoArgsConstructor
 public class CourtAddress {
-    @Id
+    @Id()
+    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtaddress_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")
@@ -28,4 +29,26 @@ public class CourtAddress {
     private String townName;
     private String townNameCy;
     private String postcode;
+
+    public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,
+                        final String townName, final String townNameCy, final String postcode) {
+        this.court = court;
+        this.addressType = addressType;
+        this.address = CollectionUtils.isEmpty(addressLines) ? "" : convertAddressLines(addressLines);
+        this.addressCy = CollectionUtils.isEmpty(addressLinesCy) ? "" : convertAddressLines(addressLinesCy);
+        this.townName = townName;
+        this.townNameCy = townNameCy;
+        this.postcode = postcode;
+    }
+
+    private String convertAddressLines(final List<String> addressLines) {
+        final StringBuilder builder = new StringBuilder();
+        final int lastLine = addressLines.size() - 1;
+        for (int i = 0; i < lastLine; i++) {
+            builder.append(addressLines.get(i))
+                .append(System.lineSeparator());
+        }
+        builder.append(addressLines.get(lastLine));
+        return builder.toString();
+    }
 }
