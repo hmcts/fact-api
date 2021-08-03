@@ -22,9 +22,9 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
-    private static final String FACILITIES_PATH = "facilities";
-    private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court/";
-    private static final String GREENWICH_MAGISTRATES_COURT_SLUG = "greenwich-magistrate-court/";
+    private static final String FACILITIES_PATH = "/facilities";
+    private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court";
+    private static final String GREENWICH_MAGISTRATES_COURT_SLUG = "greenwich-magistrate-court";
 
 
     private static final String AYLESBURY_COURT_FACILITIES_PATH = ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG
@@ -38,8 +38,9 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     private static final String TEST_FACILITY_DESCRIPTION_CY = "TESTCY";
 
 
+    /************************************************************* GET request tests section. ***************************************************************/
     @Test
-    public void returnFacilitiesForTheCourt() {
+    public void getFacilitiesForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -51,13 +52,13 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingFacilities() {
+    public void shouldRequireATokenWhenGettingFacilitiesForTheCourt() {
         final var response = doGetRequest(AYLESBURY_COURT_FACILITIES_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingFacilities() {
+    public void shouldBeForbiddenForGettingFacilitiesForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -71,6 +72,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
+    /************************************************************* PUT request tests section. ***************************************************************/
     @Test
     public void shouldUpdateCourtFacilities() throws JsonProcessingException {
         final List<Facility> currentCourtFacilities = getCurrentFacilities();
@@ -80,7 +82,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
         final var response = doPutRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -94,7 +96,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             originalJson
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
@@ -106,10 +108,36 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         assertThat(cleanFacilities).containsExactlyElementsOf(currentCourtFacilities);
     }
 
+    @Test
+    public void shouldRequireATokenWhenUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
+        final var response = doPutRequest(AYLESBURY_COURT_FACILITIES_PATH, getTestFacility());
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldBeForbiddenForUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
+        final var response = doPutRequest(
+            AYLESBURY_COURT_FACILITIES_PATH,
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestFacility()
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldNotUpdateFacilitiesWhenCourtSlugNotFound() throws JsonProcessingException {
+        final var response = doPutRequest(
+            COURT_NOT_FIND_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            getTestFacility()
+        );
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
+
+    /************************************************************* Shared utility methods. ***************************************************************/
     private List<Facility> getCurrentFacilities() {
         final var response = doGetRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken)
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
         return response.body().jsonPath().getList(".", Facility.class);
     }
@@ -134,6 +162,4 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         );
         return objectMapper().writeValueAsString(facilities);
     }
-
-
 }
