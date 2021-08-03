@@ -12,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.repositories.CourtFacilityRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.FacilityTypeRepository;
 
@@ -56,10 +55,6 @@ public class AdminCourtFacilityServiceTest {
 
     @MockBean
     private FacilityTypeRepository facilityTypeRepository;
-
-    @MockBean
-    private CourtFacilityRepository courtFacilityRepository;
-
 
     @Mock
     private Court court;
@@ -128,7 +123,6 @@ public class AdminCourtFacilityServiceTest {
 
     @Test
     void shouldUpdateCourtFacility() {
-        when(courtFacilityRepository.saveAll(any())).thenReturn(COURT_FACILITIES);
         when(court.getFacilities()).thenReturn(COURT_FACILITIES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtRepository.save(court)).thenReturn(court);
