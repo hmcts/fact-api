@@ -116,7 +116,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<Facility> updateFacilities(final List<Facility> facilities) {
-        List<Facility> updatedFacilities = new ArrayList<>(facilities);
+        final List<Facility> updatedFacilities = new ArrayList<>(facilities);
         Facility facility = new Facility();
         facility.setName(TEST_FACILITY_NAME1);
         facility.setDescription(TEST_FACILITY_DESCRIPTION);
