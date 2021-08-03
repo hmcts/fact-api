@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.repositories.CourtFacilityRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.FacilityTypeRepository;
 
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -30,7 +32,6 @@ public class AdminCourtFacilityServiceTest {
 
     private static final int FACILITY_COUNT = 3;
     private static final String COURT_SLUG = "some slug";
-    private static final String FACILITY_TYPE_NAME = "name";
     private static final List<Facility> COURT_FACILITIES = new ArrayList<>();
     private static final String NOT_FOUND = "Not found: ";
     private static final String FACILITY_1 = "Facility1";
@@ -56,6 +57,10 @@ public class AdminCourtFacilityServiceTest {
     @MockBean
     private FacilityTypeRepository facilityTypeRepository;
 
+    @MockBean
+    private CourtFacilityRepository courtFacilityRepository;
+
+
     @Mock
     private Court court;
 
@@ -68,14 +73,23 @@ public class AdminCourtFacilityServiceTest {
         final FacilityType facilityType1 = new FacilityType();
         facilityType1.setId(1);
         facilityType1.setName("FacilityType1");
+        facilityType1.setImage("Image");
+        facilityType1.setImageDescription("ImageDescription");
+        facilityType1.setImageFilePath("ImagePath");
         facilityType1.setOrder(1);
         final FacilityType facilityType2 = new FacilityType();
         facilityType2.setId(2);
         facilityType2.setName("FacilityType2");
+        facilityType1.setImage("Image");
+        facilityType1.setImageDescription("ImageDescription");
+        facilityType1.setImageFilePath("ImagePath");
         facilityType2.setOrder(2);
         final FacilityType facilityType3 = new FacilityType();
         facilityType3.setId(3);
         facilityType3.setName("FacilityType3");
+        facilityType1.setImage("Image");
+        facilityType1.setImageDescription("ImageDescription");
+        facilityType1.setImageFilePath("ImagePath");
         facilityType3.setOrder(3);
 
         final Facility facility1 = new Facility("Facility1","Description1","DescriptionCy1",facilityType1);
@@ -114,10 +128,11 @@ public class AdminCourtFacilityServiceTest {
 
     @Test
     void shouldUpdateCourtFacility() {
+        when(courtFacilityRepository.saveAll(any())).thenReturn(COURT_FACILITIES);
         when(court.getFacilities()).thenReturn(COURT_FACILITIES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtRepository.save(court)).thenReturn(court);
-        when(facilityTypeRepository.findByName(FACILITY_TYPE_NAME)).thenReturn(Optional.of(facilityType));
+        when(facilityTypeRepository.findByName(any())).thenReturn(Optional.of(facilityType));
 
         assertThat(adminCourtFacilityService.updateCourtFacility(COURT_SLUG,expectedCourtFacilities))
             .hasSize(FACILITY_COUNT)
