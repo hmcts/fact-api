@@ -110,7 +110,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
-        final var response = doPutRequest(AYLESBURY_COURT_FACILITIES_PATH, getTestFacility());
+        final var response = doPutRequest(AYLESBURY_COURT_FACILITIES_PATH, getTestFacilities());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
@@ -118,7 +118,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     public void shouldBeForbiddenForUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
         final var response = doPutRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
-            Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestFacility()
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestFacilities()
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
@@ -128,7 +128,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         final var response = doPutRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),
-            getTestFacility()
+            getTestFacilities()
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
@@ -154,11 +154,10 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         return updatedFacilities;
     }
 
-    private static String getTestFacility() throws JsonProcessingException {
+    private static String getTestFacilities() throws JsonProcessingException {
         final List<Facility> facilities = Arrays.asList(
             new Facility(TEST_FACILITY_NAME1, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY),
             new Facility(TEST_FACILITY_NAME2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)
-
         );
         return objectMapper().writeValueAsString(facilities);
     }
