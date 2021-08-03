@@ -26,7 +26,6 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court";
     private static final String GREENWICH_MAGISTRATES_COURT_SLUG = "greenwich-magistrate-court";
 
-
     private static final String AYLESBURY_COURT_FACILITIES_PATH = ADMIN_COURTS_ENDPOINT + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG
         + FACILITIES_PATH;
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT + GREENWICH_MAGISTRATES_COURT_SLUG
@@ -40,7 +39,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* GET request tests section. ***************************************************************/
     @Test
-    public void getFacilitiesForTheCourt() {
+    public void returnFacilitiesForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -150,7 +149,6 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         facility.setDescription(TEST_FACILITY_DESCRIPTION);
         facility.setDescriptionCy(TEST_FACILITY_DESCRIPTION_CY);
         updatedFacilities.add(facility);
-
         return updatedFacilities;
     }
 

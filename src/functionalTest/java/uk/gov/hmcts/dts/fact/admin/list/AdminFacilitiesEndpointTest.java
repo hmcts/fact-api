@@ -22,7 +22,7 @@ public class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     private static final String GET_FACILITIES_ENDPOINT = "/admin/facilities";
 
     @Test
-    public void shouldGetAllFacilities() {
+    public void shouldReturnAllFacilities() {
         final Response response = doGetRequest(GET_FACILITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
