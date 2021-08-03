@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
+import uk.gov.hmcts.dts.fact.repositories.CourtFacilityRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.FacilityTypeRepository;
 
@@ -16,11 +17,13 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class AdminCourtFacilityService {
     private final CourtRepository courtRepository;
+    private final CourtFacilityRepository courtFacilityRepository;
     private final FacilityTypeRepository facilityTypeRepository;
 
     @Autowired
-    public AdminCourtFacilityService(final CourtRepository courtRepository, final FacilityTypeRepository facilityTypeRepository) {
+    public AdminCourtFacilityService(final CourtRepository courtRepository, final CourtFacilityRepository courtFacilityRepository, final FacilityTypeRepository facilityTypeRepository) {
         this.courtRepository = courtRepository;
+        this.courtFacilityRepository = courtFacilityRepository;
         this.facilityTypeRepository = facilityTypeRepository;
     }
 
@@ -46,6 +49,10 @@ public class AdminCourtFacilityService {
     protected List<Facility> saveCourtFacilities(final Court courtEntity, final List<Facility> courtFacilities) {
 
         final List<uk.gov.hmcts.dts.fact.entity.Facility> courtFacilitiesEntities = getNewCourtFacilityEntity(courtFacilities);
+
+        //remove existing court facilities and add updated facilities
+        courtFacilityRepository.deleteAll(courtEntity.getFacilities());
+        courtFacilityRepository.saveAll(courtFacilitiesEntities);
 
         if (courtEntity.getFacilities().isEmpty()) {
             courtEntity.setFacilities(courtFacilitiesEntities);
