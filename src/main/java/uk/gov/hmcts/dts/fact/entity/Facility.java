@@ -25,6 +25,7 @@ public class Facility {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     private String description;
+    @Column(name = "description_cy")
     private String descriptionCy;
     private String name;
     @Column(name = "name_cy")
