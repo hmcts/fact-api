@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CourtAreaOfLawRepository extends JpaRepository<CourtAreaOfLaw, Integer> {
     void deleteCourtAreaOfLawByCourtId(Integer id);
+
     List<CourtAreaOfLaw> getCourtAreaOfLawByCourtId(Integer courtId);
 }

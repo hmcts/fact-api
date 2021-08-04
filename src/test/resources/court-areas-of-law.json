@@ -1,15 +1,17 @@
 [
   {
     "id": 1,
-    "name": "AreaOfLaw1"
-
+    "name": "AreaOfLaw1",
+    "singlePointEntry": false
   },
   {
     "id": 2,
-    "name": "AreaOfLaw2"
+    "name": "AreaOfLaw2",
+    "singlePointEntry": true
   },
   {
     "id": 3,
-    "name": "AreaOfLaw3"
+    "name": "AreaOfLaw3",
+    "singlePointEntry": false
   }
 ]
