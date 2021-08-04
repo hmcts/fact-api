@@ -30,7 +30,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
         + AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG + AREAS_OF_LAW_PATH;
     private static final String AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH = ADMIN_COURTS_ENDPOINT + "NotFound" + AREAS_OF_LAW_PATH;
     private static final String TEST_AREA_OF_LAW_NAME = "Employment";
-    private static final int TEST_AREA_OF_LAW_ID = 34260;
+    private static final int TEST_AREA_OF_LAW_ID = 34_260;
 
     /************************************************************* GET request tests section. ***************************************************************/
     @Test

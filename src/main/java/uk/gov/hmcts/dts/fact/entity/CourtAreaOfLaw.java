@@ -1,17 +1,10 @@
 package uk.gov.hmcts.dts.fact.entity;
 
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "search_courtareaoflaw")
@@ -33,13 +26,9 @@ public class CourtAreaOfLaw {
     private Court court;
     private Boolean singlePointOfEntry;
 
-    public CourtAreaOfLaw(final AreaOfLaw areaOfLaw, final Court court) {
+    public CourtAreaOfLaw(final AreaOfLaw areaOfLaw, final Court court, boolean singlePointOfEntry) {
         this.areaOfLaw = areaOfLaw;
         this.court = court;
-
-//      Single point of entry needs to be set.
-//      This will be looked at in another story but will be set to false by default for now.
-        this.singlePointOfEntry = getSinglePointOfEntry();
+        this.singlePointOfEntry = singlePointOfEntry;
     }
-
 }

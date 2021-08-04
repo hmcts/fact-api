@@ -10,11 +10,8 @@ import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
-import javax.swing.text.html.Option;
-import java.awt.geom.Area;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -40,10 +37,13 @@ public class AdminCourtAreasOfLawService {
 
     @Transactional()
     public List<AreaOfLaw> updateAreasOfLawForCourt(final String slug, final List<AreaOfLaw> areasOfLaw) {
+        Map<Integer, Boolean> singlePointEntries =
+            areasOfLaw.stream().collect(Collectors.toMap(AreaOfLaw::getId, AreaOfLaw::isSinglePointEntry));
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
+
         List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> newAreasOfLawList = getNewAreasOfLaw(areasOfLaw);
-        List<CourtAreaOfLaw> newCourtAreasOfLawList = getNewCourtAreasOfLaw(courtEntity, newAreasOfLawList);
+        List<CourtAreaOfLaw> newCourtAreasOfLawList = getNewCourtAreasOfLaw(courtEntity, newAreasOfLawList, singlePointEntries);
 
         courtAreaOfLawRepository.deleteCourtAreaOfLawByCourtId(courtEntity.getId());
 
@@ -56,14 +56,16 @@ public class AdminCourtAreasOfLawService {
 
     private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewAreasOfLaw(final List<AreaOfLaw> areaOfLaw) {
         return areaOfLaw.stream()
-            .map(e -> new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(e.getId(), e.getName()
-            )).collect(toList());
+            .map(e -> new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(e.getId(), e.getName())).collect(toList());
     }
 
-    private List<CourtAreaOfLaw> getNewCourtAreasOfLaw(final Court court, final List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> areasOfLaw) {
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private List<CourtAreaOfLaw> getNewCourtAreasOfLaw(final Court court,
+                                                       final List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> areasOfLaw,
+                                                       Map<Integer, Boolean> singlePointEntries) {
         final List<CourtAreaOfLaw> newCourtAreasOfLawList = new ArrayList<>();
-        for (int i = 0; i < areasOfLaw.size(); i++) {
-            newCourtAreasOfLawList.add(new CourtAreaOfLaw(areasOfLaw.get(i), court));
+        for (uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw : areasOfLaw) {
+            newCourtAreasOfLawList.add(new CourtAreaOfLaw(areaOfLaw, court, singlePointEntries.get(areaOfLaw.getId())));
         }
         return newCourtAreasOfLawList;
     }

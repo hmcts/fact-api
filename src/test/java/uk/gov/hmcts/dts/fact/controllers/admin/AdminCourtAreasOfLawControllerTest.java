@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.model.admin.Email;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAreasOfLawService;
 
 import java.util.List;
