@@ -12,7 +12,6 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAreasOfLawService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -67,9 +66,9 @@ public class AdminCourtAreasOfLawControllerTest {
         when(adminService.updateAreasOfLawForCourt(TEST_SLUG, areasOfLaw)).thenReturn(areasOfLaw);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
-                    .content(expectedJson)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+            .content(expectedJson)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson));
     }
@@ -81,12 +80,11 @@ public class AdminCourtAreasOfLawControllerTest {
         when(adminService.updateAreasOfLawForCourt(TEST_SLUG, areasOfLaw))
             .thenThrow(new NotFoundException(TEST_SLUG));
 
-            mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
-                .content(jsonBody)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
+            .content(jsonBody)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().string("Not found: " + TEST_SLUG));
     }
-
 }

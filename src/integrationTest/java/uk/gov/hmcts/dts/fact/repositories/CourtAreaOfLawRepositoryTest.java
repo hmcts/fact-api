@@ -1,7 +1,6 @@
 package uk.gov.hmcts.dts.fact.repositories;
 
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,9 @@ public class CourtAreaOfLawRepositoryTest {
         final int courtId = court.get().getId();
 
         courtAreaOfLawRepository.save(new CourtAreaOfLaw(
-            new AreaOfLaw(100001, "Area of Law"), court.get(), true));
+            new AreaOfLaw(100_001, "Area of Law"), court.get(), true));
         courtAreaOfLawRepository.save(new CourtAreaOfLaw(
-            new AreaOfLaw(100002, "Area of Law 2"), court.get(), true));
+            new AreaOfLaw(100_002, "Area of Law 2"), court.get(), true));
 
         final SoftAssertions softly = new SoftAssertions();
         softly.assertThat(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(courtId)).isNotEmpty();
