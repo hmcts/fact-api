@@ -21,6 +21,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 public class AdminCourtAddressService {
     private final CourtRepository courtRepository;
     private final CourtAddressRepository courtAddressRepository;
@@ -64,42 +65,31 @@ public class AdminCourtAddressService {
             .collect(toList());
     }
 
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<String> validateCourtAddressPostcodes(final String slug, final List<CourtAddress> courtAddresses) {
         final List<String> invalidPostcodes = new ArrayList<>();
 
         if (!CollectionUtils.isEmpty(courtAddresses)) {
-            final List<String> allPostcodes = getAllPostcodes(courtAddresses);
-            final List<String> visitUsPostcodes = getVisitUsPostcodes(courtAddresses);
+            final List<String> allPostcodes = getAllPostcodesSortedByAddressType(courtAddresses);
 
             if (!CollectionUtils.isEmpty(allPostcodes)) {
                 invalidPostcodes.addAll(validationService.validateFullPostcodes(allPostcodes));
             }
 
-            if (invalidPostcodes.isEmpty()) {
-                if (CollectionUtils.isEmpty(visitUsPostcodes)) {
-                    // Remove the coordinates if all postcodes are valid but no 'visit us' postcode
-                    adminService.removeCourtLatLon(slug);
-                } else {
-                    updateCourtLatLonUsingPrimaryPostcode(slug, visitUsPostcodes.get(0));
-                }
+            if (invalidPostcodes.isEmpty()
+                && !CollectionUtils.isEmpty(allPostcodes)
+                && isInPersonCourt(slug)) {
+                updateCourtLatLonUsingPrimaryPostcode(slug, allPostcodes.get(0));
             }
         }
         return invalidPostcodes;
     }
 
-    private List<String> getAllPostcodes(final List<CourtAddress> courtAddresses) {
-        return courtAddresses.stream()
-            .map(CourtAddress::getPostcode)
-            .filter(StringUtils::isNotBlank)
-            .collect(toList());
-    }
-
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private List<String> getVisitUsPostcodes(final List<CourtAddress> courtAddresses) {
+    private List<String> getAllPostcodesSortedByAddressType(final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
+
+        // Sort the postcodes so that the 'visit us' or 'visit or contact us' postcodes appear first
         return courtAddresses.stream()
-            .filter(a -> AddressType.isCourtAddress(getAddressTypeFromId(addressTypeMap, a.getAddressTypeId())))
+            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(getAddressTypeFromId(addressTypeMap, a.getAddressTypeId())) ? 0 : 1))
             .map(CourtAddress::getPostcode)
             .filter(StringUtils::isNotBlank)
             .collect(toList());
@@ -112,6 +102,12 @@ public class AdminCourtAddressService {
         return map.get(addressTypeId).getName();
     }
 
+    private boolean isInPersonCourt(final String slug) {
+        final Court courtEntity = courtRepository.findBySlug(slug)
+            .orElseThrow(() -> new NotFoundException(slug));
+        return courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
+    }
+
     private void updateCourtLatLonUsingPrimaryPostcode(final String slug, final String postcode) {
         final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
         if (mapitData.isPresent()) {
@@ -119,7 +115,6 @@ public class AdminCourtAddressService {
         }
     }
 
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         return courtAddresses.stream()

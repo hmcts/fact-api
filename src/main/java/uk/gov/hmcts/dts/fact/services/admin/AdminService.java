@@ -111,9 +111,4 @@ public class AdminService {
     public void updateCourtLatLon(final String slug, final Double lat, final Double lon) {
         courtRepository.updateLatLonBySlug(slug, lat, lon);
     }
-
-    @Transactional
-    public void removeCourtLatLon(final String slug) {
-        courtRepository.updateLatLonBySlug(slug, null, null);
-    }
 }
