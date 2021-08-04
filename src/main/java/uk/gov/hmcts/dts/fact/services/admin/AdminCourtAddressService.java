@@ -75,6 +75,7 @@ public class AdminCourtAddressService {
                 invalidPostcodes.addAll(validationService.validateFullPostcodes(allPostcodes));
             }
 
+            // Only update the in-person court coordinates is all input postcodes are valid
             if (invalidPostcodes.isEmpty()
                 && !CollectionUtils.isEmpty(allPostcodes)
                 && isInPersonCourt(slug)) {

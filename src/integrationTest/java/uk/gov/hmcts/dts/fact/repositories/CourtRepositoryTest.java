@@ -331,9 +331,5 @@ class CourtRepositoryTest {
         softly.assertThat(result.get().getLon()).isNotEqualTo(lon);
         softly.assertThat(result.get().getLon()).isEqualTo(expectedLon);
         softly.assertAll();
-
     }
-
-
-
 }
