@@ -32,7 +32,8 @@ public class AdminCourtFacilityServiceTest {
 
     private static final int FACILITY_COUNT = 3;
     private static final String COURT_SLUG = "some slug";
-    private static final List<Facility> COURT_FACILITIES = new ArrayList<>();
+    private static final List<Facility> FACILITIES = new ArrayList<>();
+    private static final List<CourtFacility> COURT_FACILITIES = new ArrayList<>();
     private static final String NOT_FOUND = "Not found: ";
     private static final String FACILITY_1 = "Facility1";
     private static final String FACILITY_2 = "Facility2";
@@ -41,11 +42,12 @@ public class AdminCourtFacilityServiceTest {
     private static final String DESCRIPTION_CY_1 = "DescriptionCy1";
     private static final String DESCRIPTION_2 = "Description2";
     private static final String DESCRIPTION_CY_2 = "DescriptionCy2";
-
+    private static final String DESCRIPTION_3 = "Description3";
+    private static final String DESCRIPTION_CY_3 = "DescriptionCy3";
     final List<uk.gov.hmcts.dts.fact.model.admin.Facility> expectedCourtFacilities = Arrays.asList(
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_1,DESCRIPTION_1,DESCRIPTION_CY_1),
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_2,DESCRIPTION_2,DESCRIPTION_CY_2),
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_3,"updated1","updated2"));
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_3,DESCRIPTION_3,DESCRIPTION_CY_3));
 
 
     @Autowired
@@ -59,7 +61,6 @@ public class AdminCourtFacilityServiceTest {
 
     @MockBean
     private CourtFacilityRepository courtFacilityRepository;
-
 
     @Mock
     private Court court;
@@ -96,19 +97,28 @@ public class AdminCourtFacilityServiceTest {
         final Facility facility2 = new Facility("Facility2","Description2","DescriptionCy2",facilityType2);
         final Facility facility3 = new Facility("Facility3","Description3","DescriptionCy3",facilityType1);
 
-        COURT_FACILITIES.add(facility1);
-        COURT_FACILITIES.add(facility2);
-        COURT_FACILITIES.add(facility3);
+        FACILITIES.add(facility1);
+        FACILITIES.add(facility2);
+        FACILITIES.add(facility3);
+
+        final CourtFacility courtFacility1 = new CourtFacility(new Court(),facility1);
+        final CourtFacility courtFacility2 = new CourtFacility(new Court(),facility2);
+        final CourtFacility courtFacility3 = new CourtFacility(new Court(),facility3);
+
+        COURT_FACILITIES.add(courtFacility1);
+        COURT_FACILITIES.add(courtFacility2);
+        COURT_FACILITIES.add(courtFacility3);
     }
 
     @AfterEach
     void tearDown() {
+        FACILITIES.clear();
         COURT_FACILITIES.clear();
     }
 
     @Test
     void shouldReturnCourtFacilities() {
-        when(court.getFacilities()).thenReturn(COURT_FACILITIES);
+        when(court.getFacilities()).thenReturn(FACILITIES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
 
         assertThat(adminCourtFacilityService.getCourtFacilitiesBySlug(COURT_SLUG))
@@ -129,7 +139,6 @@ public class AdminCourtFacilityServiceTest {
     @Test
     void shouldUpdateCourtFacility() {
         when(courtFacilityRepository.saveAll(any())).thenReturn(COURT_FACILITIES);
-        when(court.getFacilities()).thenReturn(COURT_FACILITIES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtRepository.save(court)).thenReturn(court);
         when(facilityTypeRepository.findByName(any())).thenReturn(Optional.of(facilityType));
