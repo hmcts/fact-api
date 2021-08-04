@@ -99,12 +99,22 @@ public class AdminCourtAreasOfLawServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtAreaOfLawRepository.saveAll(any())).thenReturn(COURT_AREA_OF_LAWS);
 
-        List<AreaOfLaw> courtAreasOfLawResult = adminCourtAreasOfLawService.updateAreasOfLawForCourt(COURT_SLUG, areasOfLaw);
+        final List<AreaOfLaw> courtAreasOfLawResult =
+            adminCourtAreasOfLawService.updateAreasOfLawForCourt(COURT_SLUG, areasOfLaw);
         verify(courtAreaOfLawRepository).deleteCourtAreaOfLawByCourtId(court.getId());
         verify(courtAreaOfLawRepository).saveAll(anyIterable());
 
         assertThat(courtAreasOfLawResult)
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .containsExactlyElementsOf(areasOfLaw);
+    }
+
+    @Test
+    void shouldNotUpdateCourtAreasOfLawWhenSlugNotFound() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminCourtAreasOfLawService.updateAreasOfLawForCourt(COURT_SLUG, new ArrayList<>()))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 }

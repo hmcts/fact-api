@@ -54,8 +54,8 @@ public class AdminCourtAreasOfLawService {
             .collect(toList());
     }
 
-    private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewAreasOfLaw(final List<AreaOfLaw> areaOfLaw) {
-        return areaOfLaw.stream()
+    private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewAreasOfLaw(final List<AreaOfLaw> areasOfLaw) {
+        return areasOfLaw.stream()
             .map(e -> new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(e.getId(), e.getName())).collect(toList());
     }
 

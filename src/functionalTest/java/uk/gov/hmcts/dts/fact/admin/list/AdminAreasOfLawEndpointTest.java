@@ -15,7 +15,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
-    private static final String ADMIN_AREAS_OF_LAW_ENDPOINT = "/admin/courtAreasOfLaw";
+    private static final String ADMIN_AREAS_OF_LAW_ENDPOINT = "/admin/areasOfLaw";
 
     @Test
     public void shouldReturnAllAreasOfLaw() {
