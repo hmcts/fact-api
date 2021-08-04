@@ -79,7 +79,7 @@ public class AdminCourtAddressControllerTest {
     @Test
     void shouldUpdateCourtAddresses() throws Exception {
         when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.updateCourtAddresses(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
+        when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .content(courtAddressesJson)
@@ -92,7 +92,7 @@ public class AdminCourtAddressControllerTest {
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForUnknownCourtSlug() throws Exception {
         when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.updateCourtAddresses(TEST_SLUG, COURT_ADDRESSES)).thenThrow(new NotFoundException(TEST_SLUG));
+        when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenThrow(new NotFoundException(TEST_SLUG));
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .content(courtAddressesJson)
@@ -115,6 +115,6 @@ public class AdminCourtAddressControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(content().json(expectedResultJson));
 
-        verify(adminService, never()).updateCourtAddresses(TEST_SLUG, COURT_ADDRESSES);
+        verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
     }
 }

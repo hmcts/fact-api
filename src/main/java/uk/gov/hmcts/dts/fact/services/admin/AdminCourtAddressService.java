@@ -18,6 +18,7 @@ import uk.gov.hmcts.dts.fact.util.AddressType;
 
 import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -31,7 +32,7 @@ public class AdminCourtAddressService {
     private final ValidationService validationService;
 
     @Autowired
-    public AdminCourtAddressService(final CourtRepository courtRepository, final CourtAddressRepository courtAddressRepository, final AdminAddressTypeService addressTypeService, AdminService adminService, MapitService mapitService, ValidationService validationService) {
+    public AdminCourtAddressService(final CourtRepository courtRepository, final CourtAddressRepository courtAddressRepository, final AdminAddressTypeService addressTypeService, final AdminService adminService, final MapitService mapitService, final ValidationService validationService) {
         this.courtRepository = courtRepository;
         this.courtAddressRepository = courtAddressRepository;
         this.addressTypeService = addressTypeService;
@@ -51,56 +52,45 @@ public class AdminCourtAddressService {
     }
 
     @Transactional()
-    public List<CourtAddress> updateCourtAddresses(final String slug, final List<CourtAddress> courtAddresses) {
+    public List<CourtAddress> updateCourtAddressesAndCoordinates(final String slug, final List<CourtAddress> courtAddresses) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> newCourtAddressesEntity = constructCourtAddressesEntity(courtEntity, courtAddresses);
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
 
-        return courtAddressRepository.saveAll(newCourtAddressesEntity)
+        final List<CourtAddress> updatedCourtAddresses = courtAddressRepository.saveAll(newCourtAddressesEntity)
             .stream()
             .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .map(CourtAddress::new)
             .collect(toList());
+
+        // Update the in-person court with its primary postcode coordinates
+        if (isInPersonCourt(slug) && !CollectionUtils.isEmpty(updatedCourtAddresses)) {
+            final String primaryPostcode = updatedCourtAddresses.get(0).getPostcode();
+            if (StringUtils.isNotBlank(primaryPostcode)) {
+                updateCourtLatLonUsingPrimaryPostcode(slug, primaryPostcode);
+            }
+        }
+        return updatedCourtAddresses;
     }
 
     public List<String> validateCourtAddressPostcodes(final String slug, final List<CourtAddress> courtAddresses) {
-        final List<String> invalidPostcodes = new ArrayList<>();
-
         if (!CollectionUtils.isEmpty(courtAddresses)) {
-            final List<String> allPostcodes = getAllPostcodesSortedByAddressType(courtAddresses);
+            final List<String> allPostcodes = getAllPostcodes(courtAddresses);
 
             if (!CollectionUtils.isEmpty(allPostcodes)) {
-                invalidPostcodes.addAll(validationService.validateFullPostcodes(allPostcodes));
-            }
-
-            // Only update the in-person court coordinates is all input postcodes are valid
-            if (invalidPostcodes.isEmpty()
-                && !CollectionUtils.isEmpty(allPostcodes)
-                && isInPersonCourt(slug)) {
-                updateCourtLatLonUsingPrimaryPostcode(slug, allPostcodes.get(0));
+                return validationService.validateFullPostcodes(allPostcodes);
             }
         }
-        return invalidPostcodes;
+        return emptyList();
     }
 
-    private List<String> getAllPostcodesSortedByAddressType(final List<CourtAddress> courtAddresses) {
-        final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
-
-        // Sort the postcodes so that the 'visit us' or 'visit or contact us' postcodes appear first
+    private List<String> getAllPostcodes(final List<CourtAddress> courtAddresses) {
         return courtAddresses.stream()
-            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(getAddressTypeFromId(addressTypeMap, a.getAddressTypeId())) ? 0 : 1))
             .map(CourtAddress::getPostcode)
             .filter(StringUtils::isNotBlank)
             .collect(toList());
-    }
-
-    private String getAddressTypeFromId(final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> map, final Integer addressTypeId) {
-        if (!map.containsKey(addressTypeId)) {
-            throw new IllegalArgumentException("Unknown address type ID: " + addressTypeId);
-        }
-        return map.get(addressTypeId).getName();
     }
 
     private boolean isInPersonCourt(final String slug) {

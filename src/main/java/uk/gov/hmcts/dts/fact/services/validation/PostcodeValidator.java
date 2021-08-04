@@ -66,7 +66,7 @@ public class PostcodeValidator {
         if (StringUtils.isNotBlank(postcode) && isFullPostcodeFormat(postcode)) {
             return fullPostCodeDataExists(postcode);
         }
-        log.info("'{}' is not a full postcode", postcode);
+        log.warn("'{}' is not a full postcode", postcode);
         return false;
     }
 

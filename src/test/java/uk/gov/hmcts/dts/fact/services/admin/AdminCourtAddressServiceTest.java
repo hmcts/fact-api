@@ -167,133 +167,141 @@ public class AdminCourtAddressServiceTest {
                                                                             WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
 
-        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddresses(COURT_SLUG, EXPECTED_ADDRESSES);
+        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
+        when(mapitData.getLat()).thenReturn(LATITUDE);
+        when(mapitData.getLon()).thenReturn(LONGITUDE);
+
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
         assertThat(results).hasSize(ADDRESS_COUNT);
         assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
         assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
 
         verify(courtAddressRepository).deleteAll(any());
+        verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
     }
 
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddresses(COURT_SLUG, any()))
+        assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 
     @Test
-    void validateCourtPostcodesForInPersonCourtShouldUpdateCoordinates() {
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(emptyList());
-
-        when(inPerson.getIsInPerson()).thenReturn(true);
-        when(MOCK_COURT.getInPerson()).thenReturn(inPerson);
+    void shouldUpdateCoordinatesForNullInPersonEntity() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
 
+        when(MOCK_COURT.getInPerson()).thenReturn(null);
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
         when(mapitData.getLat()).thenReturn(LATITUDE);
         when(mapitData.getLon()).thenReturn(LONGITUDE);
 
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).isEmpty();
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
+        assertThat(results).hasSize(ADDRESS_COUNT);
+        assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
+
+        verify(courtAddressRepository).deleteAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
     }
 
     @Test
-    void validateCourtPostcodesForNotInPersonCourtShouldNotUpdateCoordinates() {
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(emptyList());
+    void shouldNotUpdateCoordinatesForNotInPersonCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
+        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
 
         when(inPerson.getIsInPerson()).thenReturn(false);
         when(MOCK_COURT.getInPerson()).thenReturn(inPerson);
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
 
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).isEmpty();
-        verify(adminService, never()).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
+        assertThat(results).hasSize(ADDRESS_COUNT);
+        assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
+
+        verify(courtAddressRepository).deleteAll(any());
+        verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
     }
 
     @Test
-    void validateCourtPostcodesForNullPersonEntityShouldUpdateCoordinates() {
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(emptyList());
+    void shouldNotUpdateCoordinatesForEmptyMapitData() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
+        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
 
-        when(MOCK_COURT.getInPerson()).thenReturn(null);
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
+        assertThat(results).hasSize(ADDRESS_COUNT);
+        assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
+
+        verify(courtAddressRepository).deleteAll(any());
+        verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
+    }
+
+    @Test
+    void validateCourtPostcodesReturnsNothingForValidPostcodes() {
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE))).thenReturn(emptyList());
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
 
-        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
-        when(mapitData.getLat()).thenReturn(LATITUDE);
-        when(mapitData.getLon()).thenReturn(LONGITUDE);
-
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).isEmpty();
-        verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
     }
 
     @Test
     void validateCourtPostcodesShouldReturnAllInvalidPostcodes() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(asList(
-            WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE));
-        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
+        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE)))
+            .thenReturn(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
             WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE);
-        verifyNoInteractions(courtRepository);
-        verifyNoInteractions(mapitService);
-        verifyNoInteractions(adminService);
     }
 
     @Test
     void validateCourtPostcodesShouldReturnInvalidVisitUsPostcodeOnly() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(
-            VISIT_US_POSTCODE,
-            WRITE_TO_US_POSTCODE
-        ))).thenReturn(singletonList(VISIT_US_POSTCODE));
+        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE)))
+            .thenReturn(singletonList(VISIT_US_POSTCODE));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
             VISIT_US_POSTCODE);
-        verifyNoInteractions(courtRepository);
-        verifyNoInteractions(mapitService);
-        verifyNoInteractions(adminService);
     }
 
     @Test
     void validateCourtPostcodesShouldReturnInvalidWriteToUsPostcodeOnly() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(
-            VISIT_US_POSTCODE,
-            WRITE_TO_US_POSTCODE
-        ))).thenReturn(singletonList(WRITE_TO_US_POSTCODE));
+        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE)))
+            .thenReturn(singletonList(WRITE_TO_US_POSTCODE));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
             WRITE_TO_US_POSTCODE);
-        verifyNoInteractions(courtRepository);
-        verifyNoInteractions(mapitService);
-        verifyNoInteractions(adminService);
     }
 
     @Test
     void validateCourtPostcodesShouldReturnInvalidPartialPostcode() {
-        final List<CourtAddress> testAddresses = singletonList(new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, PARTIAL_POSTCODE));
+        final List<CourtAddress> testAddresses = singletonList(
+            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, PARTIAL_POSTCODE)
+        );
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(singletonList(PARTIAL_POSTCODE))).thenReturn(singletonList(PARTIAL_POSTCODE));
+        when(validationService.validateFullPostcodes(singletonList(PARTIAL_POSTCODE)))
+            .thenReturn(singletonList(PARTIAL_POSTCODE));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).containsExactly(PARTIAL_POSTCODE);
-        verifyNoInteractions(courtRepository);
-        verifyNoInteractions(mapitService);
-        verifyNoInteractions(adminService);
     }
 
     @Test
     void validateCourtPostcodesShouldReturnNothingForEmptyAddress() {
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, emptyList())).isEmpty();
-
         verifyNoInteractions(validationService);
-        verifyNoInteractions(courtRepository);
-        verifyNoInteractions(mapitService);
-        verifyNoInteractions(adminService);
     }
 
     @Test
@@ -301,10 +309,6 @@ public class AdminCourtAddressServiceTest {
         final List<CourtAddress> testAddresses = singletonList(new CourtAddress(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, ""));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).isEmpty();
-
         verifyNoInteractions(validationService);
-        verifyNoInteractions(courtRepository);
-        verifyNoInteractions(mapitService);
-        verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
     }
 }

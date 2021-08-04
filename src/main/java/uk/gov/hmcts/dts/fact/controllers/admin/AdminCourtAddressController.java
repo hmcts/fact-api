@@ -70,7 +70,7 @@ public class AdminCourtAddressController {
     public ResponseEntity<List<CourtAddress>> updateCourtAddresses(@PathVariable String slug, @RequestBody List<CourtAddress> courtAddresses) {
         final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(slug, courtAddresses);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
-            return ok(adminService.updateCourtAddresses(slug, courtAddresses));
+            return ok(adminService.updateCourtAddressesAndCoordinates(slug, courtAddresses));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }
