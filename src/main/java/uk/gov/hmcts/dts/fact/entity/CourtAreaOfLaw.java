@@ -17,7 +17,7 @@ public class CourtAreaOfLaw {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
 
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "area_of_law_id")
     private AreaOfLaw areaOfLaw;
 

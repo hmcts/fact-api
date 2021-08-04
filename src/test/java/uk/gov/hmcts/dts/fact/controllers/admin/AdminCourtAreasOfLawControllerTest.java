@@ -12,6 +12,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAreasOfLawService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -36,7 +37,6 @@ public class AdminCourtAreasOfLawControllerTest {
 
     @MockBean
     private AdminCourtAreasOfLawService adminService;
-
 
     @Test
     void shouldReturnCourAreasOfLaw() throws Exception {
@@ -72,6 +72,21 @@ public class AdminCourtAreasOfLawControllerTest {
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson));
+    }
+
+    @Test
+    void updateCourtLocalAuthoritiesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
+        final String jsonBody = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
+        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(jsonBody, AreaOfLaw[].class));
+        when(adminService.updateAreasOfLawForCourt(TEST_SLUG, areasOfLaw))
+            .thenThrow(new NotFoundException(TEST_SLUG));
+
+            mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
+                .content(jsonBody)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("Not found: " + TEST_SLUG));
     }
 
 }
