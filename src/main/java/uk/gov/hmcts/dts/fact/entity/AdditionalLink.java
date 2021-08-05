@@ -25,4 +25,11 @@ public class AdditionalLink {
     @OneToOne()
     @JoinColumn(name = "location_id")
     private SidebarLocation location;
+
+    public AdditionalLink(final String url, final String description, final String descriptionCy, final SidebarLocation location) {
+        this.url = url;
+        this.description = description;
+        this.descriptionCy = descriptionCy;
+        this.location = location;
+    }
 }

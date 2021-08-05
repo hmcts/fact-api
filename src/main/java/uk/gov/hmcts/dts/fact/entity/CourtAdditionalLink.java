@@ -23,4 +23,9 @@ public class CourtAdditionalLink {
     @JoinColumn(name = "additional_link_id")
     private AdditionalLink additionalLink;
     private Integer sort;
+
+    public CourtAdditionalLink(final Court court, final AdditionalLink additionalLink) {
+        this.court = court;
+        this.additionalLink = additionalLink;
+    }
 }
