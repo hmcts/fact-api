@@ -29,6 +29,8 @@ class AdminServiceTest {
 
     private Court courtEntity;
     private static final String SOME_SLUG = "some-slug";
+    private static final Double LATITUDE = 1.0;
+    private static final Double LONGITUDE = -3.0;
     private static uk.gov.hmcts.dts.fact.model.admin.Court court;
 
     @Autowired
@@ -145,8 +147,12 @@ class AdminServiceTest {
         when(rolesProvider.getRoles()).thenReturn(singletonList("fact-super-admin"));
 
         adminService.updateMultipleCourtsInfo(info);
-
-        verify(courtRepository, times(1)).updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
+        verify(courtRepository).updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
     }
 
+    @Test
+    void shouldUpdateCourtLatLon() {
+        adminService.updateCourtLatLon(SOME_SLUG, LATITUDE, LONGITUDE);
+        verify(courtRepository).updateLatLonBySlug(SOME_SLUG, LATITUDE, LONGITUDE);
+    }
 }

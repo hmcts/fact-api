@@ -17,6 +17,10 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     @Query("UPDATE Court c SET c.info = :info, c.infoCy = :infoCy WHERE c.slug in :slugs")
     void updateInfoForSlugs(@Param("slugs") List<String> slugs, @Param("info") String info, @Param("infoCy") String infoCy);
 
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Court SET lat = :lat, lon = :lon WHERE slug = :slug")
+    void updateLatLonBySlug(String slug, Double lat, Double lon);
+
     List<Court> findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(String prefix, boolean active);
 
     @Query(nativeQuery = true,
