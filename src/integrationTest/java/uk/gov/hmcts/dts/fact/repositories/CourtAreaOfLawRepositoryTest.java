@@ -23,6 +23,9 @@ public class CourtAreaOfLawRepositoryTest {
     private CourtAreaOfLawRepository courtAreaOfLawRepository;
 
     @Autowired
+    private AreasOfLawRepository areasOfLawRepository;
+
+    @Autowired
     private CourtRepository courtRepository;
 
     @Test
@@ -32,10 +35,17 @@ public class CourtAreaOfLawRepositoryTest {
         assertThat(court).isPresent();
         final int courtId = court.get().getId();
 
+        AreaOfLaw areaOfLaw = new AreaOfLaw(100_001, "Area of Law");
+        AreaOfLaw areaOfLaw2 = new AreaOfLaw(100_002, "Area of Law 2");
+        areasOfLawRepository.save(areaOfLaw);
+        areasOfLawRepository.save(areaOfLaw2);
+        areasOfLawRepository.flush();
+
         courtAreaOfLawRepository.save(new CourtAreaOfLaw(
-            new AreaOfLaw(100_001, "Area of Law"), court.get(), true));
+            areaOfLaw, court.get(), true));
         courtAreaOfLawRepository.save(new CourtAreaOfLaw(
-            new AreaOfLaw(100_002, "Area of Law 2"), court.get(), true));
+            areaOfLaw2, court.get(), true));
+        courtAreaOfLawRepository.flush();
 
         final SoftAssertions softly = new SoftAssertions();
         softly.assertThat(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(courtId)).isNotEmpty();
