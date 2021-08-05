@@ -24,8 +24,9 @@ public class CourtAdditionalLink {
     private AdditionalLink additionalLink;
     private Integer sort;
 
-    public CourtAdditionalLink(final Court court, final AdditionalLink additionalLink) {
+    public CourtAdditionalLink(final Court court, final AdditionalLink additionalLink, final Integer sort) {
         this.court = court;
         this.additionalLink = additionalLink;
+        this.sort = sort;
     }
 }

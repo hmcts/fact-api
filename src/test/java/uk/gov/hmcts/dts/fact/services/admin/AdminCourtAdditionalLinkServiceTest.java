@@ -69,9 +69,9 @@ public class AdminCourtAdditionalLinkServiceTest {
                                                                                                                                         TEST_DESCRIPTION_CY3,
                                                                                                                                         SIDEBAR_LOCATION2);
     private static final List<CourtAdditionalLink> COURT_ADDITIONAL_LINKS = Arrays.asList(
-        new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY1),
-        new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY2),
-        new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY3)
+        new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY1, 0),
+        new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY2, 1),
+        new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY3, 2)
     );
 
     private static final String NOT_FOUND = "Not found: ";

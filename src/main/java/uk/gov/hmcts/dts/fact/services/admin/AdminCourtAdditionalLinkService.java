@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtAdditionalLinkRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminSidebarLocationService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,14 +54,19 @@ public class AdminCourtAdditionalLinkService {
             .collect(toList());
     }
 
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    @SuppressWarnings({"PMD.AvoidInstantiatingObjectsInLoops", "PMD.DataflowAnomalyAnalysis"})
     private List<CourtAdditionalLink> constructCourtAdditionalLinksEntity(final Court courtEntity, final List<AdditionalLink> additionalLinks) {
         final Map<Integer, SidebarLocation> sidebarLocationMap = sidebarLocationService.getSidebarLocationMap();
-        return additionalLinks.stream()
-            .map(a -> new CourtAdditionalLink(courtEntity, new uk.gov.hmcts.dts.fact.entity.AdditionalLink(a.getUrl(),
-                                                                                                           a.getDescription(),
-                                                                                                           a.getDescriptionCy(),
-                                                                                                           sidebarLocationMap.get(a.getSidebarLocationId()))))
-            .collect(toList());
+        final List<CourtAdditionalLink> courtAdditionalLinks = new ArrayList<>();
+        for (int i = 0; i < additionalLinks.size(); i++) {
+            courtAdditionalLinks.add(new CourtAdditionalLink(courtEntity,
+                                                             new uk.gov.hmcts.dts.fact.entity.AdditionalLink(
+                                                                 additionalLinks.get(i).getUrl(),
+                                                                 additionalLinks.get(i).getDescription(),
+                                                                 additionalLinks.get(i).getDescriptionCy(),
+                                                                 sidebarLocationMap.get(additionalLinks.get(i).getSidebarLocationId())
+                                                             ), i));
+        }
+        return courtAdditionalLinks;
     }
 }

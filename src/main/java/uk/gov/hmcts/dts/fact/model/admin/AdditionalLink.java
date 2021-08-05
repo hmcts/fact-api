@@ -14,9 +14,7 @@ public class AdditionalLink {
     private String descriptionCy;
 
     public AdditionalLink(final uk.gov.hmcts.dts.fact.entity.AdditionalLink additionalLink) {
-        if (additionalLink.getLocation() != null) {
-            this.sidebarLocationId = additionalLink.getLocation().getId();
-        }
+        this.sidebarLocationId = additionalLink.getLocation().getId();
         this.url = additionalLink.getUrl();
         this.description = additionalLink.getDescription();
         this.descriptionCy = additionalLink.getDescriptionCy();
