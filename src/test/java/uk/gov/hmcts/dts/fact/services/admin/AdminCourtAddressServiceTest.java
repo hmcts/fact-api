@@ -183,8 +183,10 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
 
-        assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, any()))
+        assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
@@ -250,7 +252,7 @@ public class AdminCourtAddressServiceTest {
     @Test
     void validateCourtPostcodesReturnsNothingForValidPostcodes() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE))).thenReturn(emptyList());
+        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(emptyList());
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).isEmpty();
@@ -259,7 +261,7 @@ public class AdminCourtAddressServiceTest {
     @Test
     void validateCourtPostcodesShouldReturnAllInvalidPostcodes() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE)))
+        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE)))
             .thenReturn(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
@@ -269,7 +271,7 @@ public class AdminCourtAddressServiceTest {
     @Test
     void validateCourtPostcodesShouldReturnInvalidVisitUsPostcodeOnly() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE)))
+        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE)))
             .thenReturn(singletonList(VISIT_US_POSTCODE));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
@@ -279,7 +281,7 @@ public class AdminCourtAddressServiceTest {
     @Test
     void validateCourtPostcodesShouldReturnInvalidWriteToUsPostcodeOnly() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE)))
+        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE)))
             .thenReturn(singletonList(WRITE_TO_US_POSTCODE));
 
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
