@@ -30,9 +30,10 @@ public class AdminCourtAreasOfLawService {
     public List<AreaOfLaw> getCourtAreasOfLawBySlug(final String slug) {
 
         Court court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
-        List<CourtAreaOfLaw> courtAreaOfLawList = courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(court.getId());
-        return courtAreaOfLawList.stream()
-            .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry())).collect(toList());
+        return courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(court.getId())
+            .stream()
+            .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry()))
+            .collect(toList());
     }
 
     @Transactional()
