@@ -55,6 +55,28 @@ public class ValidateServiceTest {
     }
 
     @Test
+    public void testValidateFullPostcodesSuccess() {
+        final List<String> testPostcodes = Arrays.asList("SW1A 1AA", "M11AA");
+        when(postcodeValidator.fullPostcodeValid(anyString())).thenReturn(true);
+        assertThat(validationService.validateFullPostcodes(testPostcodes)).isEmpty();
+    }
+
+    @Test
+    public void testValidateFullPostcodesInvalid() {
+        final String testPostcode1 = "SW1A 1AA";
+        final String testPostcode1WithoutSpace = "SW1A1AA";
+        final String testPostcode2 = "M11";
+        final String testPostcode3 = "M11AA";
+        final List<String> testPostcodes = Arrays.asList(testPostcode1, testPostcode2, testPostcode3);
+
+        when(postcodeValidator.fullPostcodeValid(testPostcode1WithoutSpace)).thenReturn(true);
+        when(postcodeValidator.fullPostcodeValid(testPostcode2)).thenReturn(false);
+        when(postcodeValidator.fullPostcodeValid(testPostcode3)).thenReturn(true);
+
+        assertThat(validationService.validateFullPostcodes(testPostcodes)).containsExactly(testPostcode2);
+    }
+
+    @Test
     public void testValidateWhenLocalAuthorityIsValid() {
         when(localAuthorityValidator.localAuthorityNameIsValid(any())).thenReturn(true);
         assertThat(validationService.validateLocalAuthority("Birmingham City Council")).isTrue();

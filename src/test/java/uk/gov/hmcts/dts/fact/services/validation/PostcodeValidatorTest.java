@@ -31,7 +31,7 @@ public class PostcodeValidatorTest {
     private PostcodeValidator postcodeValidator;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         when(mockMapitService.getMapitData(Mockito.anyString()))
             .thenReturn(Optional.of(new MapitData()));
         when(mockMapitService.getMapitDataWithPartial(Mockito.anyString()))
@@ -39,7 +39,7 @@ public class PostcodeValidatorTest {
     }
 
     @Test
-    public void testIfPostcodesAreInvalid() {
+    void testIfPostcodesAreInvalid() {
         for (String testPostcode : new String[]{"P$11&PY", ".@£*$&,)@*&!@£,",
             "ReEeEeeEaAaAllLlYLlLlLoOoOnNnG", "MM", "M1111", "M223J", "", "  "}) {
             assertFalse(postcodeValidator.postcodeDataExists(testPostcode));
@@ -47,7 +47,7 @@ public class PostcodeValidatorTest {
     }
 
     @Test
-    public void testIfPostcodesAreValid() {
+    void testIfPostcodesAreValid() {
         for (String testPostcode : new String[]{"M", "M0", "M00", "M000", "M0S", "M05H", "M0S5", "M05H3",
             "MO5", "MO53", "MO533", "MO5H", "MO5H3", "EC1W",
             "W1J 7NT", "DE12 8HJ", "SW1A 1AA", "HD7 5UZ", "CH5 3QW",
@@ -58,14 +58,16 @@ public class PostcodeValidatorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"SW9 2PR", "w9 9ha", "N17 4JA", "W1D 7qb", "SW1A 1AA"})
-    public void testIsFullPostcodeFormat(final String input) {
+    @ValueSource(strings = {"SW92PR", "w9 9ha", "N17 4JA", "W1D 7qb", "SW1A 1AA"})
+    void testValidFullPostcodes(final String input) {
         assertThat(PostcodeValidator.isFullPostcodeFormat(input)).isTrue();
+        assertThat(postcodeValidator.fullPostcodeValid(input)).isTrue();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"SW9 2P", "SW9 2", "W119", "N17", "W1D", "SW"})
-    public void testIsNotFullPostcodeFormat(final String input) {
+    void testInvalidFullPostcodes(final String input) {
         assertThat(PostcodeValidator.isFullPostcodeFormat(input)).isFalse();
+        assertThat(postcodeValidator.fullPostcodeValid(input)).isFalse();
     }
 }
