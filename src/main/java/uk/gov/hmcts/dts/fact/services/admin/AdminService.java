@@ -106,4 +106,9 @@ public class AdminService {
     public void updateMultipleCourtsInfo(CourtInfoUpdate info) {
         courtRepository.updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
     }
+
+    @Transactional
+    public void updateCourtLatLon(final String slug, final Double lat, final Double lon) {
+        courtRepository.updateLatLonBySlug(slug, lat, lon);
+    }
 }

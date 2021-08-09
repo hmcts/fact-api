@@ -308,4 +308,28 @@ class CourtRepositoryTest {
         final List<Court> result = courtRepository.findCourtByFullPostcode("WC2A 2LL");
         assertThat(result).isNotEmpty();
     }
+
+    @Test
+    void shouldUpdateLatLonBySlug() {
+        final String testSlug = "west-london-family-court";
+        Optional<Court> result = courtRepository.findBySlug(testSlug);
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result).isPresent();
+
+        final Double lat = result.get().getLat();
+        final Double lon = result.get().getLon();
+        final Double expectedLat = 1.0;
+        final Double expectedLon = 2.0;
+
+        courtRepository.updateLatLonBySlug(testSlug, expectedLat, expectedLon);
+        result = courtRepository.findBySlug(testSlug);
+
+        softly.assertThat(result).isPresent();
+        softly.assertThat(result.get().getLat()).isNotEqualTo(lat);
+        softly.assertThat(result.get().getLat()).isEqualTo(expectedLat);
+        softly.assertThat(result.get().getLon()).isNotEqualTo(lon);
+        softly.assertThat(result.get().getLon()).isEqualTo(expectedLon);
+        softly.assertAll();
+    }
 }
