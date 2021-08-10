@@ -44,30 +44,39 @@ public class AdminCourtAdditionalLinkServiceTest {
     private static final String TEST_DESCRIPTION_CY2 = "description cy 2";
     private static final String TEST_DESCRIPTION_CY3 = "description cy 3";
 
-    private static final String SIDEBAR_LOCATION_NAME1 = "location 1";
-    private static final String SIDEBAR_LOCATION_NAME2 = "location 2";
+    private static final String TEST_TYPE1 = "type 1";
+    private static final String TEST_TYPE2 = "type 2";
+    private static final String TEST_TYPE3 = "type 3";
+
+    private static final Integer TEST_COURT_ID = 20;
+
+    private static final String THIS_LOCATION_HANDLES_LOCATION_NAME = "This location handles";
+    private static final String FIND_OUT_MORE_ABOUT_LOCATION_NAME = "Find out more about";
 
     private static final List<AdditionalLink> EXPECTED_ADDITIONAL_LINKS = Arrays.asList(
-        new AdditionalLink(1, TEST_URL1, TEST_DESCRIPTION1, TEST_DESCRIPTION_CY1),
-        new AdditionalLink(1, TEST_URL2, TEST_DESCRIPTION2, TEST_DESCRIPTION_CY2),
-        new AdditionalLink(2, TEST_URL3, TEST_DESCRIPTION3, TEST_DESCRIPTION_CY3)
+        new AdditionalLink(1, TEST_URL1, TEST_DESCRIPTION1, TEST_DESCRIPTION_CY1, TEST_TYPE1),
+        new AdditionalLink(1, TEST_URL2, TEST_DESCRIPTION2, TEST_DESCRIPTION_CY2, TEST_TYPE2),
+        new AdditionalLink(2, TEST_URL3, TEST_DESCRIPTION3, TEST_DESCRIPTION_CY3, TEST_TYPE3)
     );
 
-    private static final SidebarLocation SIDEBAR_LOCATION1 = new SidebarLocation(1, SIDEBAR_LOCATION_NAME1);
-    private static final SidebarLocation SIDEBAR_LOCATION2 = new SidebarLocation(2, SIDEBAR_LOCATION_NAME2);
+    private static final SidebarLocation THIS_LOCATION_HANDLES_SIDEBAR_LOCATION = new SidebarLocation(1, THIS_LOCATION_HANDLES_LOCATION_NAME);
+    private static final SidebarLocation FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION = new SidebarLocation(2, FIND_OUT_MORE_ABOUT_LOCATION_NAME);
 
     private static final uk.gov.hmcts.dts.fact.entity.AdditionalLink ADDITIONAL_LINK_ENTITY1 = new uk.gov.hmcts.dts.fact.entity.AdditionalLink(TEST_URL1,
-                                                                                                                                        TEST_DESCRIPTION1,
-                                                                                                                                        TEST_DESCRIPTION_CY1,
-                                                                                                                                        SIDEBAR_LOCATION1);
+                                                                                                                                               TEST_DESCRIPTION1,
+                                                                                                                                               TEST_DESCRIPTION_CY1,
+                                                                                                                                               TEST_TYPE1,
+                                                                                                                                               THIS_LOCATION_HANDLES_SIDEBAR_LOCATION);
     private static final uk.gov.hmcts.dts.fact.entity.AdditionalLink ADDITIONAL_LINK_ENTITY2 = new uk.gov.hmcts.dts.fact.entity.AdditionalLink(TEST_URL2,
-                                                                                                                                        TEST_DESCRIPTION2,
-                                                                                                                                        TEST_DESCRIPTION_CY2,
-                                                                                                                                        SIDEBAR_LOCATION1);
+                                                                                                                                               TEST_DESCRIPTION2,
+                                                                                                                                               TEST_DESCRIPTION_CY2,
+                                                                                                                                               TEST_TYPE2,
+                                                                                                                                               FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION);
     private static final uk.gov.hmcts.dts.fact.entity.AdditionalLink ADDITIONAL_LINK_ENTITY3 = new uk.gov.hmcts.dts.fact.entity.AdditionalLink(TEST_URL3,
-                                                                                                                                        TEST_DESCRIPTION3,
-                                                                                                                                        TEST_DESCRIPTION_CY3,
-                                                                                                                                        SIDEBAR_LOCATION2);
+                                                                                                                                               TEST_DESCRIPTION3,
+                                                                                                                                               TEST_DESCRIPTION_CY3,
+                                                                                                                                               TEST_TYPE3,
+                                                                                                                                               FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION);
     private static final List<CourtAdditionalLink> COURT_ADDITIONAL_LINKS = Arrays.asList(
         new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY1, 0),
         new CourtAdditionalLink(MOCK_COURT, ADDITIONAL_LINK_ENTITY2, 1),
@@ -107,10 +116,31 @@ public class AdminCourtAdditionalLinkServiceTest {
     }
 
     @Test
+    void shouldRetrieveInPersonCourtCourtCasesHeardAdditionalLinks() {
+        when(MOCK_COURT.isInPerson()).thenReturn(true);
+        when(MOCK_COURT.getCourtAdditionalLinks()).thenReturn(COURT_ADDITIONAL_LINKS);
+
+        final List<AdditionalLink> results = adminService.getCourtCasesHeardAdditionalLinks(MOCK_COURT);
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).getSidebarLocationId()).isEqualTo(THIS_LOCATION_HANDLES_SIDEBAR_LOCATION.getId());
+    }
+
+    @Test
+    void shouldRetrieveNotInPersonCourtCasesHeardAdditionalLinks() {
+        when(MOCK_COURT.isInPerson()).thenReturn(false);
+        when(MOCK_COURT.getCourtAdditionalLinks()).thenReturn(COURT_ADDITIONAL_LINKS);
+
+        final List<AdditionalLink> results = adminService.getCourtCasesHeardAdditionalLinks(MOCK_COURT);
+        assertThat(results).hasSize(2);
+        assertThat(results.stream().map(r -> r.getSidebarLocationId())).allSatisfy(r -> FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION.getId());
+    }
+
+    @Test
     void shouldUpdateCourtAdditionalLinks() {
+        when(MOCK_COURT.getId()).thenReturn(TEST_COURT_ID);
         when(courtRepository.findBySlug(TEST_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(sidebarLocationService.getSidebarLocationMap()).thenReturn(Map.of(1, SIDEBAR_LOCATION1,
-                                                                               2, SIDEBAR_LOCATION2));
+        when(sidebarLocationService.getSidebarLocationMap()).thenReturn(Map.of(1, THIS_LOCATION_HANDLES_SIDEBAR_LOCATION,
+                                                                               2, FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION));
         when(courtAdditionalLinkRepository.saveAll(any())).thenReturn(COURT_ADDITIONAL_LINKS);
 
         final List<AdditionalLink> results = adminService.updateCourtAdditionalLinks(TEST_SLUG, EXPECTED_ADDITIONAL_LINKS);
@@ -118,7 +148,7 @@ public class AdminCourtAdditionalLinkServiceTest {
             .hasSize(EXPECTED_ADDITIONAL_LINKS.size())
             .containsAnyElementsOf(EXPECTED_ADDITIONAL_LINKS);
 
-        verify(courtAdditionalLinkRepository).deleteAll(any());
+        verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtId(TEST_COURT_ID);
     }
 
     @Test

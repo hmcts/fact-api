@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
+import uk.gov.hmcts.dts.fact.entity.Court;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,22 +16,18 @@ public class CourtAdditionalLinkRepositoryTest {
     @Autowired
     private CourtAdditionalLinkRepository courtAdditionalLinkRepository;
 
+    @Autowired
+    private CourtRepository courtRepository;
+
     @Test
-    void shouldRetrieveAndUpdateCourtAdditionalLinks() {
-        final List<CourtAdditionalLink> results = courtAdditionalLinkRepository.findAll();
-        final int additionalLinkSize = results.size();
-        assertThat(results).hasSizeGreaterThan(1);
+    void shouldDeleteCourtAdditionalLinksByCourtId() {
+        final Optional<Court> court = courtRepository.findBySlug("manchester-civil-justice-centre-civil-and-family-courts");
+        assertThat(court).isPresent();
 
-        final List<CourtAdditionalLink> newCourtAdditionalLinks = new ArrayList<>(results);
-        final CourtAdditionalLink firstCourtAdditionalLink = results.get(0);
-        final CourtAdditionalLink courtAdditionalLinkToAdd = new CourtAdditionalLink(firstCourtAdditionalLink.getCourt(), firstCourtAdditionalLink.getAdditionalLink(), 0);
-        newCourtAdditionalLinks.add(courtAdditionalLinkToAdd);
+        final Integer courtId = court.get().getId();
+        assertThat(courtAdditionalLinkRepository.findCourtAdditionalLinksByCourtId(courtId)).hasSizeGreaterThan(1);
 
-        final List<CourtAdditionalLink> updatedResults = courtAdditionalLinkRepository.saveAll(newCourtAdditionalLinks);
-        assertThat(updatedResults).hasSize(additionalLinkSize + 1);
-
-        courtAdditionalLinkRepository.delete(courtAdditionalLinkToAdd);
-        final List<CourtAdditionalLink> finalResults = courtAdditionalLinkRepository.findAll();
-        assertThat(finalResults).hasSize(additionalLinkSize);
+        courtAdditionalLinkRepository.deleteCourtAdditionalLinksByCourtId(courtId);
+        assertThat(courtAdditionalLinkRepository.findCourtAdditionalLinksByCourtId(courtId)).isEmpty();
     }
 }

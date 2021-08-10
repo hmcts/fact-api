@@ -10,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
@@ -116,9 +115,6 @@ public class AdminCourtAddressServiceTest {
     @Mock
     private MapitData mapitData;
 
-    @Mock
-    private InPerson inPerson;
-
     @Test
     void shouldReturnAllCourtAddresses() {
         when(MOCK_COURT.getAddresses()).thenReturn(COURT_ADDRESSES_ENTITY);
@@ -170,6 +166,7 @@ public class AdminCourtAddressServiceTest {
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
         when(mapitData.getLat()).thenReturn(LATITUDE);
         when(mapitData.getLon()).thenReturn(LONGITUDE);
+        when(MOCK_COURT.isInPerson()).thenReturn(true);
 
         final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
         assertThat(results).hasSize(ADDRESS_COUNT);
@@ -192,36 +189,13 @@ public class AdminCourtAddressServiceTest {
     }
 
     @Test
-    void shouldUpdateCoordinatesForNullInPersonEntity() {
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
-        when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
-
-        when(MOCK_COURT.getInPerson()).thenReturn(null);
-        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
-        when(mapitData.getLat()).thenReturn(LATITUDE);
-        when(mapitData.getLon()).thenReturn(LONGITUDE);
-
-        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
-        assertThat(results).hasSize(ADDRESS_COUNT);
-        assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
-        assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
-
-        verify(courtAddressRepository).deleteAll(any());
-        verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
-    }
-
-    @Test
     void shouldNotUpdateCoordinatesForNotInPersonCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
                                                                             WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
-
-        when(inPerson.getIsInPerson()).thenReturn(false);
-        when(MOCK_COURT.getInPerson()).thenReturn(inPerson);
+        when(MOCK_COURT.isInPerson()).thenReturn(false);
 
         final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
         assertThat(results).hasSize(ADDRESS_COUNT);

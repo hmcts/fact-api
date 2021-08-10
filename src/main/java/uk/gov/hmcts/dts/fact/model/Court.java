@@ -100,7 +100,7 @@ public class Court {
         this.gbs = courtEntity.getGbs();
         this.dxNumbers = getDxNumbers(contacts);
         this.serviceAreas = courtEntity.getServiceAreas() == null ? emptyList() : getServiceAreas(courtEntity);
-        this.inPerson = courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
+        this.inPerson = courtEntity.isInPerson();
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
         this.additionalLinks = getAdditionalLink(courtEntity);
     }

@@ -22,14 +22,16 @@ public class AdditionalLink {
     private String description;
     @Column(name = "description_cy")
     private String descriptionCy;
+    private String type;
     @OneToOne()
     @JoinColumn(name = "location_id")
     private SidebarLocation location;
 
-    public AdditionalLink(final String url, final String description, final String descriptionCy, final SidebarLocation location) {
+    public AdditionalLink(final String url, final String description, final String descriptionCy, final String type, final SidebarLocation location) {
         this.url = url;
         this.description = description;
         this.descriptionCy = descriptionCy;
+        this.type = type;
         this.location = location;
     }
 }
