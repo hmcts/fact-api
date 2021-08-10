@@ -9,20 +9,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdditionalLink {
-    @JsonProperty("location_id")
-    private Integer sidebarLocationId;
     private String url;
-    @JsonProperty("url_description")
-    private String urlDescription;
-    @JsonProperty("url_description_cy")
-    private String urlDescriptionCy;
+    @JsonProperty("display_name")
+    private String displayName;
+    @JsonProperty("display_name_cy")
+    private String displayNameCy;
     private String type;
 
     public AdditionalLink(final uk.gov.hmcts.dts.fact.entity.AdditionalLink additionalLink) {
-        this.sidebarLocationId = additionalLink.getLocation().getId();
         this.url = additionalLink.getUrl();
-        this.urlDescription = additionalLink.getDescription();
-        this.urlDescriptionCy = additionalLink.getDescriptionCy();
+        this.displayName = additionalLink.getDescription();
+        this.displayNameCy = additionalLink.getDescriptionCy();
         this.type = additionalLink.getType();
     }
 }

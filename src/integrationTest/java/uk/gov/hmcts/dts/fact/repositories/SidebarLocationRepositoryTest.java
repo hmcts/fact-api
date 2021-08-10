@@ -4,9 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import uk.gov.hmcts.dts.fact.entity.SidebarLocation;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,10 +14,12 @@ public class SidebarLocationRepositoryTest {
     private SidebarLocationRepository sidebarLocationRepository;
 
     @Test
-    void shouldRetrieveAddressTypes() {
-        final List<SidebarLocation> results = sidebarLocationRepository.findAll();
-        assertThat(results).hasSizeGreaterThan(1);
-        assertThat(results.stream().map(r -> r.getId())).isNotEmpty();
-        assertThat(results.stream().map(r -> r.getName())).isNotEmpty();
+    void shouldRetrieveSidebarLocationByName() {
+        assertThat(sidebarLocationRepository.findSidebarLocationByName("This location handles")).isPresent();
+    }
+
+    @Test
+    void shouldNotRetrieveSidebarLocationUsingIncorrectName() {
+        assertThat(sidebarLocationRepository.findSidebarLocationByName("Incorrect location")).isNotPresent();
     }
 }

@@ -14,11 +14,10 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AdditionalLink;
 import uk.gov.hmcts.dts.fact.repositories.CourtAdditionalLinkRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
-import uk.gov.hmcts.dts.fact.services.admin.list.AdminSidebarLocationService;
+import uk.gov.hmcts.dts.fact.repositories.SidebarLocationRepository;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,9 +53,9 @@ public class AdminCourtAdditionalLinkServiceTest {
     private static final String FIND_OUT_MORE_ABOUT_LOCATION_NAME = "Find out more about";
 
     private static final List<AdditionalLink> EXPECTED_ADDITIONAL_LINKS = Arrays.asList(
-        new AdditionalLink(1, TEST_URL1, TEST_DESCRIPTION1, TEST_DESCRIPTION_CY1, TEST_TYPE1),
-        new AdditionalLink(1, TEST_URL2, TEST_DESCRIPTION2, TEST_DESCRIPTION_CY2, TEST_TYPE2),
-        new AdditionalLink(2, TEST_URL3, TEST_DESCRIPTION3, TEST_DESCRIPTION_CY3, TEST_TYPE3)
+        new AdditionalLink(TEST_URL1, TEST_DESCRIPTION1, TEST_DESCRIPTION_CY1, TEST_TYPE1),
+        new AdditionalLink(TEST_URL2, TEST_DESCRIPTION2, TEST_DESCRIPTION_CY2, TEST_TYPE2),
+        new AdditionalLink(TEST_URL3, TEST_DESCRIPTION3, TEST_DESCRIPTION_CY3, TEST_TYPE3)
     );
 
     private static final SidebarLocation THIS_LOCATION_HANDLES_SIDEBAR_LOCATION = new SidebarLocation(1, THIS_LOCATION_HANDLES_LOCATION_NAME);
@@ -95,15 +94,15 @@ public class AdminCourtAdditionalLinkServiceTest {
     private CourtAdditionalLinkRepository courtAdditionalLinkRepository;
 
     @MockBean
-    private AdminSidebarLocationService sidebarLocationService;
+    private SidebarLocationRepository sidebarLocationRepository;
 
     @Test
-    void shouldRetrieveCourtAdditionalLinks() {
+    void shouldRetrieveCourtFindOutMoreAdditionalLinks() {
         when(MOCK_COURT.getCourtAdditionalLinks()).thenReturn(COURT_ADDITIONAL_LINKS);
         when(courtRepository.findBySlug(TEST_SLUG)).thenReturn(Optional.of(MOCK_COURT));
 
         final List<AdditionalLink> results = adminService.getCourtAdditionalLinksBySlug(TEST_SLUG);
-        assertThat(results).hasSize(COURT_ADDITIONAL_LINKS.size());
+        assertThat(results).hasSize(2);
     }
 
     @Test
@@ -122,7 +121,6 @@ public class AdminCourtAdditionalLinkServiceTest {
 
         final List<AdditionalLink> results = adminService.getCourtCasesHeardAdditionalLinks(MOCK_COURT);
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getSidebarLocationId()).isEqualTo(THIS_LOCATION_HANDLES_SIDEBAR_LOCATION.getId());
     }
 
     @Test
@@ -132,15 +130,13 @@ public class AdminCourtAdditionalLinkServiceTest {
 
         final List<AdditionalLink> results = adminService.getCourtCasesHeardAdditionalLinks(MOCK_COURT);
         assertThat(results).hasSize(2);
-        assertThat(results.stream().map(r -> r.getSidebarLocationId())).allSatisfy(r -> FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION.getId());
     }
 
     @Test
     void shouldUpdateCourtAdditionalLinks() {
         when(MOCK_COURT.getId()).thenReturn(TEST_COURT_ID);
         when(courtRepository.findBySlug(TEST_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(sidebarLocationService.getSidebarLocationMap()).thenReturn(Map.of(1, THIS_LOCATION_HANDLES_SIDEBAR_LOCATION,
-                                                                               2, FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION));
+        when(sidebarLocationRepository.findSidebarLocationByName(anyString())).thenReturn(Optional.of(FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION));
         when(courtAdditionalLinkRepository.saveAll(any())).thenReturn(COURT_ADDITIONAL_LINKS);
 
         final List<AdditionalLink> results = adminService.updateCourtAdditionalLinks(TEST_SLUG, EXPECTED_ADDITIONAL_LINKS);
@@ -148,7 +144,7 @@ public class AdminCourtAdditionalLinkServiceTest {
             .hasSize(EXPECTED_ADDITIONAL_LINKS.size())
             .containsAnyElementsOf(EXPECTED_ADDITIONAL_LINKS);
 
-        verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtId(TEST_COURT_ID);
+        verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtIdAndAdditionalLinkLocationId(TEST_COURT_ID, FIND_OUT_MORE_ABOUT_SIDEBAR_LOCATION.getId());
     }
 
     @Test

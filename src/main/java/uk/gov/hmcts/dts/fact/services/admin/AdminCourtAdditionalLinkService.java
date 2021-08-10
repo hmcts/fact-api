@@ -9,13 +9,13 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AdditionalLink;
 import uk.gov.hmcts.dts.fact.repositories.CourtAdditionalLinkRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
-import uk.gov.hmcts.dts.fact.services.admin.list.AdminSidebarLocationService;
+import uk.gov.hmcts.dts.fact.repositories.SidebarLocationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.SidebarLocation.FIND_OUT_MORE_ABOUT;
 import static uk.gov.hmcts.dts.fact.util.SidebarLocation.THIS_LOCATION_HANDLES;
@@ -24,18 +24,21 @@ import static uk.gov.hmcts.dts.fact.util.SidebarLocation.THIS_LOCATION_HANDLES;
 public class AdminCourtAdditionalLinkService {
     private final CourtRepository courtRepository;
     private final CourtAdditionalLinkRepository courtAdditionalLinkRepository;
-    private final AdminSidebarLocationService sidebarLocationService;
+    private final SidebarLocationRepository sidebarLocationRepository;
 
-    public AdminCourtAdditionalLinkService(final CourtRepository courtRepository, final CourtAdditionalLinkRepository courtAdditionalLinkRepository, final AdminSidebarLocationService sidebarLocationService) {
+    public AdminCourtAdditionalLinkService(final CourtRepository courtRepository, final CourtAdditionalLinkRepository courtAdditionalLinkRepository, final SidebarLocationRepository sidebarLocationRepository) {
         this.courtRepository = courtRepository;
         this.courtAdditionalLinkRepository = courtAdditionalLinkRepository;
-        this.sidebarLocationService = sidebarLocationService;
+        this.sidebarLocationRepository = sidebarLocationRepository;
     }
 
     public List<AdditionalLink> getCourtAdditionalLinksBySlug(final String slug) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        return getCourtAdditionalLinksFromRepository(courtEntity, link -> true);
+
+        return courtEntity.isInPerson()
+            ? getCourtAdditionalLinksFromRepository(courtEntity, link -> FIND_OUT_MORE_ABOUT.getName().equalsIgnoreCase(link.getLocation().getName()))
+            : emptyList();
     }
 
     public List<AdditionalLink> getCourtCasesHeardAdditionalLinks(final Court court) {
@@ -50,9 +53,14 @@ public class AdminCourtAdditionalLinkService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        final List<CourtAdditionalLink> newCourtAdditionalLinks = constructCourtAdditionalLinksEntity(courtEntity, additionalLinks);
-        courtAdditionalLinkRepository.deleteCourtAdditionalLinksByCourtId(courtEntity.getId());
+        // The admin user can only update additional links in the 'find out more about' section
+        final String sidebarName = FIND_OUT_MORE_ABOUT.getName();
+        final SidebarLocation sidebarLocation = sidebarLocationRepository.findSidebarLocationByName(sidebarName)
+            .orElseThrow(() -> new NotFoundException(sidebarName));
 
+        final List<CourtAdditionalLink> newCourtAdditionalLinks = constructCourtAdditionalLinksEntity(courtEntity, additionalLinks, sidebarLocation);
+        courtAdditionalLinkRepository.deleteCourtAdditionalLinksByCourtIdAndAdditionalLinkLocationId(courtEntity.getId(),
+                                                                                                     sidebarLocation.getId());
         return courtAdditionalLinkRepository.saveAll(newCourtAdditionalLinks)
             .stream()
             .map(a -> a.getAdditionalLink())
@@ -70,17 +78,16 @@ public class AdminCourtAdditionalLinkService {
     }
 
     @SuppressWarnings({"PMD.AvoidInstantiatingObjectsInLoops", "PMD.DataflowAnomalyAnalysis"})
-    private List<CourtAdditionalLink> constructCourtAdditionalLinksEntity(final Court courtEntity, final List<AdditionalLink> additionalLinks) {
-        final Map<Integer, SidebarLocation> sidebarLocationMap = sidebarLocationService.getSidebarLocationMap();
+    private List<CourtAdditionalLink> constructCourtAdditionalLinksEntity(final Court courtEntity, final List<AdditionalLink> additionalLinks, final SidebarLocation sidebarLocation) {
         final List<CourtAdditionalLink> courtAdditionalLinks = new ArrayList<>();
         for (int i = 0; i < additionalLinks.size(); i++) {
             courtAdditionalLinks.add(new CourtAdditionalLink(courtEntity,
                                                              new uk.gov.hmcts.dts.fact.entity.AdditionalLink(
                                                                  additionalLinks.get(i).getUrl(),
-                                                                 additionalLinks.get(i).getUrlDescription(),
-                                                                 additionalLinks.get(i).getUrlDescriptionCy(),
+                                                                 additionalLinks.get(i).getDisplayName(),
+                                                                 additionalLinks.get(i).getDisplayNameCy(),
                                                                  additionalLinks.get(i).getType(),
-                                                                 sidebarLocationMap.get(additionalLinks.get(i).getSidebarLocationId())),
+                                                                 sidebarLocation),
                                                              i));
         }
         return courtAdditionalLinks;

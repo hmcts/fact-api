@@ -20,7 +20,6 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-@Disabled
 public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
@@ -33,7 +32,6 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
     private static final String TEST_URL = "https://www.gov.uk/money-property-when-relationship-not-ends";
     private static final String TEST_DESCRIPTION = "Financial Remedy";
     private static final String TEST_DESCRIPTION_CY = "Rhwymedi Ariannol";
-    private static final int SIDEBAR_LOCATION_ID = 1;
 
 
     /************************************************************* Get Request Tests. ***************************************************************/
@@ -139,13 +137,13 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
 
     private List<AdditionalLink> addNewAdditionalLink(final List<AdditionalLink> additionalLinks) {
         final List<AdditionalLink> updatedAdditionalLinks = new ArrayList<>(additionalLinks);
-        updatedAdditionalLinks.add(new AdditionalLink(SIDEBAR_LOCATION_ID,TEST_URL,TEST_DESCRIPTION,TEST_DESCRIPTION_CY, null));
+        updatedAdditionalLinks.add(new AdditionalLink(TEST_URL,TEST_DESCRIPTION,TEST_DESCRIPTION_CY, null));
         return updatedAdditionalLinks;
     }
 
     private static String getTestAdditionalLink() throws JsonProcessingException {
         final List<AdditionalLink> additionalLink = Arrays.asList(
-            new AdditionalLink(SIDEBAR_LOCATION_ID,TEST_URL,TEST_DESCRIPTION,TEST_DESCRIPTION_CY, null)
+            new AdditionalLink(TEST_URL,TEST_DESCRIPTION,TEST_DESCRIPTION_CY, null)
         );
         return objectMapper().writeValueAsString(additionalLink);
     }

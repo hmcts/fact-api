@@ -20,9 +20,8 @@ public class AdditionalLinkTest {
         final AdditionalLink result = new AdditionalLink(additionalLinkEntity);
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(result.getUrl()).isEqualTo(TEST_URL);
-        softly.assertThat(result.getUrlDescription()).isEqualTo(TEST_DESCRIPTION);
-        softly.assertThat(result.getUrlDescriptionCy()).isEqualTo(TEST_DESCRIPTION_CY);
-        softly.assertThat(result.getSidebarLocationId()).isEqualTo(TEST_SIDEBAR_LOCATION_ID);
+        softly.assertThat(result.getDisplayName()).isEqualTo(TEST_DESCRIPTION);
+        softly.assertThat(result.getDisplayNameCy()).isEqualTo(TEST_DESCRIPTION_CY);
         softly.assertAll();
     }
 }

@@ -47,9 +47,9 @@ public class AdminCourtAdditionalLinkControllerTest {
     private static final String TEST_TYPE3 = "type 3";
 
     private static final List<AdditionalLink> EXPECTED_ADDITIONAL_LINKS = Arrays.asList(
-        new AdditionalLink(1, TEST_URL1, TEST_DESCRIPTION1, TEST_DESCRIPTION_CY1, TEST_TYPE1),
-        new AdditionalLink(1, TEST_URL2, TEST_DESCRIPTION2, TEST_DESCRIPTION_CY2, TEST_TYPE2),
-        new AdditionalLink(2, TEST_URL3, TEST_DESCRIPTION3, TEST_DESCRIPTION_CY3, TEST_TYPE3)
+        new AdditionalLink(TEST_URL1, TEST_DESCRIPTION1, TEST_DESCRIPTION_CY1, TEST_TYPE1),
+        new AdditionalLink(TEST_URL2, TEST_DESCRIPTION2, TEST_DESCRIPTION_CY2, TEST_TYPE2),
+        new AdditionalLink(TEST_URL3, TEST_DESCRIPTION3, TEST_DESCRIPTION_CY3, TEST_TYPE3)
     );
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static String additionalLinksJson;
