@@ -46,7 +46,7 @@ public class MapItHealthService {
         final int limit = quota.get(LIMIT).asInt();
         // Mapit quota limit will be zero if a valid Mapit key has been configured. If no key is supplied and the
         // limit hasn't been reached, throw an exception so the Mapit service can be marked as 'down' for health check
-        if (limit != 0 && limit <= quota.get(CURRENT).asInt()) {
+        if (limit != 0) {
             throw new MapitUsageException();
         }
     }
