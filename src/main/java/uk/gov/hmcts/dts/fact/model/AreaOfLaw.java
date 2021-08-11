@@ -29,4 +29,18 @@ public class AreaOfLaw {
         this.displayName = chooseString(areaOfLaw.getDisplayNameCy(), areaOfLaw.getDisplayName());
         this.displayExternalLink = areaOfLaw.getDisplayExternalLink();
     }
+
+    public AreaOfLaw(uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw, final boolean isInPerson) {
+        this.name = areaOfLaw.getName();
+        this.externalLink = chooseString(areaOfLaw.getExternalLinkCy(), areaOfLaw.getExternalLink());
+        this.externalLinkDescription = chooseString(areaOfLaw.getExternalLinkDescriptionCy(), areaOfLaw.getExternalLinkDescription());
+        this.displayName = constructDisplayName(areaOfLaw, isInPerson);
+        this.displayExternalLink = areaOfLaw.getDisplayExternalLink();
+    }
+
+    private String constructDisplayName(final uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw, final boolean isInPerson) {
+        return isInPerson
+            ? chooseString(areaOfLaw.getAltNameCy(), areaOfLaw.getAltName())
+            : chooseString(areaOfLaw.getDisplayNameCy(), areaOfLaw.getDisplayName());
+    }
 }

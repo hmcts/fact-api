@@ -117,4 +117,8 @@ public class Court {
             .sorted(comparing(AreaOfLaw::getName))
             .collect(Collectors.toList());
     }
+
+    public boolean isInPerson() {
+        return inPerson == null || inPerson.getIsInPerson();
+    }
 }

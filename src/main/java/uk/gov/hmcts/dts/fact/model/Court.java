@@ -88,7 +88,7 @@ public class Court {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = getAreasOfLaw(courtEntity);
+        this.areasOfLaw = getAreasOfLaw(courtEntity, courtEntity.isInPerson());
         final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = getContactEntities(courtEntity);
         this.contacts = getContacts(contacts);
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
@@ -100,7 +100,7 @@ public class Court {
         this.gbs = courtEntity.getGbs();
         this.dxNumbers = getDxNumbers(contacts);
         this.serviceAreas = courtEntity.getServiceAreas() == null ? emptyList() : getServiceAreas(courtEntity);
-        this.inPerson = courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
+        this.inPerson = courtEntity.isInPerson();
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
         this.additionalLinks = getAdditionalLink(courtEntity);
     }
@@ -114,11 +114,11 @@ public class Court {
             .collect(toList());
     }
 
-    private List<AreaOfLaw> getAreasOfLaw(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    private List<AreaOfLaw> getAreasOfLaw(final uk.gov.hmcts.dts.fact.entity.Court courtEntity, final boolean isInPerson) {
         return courtEntity.getAreasOfLaw()
             .stream()
             .map(areaOfLaw -> {
-                AreaOfLaw areaOfLawObj = new AreaOfLaw(areaOfLaw);
+                AreaOfLaw areaOfLawObj = new AreaOfLaw(areaOfLaw, isInPerson);
                 areaOfLawObj.setExternalLink(decodeUrlFromString(areaOfLawObj.getExternalLink()));
                 return areaOfLawObj;
             })
