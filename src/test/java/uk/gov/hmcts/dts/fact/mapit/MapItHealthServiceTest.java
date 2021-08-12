@@ -79,7 +79,7 @@ public class MapItHealthServiceTest {
     }
 
     @Test
-    void testMapItReturnsBodyWithNoQuotaLimitNotZero() {
+    void testMapItUsageExceptionWithQuotaLimitNotZero() {
         when(restTemplate.getForEntity(anyString(), eq(JsonNode.class))).thenReturn(response);
         when(response.getBody()).thenReturn(responseBody);
         when(responseBody.get(QUOTA)).thenReturn(quota);
