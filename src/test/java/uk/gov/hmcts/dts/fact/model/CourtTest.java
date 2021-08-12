@@ -81,11 +81,7 @@ class CourtTest {
         when(courtContactEntity.getContact()).thenReturn(contactEntity);
         courtEntity.setCourtContacts(singletonList(courtContactEntity));
 
-        final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
-        areaOfLawEntity.setName("Divorce");
-        areaOfLawEntity.setExternalLinkDescription("Description of url");
-        areaOfLawEntity.setExternalLink("http%3A//url");
-        courtEntity.setAreasOfLaw(singletonList(areaOfLawEntity));
+        courtEntity.setAreasOfLaw(singletonList(getAreaOfLaw()));
 
         final CourtType courtTypeEntity = new CourtType();
         courtTypeEntity.setName("court type");
@@ -110,6 +106,18 @@ class CourtTest {
         courtEntity.setDirectionsCy("Directions in Welsh");
         courtEntity.setAlert("Alert");
         courtEntity.setAlertCy("Alert in Welsh");
+    }
+
+    private static AreaOfLaw getAreaOfLaw() {
+        final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
+        areaOfLawEntity.setName("Divorce");
+        areaOfLawEntity.setExternalLinkDescription("Description of url");
+        areaOfLawEntity.setExternalLink("http%3A//url");
+        areaOfLawEntity.setDisplayName("Name for not in-person court");
+        areaOfLawEntity.setDisplayNameCy("Name for not in-person court cy");
+        areaOfLawEntity.setAltName("Name for in-person court");
+        areaOfLawEntity.setAltNameCy("Name for in-person court cy");
+        return areaOfLawEntity;
     }
 
     @ParameterizedTest
@@ -156,7 +164,10 @@ class CourtTest {
 
     @Test
     void testNotInPersonData() {
-        courtEntity.setInPerson(null);
+        final InPerson inPersonEntity = new InPerson();
+        inPersonEntity.setIsInPerson(false);
+        courtEntity.setInPerson(inPersonEntity);
+
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
@@ -165,14 +176,20 @@ class CourtTest {
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
         courtEntity.setAddresses(singletonList(courtAddress));
-        Court court = new Court(courtEntity);
-        assertTrue(court.getInPerson());
+
+        final Court court = new Court(courtEntity);
+        assertFalse(court.getInPerson());
         assertNull(court.getAccessScheme());
         assertEquals("Write to us", court.getAddresses().get(0).getAddressType());
+        assertEquals(courtEntity.getAreasOfLaw().get(0).getDisplayName(), court.getAreasOfLaw().get(0).getDisplayName());
     }
 
     @Test
     void testInPersonData() {
+        final InPerson inPersonEntity = new InPerson();
+        inPersonEntity.setIsInPerson(true);
+        courtEntity.setInPerson(inPersonEntity);
+
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
@@ -181,8 +198,11 @@ class CourtTest {
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
         courtEntity.setAddresses(singletonList(courtAddress));
-        Court court = new Court(courtEntity);
+
+        final Court court = new Court(courtEntity);
+        assertTrue(court.getInPerson());
         assertEquals("Visit us", court.getAddresses().get(0).getAddressType());
+        assertEquals(courtEntity.getAreasOfLaw().get(0).getAltName(), court.getAreasOfLaw().get(0).getDisplayName());
     }
 
     @Test
