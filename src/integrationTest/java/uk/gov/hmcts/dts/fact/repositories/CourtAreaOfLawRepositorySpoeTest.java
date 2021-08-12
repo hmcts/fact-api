@@ -25,13 +25,13 @@ public class CourtAreaOfLawRepositorySpoeTest {
         List<CourtAreaOfLawSpoe> courtAreaOfLawSpoeList = courtAreaOfLawSpoeRepository.findAll();
 
         // Use the first result as the basis for testing the repo method that has been added
-        assertThat(courtAreaOfLawSpoeList.isEmpty()).isFalse();
+        assertThat(courtAreaOfLawSpoeList).isNotEmpty();
 
         // Check we can use the above on our custom jpa method
         CourtAreaOfLawSpoe courtAreaOfLawSpoe = courtAreaOfLawSpoeList.get(0);
         List<CourtAreaOfLawSpoe> courtAreaOfLawSpoeListBySearch =
             courtAreaOfLawSpoeRepository.getAllByCourtIdAndAreaOfLawId(courtAreaOfLawSpoe.getCourt().getId(),
                                                                        courtAreaOfLawSpoe.getAreaOfLaw().getId());
-        assertThat(courtAreaOfLawSpoeListBySearch.isEmpty()).isFalse();
+        assertThat(courtAreaOfLawSpoeListBySearch).isNotEmpty();
     }
 }
