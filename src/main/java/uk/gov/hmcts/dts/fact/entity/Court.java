@@ -119,6 +119,8 @@ public class Court {
     }
 
     public boolean isInPerson() {
+        // The in-person table does not contains all courts. So if a court does not exist in the in-person table (i.e. imPerson = null),
+        // it will be considered an in-person court so the FaCT front-end can display the court page using relevant template.
         return inPerson == null || inPerson.getIsInPerson();
     }
 }
