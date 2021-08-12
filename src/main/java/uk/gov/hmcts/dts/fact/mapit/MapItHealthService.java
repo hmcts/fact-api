@@ -43,9 +43,10 @@ public class MapItHealthService {
     }
 
     private void validateQuotaLimit(final JsonNode quota) {
-        // Mapit quota limit will be zero if a valid Mapit key has been configured. If no key is supplied, throw an exception so the
-        // Mapit service can be marked as 'down' for health check
-        if (quota.get(LIMIT).asInt() != 0) {
+        final int limit = quota.get(LIMIT).asInt();
+        // Mapit quota limit will be zero if a valid Mapit key has been configured. If no key is supplied and the
+        // limit hasn't been reached, throw an exception so the Mapit service can be marked as 'down' for health check
+        if (limit != 0) {
             throw new MapitUsageException();
         }
     }
