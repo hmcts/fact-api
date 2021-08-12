@@ -23,7 +23,6 @@ import uk.gov.hmcts.dts.fact.entity.FacilityType;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
-import uk.gov.hmcts.dts.fact.entity.SidebarLocation;
 
 import java.util.List;
 import java.util.Locale;
@@ -247,13 +246,11 @@ class CourtTest {
         assertEquals(entityAdditionalLinks1.getUrl(), additionalLinks.get(0).getUrl());
         assertEquals(welsh ? entityAdditionalLinks1.getDescriptionCy() : entityAdditionalLinks1.getDescription(),
                      additionalLinks.get(0).getDescription());
-        assertEquals(entityAdditionalLinks1.getLocation().getName(), additionalLinks.get(0).getLocation());
 
         final AdditionalLink entityAdditionalLinks2 = courtEntity.getCourtAdditionalLinks().get(1).getAdditionalLink();
         assertEquals(entityAdditionalLinks2.getUrl(), additionalLinks.get(1).getUrl());
         assertEquals(welsh ? entityAdditionalLinks2.getDescriptionCy() : entityAdditionalLinks2.getDescription(),
                      additionalLinks.get(1).getDescription());
-        assertEquals(entityAdditionalLinks2.getLocation().getName(), additionalLinks.get(1).getLocation());
     }
 
     private static List<Facility> createFacilities() {
@@ -296,7 +293,6 @@ class CourtTest {
         additionalLink1.setUrl("tester.com");
         additionalLink1.setDescription("tester");
         additionalLink1.setDescriptionCy("tester cy");
-        additionalLink1.setLocation(new SidebarLocation(1, "location 1"));
 
         final CourtAdditionalLink courtAdditionalLink1 = new CourtAdditionalLink();
         courtAdditionalLink1.setAdditionalLink(additionalLink1);
@@ -306,7 +302,6 @@ class CourtTest {
         additionalLink2.setUrl("developer.com");
         additionalLink2.setDescription("developer");
         additionalLink2.setDescriptionCy("developer cy");
-        additionalLink2.setLocation(new SidebarLocation(1, "location 2"));
 
         final CourtAdditionalLink courtAdditionalLink2 = new CourtAdditionalLink();
         courtAdditionalLink2.setAdditionalLink(additionalLink2);
