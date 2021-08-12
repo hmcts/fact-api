@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CourtAreaOfLawSpoe {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtareaoflaw_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtareaoflawspoe_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
 

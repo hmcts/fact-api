@@ -30,7 +30,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
-    "areas_of_law", "displayed", "hide_aols", "dx_number", "distance"})
+    "areas_of_law", "areas_of_law_spoe", "displayed", "hide_aols", "dx_number", "distance"})
 public class CourtWithDistance {
     private String name;
     private Double lat;
