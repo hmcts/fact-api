@@ -79,17 +79,6 @@ public class MapItHealthServiceTest {
     }
 
     @Test
-    void testMapItUsageExceptionWithQuotaLimitNotZero() {
-        when(restTemplate.getForEntity(anyString(), eq(JsonNode.class))).thenReturn(response);
-        when(response.getBody()).thenReturn(responseBody);
-        when(responseBody.get(QUOTA)).thenReturn(quota);
-        when(quota.get(LIMIT)).thenReturn(limit);
-        when(limit.asInt()).thenReturn(10);
-        assertThatThrownBy(() -> mapItHealthService.isUp())
-            .isInstanceOf(MapitUsageException.class);
-    }
-
-    @Test
     void testMapItReturnsBodyWithQuotaLimitNotExceededAndOkStatus() throws IOException {
         when(restTemplate.getForEntity(anyString(), eq(JsonNode.class))).thenReturn(response);
         when(response.getBody()).thenReturn(responseBody);
