@@ -35,14 +35,4 @@ public class AdditionalLinkTest {
 
         LocaleContextHolder.resetLocaleContext();
     }
-
-    @Test
-    void testCreationWhenSidebarLocationNameIsEmpty() {
-        AdditionalLink additionalLink = new AdditionalLink(entity);
-
-        final SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(additionalLink.getUrl()).isEqualTo(entity.getUrl());
-        softly.assertThat(additionalLink.getDescription()).isEqualTo(entity.getDescription());
-        softly.assertAll();
-    }
 }
