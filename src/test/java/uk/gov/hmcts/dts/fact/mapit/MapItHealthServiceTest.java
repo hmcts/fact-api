@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.hmcts.dts.fact.exception.MapitUsageException;
+
 import java.io.IOException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -74,5 +76,16 @@ public class MapItHealthServiceTest {
         when(limit.asInt()).thenReturn(0);
         when(response.getStatusCode()).thenReturn(HttpStatus.OK);
         assertThat(mapItHealthService.isUp()).isTrue();
+    }
+
+    @Test
+    void testMapItReturnsBodyWithNoQuotaLimitNotZero() {
+        when(restTemplate.getForEntity(anyString(), eq(JsonNode.class))).thenReturn(response);
+        when(response.getBody()).thenReturn(responseBody);
+        when(responseBody.get(QUOTA)).thenReturn(quota);
+        when(quota.get(LIMIT)).thenReturn(limit);
+        when(limit.asInt()).thenReturn(10);
+        assertThatThrownBy(() -> mapItHealthService.isUp())
+            .isInstanceOf(MapitUsageException.class);
     }
 }
