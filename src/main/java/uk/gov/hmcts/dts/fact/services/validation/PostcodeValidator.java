@@ -28,11 +28,15 @@ public class PostcodeValidator {
         this.mapitService = mapitService;
     }
 
+    public static boolean isFullPostcodeFormat(final String postcode) {
+        return postcode.matches(FULL_POSTCODE);
+    }
+
     public boolean postcodeDataExists(final String postcode) {
 
         if (StringUtils.isBlank(postcode)) {
             return false;
-        } else if (postcode.matches(FULL_POSTCODE) && fullPostCodeDataExists(postcode)) { // If we have a full postcode
+        } else if (isFullPostcodeFormat(postcode) && fullPostCodeDataExists(postcode)) { // If we have a full postcode
             log.info("Full postcode search result was successful for: {}", postcode);
             return true;
         }
@@ -56,6 +60,14 @@ public class PostcodeValidator {
             || (postcode.substring(0, 2).matches(PARTIAL_POSTCODE_SEARCH)
                 ? partialPostcodeValid(PARTIAL_POSTCODE_EDGECASE, postcode, 2) : // if two letter proceed
                 partialPostcodeValid(PARTIAL_POSTCODE_EDGECASE, postcode, 1));   // if one letters proceeds
+    }
+
+    public boolean fullPostcodeValid(String postcode) {
+        if (StringUtils.isNotBlank(postcode) && isFullPostcodeFormat(postcode)) {
+            return fullPostCodeDataExists(postcode);
+        }
+        log.warn("'{}' is not a full postcode", postcode);
+        return false;
     }
 
     private boolean fullPostCodeDataExists(String postcode) {

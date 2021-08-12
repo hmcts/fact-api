@@ -46,7 +46,7 @@ public class AdminCourtEmailService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
-    @Transactional(rollbackFor = {RuntimeException.class})
+    @Transactional()
     public List<Email> updateEmailListForCourt(final String slug, final List<Email> emailList) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));

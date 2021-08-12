@@ -21,12 +21,23 @@ public class ValidationService {
 
     /**
      * Accepts an list of strings and checks for each if mapit data exists.
-     * @param postcodes An list of strings which are postcodes
-     * @return An list of strings which indicate which postcodes have failed to return geographical information
+     * @param postcodes A list of strings which are postcodes
+     * @return A list of strings which indicate which postcodes have failed to return geographical information
      */
     public List<String> validatePostcodes(List<String> postcodes) {
         return postcodes.stream()
             .filter(postcode -> !mapitPostcodeValidator.postcodeDataExists(postcode.replaceAll("\\s+","")))
+            .collect(toList());
+    }
+
+    /**
+     * Accepts an list of full postcodes and checks for each if mapit data exists.
+     * @param postcodes A list of strings which are postcodes
+     * @return A list of strings which indicate which postcodes have failed to return geographical information
+     */
+    public List<String> validateFullPostcodes(List<String> postcodes) {
+        return postcodes.stream()
+            .filter(postcode -> !mapitPostcodeValidator.fullPostcodeValid(postcode.replaceAll("\\s+","")))
             .collect(toList());
     }
 
