@@ -34,17 +34,10 @@ public class MapItHealthService {
     public boolean isUp() throws IOException {
         final String fullPath = mapitUrl + mapitQuotaPath + "?api_key=" + mapitKey;
         final ResponseEntity<JsonNode> response = restTemplate.getForEntity(fullPath, JsonNode.class);
+
         final String envValue = System.getenv("MAPIT_KEY");
-
         log.info("xxxxxx - key is " + envValue);
-
         log.info("*******health-service - key is " + mapitKey);
-        log.info("*******health-service - mapit url is " + mapitUrl);
-        log.info("*******health-service - mapit quota url is " + mapitQuotaPath);
-
-        if (StringUtils.isNotBlank(mapitKey)) {
-            log.info("******health-service - mapit key present!!!!!********");
-        }
 
         final JsonNode responseBody = response.getBody();
         if (responseBody != null) {
