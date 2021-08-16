@@ -36,6 +36,9 @@ public class MapItHealthService {
         final ResponseEntity<JsonNode> response = restTemplate.getForEntity(fullPath, JsonNode.class);
 
         log.info("*******health-service - key is " + mapitKey);
+        log.info("*******health-service - mapit url is " + mapitUrl);
+        log.info("*******health-service - mapit quota url is " + mapitQuotaPath);
+
         if (StringUtils.isNotBlank(mapitKey)) {
             log.info("******health-service - mapit key present!!!!!********");
         }
