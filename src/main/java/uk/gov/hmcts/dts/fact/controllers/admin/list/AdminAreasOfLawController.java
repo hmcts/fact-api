@@ -44,6 +44,12 @@ public class AdminAreasOfLawController {
 
     @GetMapping(path = "/{id}")
     @ApiOperation("Get area of law")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Area of Law not found")
+    })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<AreaOfLaw> getAreaOfLaw(@PathVariable Integer id) {
         return ok(adminAreasOfLawService.getAreaOfLaw(id));
