@@ -98,7 +98,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
             ".",
             AreaOfLaw.class
         );
-        assertThat(updatedCourtAreaOfLaw).containsSequence(expectedCourtAreasOfLaw);
+        assertThat(updatedCourtAreaOfLaw).containsExactlyElementsOf(expectedCourtAreasOfLaw);
 
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
