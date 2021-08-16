@@ -18,7 +18,7 @@ public class FeignConfiguration {
     public RequestInterceptor requestInterceptor() {
 
         log.info("*******key is " + key);
-        if (StringUtils.isNotBlank(key) && key.length() == 39) {
+        if (StringUtils.isNotBlank(key)) {
             log.info("******mapit key present!!!!!********");
         }
         return template -> template.header("X-Api-Key", key);
