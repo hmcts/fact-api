@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -70,9 +71,18 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     /************************************************************* PUT request tests section. ***************************************************************/
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Test
     public void shouldUpdateCourtAreaOfLaw() throws JsonProcessingException {
-        final List<AreaOfLaw> currentCourtAreasOfLaw = getCurrentCourtAreasOfLaw();
+        final List<AreaOfLaw> currentCourtAreasOfLaw = getCurrentCourtAreasOfLaw()
+            .stream()
+            .map(aol -> {
+                AreaOfLaw newAol = new AreaOfLaw();
+                newAol.setId(aol.getId());
+                newAol.setName(aol.getName());
+                return newAol;
+            })
+            .collect(Collectors.toList());
         final List<AreaOfLaw> expectedCourtAreasOfLaw = updateCourtAreasOfLaw(currentCourtAreasOfLaw);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAreasOfLaw);
         final String originalJson = objectMapper().writeValueAsString(currentCourtAreasOfLaw);
@@ -88,7 +98,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
             ".",
             AreaOfLaw.class
         );
-        assertThat(updatedCourtAreaOfLaw).containsExactlyElementsOf(expectedCourtAreasOfLaw);
+        assertThat(updatedCourtAreaOfLaw).containsSequence(expectedCourtAreasOfLaw);
 
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
@@ -141,16 +151,27 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<AreaOfLaw> updateCourtAreasOfLaw(final List<AreaOfLaw> courtAreaOfLaw) {
-        List<AreaOfLaw> updatedAreaOfLaw = new ArrayList<>(courtAreaOfLaw);
-        AreaOfLaw areaOfLaw = new AreaOfLaw(TEST_AREA_OF_LAW_ID, TEST_AREA_OF_LAW_NAME, false);
+        final AreaOfLaw areaOfLaw = new AreaOfLaw();
+        areaOfLaw.setId(TEST_AREA_OF_LAW_ID);
+        areaOfLaw.setName(TEST_AREA_OF_LAW_NAME);
+        areaOfLaw.setSinglePointEntry(false);
+        final List<AreaOfLaw> updatedAreaOfLaw = new ArrayList<>(courtAreaOfLaw);
         updatedAreaOfLaw.add(areaOfLaw);
         return updatedAreaOfLaw;
     }
 
     private static String getTestAreasOfLawJson() throws JsonProcessingException {
+        AreaOfLaw areaOfLaw = new AreaOfLaw();
+        areaOfLaw.setId(1);
+        areaOfLaw.setName("test1");
+        areaOfLaw.setSinglePointEntry(false);
+        AreaOfLaw areaOfLaw2 = new AreaOfLaw();
+        areaOfLaw2.setId(2);
+        areaOfLaw2.setName("test2");
+        areaOfLaw2.setSinglePointEntry(false);
         final List<AreaOfLaw> courtAreaOfLaw = Arrays.asList(
-            new AreaOfLaw(1, "test1", false),
-            new AreaOfLaw(2, "test2", false)
+            areaOfLaw,
+            areaOfLaw2
         );
         return objectMapper().writeValueAsString(courtAreaOfLaw);
     }

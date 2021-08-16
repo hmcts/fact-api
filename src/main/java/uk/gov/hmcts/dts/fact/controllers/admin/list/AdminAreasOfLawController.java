@@ -41,5 +41,39 @@ public class AdminAreasOfLawController {
     public ResponseEntity<List<AreaOfLaw>> getAllAreasOfLaw() {
         return ok(adminAreasOfLawService.getAllAreasOfLaw());
     }
-}
 
+    @GetMapping(path = "/{id}")
+    @ApiOperation("Get area of law")
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    public ResponseEntity<AreaOfLaw> getAreaOfLaw(@PathVariable Integer id) {
+        return ok(adminAreasOfLawService.getAreaOfLaw(id));
+    }
+
+    @PostMapping()
+    @ApiOperation("Create area of law")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
+        @ApiResponse(code = 400, message = "Invalid Area of Law", response = String.class),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 409, message = "Area of Law already exists")
+    })
+    @Role({FACT_SUPER_ADMIN})
+    public ResponseEntity<AreaOfLaw> createAreaOfLaw(@RequestBody AreaOfLaw areaOfLaw) {
+        return ok(adminAreasOfLawService.createAreaOfLaw(areaOfLaw));
+    }
+
+    @PutMapping()
+    @ApiOperation("Update area of law")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
+        @ApiResponse(code = 400, message = "Invalid Area of Law", response = String.class),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Area of Law not found")
+    })
+    @Role({FACT_SUPER_ADMIN})
+    public ResponseEntity<AreaOfLaw> updateAreaOfLaw(@RequestBody AreaOfLaw areaOfLaw) {
+        return ok(adminAreasOfLawService.updateAreaOfLaw(areaOfLaw));
+    }
+}
