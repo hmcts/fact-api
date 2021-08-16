@@ -59,6 +59,14 @@ public class AdminAreasOfLawServiceTest {
     }
 
     @Test
+    void getAreaOfLawShouldThrowNotFoundExceptionIfIdDoesNotExist() {
+        when(areasOfLawRepository.getOne(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        assertThatThrownBy(() -> areasOfLawService
+            .getAreaOfLaw(400))
+            .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
     void shouldUpdateAreaOfLaw() {
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw =
             new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(getTestAreaOfLawEntities().get(0));
