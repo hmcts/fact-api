@@ -1,6 +1,8 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import uk.gov.hmcts.dts.fact.exception.MapitUsageException;
 import java.io.IOException;
 
 @Component
+@Slf4j
 @SuppressWarnings("PMD.ImmutableField")
 public class MapItHealthService {
     static final String QUOTA = "quota";
@@ -31,6 +34,11 @@ public class MapItHealthService {
     public boolean isUp() throws IOException {
         final String fullPath = mapitUrl + mapitQuotaPath + "?api_key=" + mapitKey;
         final ResponseEntity<JsonNode> response = restTemplate.getForEntity(fullPath, JsonNode.class);
+
+        log.info("*******health-service - key is " + mapitKey);
+        if (StringUtils.isNotBlank(mapitKey)) {
+            log.info("******health-service - mapit key present!!!!!********");
+        }
 
         final JsonNode responseBody = response.getBody();
         if (responseBody != null) {
