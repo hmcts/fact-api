@@ -13,7 +13,6 @@ public class FeignConfiguration {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-
         return template -> template.header("X-Api-Key", key);
     }
 }
