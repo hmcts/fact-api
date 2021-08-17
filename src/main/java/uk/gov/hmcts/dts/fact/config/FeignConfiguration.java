@@ -21,6 +21,7 @@ public class FeignConfiguration {
         if (StringUtils.isNotBlank(key)) {
             log.info("******mapit key present!!!!!********");
         }
+
         return template -> template.header("X-Api-Key", key);
     }
 }
