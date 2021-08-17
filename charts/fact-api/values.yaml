@@ -17,6 +17,14 @@ java:
     fact:
       resourceGroup: fact
       secrets:
+        - name: api-POSTGRES-HOST
+          alias: POSTGRES_HOST
+        - name: api-POSTGRES-PASS
+          alias: POSTGRES_PASSWORD
+        - name: api-POSTGRES-DATABASE
+          alias: POSTGRES_DATABASE
+        - name: api-POSTGRES-USER
+          alias: POSTGRES_USER
         - name: AppInsightsInstrumentationKey
           alias: azure.application-insights.instrumentation-key
         - name: mapit-key
