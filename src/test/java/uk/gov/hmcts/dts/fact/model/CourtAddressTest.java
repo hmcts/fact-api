@@ -8,9 +8,9 @@ import uk.gov.hmcts.dts.fact.entity.AddressType;
 
 import java.util.Locale;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CourtAddressTest {
 
@@ -62,7 +62,7 @@ class CourtAddressTest {
         }
 
         CourtAddress courtAddress = new CourtAddress(entity);
-        assertNull(courtAddress.getAddressLines());
+        assertEquals(emptyList(), courtAddress.getAddressLines());
 
         LocaleContextHolder.resetLocaleContext();
     }

@@ -23,22 +23,24 @@ import uk.gov.hmcts.dts.fact.entity.FacilityType;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
-import uk.gov.hmcts.dts.fact.entity.SidebarLocation;
 
 import java.util.List;
 import java.util.Locale;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
+
+    private static final String VISIT_US_ADDRESS_TYPE_NAME = "Visit us";
+    private static final String WRITE_TO_US_ADDRESS_TYPE_NAME = "Write to us";
+    private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME = "Visit or contact us";
 
     @BeforeAll
     static void setUp() {
@@ -78,11 +80,7 @@ class CourtTest {
         when(courtContactEntity.getContact()).thenReturn(contactEntity);
         courtEntity.setCourtContacts(singletonList(courtContactEntity));
 
-        final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
-        areaOfLawEntity.setName("Divorce");
-        areaOfLawEntity.setExternalLinkDescription("Description of url");
-        areaOfLawEntity.setExternalLink("http%3A//url");
-        courtEntity.setAreasOfLaw(singletonList(areaOfLawEntity));
+        courtEntity.setAreasOfLaw(singletonList(getAreaOfLaw()));
 
         final CourtType courtTypeEntity = new CourtType();
         courtTypeEntity.setName("court type");
@@ -107,6 +105,18 @@ class CourtTest {
         courtEntity.setDirectionsCy("Directions in Welsh");
         courtEntity.setAlert("Alert");
         courtEntity.setAlertCy("Alert in Welsh");
+    }
+
+    private static AreaOfLaw getAreaOfLaw() {
+        final AreaOfLaw areaOfLawEntity = new AreaOfLaw();
+        areaOfLawEntity.setName("Divorce");
+        areaOfLawEntity.setExternalLinkDescription("Description of url");
+        areaOfLawEntity.setExternalLink("http%3A//url");
+        areaOfLawEntity.setDisplayName("Name for not in-person court");
+        areaOfLawEntity.setDisplayNameCy("Name for not in-person court cy");
+        areaOfLawEntity.setAltName("Name for in-person court");
+        areaOfLawEntity.setAltNameCy("Name for in-person court cy");
+        return areaOfLawEntity;
     }
 
     @ParameterizedTest
@@ -153,7 +163,10 @@ class CourtTest {
 
     @Test
     void testNotInPersonData() {
-        courtEntity.setInPerson(null);
+        final InPerson inPersonEntity = new InPerson();
+        inPersonEntity.setIsInPerson(false);
+        courtEntity.setInPerson(inPersonEntity);
+
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
@@ -162,14 +175,20 @@ class CourtTest {
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
         courtEntity.setAddresses(singletonList(courtAddress));
-        Court court = new Court(courtEntity);
-        assertTrue(court.getInPerson());
+
+        final Court court = new Court(courtEntity);
+        assertFalse(court.getInPerson());
         assertNull(court.getAccessScheme());
         assertEquals("Write to us", court.getAddresses().get(0).getAddressType());
+        assertEquals(courtEntity.getAreasOfLaw().get(0).getDisplayName(), court.getAreasOfLaw().get(0).getDisplayName());
     }
 
     @Test
     void testInPersonData() {
+        final InPerson inPersonEntity = new InPerson();
+        inPersonEntity.setIsInPerson(true);
+        courtEntity.setInPerson(inPersonEntity);
+
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
@@ -178,8 +197,46 @@ class CourtTest {
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
         courtEntity.setAddresses(singletonList(courtAddress));
-        Court court = new Court(courtEntity);
+
+        final Court court = new Court(courtEntity);
+        assertTrue(court.getInPerson());
         assertEquals("Visit us", court.getAddresses().get(0).getAddressType());
+        assertEquals(courtEntity.getAreasOfLaw().get(0).getAltName(), court.getAreasOfLaw().get(0).getDisplayName());
+    }
+
+    @Test
+    void testVisitUsOrVisitContactUsAddressesSortedFirst() {
+        final CourtAddress courtAddressEntity1 = new CourtAddress();
+        final AddressType addressType1 = new AddressType();
+        addressType1.setName(VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity1.setAddressType(addressType1);
+
+        final CourtAddress courtAddressEntity2 = new CourtAddress();
+        final AddressType addressType2 = new AddressType();
+        addressType2.setName(WRITE_TO_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity2.setAddressType(addressType2);
+
+        final CourtAddress courtAddressEntity3 = new CourtAddress();
+        final AddressType addressType3 = new AddressType();
+        addressType3.setName(WRITE_TO_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity3.setAddressType(addressType3);
+
+        final CourtAddress courtAddressEntity4 = new CourtAddress();
+        final AddressType addressType4 = new AddressType();
+        addressType4.setName(VISIT_US_ADDRESS_TYPE_NAME);
+        courtAddressEntity4.setAddressType(addressType4);
+
+        final uk.gov.hmcts.dts.fact.entity.Court courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
+        courtEntity.setAddresses(asList(courtAddressEntity1, courtAddressEntity2, courtAddressEntity3, courtAddressEntity4));
+        courtEntity.setCourtTypes(emptyList());
+        courtEntity.setServiceAreas(emptyList());
+
+        final Court court = new Court(courtEntity);
+        final List<uk.gov.hmcts.dts.fact.model.CourtAddress> addresses = court.getAddresses();
+        assertEquals(VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME, addresses.get(0).getAddressType());
+        assertEquals(VISIT_US_ADDRESS_TYPE_NAME, addresses.get(1).getAddressType());
+        assertEquals(WRITE_TO_US_ADDRESS_TYPE_NAME, addresses.get(2).getAddressType());
+        assertEquals(WRITE_TO_US_ADDRESS_TYPE_NAME, addresses.get(3).getAddressType());
     }
 
     private void verifyAdditionalLinks(final List<uk.gov.hmcts.dts.fact.model.AdditionalLink> additionalLinks, final uk.gov.hmcts.dts.fact.entity.Court courtEntity, final boolean welsh) {
@@ -189,13 +246,11 @@ class CourtTest {
         assertEquals(entityAdditionalLinks1.getUrl(), additionalLinks.get(0).getUrl());
         assertEquals(welsh ? entityAdditionalLinks1.getDescriptionCy() : entityAdditionalLinks1.getDescription(),
                      additionalLinks.get(0).getDescription());
-        assertEquals(entityAdditionalLinks1.getLocation().getName(), additionalLinks.get(0).getLocation());
 
         final AdditionalLink entityAdditionalLinks2 = courtEntity.getCourtAdditionalLinks().get(1).getAdditionalLink();
         assertEquals(entityAdditionalLinks2.getUrl(), additionalLinks.get(1).getUrl());
         assertEquals(welsh ? entityAdditionalLinks2.getDescriptionCy() : entityAdditionalLinks2.getDescription(),
                      additionalLinks.get(1).getDescription());
-        assertEquals(entityAdditionalLinks2.getLocation().getName(), additionalLinks.get(1).getLocation());
     }
 
     private static List<Facility> createFacilities() {
@@ -238,7 +293,6 @@ class CourtTest {
         additionalLink1.setUrl("tester.com");
         additionalLink1.setDescription("tester");
         additionalLink1.setDescriptionCy("tester cy");
-        additionalLink1.setLocation(new SidebarLocation(1, "location 1"));
 
         final CourtAdditionalLink courtAdditionalLink1 = new CourtAdditionalLink();
         courtAdditionalLink1.setAdditionalLink(additionalLink1);
@@ -248,7 +302,6 @@ class CourtTest {
         additionalLink2.setUrl("developer.com");
         additionalLink2.setDescription("developer");
         additionalLink2.setDescriptionCy("developer cy");
-        additionalLink2.setLocation(new SidebarLocation(1, "location 2"));
 
         final CourtAdditionalLink courtAdditionalLink2 = new CourtAdditionalLink();
         courtAdditionalLink2.setAdditionalLink(additionalLink2);

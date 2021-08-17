@@ -7,6 +7,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AreaOfLawTest {
@@ -23,6 +24,8 @@ class AreaOfLawTest {
         entity.setExternalLinkDescriptionCy("description of external link in Welsh");
         entity.setDisplayName("display name in english");
         entity.setDisplayNameCy("display name in welsh");
+        entity.setAltName("display name in english");
+        entity.setAltNameCy("display name in welsh");
         entity.setDisplayExternalLink("display external link");
     }
 
@@ -47,6 +50,32 @@ class AreaOfLawTest {
             areaOfLaw.getDisplayName()
         );
         assertEquals(entity.getDisplayExternalLink(), areaOfLaw.getDisplayExternalLink());
+
+        LocaleContextHolder.resetLocaleContext();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testDisplayNameForInPersonCourt(boolean welsh) {
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
+        final AreaOfLaw areaOfLaw = new AreaOfLaw(entity, true);
+        assertThat(areaOfLaw.getDisplayName()).isEqualTo(welsh ? entity.getAltNameCy() : entity.getAltName());
+
+        LocaleContextHolder.resetLocaleContext();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testDisplayForNotInPersonCourt(boolean welsh) {
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
+        final AreaOfLaw areaOfLaw = new AreaOfLaw(entity, true);
+        assertThat(areaOfLaw.getDisplayName()).isEqualTo(welsh ? entity.getDisplayNameCy() : entity.getDisplayName());
 
         LocaleContextHolder.resetLocaleContext();
     }
