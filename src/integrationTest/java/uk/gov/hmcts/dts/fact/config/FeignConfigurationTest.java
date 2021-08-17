@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.config;
 
 import feign.RequestTemplate;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,6 +30,7 @@ class FeignConfigurationTest {
 
 
     @Test
+    @Disabled
     void shouldSetRequestHeaderWithMapitKey() {
         final FeignConfiguration feignConfiguration = (FeignConfiguration) (applicationContext.getBean(
             "feignConfiguration"));
