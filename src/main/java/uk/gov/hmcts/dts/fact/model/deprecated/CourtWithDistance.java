@@ -31,7 +31,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
-    "areas_of_law", "displayed", "hide_aols", "dx_number", "distance"})
+    "areas_of_law", "areas_of_law_spoe", "displayed", "hide_aols", "dx_number", "distance"})
 public class CourtWithDistance {
     private String name;
     private Double lat;
@@ -43,6 +43,8 @@ public class CourtWithDistance {
     @JsonProperty("magistrate_code")
     private Integer magistratesLocationCode;
     private String slug;
+    @JsonProperty("areas_of_law_spoe")
+    private List<String> areasOfLawSpoe;
     @JsonProperty("types")
     private List<String> courtTypes;
     private List<CourtAddress> addresses;
@@ -64,6 +66,7 @@ public class CourtWithDistance {
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
         this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.areasOfLawSpoe = courtEntity.getAreasOfLawSpoe();
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
         final List<Contact> contacts = ofNullable(courtEntity.getCourtContacts())
@@ -85,6 +88,7 @@ public class CourtWithDistance {
         this.courtTypes = courtWithDistanceEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
         this.addresses = courtWithDistanceEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.areasOfLaw = courtWithDistanceEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.areasOfLawSpoe = courtWithDistanceEntity.getAreasOfLawSpoe();
         this.displayed = courtWithDistanceEntity.getDisplayed();
         this.hideAols = courtWithDistanceEntity.getHideAols();
         this.dxNumber = this.getDxNumber(courtWithDistanceEntity.getContacts());
