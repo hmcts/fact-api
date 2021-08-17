@@ -32,13 +32,52 @@ public class AdminAreasOfLawControllerTest {
     @MockBean
     private AdminAreasOfLawService adminAreasOfLawService;
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private static final List<AreaOfLaw> AREAS_OF_LAW = Arrays.asList(
+        new AreaOfLaw(
+            100,
+            "Divorce",
+            false,
+            "https://divorce.test",
+            "Information about getting a divorce",
+            "Gwybodaeth ynglŷn â gwneud cais am ysgariad",
+            "Divorce - alternative",
+            "Ysgariad",
+            "Divorce - display",
+            "Ysgariad",
+            "https://divorce.external.text"),
+        new AreaOfLaw(
+            200,
+            "Tax",
+            false,
+            "https://tax.test",
+            "Information about tax tribunals",
+            "Gwybodaeth am tribiwnlysoedd treth",
+            "Tax - alternative",
+            "Treth",
+            "Tax - display",
+            "Treth",
+            "https://tax.external.text"),
+        new AreaOfLaw(
+            300,
+            "Employment",
+            false,
+            "https://employment.test",
+            "Information about the Employment Tribunal",
+            "Gwybodaeth ynglŷn â'r tribiwnlys cyflogaeth",
+            "Employment - alternative",
+            "Honiadau yn erbyn cyflogwyr",
+            "Employment - display",
+            "Honiadau yn erbyn cyflogwyr",
+            "https://employment.external.text")
+    );
+
     @Test
     void shouldReturnAllAreasOfLaw() throws Exception {
+        when(adminAreasOfLawService.getAllAreasOfLaw()).thenReturn(AREAS_OF_LAW);
 
-        final List<AreaOfLaw> mockAllAreasOfLaw = getAreasOfLaw();
-        when(adminAreasOfLawService.getAllAreasOfLaw()).thenReturn(mockAllAreasOfLaw);
-
-        final String allAreasOfLawJson = new ObjectMapper().writeValueAsString(mockAllAreasOfLaw);
+        final String allAreasOfLawJson = OBJECT_MAPPER.writeValueAsString(AREAS_OF_LAW);
 
         mockMvc.perform(get(BASE_PATH).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -47,10 +86,10 @@ public class AdminAreasOfLawControllerTest {
 
     @Test
     void shouldReturnAnAreaOfLaw() throws Exception {
-        final AreaOfLaw areaOfLaw = getAreasOfLaw().get(0);
+        final AreaOfLaw areaOfLaw = AREAS_OF_LAW.get(0);
         when(adminAreasOfLawService.getAreaOfLaw(100)).thenReturn(areaOfLaw);
 
-        final String areaOfLawJson = new ObjectMapper().writeValueAsString(areaOfLaw);
+        final String areaOfLawJson = OBJECT_MAPPER.writeValueAsString(areaOfLaw);
 
         mockMvc.perform(get(BASE_PATH + "/100").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -67,11 +106,10 @@ public class AdminAreasOfLawControllerTest {
 
     @Test
     void updateAreaOfLawShouldUpdateAndReturnUpdatedAreaOfLaw() throws Exception {
-        final AreaOfLaw areaOfLaw = getAreasOfLaw().get(0);
-        areaOfLaw.setExternalLink("https://a.different.url");
+        final AreaOfLaw areaOfLaw = AREAS_OF_LAW.get(0);
         when(adminAreasOfLawService.updateAreaOfLaw(areaOfLaw)).thenReturn(areaOfLaw);
 
-        final String areaOfLawJson = new ObjectMapper().writeValueAsString(areaOfLaw);
+        final String areaOfLawJson = OBJECT_MAPPER.writeValueAsString(areaOfLaw);
 
         mockMvc.perform(put(BASE_PATH)
                             .content(areaOfLawJson)
@@ -83,10 +121,10 @@ public class AdminAreasOfLawControllerTest {
 
     @Test
     void updateAreaOfLawShouldReturnNotFoundForUnknownAreaOfLaw() throws Exception {
-        final AreaOfLaw areaOfLaw = getAreasOfLaw().get(0);
+        final AreaOfLaw areaOfLaw = AREAS_OF_LAW.get(0);
         when(adminAreasOfLawService.updateAreaOfLaw(areaOfLaw)).thenThrow(NotFoundException.class);
 
-        final String areaOfLawJson = new ObjectMapper().writeValueAsString(areaOfLaw);
+        final String areaOfLawJson = OBJECT_MAPPER.writeValueAsString(areaOfLaw);
 
         mockMvc.perform(put(BASE_PATH)
                             .content(areaOfLawJson)
@@ -111,68 +149,27 @@ public class AdminAreasOfLawControllerTest {
             "https://new.test.external");
         when(adminAreasOfLawService.createAreaOfLaw(areaOfLaw)).thenReturn(areaOfLaw);
 
-        final String areaOfLawJson = new ObjectMapper().writeValueAsString(areaOfLaw);
+        final String areaOfLawJson = OBJECT_MAPPER.writeValueAsString(areaOfLaw);
 
         mockMvc.perform(post(BASE_PATH)
                             .content(areaOfLawJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andExpect(content().json(areaOfLawJson));
     }
 
     @Test
     void createAreaOfLawShouldReturnConflictIfNameAlreadyExists() throws Exception {
-        final AreaOfLaw areaOfLaw = getAreasOfLaw().get(0);
+        final AreaOfLaw areaOfLaw = AREAS_OF_LAW.get(0);
         when(adminAreasOfLawService.createAreaOfLaw(areaOfLaw)).thenThrow(DuplicatedListItemException.class);
 
-        final String areaOfLawJson = new ObjectMapper().writeValueAsString(areaOfLaw);
+        final String areaOfLawJson = OBJECT_MAPPER.writeValueAsString(areaOfLaw);
 
         mockMvc.perform(post(BASE_PATH)
                             .content(areaOfLawJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isConflict());
-    }
-
-    private List<AreaOfLaw> getAreasOfLaw() {
-        return Arrays.asList(
-            new AreaOfLaw(
-                100,
-                "Divorce",
-                false,
-                "https://divorce.test",
-                "Information about getting a divorce",
-                "Gwybodaeth ynglŷn â gwneud cais am ysgariad",
-                "Divorce - alternative",
-                "Ysgariad",
-                "Divorce - display",
-                "Ysgariad",
-                "https://divorce.external.text"),
-            new AreaOfLaw(
-                200,
-                "Tax",
-                false,
-                "https://tax.test",
-                "Information about tax tribunals",
-                "Gwybodaeth am tribiwnlysoedd treth",
-                "Tax - alternative",
-                "Treth",
-                "Tax - display",
-                "Treth",
-                "https://tax.external.text"),
-            new AreaOfLaw(
-                300,
-                "Employment",
-                false,
-                "https://employment.test",
-                "Information about the Employment Tribunal",
-                "Gwybodaeth ynglŷn â'r tribiwnlys cyflogaeth",
-                "Employment - alternative",
-                "Honiadau yn erbyn cyflogwyr",
-                "Employment - display",
-                "Honiadau yn erbyn cyflogwyr",
-                "https://employment.external.text")
-        );
     }
 }

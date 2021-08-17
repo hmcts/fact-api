@@ -9,7 +9,6 @@ import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -25,7 +24,7 @@ public class AdminAreasOfLawService {
 
     public AreaOfLaw getAreaOfLaw(final Integer id) {
         try {
-            return new AreaOfLaw(areasOfLawRepository.getOne(id));
+            return new AreaOfLaw(areasOfLawRepository.getById(id));
         } catch (final javax.persistence.EntityNotFoundException exception) {
             throw new NotFoundException(exception);
         }
@@ -40,15 +39,11 @@ public class AdminAreasOfLawService {
 
     @Transactional
     public AreaOfLaw updateAreaOfLaw(final AreaOfLaw updatedAreaOfLaw) {
-        // Ensure entity with ID exists
-        final Optional<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> areaOfLawEntity =
-            areasOfLawRepository.findById(updatedAreaOfLaw.getId());
-        if (areaOfLawEntity.isEmpty()) {
-            throw new NotFoundException(updatedAreaOfLaw.getId().toString());
-        }
+        uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawEntity =
+            areasOfLawRepository.findById(updatedAreaOfLaw.getId())
+            .orElseThrow(() -> new NotFoundException(updatedAreaOfLaw.getId().toString()));
 
-        // Update area of law entity
-        final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity.get());
+        final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity);
         return new AreaOfLaw(areasOfLawRepository.save(entity));
     }
 
@@ -72,6 +67,7 @@ public class AdminAreasOfLawService {
 
     private uk.gov.hmcts.dts.fact.entity.AreaOfLaw updateEntityPropertiesFromModel(final AreaOfLaw areaOfLaw,
                                                                                    final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity) {
+        // Name is not updated because it is not editable
         entity.setExternalLink(areaOfLaw.getExternalLink());
         entity.setExternalLinkDescription(areaOfLaw.getExternalLinkDescription());
         entity.setExternalLinkDescriptionCy(areaOfLaw.getExternalLinkDescriptionCy());

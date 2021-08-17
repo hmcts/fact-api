@@ -33,13 +33,47 @@ public class AdminAreasOfLawServiceTest {
     @MockBean
     private AreasOfLawRepository areasOfLawRepository;
 
+    private static final List<AreaOfLaw> AREAS_OF_LAW = Arrays.asList(
+        new AreaOfLaw(
+            100,
+            "Divorce",
+            "https://divorce.test",
+            "Information about getting a divorce",
+            "Gwybodaeth ynglŷn â gwneud cais am ysgariad",
+            "Divorce - alt",
+            "Ysgariad alt",
+            "Divorce - display",
+            "Ysgariad display",
+            "https://divorce.external.text"),
+        new AreaOfLaw(
+            200,
+            "Tax",
+            "https://tax.test",
+            "Information about tax tribunals",
+            "Gwybodaeth am tribiwnlysoedd treth",
+            "Tax - alt",
+            "Treth alt",
+            "Tax - display",
+            "Treth display",
+            "https://tax.external.text"),
+        new AreaOfLaw(
+            300,
+            "Employment",
+            "https://employment.test",
+            "Information about the Employment Tribunal",
+            "Gwybodaeth ynglŷn â'r tribiwnlys cyflogaeth",
+            "Employment - alt",
+            "Honiadau yn erbyn cyflogwyr alt",
+            "Employment - display",
+            "Honiadau yn erbyn cyflogwyr display",
+            "https://employment.external.text")
+    );
 
     @Test
     void shouldReturnAllAreasOfLaw() {
-        final List<AreaOfLaw> mockAreasOfLaw = getTestAreaOfLawEntities();
-        when(areasOfLawRepository.findAll()).thenReturn(mockAreasOfLaw);
+        when(areasOfLawRepository.findAll()).thenReturn(AREAS_OF_LAW);
 
-        final List<uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw> expectedResult = mockAreasOfLaw
+        final List<uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw> expectedResult = AREAS_OF_LAW
             .stream()
             .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
             .collect(Collectors.toList());
@@ -49,8 +83,8 @@ public class AdminAreasOfLawServiceTest {
 
     @Test
     void shouldReturnAnAreaOfLawForGivenId() {
-        final AreaOfLaw mockAreaOfLaw = getTestAreaOfLawEntities().get(0);
-        when(areasOfLawRepository.getOne(100)).thenReturn(mockAreaOfLaw);
+        final AreaOfLaw mockAreaOfLaw = AREAS_OF_LAW.get(0);
+        when(areasOfLawRepository.getById(100)).thenReturn(mockAreaOfLaw);
 
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw expectedResult =
             new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(mockAreaOfLaw);
@@ -59,8 +93,8 @@ public class AdminAreasOfLawServiceTest {
     }
 
     @Test
-    void getAreaOfLawShouldThrowNotFoundExceptionIfIdDoesNotExist() {
-        when(areasOfLawRepository.getOne(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+    void whenIdDoesNotExistGetAreaOfLawShouldThrowNotFoundException() {
+        when(areasOfLawRepository.getById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> areasOfLawService
             .getAreaOfLaw(400))
             .isInstanceOf(NotFoundException.class);
@@ -68,23 +102,22 @@ public class AdminAreasOfLawServiceTest {
 
     @Test
     void shouldUpdateAreaOfLaw() {
+        final AreaOfLaw entity = AREAS_OF_LAW.get(0);
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw =
-            new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(getTestAreaOfLawEntities().get(0));
+            new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(entity);
         areaOfLaw.setExternalLink("https://something.else.link");
         areaOfLaw.setExternalLinkDescription("A different description");
         areaOfLaw.setExternalLinkDescriptionCy("A different description in Welsh");
 
-        when(areasOfLawRepository.findById(areaOfLaw.getId()))
-            .thenReturn(Optional.of(getTestAreaOfLawEntities().get(0)));
-        when(areasOfLawRepository.save(any(AreaOfLaw.class)))
-            .thenAnswer((Answer<AreaOfLaw>) invocation -> invocation.getArgument(0));
+        when(areasOfLawRepository.findById(areaOfLaw.getId())).thenReturn(Optional.of(entity));
+        when(areasOfLawRepository.save(entity)).thenReturn(entity);
 
         assertThat(areasOfLawService.updateAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
     }
 
     @Test
     void updateShouldThrowNotFoundExceptionWhenAreaOfLawDoesNotExist() {
-        final AreaOfLaw testAreaOfLaw = getTestAreaOfLawEntities().get(0);
+        final AreaOfLaw testAreaOfLaw = AREAS_OF_LAW.get(0);
         when(areasOfLawRepository.findById(testAreaOfLaw.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> areasOfLawService
@@ -106,7 +139,8 @@ public class AdminAreasOfLawServiceTest {
         areaOfLaw.setDisplayNameCy("This is new area of law display name - welsh");
         areaOfLaw.setDisplayExternalLink("https://external.newarea.of.law");
 
-        when(areasOfLawRepository.save(any(AreaOfLaw.class))).thenAnswer((Answer<AreaOfLaw>)invocation -> invocation.getArgument(0));
+        when(areasOfLawRepository.save(any(AreaOfLaw.class)))
+            .thenAnswer((Answer<AreaOfLaw>)invocation -> invocation.getArgument(0));
 
         assertThat(areasOfLawService.createAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
     }
@@ -114,52 +148,13 @@ public class AdminAreasOfLawServiceTest {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Test
     void createShouldThrowDuplicatedListItemExceptionIfAreaOfLawAlreadyExists() {
-        final List<AreaOfLaw> mockAreasOfLaw = getTestAreaOfLawEntities();
-        when(areasOfLawRepository.findAll()).thenReturn(mockAreasOfLaw);
+        when(areasOfLawRepository.findAll()).thenReturn(AREAS_OF_LAW);
 
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw =
-            new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(getTestAreaOfLawEntities().get(0));
+            new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(AREAS_OF_LAW.get(0));
 
         assertThatThrownBy(() -> areasOfLawService
             .createAreaOfLaw(areaOfLaw))
             .isInstanceOf(DuplicatedListItemException.class);
-    }
-
-    private List<AreaOfLaw> getTestAreaOfLawEntities() {
-        return Arrays.asList(
-            new AreaOfLaw(
-                100,
-                "Divorce",
-                "https://divorce.test",
-                "Information about getting a divorce",
-                "Gwybodaeth ynglŷn â gwneud cais am ysgariad",
-                "Divorce - alt",
-                "Ysgariad alt",
-                "Divorce - display",
-                "Ysgariad display",
-                "https://divorce.external.text"),
-            new AreaOfLaw(
-                200,
-                "Tax",
-                "https://tax.test",
-                "Information about tax tribunals",
-                "Gwybodaeth am tribiwnlysoedd treth",
-                "Tax - alt",
-                "Treth alt",
-                "Tax - display",
-                "Treth display",
-                "https://tax.external.text"),
-            new AreaOfLaw(
-                300,
-                "Employment",
-                "https://employment.test",
-                "Information about the Employment Tribunal",
-                "Gwybodaeth ynglŷn â'r tribiwnlys cyflogaeth",
-                "Employment - alt",
-                "Honiadau yn erbyn cyflogwyr alt",
-                "Employment - display",
-                "Honiadau yn erbyn cyflogwyr display",
-                "https://employment.external.text")
-        );
     }
 }

@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.controllers.admin.list;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,10 @@ import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAreasOfLawService;
 
+import java.net.URI;
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
@@ -22,6 +25,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
     path = "/admin/areasOfLaw",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class AdminAreasOfLawController {
     private final AdminAreasOfLawService adminAreasOfLawService;
 
@@ -58,7 +62,7 @@ public class AdminAreasOfLawController {
     @PostMapping()
     @ApiOperation("Create area of law")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
+        @ApiResponse(code = 201, message = "Created", response = AreaOfLaw.class),
         @ApiResponse(code = 400, message = "Invalid Area of Law", response = String.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
@@ -66,7 +70,7 @@ public class AdminAreasOfLawController {
     })
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<AreaOfLaw> createAreaOfLaw(@RequestBody AreaOfLaw areaOfLaw) {
-        return ok(adminAreasOfLawService.createAreaOfLaw(areaOfLaw));
+        return created(URI.create(StringUtils.EMPTY)).body(adminAreasOfLawService.createAreaOfLaw(areaOfLaw));
     }
 
     @PutMapping()
