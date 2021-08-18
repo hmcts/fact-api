@@ -96,6 +96,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
+
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
@@ -174,7 +175,41 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     /************************************************************* POST request tests section. ***************************************************************/
-    // TODO
+
+    @Test
+    public void shouldBeForbiddenForCreatingAreaOfLaw() throws JsonProcessingException {
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
+        final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
+
+        final Response response = doPostRequest(
+            ADMIN_AREAS_OF_LAW_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken),testJson
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldRequireATokenWhenCreatingAreaOfLaw() throws JsonProcessingException {
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
+        final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
+
+        final Response response = doPostRequest(
+            ADMIN_AREAS_OF_LAW_ENDPOINT, testJson);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldNotCreateAreaOfLawThatAlreadyExist() throws JsonProcessingException {
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
+        final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
+
+        final Response response = doPostRequest(
+            ADMIN_AREAS_OF_LAW_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),testJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
+    }
+
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
