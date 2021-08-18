@@ -210,7 +210,6 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
     }
 
-
     /************************************************************* Shared utility methods. ***************************************************************/
 
     private AreaOfLaw getCurrentAreaOfLaw() {

@@ -67,7 +67,7 @@ public class AdminAreasOfLawService {
 
     private uk.gov.hmcts.dts.fact.entity.AreaOfLaw updateEntityPropertiesFromModel(final AreaOfLaw areaOfLaw,
                                                                                    final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity) {
-        // Name is not updated because it is not editable
+        // Name is not updated because it is not editable.
         entity.setExternalLink(areaOfLaw.getExternalLink());
         entity.setExternalLinkDescription(areaOfLaw.getExternalLinkDescription());
         entity.setExternalLinkDescriptionCy(areaOfLaw.getExternalLinkDescriptionCy());
