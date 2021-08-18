@@ -15,8 +15,6 @@ management:
 spring:
   application:
     name: FACT API
-  config:
-    import: "optional:configtree:/mnt/secrets/fact/"
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:fact}${DB_OPTIONS:}
