@@ -22,4 +22,10 @@ public class AdditionalLink {
     private String description;
     @Column(name = "description_cy")
     private String descriptionCy;
+
+    public AdditionalLink(final String url, final String description, final String descriptionCy) {
+        this.url = url;
+        this.description = description;
+        this.descriptionCy = descriptionCy;
+    }
 }
