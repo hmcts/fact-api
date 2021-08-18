@@ -3,7 +3,12 @@ package uk.gov.hmcts.dts.fact.admin.list;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.List;
@@ -15,11 +20,14 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
+@SuppressWarnings("PMD.TooManyMethods")
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
 public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_AREAS_OF_LAW_ENDPOINT = "/admin/areasOfLaw/";
 
-    private static final int AREA_OF_LAW_ID_HOUSING_POSSESSION = 34253;
+    private static final int AREA_OF_LAW_ID_HOUSING_POSSESSION = 34_253;
     private static final String TEST_NAME = "Housing possession";
     private static final String TEST_ALT_NAME = "Housing1234";
     private static final String TEST_ALT_NAME_CY = "Tai";
@@ -30,6 +38,9 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     private static final String TEST_EXTERNAL_LINK_DESC = "Information about evicting tenants";
     private static final String TEST_EXTERNAL_LINK_DESC_CY = "Gwybodaeth ynglŷn â troi tenantiaid allan";
     private static final String TEST_DISPLAY_EXTERNAL_LINK = null;
+
+    @Autowired
+    private AreasOfLawRepository areasOfLawRepository;
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -67,9 +78,9 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        final AreaOfLaw AreaOfLaw = response.as(AreaOfLaw.class);
-        assertThat(AreaOfLaw).isNotNull();
-        assertThat(AreaOfLaw.getId()).isEqualTo(AREA_OF_LAW_ID_HOUSING_POSSESSION);
+        final AreaOfLaw areaOfLaw = response.as(AreaOfLaw.class);
+        assertThat(areaOfLaw).isNotNull();
+        assertThat(areaOfLaw.getId()).isEqualTo(AREA_OF_LAW_ID_HOUSING_POSSESSION);
     }
 
     @Test
@@ -99,10 +110,10 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateAreaOfLaw() throws JsonProcessingException {
-        final AreaOfLaw CurrentAreaOfLaw = getCurrentAreaOfLaw();
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         final AreaOfLaw expectedAreaOfLaw = updateAreaOfLaw();
         final String updatedJson = objectMapper().writeValueAsString(expectedAreaOfLaw);
-        final String originalJson = objectMapper().writeValueAsString(CurrentAreaOfLaw);
+        final String originalJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
         final Response response = doPutRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT,
@@ -112,8 +123,8 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
-        final AreaOfLaw updatedAreaofLaw = response.as(AreaOfLaw.class);
-        assertThat(updatedAreaofLaw).isEqualTo(expectedAreaOfLaw);
+        final AreaOfLaw updatedAreaOfLaw = response.as(AreaOfLaw.class);
+        assertThat(updatedAreaOfLaw).isEqualTo(expectedAreaOfLaw);
 
         //clean up by removing added record
         final Response cleanUpResponse = doPutRequest(
@@ -129,8 +140,8 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldBeForbiddenForUpdatingAreaOfLaw() throws JsonProcessingException {
-        final AreaOfLaw CurrentAreaOfLaw = getCurrentAreaOfLaw();
-        final String testJson = objectMapper().writeValueAsString(CurrentAreaOfLaw);
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
+        final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
         final Response response = doPutRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT,
@@ -141,8 +152,8 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenUpdatingAreaOfLaw() throws JsonProcessingException {
-        final AreaOfLaw CurrentAreaOfLaw = getCurrentAreaOfLaw();
-        final String testJson = objectMapper().writeValueAsString(CurrentAreaOfLaw);
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
+        final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
         final Response response = doPutRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT, testJson);
@@ -151,9 +162,9 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldNotFoundForUpdateWhenAreaOflawDoesNotExist() throws JsonProcessingException {
-        final AreaOfLaw CurrentAreaOfLaw = getCurrentAreaOfLaw();
-        CurrentAreaOfLaw.setId(1234);
-        final String testJson = objectMapper().writeValueAsString(CurrentAreaOfLaw);
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
+        currentAreaOfLaw.setId(1234);
+        final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
         final Response response = doPutRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken),
@@ -163,9 +174,9 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldReturnBadRequestForUpdateAreaofLawWhenIdIsNull() throws JsonProcessingException {
-        final AreaOfLaw CurrentAreaOfLaw = getCurrentAreaOfLaw();
-        CurrentAreaOfLaw.setId(null);
-        final String testJson = objectMapper().writeValueAsString(CurrentAreaOfLaw);
+        final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
+        currentAreaOfLaw.setId(null);
+        final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
         final Response response = doPutRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken),
             testJson);
@@ -173,24 +184,22 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     /************************************************************* POST request tests section. ***************************************************************/
-//    @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
-//    @ApiResponse(code = 400, message = "Invalid Area of Law", response = String.class),
-//    @ApiResponse(code = 401, message = "Unauthorized"),
-//    @ApiResponse(code = 403, message = "Forbidden"),
-//    @ApiResponse(code = 409, message = "Area of Law already exists")
-//    @Test
-//    public void shouldCreateAreaOfLaw() throws JsonProcessingException {
-//        final AreaOfLaw newAreaOfLaw = getCurrentAreaOfLaw();
-//        newAreaOfLaw.setName("House possession111");
-//        final String originalJson = objectMapper().writeValueAsString(newAreaOfLaw);
-//        System.out.println("........"+originalJson);
-//        final var response = doPostRequest(
-//            ADMIN_AREAS_OF_LAW_ENDPOINT,
-//            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-//            originalJson
-//        );
-//        assertThat(response.statusCode()).isEqualTo(OK.value());
-//    }
+    @Test
+    public void shouldCreateAreaOfLaw() throws JsonProcessingException {
+        final AreaOfLaw newAreaOfLaw = getCurrentAreaOfLaw();
+        newAreaOfLaw.setName("House possession111");
+        final String originalJson = objectMapper().writeValueAsString(newAreaOfLaw);
+        final var response = doPostRequest(
+            ADMIN_AREAS_OF_LAW_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            originalJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+
+        // Clean up database - remove created area of law
+        final AreaOfLaw areaOfLaw = response.as(AreaOfLaw.class);
+        areasOfLawRepository.deleteById(areaOfLaw.getId());
+    }
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
@@ -204,9 +213,8 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private AreaOfLaw updateAreaOfLaw() {
 
-        final AreaOfLaw updatedAreaOfLaw  = new AreaOfLaw(AREA_OF_LAW_ID_HOUSING_POSSESSION,TEST_NAME,TEST_SINGLE_POINT_OF_ENTRY,TEST_EXTERNAL_LINK,
+        return new AreaOfLaw(AREA_OF_LAW_ID_HOUSING_POSSESSION,TEST_NAME,TEST_SINGLE_POINT_OF_ENTRY,TEST_EXTERNAL_LINK,
                                                           TEST_EXTERNAL_LINK_DESC,TEST_EXTERNAL_LINK_DESC_CY,TEST_ALT_NAME,TEST_ALT_NAME_CY,TEST_DISPLAY_NAME,
                                                           TEST_DISPLAY_NAME_CY,TEST_DISPLAY_EXTERNAL_LINK);
-        return updatedAreaOfLaw;
     }
 }

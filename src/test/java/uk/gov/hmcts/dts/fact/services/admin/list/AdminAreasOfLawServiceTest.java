@@ -84,7 +84,7 @@ public class AdminAreasOfLawServiceTest {
     @Test
     void shouldReturnAnAreaOfLawForGivenId() {
         final AreaOfLaw mockAreaOfLaw = AREAS_OF_LAW.get(0);
-        when(areasOfLawRepository.getById(100)).thenReturn(mockAreaOfLaw);
+        when(areasOfLawRepository.getOne(100)).thenReturn(mockAreaOfLaw);
 
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw expectedResult =
             new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(mockAreaOfLaw);
@@ -94,7 +94,7 @@ public class AdminAreasOfLawServiceTest {
 
     @Test
     void whenIdDoesNotExistGetAreaOfLawShouldThrowNotFoundException() {
-        when(areasOfLawRepository.getById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        when(areasOfLawRepository.getOne(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> areasOfLawService
             .getAreaOfLaw(400))
             .isInstanceOf(NotFoundException.class);
