@@ -3,12 +3,7 @@ package uk.gov.hmcts.dts.fact.admin.list;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.List;
@@ -21,8 +16,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @SuppressWarnings("PMD.TooManyMethods")
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
 public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_AREAS_OF_LAW_ENDPOINT = "/admin/areasOfLaw/";
@@ -38,9 +31,6 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     private static final String TEST_EXTERNAL_LINK_DESC = "Information about evicting tenants";
     private static final String TEST_EXTERNAL_LINK_DESC_CY = "Gwybodaeth ynglŷn â troi tenantiaid allan";
     private static final String TEST_DISPLAY_EXTERNAL_LINK = null;
-
-    @Autowired
-    private AreasOfLawRepository areasOfLawRepository;
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -184,22 +174,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     /************************************************************* POST request tests section. ***************************************************************/
-    @Test
-    public void shouldCreateAreaOfLaw() throws JsonProcessingException {
-        final AreaOfLaw newAreaOfLaw = getCurrentAreaOfLaw();
-        newAreaOfLaw.setName("House possession111");
-        final String originalJson = objectMapper().writeValueAsString(newAreaOfLaw);
-        final var response = doPostRequest(
-            ADMIN_AREAS_OF_LAW_ENDPOINT,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            originalJson
-        );
-        assertThat(response.statusCode()).isEqualTo(CREATED.value());
-
-        // Clean up database - remove created area of law
-        final AreaOfLaw areaOfLaw = response.as(AreaOfLaw.class);
-        areasOfLawRepository.deleteById(areaOfLaw.getId());
-    }
+    // TODO
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
