@@ -23,7 +23,7 @@ public class AreaOfLaw {
 
     public AreaOfLaw(uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw) {
         this.name = areaOfLaw.getName();
-        this.externalLink = chooseString(areaOfLaw.getExternalLinkCy(), areaOfLaw.getExternalLink());
+        this.externalLink = areaOfLaw.getExternalLink();
         this.externalLinkDescription =
             chooseString(areaOfLaw.getExternalLinkDescriptionCy(), areaOfLaw.getExternalLinkDescription());
         this.displayName = chooseString(areaOfLaw.getDisplayNameCy(), areaOfLaw.getDisplayName());
@@ -32,7 +32,7 @@ public class AreaOfLaw {
 
     public AreaOfLaw(uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLaw, final boolean isInPerson) {
         this.name = areaOfLaw.getName();
-        this.externalLink = chooseString(areaOfLaw.getExternalLinkCy(), areaOfLaw.getExternalLink());
+        this.externalLink = areaOfLaw.getExternalLink();
         this.externalLinkDescription = chooseString(areaOfLaw.getExternalLinkDescriptionCy(), areaOfLaw.getExternalLinkDescription());
         this.displayName = constructDisplayName(areaOfLaw, isInPerson);
         this.displayExternalLink = areaOfLaw.getDisplayExternalLink();

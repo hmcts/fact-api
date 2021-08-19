@@ -19,7 +19,6 @@ class AreaOfLawTest {
         entity = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
         entity.setName("Name of area of law");
         entity.setExternalLink("external link");
-        entity.setExternalLinkCy("external link in Welsh");
         entity.setExternalLinkDescription("description of external link");
         entity.setExternalLinkDescriptionCy("description of external link in Welsh");
         entity.setDisplayName("display name in english");
@@ -40,7 +39,7 @@ class AreaOfLawTest {
         AreaOfLaw areaOfLaw = new AreaOfLaw(entity);
 
         assertEquals(entity.getName(), areaOfLaw.getName());
-        assertEquals(welsh ? entity.getExternalLinkCy() : entity.getExternalLink(), areaOfLaw.getExternalLink());
+        assertEquals(entity.getExternalLink(), areaOfLaw.getExternalLink());
         assertEquals(
             welsh ? entity.getExternalLinkDescriptionCy() : entity.getExternalLinkDescription(),
             areaOfLaw.getExternalLinkDescription()
