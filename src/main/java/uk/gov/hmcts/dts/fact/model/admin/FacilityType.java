@@ -24,5 +24,4 @@ public class FacilityType {
         this.imageFilePath = facilityType.getImageFilePath();
         this.order = facilityType.getOrder();
     }
-
 }

@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.repositories.FacilityTypeRepository;
 
 import java.util.List;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -33,6 +34,7 @@ public class AdminCourtFacilityService {
         return  courtRepository.findBySlug(slug)
             .map(c -> c.getFacilities()
                 .stream()
+                .sorted(comparingInt(f -> f.getFacilityType().getOrder()))
                 .map(Facility::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
@@ -44,7 +46,7 @@ public class AdminCourtFacilityService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        return saveCourtFacilities(courtEntity,courtFacilities);
+        return saveCourtFacilities(courtEntity, courtFacilities);
     }
 
     protected List<Facility> saveCourtFacilities(final Court courtEntity, final List<Facility> courtFacilities) {
@@ -56,15 +58,15 @@ public class AdminCourtFacilityService {
         final List<CourtFacility> existingList = getExistingCourtFacilities(courtEntity);
 
         //remove existing court facilities and add updated facilities
-
         courtFacilityRepository.deleteAll(existingList);
 
         return courtFacilityRepository
             .saveAll(courtFacilitiesEntities)
             .stream()
-            .map(cf -> new Facility(cf.getFacility()))
+            .map(CourtFacility::getFacility)
+            .sorted(comparingInt(f -> f.getFacilityType().getOrder()))
+            .map(Facility::new)
             .collect(toList());
-
     }
 
     private List<uk.gov.hmcts.dts.fact.entity.Facility> getNewFacilityEntity(final List<Facility> facilities) {
