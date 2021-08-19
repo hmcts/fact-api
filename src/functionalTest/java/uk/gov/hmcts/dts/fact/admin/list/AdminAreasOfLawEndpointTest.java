@@ -92,9 +92,9 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     public void shouldReturnAreaOfLawNotFound() {
         final Response response = doGetRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT + "12345",
-            Map.of(AUTHORIZATION, BEARER + forbiddenToken)
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
-        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
     /************************************************************* Update Request Tests. ***************************************************************/
@@ -152,7 +152,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotFoundForUpdateWhenAreaOflawDoesNotExist() throws JsonProcessingException {
+    public void shouldNotFoundForUpdateWhenAreaOfLawDoesNotExist() throws JsonProcessingException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         currentAreaOfLaw.setId(1234);
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
@@ -164,7 +164,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnBadRequestForUpdateAreaofLawWhenIdIsNull() throws JsonProcessingException {
+    public void shouldReturnBadRequestForUpdateAreaOfLawWhenIdIsNull() throws JsonProcessingException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         currentAreaOfLaw.setId(null);
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
