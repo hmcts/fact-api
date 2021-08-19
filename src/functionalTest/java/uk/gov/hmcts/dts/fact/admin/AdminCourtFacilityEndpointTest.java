@@ -1,17 +1,18 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
+import uk.gov.hmcts.dts.fact.model.admin.FacilityType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
@@ -22,6 +23,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
+    private static final String ADMIN_FACILITY_TYPES_ENDPOINT = "/admin/facilities";
     private static final String FACILITIES_PATH = "/facilities";
     private static final String AYLESBURY_COUNTY_COURT_AND_FAMILY_COURT_SLUG = "aylesbury-county-court-and-family-court";
     private static final String GREENWICH_MAGISTRATES_COURT_SLUG = "greenwich-magistrate-court";
@@ -75,8 +77,8 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldUpdateCourtFacilities() throws JsonProcessingException {
         final List<Facility> currentCourtFacilities = getCurrentFacilities();
-        final List<Facility> expectedFacilities = updateFacilities(currentCourtFacilities);
-        final String updatedJson = objectMapper().writeValueAsString(expectedFacilities);
+        final List<Facility> facilitiesToBeUpdated = updateFacilities(currentCourtFacilities);
+        final String updatedJson = objectMapper().writeValueAsString(facilitiesToBeUpdated);
         final String originalJson = objectMapper().writeValueAsString(currentCourtFacilities);
 
         final var response = doPutRequest(
@@ -90,7 +92,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
             ".",
             Facility.class
         );
-        assertThat(updatedFacilities).containsExactlyElementsOf(expectedFacilities);
+        assertThat(updatedFacilities).containsExactlyElementsOf(getExpectedFacilities(facilitiesToBeUpdated));
 
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
@@ -158,5 +160,21 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
             new Facility(TEST_FACILITY_NAME2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)
         );
         return objectMapper().writeValueAsString(facilities);
+    }
+
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    private List<Facility> getExpectedFacilities(final List<Facility> facilities) {
+        final Map<String, FacilityType> facilityTypeMap = getFacilityTypes().stream()
+            .collect(toMap(FacilityType::getName, type -> type));
+        // Sort the facilities by the facility type sort order
+        return facilities.stream()
+            .sorted(Comparator.comparingInt(f -> facilityTypeMap.get(f.getName()).getOrder()))
+            .collect(toList());
+    }
+
+    private List<FacilityType> getFacilityTypes() {
+        final Response response = doGetRequest(ADMIN_FACILITY_TYPES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        return response.body().jsonPath().getList(".", FacilityType.class);
     }
 }
