@@ -53,7 +53,7 @@ public class AdminCourtAreasOfLawController {
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<AreaOfLaw>> updateCourtAreasOfLaw(@PathVariable String slug,
-                                                         @RequestBody List<AreaOfLaw> areasOfLaw) {
+                                                                 @RequestBody List<AreaOfLaw> areasOfLaw) {
         return ok(adminCourtAreasOfLawService.updateAreasOfLawForCourt(slug, areasOfLaw));
     }
 }
