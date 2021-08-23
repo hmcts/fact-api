@@ -105,7 +105,7 @@ public class AdminCourtAddressService {
     private boolean isInPersonCourt(final String slug) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        return courtEntity.getInPerson() == null || courtEntity.getInPerson().getIsInPerson();
+        return courtEntity.isInPerson();
     }
 
     private void updateCourtLatLonUsingPrimaryPostcode(final String slug, final String postcode) {

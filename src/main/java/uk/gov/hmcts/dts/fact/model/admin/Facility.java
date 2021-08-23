@@ -16,6 +16,5 @@ public class Facility {
         this.name = facility.getName();
         this.description = facility.getDescription();
         this.descriptionCy = facility.getDescriptionCy();
-
     }
 }
