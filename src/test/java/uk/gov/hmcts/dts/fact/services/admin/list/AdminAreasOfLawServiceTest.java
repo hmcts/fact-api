@@ -6,10 +6,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
+import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 
@@ -159,5 +162,26 @@ public class AdminAreasOfLawServiceTest {
         assertThatThrownBy(() -> areasOfLawService
             .createAreaOfLaw(areaOfLaw))
             .isInstanceOf(DuplicatedListItemException.class);
+    }
+
+    @Test
+    void deleteShouldThrowListItemInUseExceptionIfAreaOfLawInUse() {
+        // Mock a foreign key constraint violation
+        final DataAccessException mockDataAccessException = mock(DataAccessException.class);
+        doThrow(mockDataAccessException).when(areasOfLawRepository).deleteById(100);
+
+        assertThatThrownBy(() -> areasOfLawService
+            .deleteAreaOfLaw(100))
+            .isInstanceOf(ListItemInUseException.class);
+    }
+
+    @Test
+    void deleteShouldThrowNotFoundExceptionIfIdDoesNotExists() {
+        final EmptyResultDataAccessException mockEmptyResultException = mock(EmptyResultDataAccessException.class);
+        doThrow(mockEmptyResultException).when(areasOfLawRepository).deleteById(300);
+
+        assertThatThrownBy(() -> areasOfLawService
+            .deleteAreaOfLaw(300))
+            .isInstanceOf(NotFoundException.class);
     }
 }

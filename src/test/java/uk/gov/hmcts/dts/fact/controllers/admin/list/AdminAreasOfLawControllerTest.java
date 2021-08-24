@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
+import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAreasOfLawService;
@@ -16,7 +17,7 @@ import uk.gov.hmcts.dts.fact.services.admin.list.AdminAreasOfLawService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -171,5 +172,42 @@ public class AdminAreasOfLawControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isConflict());
+    }
+
+    @Test
+    void deleteAreaOfLawShouldReturnIdOfSuccessfullyDeletedAreaOfLaw() throws Exception {
+        final Integer id = 200;
+        final String idJson = OBJECT_MAPPER.writeValueAsString(id);
+
+        mockMvc.perform(delete(BASE_PATH  + "/" + id)
+                            .content(OBJECT_MAPPER.writeValueAsString(idJson))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(idJson));
+    }
+
+    @Test
+    void deleteAreaOfLawShouldReturnConflictIfAreaOfLawInUse() throws Exception {
+        final Integer id = 500;
+        doThrow(mock(ListItemInUseException.class)).when(adminAreasOfLawService).deleteAreaOfLaw(id);
+
+        mockMvc.perform(delete(BASE_PATH  + "/" + id)
+                        .content(OBJECT_MAPPER.writeValueAsString(id))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
+    }
+
+    @Test
+    void deleteAreaOfLawShouldReturnNotFoundIfIdDoesNotExist() throws Exception {
+        final Integer id = 300;
+        doThrow(mock(NotFoundException.class)).when(adminAreasOfLawService).deleteAreaOfLaw(id);
+
+        mockMvc.perform(delete(BASE_PATH  + "/" + id)
+                            .content(OBJECT_MAPPER.writeValueAsString(id))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 }
