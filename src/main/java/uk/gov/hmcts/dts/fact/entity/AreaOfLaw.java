@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AreaOfLaw {
+public class AreaOfLaw extends Auditable<String> {
     @Id
     @SequenceGenerator(name = "seq-gen", sequenceName = "search_areaoflaw_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")

@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -11,7 +12,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourtAreaOfLaw {
+@EntityListeners(AuditingEntityListener.class)
+public class CourtAreaOfLaw extends Auditable<String> {
     @Id
     @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtareaoflaw_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
