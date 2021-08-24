@@ -1,15 +1,19 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.hmcts.dts.fact.entity.Audit;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,11 +24,16 @@ public class AdminCourtAreasOfLawService {
 
     private final CourtRepository courtRepository;
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
+    private final AuditRepository auditRepository;
+
 
     @Autowired
-    public AdminCourtAreasOfLawService(final CourtRepository courtRepository, final CourtAreaOfLawRepository courtAreaOfLawRepository) {
+    public AdminCourtAreasOfLawService(final CourtRepository courtRepository,
+                                       final CourtAreaOfLawRepository courtAreaOfLawRepository,
+                                       final AuditRepository auditRepository) {
         this.courtRepository = courtRepository;
         this.courtAreaOfLawRepository = courtAreaOfLawRepository;
+        this.auditRepository = auditRepository;
     }
 
     public List<AreaOfLaw> getCourtAreasOfLawBySlug(final String slug) {
@@ -45,6 +54,14 @@ public class AdminCourtAreasOfLawService {
 
         List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> newAreasOfLawList = getNewAreasOfLaw(areasOfLaw);
         List<CourtAreaOfLaw> newCourtAreasOfLawList = getNewCourtAreasOfLaw(courtEntity, newAreasOfLawList, singlePointEntries);
+
+        auditRepository.save(new Audit(
+            SecurityContextHolder.getContext().getAuthentication().getName(), // but get from Spring Security
+            "Update court areas of law",
+            areasOfLaw.toString(),
+            "fact-api", // maybe redundant
+            LocalDateTime.now()
+        ));
 
         courtAreaOfLawRepository.deleteCourtAreaOfLawByCourtId(courtEntity.getId());
 
