@@ -9,29 +9,31 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "audit")
+@Table(name = "admin_audit")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Audit {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "audit_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "seq-gen", sequenceName = "admin_audit_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     @Column(name = "user_email")
     private String userEmail;
-    private String action;
+    @OneToOne()
+    @JoinColumn(name = "action_id")
+    private AuditType auditType;
     @Column(name = "action_data")
     private String actionData;
     private String location;
     @Column(name = "creation_time")
     private LocalDateTime creationTime;
 
-    public Audit(String userEmail, String action, String actionData,
+    public Audit(String userEmail, final AuditType auditType, String actionData,
                  String location, LocalDateTime creationTime) {
         this.userEmail = userEmail;
-        this.action = action;
+        this.auditType = auditType;
         this.actionData = actionData;
         this.location = location;
         this.creationTime = creationTime;
