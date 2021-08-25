@@ -10,6 +10,9 @@ import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
 import java.util.List;
 
@@ -19,10 +22,21 @@ import static java.util.stream.Collectors.toList;
 public class AdminAreasOfLawService {
 
     private final AreasOfLawRepository areasOfLawRepository;
+    private final CourtAreaOfLawRepository courtAreaOfLawRepository;
+    private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
+    private final ServiceAreaRepository serviceAreaRepository;
 
     @Autowired
-    public AdminAreasOfLawService(final AreasOfLawRepository areasOfLawRepository) {
+    public AdminAreasOfLawService(
+        final AreasOfLawRepository areasOfLawRepository,
+        final CourtAreaOfLawRepository courtAreaOfLawRepository,
+        final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo,
+        final ServiceAreaRepository serviceAreaRepository) {
+
         this.areasOfLawRepository = areasOfLawRepository;
+        this.courtAreaOfLawRepository = courtAreaOfLawRepository;
+        this.courtLocalAuthorityAreaOfLawRepo = courtLocalAuthorityAreaOfLawRepo;
+        this.serviceAreaRepository = serviceAreaRepository;
     }
 
     public AreaOfLaw getAreaOfLaw(final Integer id) {
@@ -58,6 +72,7 @@ public class AdminAreasOfLawService {
 
     public void deleteAreaOfLaw(final Integer areaOfLawId) {
         try {
+            ensureAreaOfLawIsNotInUse(areaOfLawId);
             areasOfLawRepository.deleteById(areaOfLawId);
         } catch (EmptyResultDataAccessException ex) {
             throw new NotFoundException(ex);
@@ -91,5 +106,13 @@ public class AdminAreasOfLawService {
         entity.setDisplayNameCy(areaOfLaw.getDisplayNameCy());
         entity.setDisplayExternalLink(areaOfLaw.getDisplayExternalLink());
         return entity;
+    }
+
+    private void ensureAreaOfLawIsNotInUse(Integer areaOfLawId) {
+        if (!courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(areaOfLawId).isEmpty()
+            || !courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(areaOfLawId).isEmpty()
+            || !serviceAreaRepository.findByAreaOfLawId(areaOfLawId).isEmpty()) {
+            throw new ListItemInUseException(areaOfLawId.toString());
+        }
     }
 }

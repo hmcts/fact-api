@@ -21,8 +21,8 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_AREAS_OF_LAW_ENDPOINT = "/admin/areasOfLaw/";
 
     private static final int AREA_OF_LAW_ID_HOUSING_POSSESSION = 34_253;
-    private static final int AREA_OF_LAW_ID_NOT_FOUND = 34_2053;
-    private static final String TEST_NAME = "Housing possession";
+    private static final int AREA_OF_LAW_ID_NOT_FOUND = 342_053;
+    private static final String HOUSING_POSSESSION_NAME = "Housing possession";
     private static final String TEST_ALT_NAME = "Housing1234";
     private static final String TEST_ALT_NAME_CY = "Tai";
     private static final String TEST_DISPLAY_NAME = "Housing234";
@@ -105,7 +105,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldUpdateAreaOfLaw() throws JsonProcessingException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
-        final AreaOfLaw expectedAreaOfLaw = updateAreaOfLaw();
+        final AreaOfLaw expectedAreaOfLaw = getUpdatedHousingPossessionAreaOfLaw();
         final String updatedJson = objectMapper().writeValueAsString(expectedAreaOfLaw);
         final String originalJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
@@ -187,7 +187,6 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
         final List<AreaOfLaw> currentAreasOfLaw = getCurrentAreasOfLaw();
         final AreaOfLaw expectedAreaOfLaw = createAreaOfLaw();
         final String newAreaOfLawJson = objectMapper().writeValueAsString(expectedAreaOfLaw);
-        final String originalJson = objectMapper().writeValueAsString(currentAreasOfLaw);
 
         final var response = doPostRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT,
@@ -306,11 +305,11 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
         return response.as(AreaOfLaw.class);
     }
 
-    private AreaOfLaw updateAreaOfLaw() {
+    private AreaOfLaw getUpdatedHousingPossessionAreaOfLaw() {
 
         return new AreaOfLaw(
             AREA_OF_LAW_ID_HOUSING_POSSESSION,
-            TEST_NAME,
+            HOUSING_POSSESSION_NAME,
             TEST_SINGLE_POINT_OF_ENTRY,
             TEST_EXTERNAL_LINK,
             TEST_EXTERNAL_LINK_DESC,
@@ -324,7 +323,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     private String getTestAreasOfLawJson() throws JsonProcessingException {
-        return objectMapper().writeValueAsString(updateAreaOfLaw());
+        return objectMapper().writeValueAsString(getUpdatedHousingPossessionAreaOfLaw());
     }
 
     private List<AreaOfLaw> getCurrentAreasOfLaw() {
