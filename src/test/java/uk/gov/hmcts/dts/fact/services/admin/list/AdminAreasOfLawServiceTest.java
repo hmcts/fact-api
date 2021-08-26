@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminAreasOfLawService.class)
 public class AdminAreasOfLawServiceTest {
@@ -178,6 +179,20 @@ public class AdminAreasOfLawServiceTest {
         assertThatThrownBy(() -> areasOfLawService
             .createAreaOfLaw(areaOfLaw))
             .isInstanceOf(DuplicatedListItemException.class);
+    }
+
+    @Test
+    void shouldDeleteAreaOfLaw() {
+        when(serviceAreaRepository.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+        when(courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+
+        areasOfLawService.deleteAreaOfLaw(123);
+
+        verify(areasOfLawRepository).deleteById(123);
     }
 
     @Test
