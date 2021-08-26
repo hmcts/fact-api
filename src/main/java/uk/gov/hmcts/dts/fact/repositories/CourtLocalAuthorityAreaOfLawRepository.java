@@ -9,4 +9,5 @@ import java.util.List;
 public interface CourtLocalAuthorityAreaOfLawRepository extends JpaRepository<CourtLocalAuthorityAreaOfLaw, Integer> {
     List<CourtLocalAuthorityAreaOfLaw> findByCourtId(Integer courtId);
 
+    List<CourtLocalAuthorityAreaOfLaw> findByAreaOfLawId(Integer areaOfLawId);
 }

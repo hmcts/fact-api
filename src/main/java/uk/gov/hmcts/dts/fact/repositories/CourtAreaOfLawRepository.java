@@ -9,4 +9,6 @@ public interface CourtAreaOfLawRepository extends JpaRepository<CourtAreaOfLaw, 
     void deleteCourtAreaOfLawByCourtId(Integer id);
 
     List<CourtAreaOfLaw> getCourtAreaOfLawByCourtId(Integer courtId);
+
+    List<CourtAreaOfLaw> getCourtAreaOfLawByAreaOfLawId(Integer areaOfLawId);
 }

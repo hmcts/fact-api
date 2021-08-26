@@ -6,14 +6,24 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.CourtLocalAuthorityAreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
+import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminAreasOfLawService.class)
 public class AdminAreasOfLawServiceTest {
@@ -32,6 +43,15 @@ public class AdminAreasOfLawServiceTest {
 
     @MockBean
     private AreasOfLawRepository areasOfLawRepository;
+
+    @MockBean
+    private CourtAreaOfLawRepository courtAreaOfLawRepository;
+
+    @MockBean
+    private CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
+
+    @MockBean
+    private ServiceAreaRepository serviceAreaRepository;
 
     private static final List<AreaOfLaw> AREAS_OF_LAW = Arrays.asList(
         new AreaOfLaw(
@@ -159,5 +179,81 @@ public class AdminAreasOfLawServiceTest {
         assertThatThrownBy(() -> areasOfLawService
             .createAreaOfLaw(areaOfLaw))
             .isInstanceOf(DuplicatedListItemException.class);
+    }
+
+    @Test
+    void shouldDeleteAreaOfLaw() {
+        when(serviceAreaRepository.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+        when(courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+
+        areasOfLawService.deleteAreaOfLaw(123);
+
+        verify(areasOfLawRepository).deleteById(123);
+    }
+
+    @Test
+    void deleteShouldThrowListItemInUseExceptionIfAreaOfLawInUse() {
+        // Mock a foreign key constraint violation
+        final DataAccessException mockDataAccessException = mock(DataAccessException.class);
+        doThrow(mockDataAccessException).when(areasOfLawRepository).deleteById(100);
+        assertThatThrownBy(() -> areasOfLawService
+            .deleteAreaOfLaw(100))
+            .isInstanceOf(ListItemInUseException.class);
+    }
+
+    @Test
+    void deleteShouldThrowListItemInUseExceptionIfAreaOfLawIsUsedByCourt() {
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(any()))
+            .thenReturn(Arrays.asList(mock(CourtAreaOfLaw.class)));
+        when(courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+        when(serviceAreaRepository.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> areasOfLawService
+            .deleteAreaOfLaw(100))
+            .isInstanceOf(ListItemInUseException.class);
+    }
+
+    @Test
+    void deleteShouldThrowListItemInUseExceptionIfAreaOfLawIsUsedByCourtLocalAuthority() {
+        when(courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(any()))
+            .thenReturn(Arrays.asList(mock(CourtLocalAuthorityAreaOfLaw.class)));
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+        when(serviceAreaRepository.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> areasOfLawService
+            .deleteAreaOfLaw(100))
+            .isInstanceOf(ListItemInUseException.class);
+    }
+
+    @Test
+    void deleteShouldThrowListItemInUseExceptionIfAreaOfLawIsUsedByServiceArea() {
+        when(serviceAreaRepository.findByAreaOfLawId(any()))
+            .thenReturn(Arrays.asList(mock(ServiceArea.class)));
+        when(courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(any()))
+            .thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> areasOfLawService
+            .deleteAreaOfLaw(100))
+            .isInstanceOf(ListItemInUseException.class);
+    }
+
+    @Test
+    void deleteShouldThrowNotFoundExceptionIfIdDoesNotExists() {
+        final EmptyResultDataAccessException mockEmptyResultException = mock(EmptyResultDataAccessException.class);
+        doThrow(mockEmptyResultException).when(areasOfLawRepository).deleteById(300);
+
+        assertThatThrownBy(() -> areasOfLawService
+            .deleteAreaOfLaw(300))
+            .isInstanceOf(NotFoundException.class);
     }
 }
