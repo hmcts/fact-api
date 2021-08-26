@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,7 +42,7 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final String COURT_INFO_CY = "Welsh info";
     private static final String NOT_FOUND = "Not found: ";
 
-    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(false, false, false, null, null, COURT_ALERT, COURT_ALERT_CY);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
     private static final CourtGeneralInfo SUPER_ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
     private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
 
@@ -53,6 +54,9 @@ public class AdminCourtGeneralInfoServiceTest {
 
     @MockBean
     private RolesProvider rolesProvider;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Mock
     private Court court;
@@ -81,13 +85,17 @@ public class AdminCourtGeneralInfoServiceTest {
         when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_ADMIN));
         when(courtRepository.save(court)).thenReturn(court);
 
-        assertThat(adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO)).isEqualTo(
+        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO);
+        assertThat(results).isEqualTo(
             OUTPUT_COURT_GENERAL_INFO);
 
         verify(court, never()).setInfo(anyString());
         verify(court, never()).setInfoCy(anyString());
         verify(court, never()).setDisplayed(anyBoolean());
         verify(inPerson, never()).setAccessScheme(anyBoolean());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+                                                           new Gson().toJson(ADMIN_INPUT_COURT_GENERAL_INFO),
+                                                           new Gson().toJson(results), COURT_SLUG);
     }
 
     @Test
@@ -96,13 +104,17 @@ public class AdminCourtGeneralInfoServiceTest {
         when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
         when(courtRepository.save(court)).thenReturn(court);
 
-        assertThat(adminService.updateCourtGeneralInfo(COURT_SLUG, SUPER_ADMIN_INPUT_COURT_GENERAL_INFO)).isEqualTo(
+        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO);
+        assertThat(results).isEqualTo(
             OUTPUT_COURT_GENERAL_INFO);
 
         verify(court).setInfo(COURT_INFO);
         verify(court).setInfoCy(COURT_INFO_CY);
         verify(court).setDisplayed(true);
         verify(inPerson).setAccessScheme(true);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+                                                           new Gson().toJson(ADMIN_INPUT_COURT_GENERAL_INFO),
+                                                           new Gson().toJson(results), COURT_SLUG);
     }
 
     @Test
@@ -112,6 +124,7 @@ public class AdminCourtGeneralInfoServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtGeneralInfo(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

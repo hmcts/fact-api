@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -86,6 +87,9 @@ public class AdminCourtContactServiceTest {
     @MockBean
     private ContactTypeRepository contactTypeRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Mock
     private Court court;
 
@@ -130,12 +134,16 @@ public class AdminCourtContactServiceTest {
         courtContactsWithoutDX.removeIf(c -> c.getContact().getDescription().equals(DX));
         when(courtContactRepository.saveAll(any())).thenReturn(courtContactsWithoutDX);
 
-        assertThat(adminService.updateCourtContacts(COURT_SLUG, EXPECTED_CONTACTS))
+        List<Contact> results = adminService.updateCourtContacts(COURT_SLUG, EXPECTED_CONTACTS);
+        assertThat(results)
             .hasSize(CONTACT_COUNT)
             .containsExactlyElementsOf(EXPECTED_CONTACTS);
 
         verify(courtContactRepository).deleteAll(courtContactsWithoutDX);
         verify(courtContactRepository).saveAll(any());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court contacts",
+                                                           new Gson().toJson(EXPECTED_CONTACTS),
+                                                           new Gson().toJson(results), COURT_SLUG);
     }
 
     @Test
@@ -145,6 +153,7 @@ public class AdminCourtContactServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtContacts(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

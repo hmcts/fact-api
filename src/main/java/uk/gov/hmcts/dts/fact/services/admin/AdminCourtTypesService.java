@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 
 import java.util.List;
@@ -21,12 +23,16 @@ public class AdminCourtTypesService {
     private final CourtRepository courtRepository;
     private final CourtTypeRepository courtTypeRepository;
     private final MapCourtCode mapCourtCode;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtTypesService(final CourtRepository courtRepository, final CourtTypeRepository courtTypeRepository, final MapCourtCode mapCourtCode) {
+    public AdminCourtTypesService(final CourtRepository courtRepository,
+                                  final CourtTypeRepository courtTypeRepository, final MapCourtCode mapCourtCode,
+                                  final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtTypeRepository = courtTypeRepository;
         this.mapCourtCode = mapCourtCode;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<CourtType> getAllCourtTypes() {
@@ -58,8 +64,12 @@ public class AdminCourtTypesService {
     public List<CourtType> updateCourtCourtTypes(final String slug, final List<CourtType> courtTypes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        return saveNewCourtCourtTypes(courtEntity, courtTypes);
-
+        List<CourtType> savedCourtTypeList = saveNewCourtCourtTypes(courtEntity, courtTypes);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court court types"),
+            new Gson().toJson(courtTypes),
+            new Gson().toJson(savedCourtTypeList), slug);
+        return savedCourtTypeList;
     }
 
     protected List<CourtType> saveNewCourtCourtTypes(final Court courtEntity, final List<CourtType> courtTypes) {

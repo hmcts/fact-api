@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -112,6 +113,9 @@ public class AdminCourtAddressServiceTest {
     @MockBean
     private ValidationService validationService;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Mock
     private MapitData mapitData;
 
@@ -176,6 +180,9 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+                                                           new Gson().toJson(EXPECTED_ADDRESSES),
+                                                           new Gson().toJson(results), COURT_SLUG);
     }
 
     @Test
@@ -187,6 +194,7 @@ public class AdminCourtAddressServiceTest {
         assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -206,6 +214,7 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
+        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -223,6 +232,7 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
+        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

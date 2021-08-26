@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.List;
 
@@ -20,11 +22,15 @@ public class AdminCourtLocalAuthoritiesService {
 
     private final CourtRepository courtRepository;
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtLocalAuthoritiesService(final CourtRepository courtRepository, final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository) {
+    public AdminCourtLocalAuthoritiesService(final CourtRepository courtRepository,
+                                             final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository,
+                                             final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtLocalAuthorityAreaOfLawRepository = courtLocalAuthorityAreaOfLawRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<LocalAuthority> getCourtLocalAuthoritiesBySlugAndAreaOfLaw(final String slug, final String areaOfLaw) {
@@ -50,7 +56,13 @@ public class AdminCourtLocalAuthoritiesService {
             .filter(al -> al.getName().equals(areaOfLaw)).findFirst()
             .orElseThrow(() -> new NotFoundException(areaOfLaw));
 
-        return saveNewCourtLocalAuthorities(courtEntity, areaOfLawEntity, localAuthorities);
+        List<LocalAuthority> updatedLocalAuthorities =
+            saveNewCourtLocalAuthorities(courtEntity, areaOfLawEntity, localAuthorities);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court local authorities"),
+            new Gson().toJson(localAuthorities),
+            new Gson().toJson(updatedLocalAuthorities), slug);
+        return updatedLocalAuthorities;
     }
 
     protected List<LocalAuthority> saveNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw, final List<LocalAuthority> localAuthorities) {

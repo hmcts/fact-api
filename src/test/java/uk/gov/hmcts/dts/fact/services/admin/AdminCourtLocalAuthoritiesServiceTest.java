@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,8 +23,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtLocalAuthoritiesService.class)
@@ -47,6 +48,9 @@ public class AdminCourtLocalAuthoritiesServiceTest {
 
     @MockBean
     private CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Mock
     private Court court;
@@ -123,11 +127,14 @@ public class AdminCourtLocalAuthoritiesServiceTest {
         when(courtLocalAuthorityAreaOfLawRepository.findByCourtId(any())).thenReturn(COURT_LOCAL_AUTHORITIES);
         when(courtLocalAuthorityAreaOfLawRepository.saveAll(any())).thenReturn(COURT_LOCAL_AUTHORITIES);
 
-        assertThat(adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(COURT_SLUG,AREA_OF_LAW,
-                                                                               EXPECTED_COURT_LOCAL_AUTHORITIES
-        ))
+        List<uk.gov.hmcts.dts.fact.model.admin.LocalAuthority> results =
+            adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(COURT_SLUG, AREA_OF_LAW, EXPECTED_COURT_LOCAL_AUTHORITIES);
+        assertThat(results)
             .hasSize(LOCAL_AUTHORITIES_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_LOCAL_AUTHORITIES);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court local authorities",
+                                                           new Gson().toJson(EXPECTED_COURT_LOCAL_AUTHORITIES),
+                                                           new Gson().toJson(results), COURT_SLUG);
     }
 
     @Test
@@ -137,6 +144,7 @@ public class AdminCourtLocalAuthoritiesServiceTest {
         assertThatThrownBy(() -> adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(COURT_SLUG, AREA_OF_LAW, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -147,5 +155,6 @@ public class AdminCourtLocalAuthoritiesServiceTest {
         assertThatThrownBy(() -> adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(COURT_SLUG, NON_EXISTENT_AREA_OF_LAW, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + NON_EXISTENT_AREA_OF_LAW);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 }

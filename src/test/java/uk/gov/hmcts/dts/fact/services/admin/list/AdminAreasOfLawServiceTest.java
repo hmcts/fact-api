@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
+import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +34,9 @@ public class AdminAreasOfLawServiceTest {
 
     @MockBean
     private AreasOfLawRepository areasOfLawRepository;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     private static final List<AreaOfLaw> AREAS_OF_LAW = Arrays.asList(
         new AreaOfLaw(
@@ -116,6 +121,9 @@ public class AdminAreasOfLawServiceTest {
         when(areasOfLawRepository.save(entity)).thenReturn(entity);
 
         assertThat(areasOfLawService.updateAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update area of law",
+                                                           new Gson().toJson(areaOfLaw),
+                                                           new Gson().toJson(areaOfLaw));
     }
 
     @Test
@@ -128,6 +136,9 @@ public class AdminAreasOfLawServiceTest {
             .isInstanceOf(NotFoundException.class);
 
         verify(areasOfLawRepository, never()).save(any());
+        verify(adminAuditService, never()).saveAudit("Update area of law",
+                                                     new Gson().toJson(testAreaOfLaw),
+                                                     new Gson().toJson(testAreaOfLaw));
     }
 
     @Test
@@ -146,6 +157,9 @@ public class AdminAreasOfLawServiceTest {
             .thenAnswer((Answer<AreaOfLaw>)invocation -> invocation.getArgument(0));
 
         assertThat(areasOfLawService.createAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Create area of law",
+                                                           new Gson().toJson(areaOfLaw),
+                                                           new Gson().toJson(areaOfLaw));
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -159,5 +173,8 @@ public class AdminAreasOfLawServiceTest {
         assertThatThrownBy(() -> areasOfLawService
             .createAreaOfLaw(areaOfLaw))
             .isInstanceOf(DuplicatedListItemException.class);
+        verify(adminAuditService, never()).saveAudit("Create area of law",
+                                                     new Gson().toJson(areaOfLaw),
+                                                     new Gson().toJson(areaOfLaw));
     }
 }

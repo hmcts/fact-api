@@ -6,17 +6,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.entity.Audit;
-import uk.gov.hmcts.dts.fact.entity.AuditType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
-import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,15 +54,18 @@ public class AdminCourtAreasOfLawService {
         List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> newAreasOfLawList = getNewAreasOfLaw(areasOfLaw);
         List<CourtAreaOfLaw> newCourtAreasOfLawList = getNewCourtAreasOfLaw(courtEntity, newAreasOfLawList, singlePointEntries);
 
-        adminAuditService.saveAudit("Update court areas of law", new Gson().toJson(areasOfLaw), slug);
-
         courtAreaOfLawRepository.deleteCourtAreaOfLawByCourtId(courtEntity.getId());
 
-        return courtAreaOfLawRepository
+        List<AreaOfLaw> newAreaOfLawList = courtAreaOfLawRepository
             .saveAll(newCourtAreasOfLawList)
             .stream()
             .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry()))
             .collect(toList());
+
+        adminAuditService.saveAudit(AuditType.findByName("Update court areas of law"),
+                                    new Gson().toJson(areasOfLaw), new Gson().toJson(newAreaOfLawList),
+                                    slug);
+        return newAreaOfLawList;
     }
 
     private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewAreasOfLaw(final List<AreaOfLaw> areasOfLaw) {

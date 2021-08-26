@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -75,6 +76,9 @@ public class AdminCourtAdditionalLinkServiceTest {
     @MockBean
     private CourtAdditionalLinkRepository courtAdditionalLinkRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Test
     void shouldRetrieveCourtAdditionalLinks() {
         when(MOCK_COURT.getCourtAdditionalLinks()).thenReturn(COURT_ADDITIONAL_LINKS);
@@ -105,6 +109,9 @@ public class AdminCourtAdditionalLinkServiceTest {
             .containsAnyElementsOf(EXPECTED_ADDITIONAL_LINKS);
 
         verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtId(TEST_COURT_ID);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court additional links",
+                                                           new Gson().toJson(EXPECTED_ADDITIONAL_LINKS),
+                                                           new Gson().toJson(results), TEST_SLUG);
     }
 
     @Test
@@ -114,5 +121,6 @@ public class AdminCourtAdditionalLinkServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtAdditionalLinks(TEST_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + TEST_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), any(), any());
     }
 }

@@ -8,6 +8,8 @@ import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminAuditService {
@@ -21,11 +23,37 @@ public class AdminAuditService {
         this.auditTypeRepository = auditTypeRepository;
     }
 
-    public void saveAudit(String auditType, String auditData, String auditLocation) {
+    public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData() {
+        return auditRepository
+            .findAll()
+            .stream()
+            .map(audit -> new uk.gov.hmcts.dts.fact.model.admin.Audit(
+                audit.getId(),
+                audit.getUserEmail(),
+                audit.getAuditType(),
+                audit.getActionDataBefore(),
+                audit.getActionDataAfter(),
+                audit.getLocation(),
+                audit.getCreationTime()
+            )).collect(Collectors.toList());
+    }
+
+    public void saveAudit(String auditType, String auditDataBefore, String auditDataAfter) {
         auditRepository.save(new Audit(
             SecurityContextHolder.getContext().getAuthentication().getName(),
             auditTypeRepository.findByName(auditType),
-            auditData,
+            auditDataBefore,
+            auditDataAfter,
+            LocalDateTime.now()
+        ));
+    }
+
+    public void saveAudit(String auditType, String auditDataBefore, String auditDataAfter, String auditLocation) {
+        auditRepository.save(new Audit(
+            SecurityContextHolder.getContext().getAuthentication().getName(),
+            auditTypeRepository.findByName(auditType),
+            auditDataBefore,
+            auditDataAfter,
             auditLocation,
             LocalDateTime.now()
         ));

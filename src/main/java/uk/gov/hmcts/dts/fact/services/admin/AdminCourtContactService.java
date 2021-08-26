@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,12 +28,17 @@ public class AdminCourtContactService {
     private final CourtRepository courtRepository;
     private final CourtContactRepository courtContactRepository;
     private final ContactTypeRepository contactTypeRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtContactService(final CourtRepository courtRepository, final CourtContactRepository courtContactRepository, final ContactTypeRepository contactTypeRepository) {
+    public AdminCourtContactService(final CourtRepository courtRepository,
+                                    final CourtContactRepository courtContactRepository,
+                                    final ContactTypeRepository contactTypeRepository,
+                                    final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtContactRepository = courtContactRepository;
         this.contactTypeRepository = contactTypeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<Contact> getCourtContactsBySlug(final String slug) {
@@ -49,7 +56,12 @@ public class AdminCourtContactService {
     public List<Contact> updateCourtContacts(final String slug, final List<Contact> contacts) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        return saveNewCourtContacts(courtEntity, contacts);
+        List<Contact> contactList = saveNewCourtContacts(courtEntity, contacts);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court contacts"),
+            new Gson().toJson(contacts),
+            new Gson().toJson(contactList), slug);
+        return contactList;
     }
 
     public List<ContactType> getAllCourtContactTypes() {

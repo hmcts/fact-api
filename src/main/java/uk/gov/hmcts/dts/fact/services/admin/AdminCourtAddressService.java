@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import uk.gov.hmcts.dts.fact.services.MapitService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 import uk.gov.hmcts.dts.fact.util.AddressType;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.*;
 
@@ -30,15 +32,21 @@ public class AdminCourtAddressService {
     private final AdminService adminService;
     private final MapitService mapitService;
     private final ValidationService validationService;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtAddressService(final CourtRepository courtRepository, final CourtAddressRepository courtAddressRepository, final AdminAddressTypeService addressTypeService, final AdminService adminService, final MapitService mapitService, final ValidationService validationService) {
+    public AdminCourtAddressService(final CourtRepository courtRepository,
+                                    final CourtAddressRepository courtAddressRepository,
+                                    final AdminAddressTypeService addressTypeService, final AdminService adminService,
+                                    final MapitService mapitService, final ValidationService validationService,
+                                    final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtAddressRepository = courtAddressRepository;
         this.addressTypeService = addressTypeService;
         this.adminService = adminService;
         this.mapitService = mapitService;
         this.validationService = validationService;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<CourtAddress> getCourtAddressesBySlug(final String slug) {
@@ -68,11 +76,16 @@ public class AdminCourtAddressService {
         final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> newCourtAddressesEntity = constructCourtAddressesEntity(courtEntity, courtAddresses);
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
 
-        return courtAddressRepository.saveAll(newCourtAddressesEntity)
+        List<CourtAddress> updatedAddresses = courtAddressRepository.saveAll(newCourtAddressesEntity)
             .stream()
             .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .map(CourtAddress::new)
             .collect(toList());
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court addresses and coordinates"),
+            new Gson().toJson(courtAddresses),
+            new Gson().toJson(updatedAddresses), slug);
+        return updatedAddresses;
     }
 
     public List<String> validateCourtAddressPostcodes(final String slug, final List<CourtAddress> courtAddresses) {

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtFacilityService.class)
@@ -70,6 +71,9 @@ public class AdminCourtFacilityServiceTest {
 
     @MockBean
     private CourtFacilityRepository courtFacilityRepository;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Mock
     private Court court;
@@ -142,9 +146,14 @@ public class AdminCourtFacilityServiceTest {
         when(courtRepository.save(court)).thenReturn(court);
         when(facilityTypeRepository.findByName(any())).thenReturn(Optional.of(facilityType));
 
-        assertThat(adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES))
+        List<uk.gov.hmcts.dts.fact.model.admin.Facility> results =
+            adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES);
+        assertThat(results)
             .hasSize(FACILITY_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court facilities",
+                                                           new Gson().toJson(INPUT_COURT_FACILITIES),
+                                                           new Gson().toJson(results), COURT_SLUG);
     }
 
     @Test
@@ -155,6 +164,7 @@ public class AdminCourtFacilityServiceTest {
         assertThatThrownBy(() -> adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 }
 

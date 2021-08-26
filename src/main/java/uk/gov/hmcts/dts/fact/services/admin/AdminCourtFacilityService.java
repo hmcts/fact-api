@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.repositories.CourtFacilityRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.FacilityTypeRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.List;
 
@@ -21,12 +23,17 @@ public class AdminCourtFacilityService {
     private final CourtRepository courtRepository;
     private final CourtFacilityRepository courtFacilityRepository;
     private final FacilityTypeRepository facilityTypeRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtFacilityService(final CourtRepository courtRepository, final CourtFacilityRepository courtFacilityRepository, final FacilityTypeRepository facilityTypeRepository) {
+    public AdminCourtFacilityService(final CourtRepository courtRepository,
+                                     final CourtFacilityRepository courtFacilityRepository,
+                                     final FacilityTypeRepository facilityTypeRepository,
+                                     final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtFacilityRepository = courtFacilityRepository;
         this.facilityTypeRepository = facilityTypeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -46,7 +53,12 @@ public class AdminCourtFacilityService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        return saveCourtFacilities(courtEntity, courtFacilities);
+        List<Facility> newFacilities = saveCourtFacilities(courtEntity, courtFacilities);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court facilities"),
+            new Gson().toJson(courtFacilities),
+            new Gson().toJson(newFacilities), slug);
+        return newFacilities;
     }
 
     protected List<Facility> saveCourtFacilities(final Court courtEntity, final List<Facility> courtFacilities) {

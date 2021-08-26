@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +27,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -46,6 +46,9 @@ public class AdminCourtAreasOfLawServiceTest {
 
     @MockBean
     private CourtAreaOfLawRepository courtAreaOfLawRepository;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Mock
     private static Court court;
@@ -107,6 +110,9 @@ public class AdminCourtAreasOfLawServiceTest {
         assertThat(courtAreasOfLawResult)
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .containsExactlyElementsOf(areasOfLaw);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court areas of law",
+                                                           new Gson().toJson(areasOfLaw),
+                                                           new Gson().toJson(courtAreasOfLawResult), COURT_SLUG);
     }
 
     @Test
@@ -116,5 +122,6 @@ public class AdminCourtAreasOfLawServiceTest {
         assertThatThrownBy(() -> adminCourtAreasOfLawService.updateAreasOfLawForCourt(COURT_SLUG, new ArrayList<>()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 }

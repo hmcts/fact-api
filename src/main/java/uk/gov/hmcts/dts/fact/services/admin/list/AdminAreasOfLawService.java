@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +8,8 @@ import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
+import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.List;
 
@@ -16,10 +19,13 @@ import static java.util.stream.Collectors.toList;
 public class AdminAreasOfLawService {
 
     private final AreasOfLawRepository areasOfLawRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminAreasOfLawService(final AreasOfLawRepository areasOfLawRepository) {
+    public AdminAreasOfLawService(final AreasOfLawRepository areasOfLawRepository,
+                                  final AdminAuditService adminAuditService) {
         this.areasOfLawRepository = areasOfLawRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public AreaOfLaw getAreaOfLaw(final Integer id) {
@@ -44,13 +50,21 @@ public class AdminAreasOfLawService {
             .orElseThrow(() -> new NotFoundException(updatedAreaOfLaw.getId().toString()));
 
         final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity);
-        return new AreaOfLaw(areasOfLawRepository.save(entity));
+        AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(entity));
+        adminAuditService.saveAudit(AuditType.findByName("Update area of law"),
+                                    new Gson().toJson(updatedAreaOfLaw),
+                                    new Gson().toJson(newAreaOfLaw));
+        return newAreaOfLaw;
     }
 
     @Transactional
     public AreaOfLaw createAreaOfLaw(final AreaOfLaw areaOfLaw) {
         checkIfAreaOfLawAlreadyExists(areaOfLaw.getName());
-        return new AreaOfLaw(areasOfLawRepository.save(createNewAreaOfLawEntityFromModel(areaOfLaw)));
+        AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(createNewAreaOfLawEntityFromModel(areaOfLaw)));
+        adminAuditService.saveAudit(AuditType.findByName("Create area of law"),
+                                    new Gson().toJson(areaOfLaw),
+                                    new Gson().toJson(newAreaOfLaw));
+        return newAreaOfLaw;
     }
 
     private void checkIfAreaOfLawAlreadyExists(final String areaOfLawName) {

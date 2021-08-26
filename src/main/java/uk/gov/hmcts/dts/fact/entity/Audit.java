@@ -24,17 +24,31 @@ public class Audit {
     @OneToOne()
     @JoinColumn(name = "action_id")
     private AuditType auditType;
-    @Column(name = "action_data")
-    private String actionData;
+    @Column(name = "action_data_before")
+    private String actionDataBefore;
+    @Column(name = "action_data_after")
+    private String actionDataAfter;
     private String location;
     @Column(name = "creation_time")
     private LocalDateTime creationTime;
 
-    public Audit(String userEmail, final AuditType auditType, String actionData,
+    public Audit(String userEmail, final AuditType auditType,
+                 String actionDataBefore, String actionDataAfter,
+                 LocalDateTime creationTime) {
+        this.userEmail = userEmail;
+        this.auditType = auditType;
+        this.actionDataBefore = actionDataBefore;
+        this.actionDataAfter = actionDataAfter;
+        this.creationTime = creationTime;
+    }
+
+    public Audit(String userEmail, final AuditType auditType,
+                 String actionDataBefore, String actionDataAfter,
                  String location, LocalDateTime creationTime) {
         this.userEmail = userEmail;
         this.auditType = auditType;
-        this.actionData = actionData;
+        this.actionDataBefore = actionDataBefore;
+        this.actionDataAfter = actionDataAfter;
         this.location = location;
         this.creationTime = creationTime;
     }

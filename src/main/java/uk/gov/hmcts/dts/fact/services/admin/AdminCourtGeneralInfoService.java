@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
@@ -15,11 +17,14 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminCourtGeneralInfoService {
     private final CourtRepository courtRepository;
     private final RolesProvider rolesProvider;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtGeneralInfoService(final CourtRepository courtRepository, final RolesProvider rolesProvider) {
+    public AdminCourtGeneralInfoService(final CourtRepository courtRepository, final RolesProvider rolesProvider,
+                                        final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
+        this.adminAuditService = adminAuditService;
     }
 
     public CourtGeneralInfo getCourtGeneralInfoBySlug(final String slug) {
@@ -44,6 +49,11 @@ public class AdminCourtGeneralInfoService {
                 courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
             }
         }
-        return new CourtGeneralInfo(courtRepository.save(courtEntity));
+        CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court general info"),
+            new Gson().toJson(generalInfo),
+            new Gson().toJson(updatedGeneralInfo), slug);
+        return updatedGeneralInfo;
     }
 }

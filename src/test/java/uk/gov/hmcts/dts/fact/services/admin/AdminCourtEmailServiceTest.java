@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,6 +90,9 @@ public class AdminCourtEmailServiceTest {
     @MockBean
     private EmailTypeRepository emailTypeRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Mock
     private Court court;
 
@@ -147,6 +151,9 @@ public class AdminCourtEmailServiceTest {
         assertThat(emails)
             .hasSize(EMAIL_COUNT)
             .containsExactlyElementsOf(EXPECTED_EMAILS);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court email lis",
+                                                           new Gson().toJson(EXPECTED_EMAILS),
+                                                           new Gson().toJson(emails), COURT_SLUG);
     }
 
     @Test
@@ -156,6 +163,7 @@ public class AdminCourtEmailServiceTest {
         assertThatThrownBy(() -> adminService.updateEmailListForCourt(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

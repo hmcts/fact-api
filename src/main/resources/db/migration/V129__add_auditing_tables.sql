@@ -2,7 +2,8 @@ CREATE TABLE public.admin_audit (
   id integer PRIMARY KEY NOT NULL,
   user_email character varying(255) NOT NULL,
   action_id integer NOT NULL,
-  action_data character varying,
+  action_data_before character varying,
+  action_data_after character varying,
   location character varying(255),
   creation_time timestamp NOT NULL);
 

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -64,6 +65,9 @@ public class AdminCourtPostcodeServiceTest {
     @MockBean
     private CourtPostcodeRepository courtPostcodeRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Mock
     private Court court;
 
@@ -100,9 +104,13 @@ public class AdminCourtPostcodeServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtPostcodeRepository.save(any())).thenReturn(new CourtPostcode(NEW_POSTCODE, court));
 
-        assertThat(adminService.addCourtPostcodes(COURT_SLUG, singletonList(NEW_POSTCODE)))
+        List<String> results = adminService.addCourtPostcodes(COURT_SLUG, singletonList(NEW_POSTCODE));
+        assertThat(results)
             .hasSize(1)
             .containsExactly(NEW_POSTCODE);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Create court postcodes",
+                                                           results.toString(),
+                                                           results.toString(), COURT_SLUG);
     }
 
     @Test
@@ -114,6 +122,7 @@ public class AdminCourtPostcodeServiceTest {
             .hasMessage(NOT_FOUND + COURT_SLUG);
 
         verifyNoInteractions(courtPostcodeRepository);
+        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -123,7 +132,11 @@ public class AdminCourtPostcodeServiceTest {
         when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE2)).thenReturn(singletonList(courtPostcodes.get(1)));
         when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE3)).thenReturn(singletonList(courtPostcodes.get(2)));
 
-        assertThat(adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_DELETED)).isEqualTo(2);
+        int rowsDeleted = adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_DELETED);
+        assertThat(rowsDeleted).isEqualTo(2);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Delete court postcodes",
+                                                           POSTCODES_TO_BE_DELETED.toString(),
+                                                           rowsDeleted + " postcodes deleted", COURT_SLUG);
     }
 
     @Test
@@ -135,6 +148,7 @@ public class AdminCourtPostcodeServiceTest {
             .hasMessage(NOT_FOUND + COURT_SLUG);
 
         verifyNoInteractions(courtPostcodeRepository);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -157,9 +171,14 @@ public class AdminCourtPostcodeServiceTest {
         courtPostcodes.get(1).setCourt(destinationCourt);
         when(courtPostcodeRepository.saveAll(courtPostcodes)).thenReturn(courtPostcodes);
 
-        assertThat(adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
+        List<String> results = adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED);
+        assertThat(results)
             .hasSize(2)
             .containsExactlyInAnyOrderElementsOf(POSTCODES_TO_BE_MOVED);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Move court postcodes",
+                                                           "postcodes moved from: source-slug to destination-slug are: " + results,
+                                                           POSTCODES_TO_BE_DELETED.toString() + " have been moved",
+                                                           SOURCE_COURT_SLUG);
     }
 
     @Test

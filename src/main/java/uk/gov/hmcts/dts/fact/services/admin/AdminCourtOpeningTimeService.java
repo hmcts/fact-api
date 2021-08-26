@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.OpeningTypeRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,11 +25,15 @@ import static java.util.stream.Collectors.toMap;
 public class AdminCourtOpeningTimeService {
     private final CourtRepository courtRepository;
     private final OpeningTypeRepository openingTypeRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtOpeningTimeService(final CourtRepository courtRepository, final OpeningTypeRepository openingTypeRepository) {
+    public AdminCourtOpeningTimeService(final CourtRepository courtRepository,
+                                        final OpeningTypeRepository openingTypeRepository,
+                                        final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.openingTypeRepository = openingTypeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<OpeningTime> getCourtOpeningTimesBySlug(final String slug) {
@@ -44,7 +50,12 @@ public class AdminCourtOpeningTimeService {
     public List<OpeningTime> updateCourtOpeningTimes(final String slug, final List<OpeningTime> openingTimes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        return saveNewOpeningTimes(courtEntity, openingTimes);
+        List<OpeningTime> updatedOpeningTimes = saveNewOpeningTimes(courtEntity, openingTimes);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court opening times"),
+            new Gson().toJson(openingTimes),
+            new Gson().toJson(updatedOpeningTimes), slug);
+        return updatedOpeningTimes;
     }
 
     public List<OpeningType> getAllCourtOpeningTypes() {

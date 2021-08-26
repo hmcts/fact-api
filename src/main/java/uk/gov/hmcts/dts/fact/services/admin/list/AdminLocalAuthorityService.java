@@ -1,5 +1,7 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
+import com.launchdarkly.shaded.com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +9,8 @@ import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
+import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +21,13 @@ import static java.util.stream.Collectors.toList;
 public class AdminLocalAuthorityService {
 
     private final LocalAuthorityRepository localAuthorityRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminLocalAuthorityService(final LocalAuthorityRepository localAuthorityRepository) {
+    public AdminLocalAuthorityService(final LocalAuthorityRepository localAuthorityRepository,
+                                      final AdminAuditService adminAuditService) {
         this.localAuthorityRepository = localAuthorityRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<LocalAuthority> getAllLocalAuthorities() {
@@ -45,7 +52,12 @@ public class AdminLocalAuthorityService {
         // Change local authority entity name
         final uk.gov.hmcts.dts.fact.entity.LocalAuthority existingEntity = localAuthorityEntity.get();
         existingEntity.setName(name);
-        return new LocalAuthority(localAuthorityRepository.save(existingEntity));
+        LocalAuthority newLocalAuthority = new LocalAuthority(localAuthorityRepository.save(existingEntity));
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update local authority"),
+            new Gson().toJson(localAuthorityEntity),
+            new Gson().toJson(newLocalAuthority));
+        return newLocalAuthority;
     }
 
     private void checkIfLocalAuthorityAlreadyExists(final Integer localAuthorityId, final String localAuthorityName) {

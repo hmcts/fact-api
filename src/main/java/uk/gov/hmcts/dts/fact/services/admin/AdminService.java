@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +27,15 @@ import static java.util.stream.Collectors.toList;
 public class AdminService {
 
     private final CourtRepository courtRepository;
-
     private final RolesProvider rolesProvider;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminService(final CourtRepository courtRepository, final RolesProvider rolesProvider) {
+    public AdminService(final CourtRepository courtRepository, final RolesProvider rolesProvider,
+                        final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<CourtReference> getAllCourtReferences() {
@@ -99,7 +103,12 @@ public class AdminService {
         }
 
         uk.gov.hmcts.dts.fact.entity.Court updatedCourt = courtRepository.save(courtEntity);
-        return new Court(updatedCourt);
+        Court updatedCourtModel = new Court(updatedCourt);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court details"),
+            new Gson().toJson(court),
+            new Gson().toJson(updatedCourtModel), slug);
+        return updatedCourtModel;
     }
 
     @Transactional
