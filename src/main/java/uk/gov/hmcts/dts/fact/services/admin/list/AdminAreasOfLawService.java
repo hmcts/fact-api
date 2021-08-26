@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,6 +20,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Slf4j
 public class AdminAreasOfLawService {
 
     private final AreasOfLawRepository areasOfLawRepository;
@@ -71,12 +73,15 @@ public class AdminAreasOfLawService {
     }
 
     public void deleteAreaOfLaw(final Integer areaOfLawId) {
+        ensureAreaOfLawIsNotInUse(areaOfLawId);
+
         try {
-            ensureAreaOfLawIsNotInUse(areaOfLawId);
             areasOfLawRepository.deleteById(areaOfLawId);
         } catch (EmptyResultDataAccessException ex) {
+            log.warn("Area of Law could not be deleted because it no longer exists: " + areaOfLawId);
             throw new NotFoundException(ex);
         } catch (DataAccessException ex) {
+            log.warn("A data access exception was thrown when trying to delete an area of law: " + areaOfLawId);
             throw new ListItemInUseException(ex);
         }
     }
