@@ -22,6 +22,8 @@ import static java.util.Optional.ofNullable;
 public class Court {
     private static final String COURT_ID = "court_id";
     private static final String COURT_STRING = "court";
+    private static final String SORT = "sort";
+
     @Id
     private Integer id;
     private String name;
@@ -68,12 +70,16 @@ public class Court {
     @OrderBy("sort_order")
     private List<CourtContact> courtContacts;
 
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
+    @OrderBy(SORT)
+    private List<CourtDxCode> courtDxCodes;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
-    @OrderBy("sort")
+    @OrderBy(SORT)
     private List<CourtOpeningTime> courtOpeningTimes;
 
     @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
-    @OrderBy("sort")
+    @OrderBy(SORT)
     private List<CourtApplicationUpdate> courtApplicationUpdates;
 
     @ManyToMany
@@ -107,7 +113,7 @@ public class Court {
     private List<CourtPostcode> courtPostcodes;
 
     @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
-    @OrderBy("sort")
+    @OrderBy(SORT)
     private List<CourtAdditionalLink> courtAdditionalLinks;
 
     public List<AreaOfLaw> getAreasOfLaw() {

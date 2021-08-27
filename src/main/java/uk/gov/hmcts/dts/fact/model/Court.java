@@ -25,8 +25,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
-import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
 import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
@@ -89,8 +87,7 @@ public class Court {
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.areasOfLaw = getAreasOfLaw(courtEntity, courtEntity.isInPerson());
-        final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = getContactEntities(courtEntity);
-        this.contacts = getContacts(contacts);
+        this.contacts = getContacts(courtEntity);
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = getEmails(courtEntity);
         this.openingTimes = getOpeningTimes(courtEntity);
@@ -98,7 +95,7 @@ public class Court {
         this.facilities = getFacilities(courtEntity);
         this.addresses = getCourtAddresses(courtEntity);
         this.gbs = courtEntity.getGbs();
-        this.dxNumbers = getDxNumbers(contacts);
+        this.dxNumbers = getDxNumbers(courtEntity);
         this.serviceAreas = courtEntity.getServiceAreas() == null ? emptyList() : getServiceAreas(courtEntity);
         this.inPerson = courtEntity.isInPerson();
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
@@ -125,25 +122,20 @@ public class Court {
             .collect(toList());
     }
 
-    private List<Contact> getContacts(final List<uk.gov.hmcts.dts.fact.entity.Contact> contactEntities) {
-        return contactEntities.stream()
-            .filter(NAME_IS_NOT_DX)
-            .map(Contact::new)
-            .collect(toList());
-    }
-
-    private List<String> getDxNumbers(final List<uk.gov.hmcts.dts.fact.entity.Contact> contactEntities) {
-        return contactEntities.stream()
-            .filter(NAME_IS_DX)
-            .map(uk.gov.hmcts.dts.fact.entity.Contact::getNumber)
-            .collect(toList());
-    }
-
-    private List<uk.gov.hmcts.dts.fact.entity.Contact> getContactEntities(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    private List<Contact> getContacts(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         return ofNullable(courtEntity.getCourtContacts())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtContact::getContact)
+            .map(Contact::new)
+            .collect(toList());
+    }
+
+    private List<String> getDxNumbers(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return ofNullable(courtEntity.getCourtDxCodes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(c -> c.getDxCode().getCode())
             .collect(toList());
     }
 
