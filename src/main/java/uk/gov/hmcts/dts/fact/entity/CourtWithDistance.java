@@ -71,6 +71,14 @@ public class CourtWithDistance {
 
     @ManyToMany
     @JoinTable(
+        name = "search_courtdxcode",
+        joinColumns = @JoinColumn(name = COURT_ID),
+        inverseJoinColumns = @JoinColumn(name = "dx_code_id")
+    )
+    private List<DxCode> dxCodes;
+
+    @ManyToMany
+    @JoinTable(
         name = "search_courtopeningtime",
         joinColumns = @JoinColumn(name = COURT_ID),
         inverseJoinColumns = @JoinColumn(name = "opening_time_id")
