@@ -80,6 +80,10 @@ public class AdminCourtPostcodeService {
     @Transactional()
     public List<String> addCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
+        final List<String> originalPostcodes = courtEntity.getCourtPostcodes()
+            .stream()
+            .map(CourtPostcode::getPostcode)
+            .collect(toList());
         List<String> newPostcodes = createNewCourtPostcodesEntity(courtEntity, postcodes).stream()
             .filter(p -> !postcodeExists(
                 courtEntity,
@@ -90,7 +94,7 @@ public class AdminCourtPostcodeService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Create court postcodes"),
-            postcodes.toString(),
+            originalPostcodes.toString(),
             newPostcodes.toString(), slug);
         return newPostcodes;
     }
@@ -98,6 +102,11 @@ public class AdminCourtPostcodeService {
     @Transactional()
     public int deleteCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
+        final List<String> originalPostcodes = courtEntity.getCourtPostcodes()
+            .stream()
+            .map(CourtPostcode::getPostcode)
+            .collect(toList());
+
         int deletedPostcodes = postcodes.stream()
             .map(p -> courtPostcodeRepository.deleteByCourtIdAndPostcode(
                 courtEntity.getId(),
@@ -105,10 +114,11 @@ public class AdminCourtPostcodeService {
             ))
             .mapToInt(List::size)
             .sum();
+
         adminAuditService.saveAudit(
             AuditType.findByName("Delete court postcodes"),
-            postcodes.toString(),
-            deletedPostcodes + " postcodes deleted", slug);
+            originalPostcodes.toString(),
+            getCourtPostcodesBySlug(slug).toString());
         return deletedPostcodes;
     }
 

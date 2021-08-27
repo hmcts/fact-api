@@ -50,10 +50,11 @@ public class AdminCourtOpeningTimeService {
     public List<OpeningTime> updateCourtOpeningTimes(final String slug, final List<OpeningTime> openingTimes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
+        List<OpeningTime> originalOpeningTimes = getCourtOpeningTimesBySlug(slug);
         List<OpeningTime> updatedOpeningTimes = saveNewOpeningTimes(courtEntity, openingTimes);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court opening times"),
-            new Gson().toJson(openingTimes),
+            new Gson().toJson(originalOpeningTimes),
             new Gson().toJson(updatedOpeningTimes), slug);
         return updatedOpeningTimes;
     }

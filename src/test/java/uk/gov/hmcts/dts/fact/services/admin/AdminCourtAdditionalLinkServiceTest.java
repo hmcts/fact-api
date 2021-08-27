@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -100,6 +101,7 @@ public class AdminCourtAdditionalLinkServiceTest {
     @Test
     void shouldUpdateCourtAdditionalLinks() {
         when(MOCK_COURT.getId()).thenReturn(TEST_COURT_ID);
+        when(MOCK_COURT.getCourtAdditionalLinks()).thenReturn(COURT_ADDITIONAL_LINKS);
         when(courtRepository.findBySlug(TEST_SLUG)).thenReturn(Optional.of(MOCK_COURT));
         when(courtAdditionalLinkRepository.saveAll(any())).thenReturn(COURT_ADDITIONAL_LINKS);
 
@@ -110,7 +112,11 @@ public class AdminCourtAdditionalLinkServiceTest {
 
         verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtId(TEST_COURT_ID);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court additional links",
-                                                           new Gson().toJson(EXPECTED_ADDITIONAL_LINKS),
+                                                           new Gson().toJson(MOCK_COURT.getCourtAdditionalLinks()
+                                                                                 .stream()
+                                                                                 .map(CourtAdditionalLink::getAdditionalLink)
+                                                                                 .map(AdditionalLink::new)
+                                                                                 .collect(toList())),
                                                            new Gson().toJson(results), TEST_SLUG);
     }
 

@@ -54,7 +54,11 @@ public class AdminCourtAdditionalLinkService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court additional links"),
-            new Gson().toJson(additionalLinks),
+            new Gson().toJson(courtEntity.getCourtAdditionalLinks()
+                                  .stream()
+                                  .map(CourtAdditionalLink::getAdditionalLink)
+                                  .map(AdditionalLink::new)
+                                  .collect(toList())),
             new Gson().toJson(newLinks), slug);
         return newLinks;
     }

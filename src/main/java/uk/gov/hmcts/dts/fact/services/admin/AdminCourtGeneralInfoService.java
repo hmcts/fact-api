@@ -37,7 +37,7 @@ public class AdminCourtGeneralInfoService {
     public CourtGeneralInfo updateCourtGeneralInfo(final String slug, final CourtGeneralInfo generalInfo) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-
+        CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
         courtEntity.setAlert(generalInfo.getAlert());
         courtEntity.setAlertCy(generalInfo.getAlertCy());
 
@@ -52,7 +52,7 @@ public class AdminCourtGeneralInfoService {
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));
         adminAuditService.saveAudit(
             AuditType.findByName("Update court general info"),
-            new Gson().toJson(generalInfo),
+            new Gson().toJson(originalGeneralInfo),
             new Gson().toJson(updatedGeneralInfo), slug);
         return updatedGeneralInfo;
     }

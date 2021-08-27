@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,6 +21,7 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -109,7 +109,7 @@ public class AdminCourtPostcodeServiceTest {
             .hasSize(1)
             .containsExactly(NEW_POSTCODE);
         verify(adminAuditService, atLeastOnce()).saveAudit("Create court postcodes",
-                                                           results.toString(),
+                                                           emptyList().toString(),
                                                            results.toString(), COURT_SLUG);
     }
 
@@ -122,12 +122,13 @@ public class AdminCourtPostcodeServiceTest {
             .hasMessage(NOT_FOUND + COURT_SLUG);
 
         verifyNoInteractions(courtPostcodeRepository);
-        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
     void shouldDeleteCourtPostcodes() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(court.getCourtPostcodes()).thenReturn(courtPostcodes).thenReturn(emptyList());
         when(court.getId()).thenReturn(TEST_COURT_ID);
         when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE2)).thenReturn(singletonList(courtPostcodes.get(1)));
         when(courtPostcodeRepository.deleteByCourtIdAndPostcode(TEST_COURT_ID, TEST_POSTCODE3)).thenReturn(singletonList(courtPostcodes.get(2)));
@@ -135,8 +136,10 @@ public class AdminCourtPostcodeServiceTest {
         int rowsDeleted = adminService.deleteCourtPostcodes(COURT_SLUG, POSTCODES_TO_BE_DELETED);
         assertThat(rowsDeleted).isEqualTo(2);
         verify(adminAuditService, atLeastOnce()).saveAudit("Delete court postcodes",
-                                                           POSTCODES_TO_BE_DELETED.toString(),
-                                                           rowsDeleted + " postcodes deleted", COURT_SLUG);
+                                                           courtPostcodes.stream()
+                                                               .map(CourtPostcode::getPostcode)
+                                                               .collect(toList()).toString(),
+                                                           emptyList().toString());
     }
 
     @Test
@@ -191,6 +194,7 @@ public class AdminCourtPostcodeServiceTest {
         assertThatThrownBy(() -> adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
             .isInstanceOf(PostcodeNotFoundException.class)
             .hasMessage("Postcodes do not exist: " + POSTCODES_TO_BE_MOVED);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -214,6 +218,7 @@ public class AdminCourtPostcodeServiceTest {
             .hasMessage("Postcodes already exist: " + POSTCODES_TO_BE_MOVED);
 
         verify(courtPostcodeRepository, never()).saveAll(any());
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -225,6 +230,7 @@ public class AdminCourtPostcodeServiceTest {
             .hasMessage(NOT_FOUND + SOURCE_COURT_SLUG);
 
         verifyNoInteractions(courtPostcodeRepository);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -241,6 +247,7 @@ public class AdminCourtPostcodeServiceTest {
         assertThatThrownBy(() -> adminService.moveCourtPostcodes(SOURCE_COURT_SLUG, DESTINATION_COURT_SLUG, POSTCODES_TO_BE_MOVED))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + DESTINATION_COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

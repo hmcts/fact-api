@@ -69,7 +69,10 @@ public class AdminCourtEmailService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court email list"),
-            new Gson().toJson(emailList),
+            new Gson().toJson(courtEntity.getCourtEmails().stream()
+                                  .map(CourtEmail::getEmail)
+                                  .map(Email::new)
+                                  .collect(toList())),
             new Gson().toJson(resultEmailList), slug);
         return resultEmailList;
     }

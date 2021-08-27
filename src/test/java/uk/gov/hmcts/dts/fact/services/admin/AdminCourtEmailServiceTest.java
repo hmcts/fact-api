@@ -151,7 +151,7 @@ public class AdminCourtEmailServiceTest {
         assertThat(emails)
             .hasSize(EMAIL_COUNT)
             .containsExactlyElementsOf(EXPECTED_EMAILS);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court email lis",
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court email list",
                                                            new Gson().toJson(EXPECTED_EMAILS),
                                                            new Gson().toJson(emails), COURT_SLUG);
     }
@@ -163,7 +163,7 @@ public class AdminCourtEmailServiceTest {
         assertThatThrownBy(() -> adminService.updateEmailListForCourt(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
-        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

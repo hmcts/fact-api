@@ -48,12 +48,12 @@ public class AdminAreasOfLawService {
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawEntity =
             areasOfLawRepository.findById(updatedAreaOfLaw.getId())
             .orElseThrow(() -> new NotFoundException(updatedAreaOfLaw.getId().toString()));
-
+        final List<AreaOfLaw> originalAreasOfLaw = getAllAreasOfLaw();
         final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity);
         AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(entity));
         adminAuditService.saveAudit(AuditType.findByName("Update area of law"),
-                                    new Gson().toJson(updatedAreaOfLaw),
-                                    new Gson().toJson(newAreaOfLaw));
+                                    new Gson().toJson(originalAreasOfLaw),
+                                    new Gson().toJson(getAllAreasOfLaw()));
         return newAreaOfLaw;
     }
 

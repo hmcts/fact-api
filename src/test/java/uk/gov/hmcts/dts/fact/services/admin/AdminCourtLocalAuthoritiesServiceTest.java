@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -133,7 +134,10 @@ public class AdminCourtLocalAuthoritiesServiceTest {
             .hasSize(LOCAL_AUTHORITIES_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_LOCAL_AUTHORITIES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court local authorities",
-                                                           new Gson().toJson(EXPECTED_COURT_LOCAL_AUTHORITIES),
+                                                           new Gson().toJson(COURT_LOCAL_AUTHORITIES
+                                                                                 .stream()
+                                                                                 .map(la -> new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
+                                                                                 .collect(toList())),
                                                            new Gson().toJson(results), COURT_SLUG);
     }
 

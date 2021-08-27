@@ -55,20 +55,26 @@ public class AdminCourtLocalAuthoritiesService {
             .stream()
             .filter(al -> al.getName().equals(areaOfLaw)).findFirst()
             .orElseThrow(() -> new NotFoundException(areaOfLaw));
+        final List<CourtLocalAuthorityAreaOfLaw> originalCourtLocalAuthorities = getExistingCourtLocalAuthorities(courtEntity, areaOfLawEntity);
 
         List<LocalAuthority> updatedLocalAuthorities =
-            saveNewCourtLocalAuthorities(courtEntity, areaOfLawEntity, localAuthorities);
+            saveNewCourtLocalAuthorities(courtEntity, areaOfLawEntity, localAuthorities, originalCourtLocalAuthorities);
+
         adminAuditService.saveAudit(
             AuditType.findByName("Update court local authorities"),
-            new Gson().toJson(localAuthorities),
+            new Gson().toJson(originalCourtLocalAuthorities
+                                  .stream()
+                                  .map(la -> new LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
+                                  .collect(toList())),
             new Gson().toJson(updatedLocalAuthorities), slug);
         return updatedLocalAuthorities;
     }
 
-    protected List<LocalAuthority> saveNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw, final List<LocalAuthority> localAuthorities) {
+    protected List<LocalAuthority> saveNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw,
+                                                                final List<LocalAuthority> localAuthorities,
+                                                                final List<CourtLocalAuthorityAreaOfLaw> existingCourtLocalAuthorities) {
 
         final List<CourtLocalAuthorityAreaOfLaw> courtLocalAuthorityAreaOfLawEntities = getNewCourtLocalAuthorities(courtEntity, areaOflaw, localAuthorities);
-        final List<CourtLocalAuthorityAreaOfLaw> existingCourtLocalAuthorities = getExistingCourtLocalAuthorities(courtEntity, areaOflaw);
 
         //delete existing Court Local Authorities for Area of Law
         courtLocalAuthorityAreaOfLawRepository.deleteAll(existingCourtLocalAuthorities);
@@ -78,7 +84,6 @@ public class AdminCourtLocalAuthoritiesService {
             .stream()
             .map(la -> new LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
             .collect(toList());
-
     }
 
     private List<CourtLocalAuthorityAreaOfLaw> getNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw, final List<LocalAuthority> localAuthorities) {

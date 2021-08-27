@@ -15,11 +15,13 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -110,6 +112,15 @@ public class AdminAreasOfLawServiceTest {
 
     @Test
     void shouldUpdateAreaOfLaw() {
+        final List<AreaOfLaw> areasOfLawCopy = AREAS_OF_LAW
+            .stream()
+            .map(aol -> new AreaOfLaw(
+                aol.getId(), aol.getName(), aol.getExternalLink(), aol.getExternalLinkCy(),
+                aol.getExternalLinkDescription(), aol.getExternalLinkDescriptionCy(),
+                aol.getAltName(), aol.getAltNameCy(), aol.getDisplayName(), aol.getDisplayNameCy(),
+                aol.getDisplayExternalLink()
+            ))
+            .collect(toList());
         final AreaOfLaw entity = AREAS_OF_LAW.get(0);
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw =
             new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(entity);
@@ -119,11 +130,16 @@ public class AdminAreasOfLawServiceTest {
 
         when(areasOfLawRepository.findById(areaOfLaw.getId())).thenReturn(Optional.of(entity));
         when(areasOfLawRepository.save(entity)).thenReturn(entity);
+        when(areasOfLawRepository.findAll()).thenReturn(AREAS_OF_LAW);
 
         assertThat(areasOfLawService.updateAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update area of law",
-                                                           new Gson().toJson(areaOfLaw),
-                                                           new Gson().toJson(areaOfLaw));
+                                                           new Gson().toJson(areasOfLawCopy.stream()
+                                                                                 .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
+                                                                                 .collect(toList())),
+                                                           new Gson().toJson(AREAS_OF_LAW.stream()
+                                                                                 .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
+                                                                                 .collect(toList())));
     }
 
     @Test

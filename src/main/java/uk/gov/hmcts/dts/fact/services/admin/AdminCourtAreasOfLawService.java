@@ -50,6 +50,7 @@ public class AdminCourtAreasOfLawService {
             areasOfLaw.stream().collect(Collectors.toMap(AreaOfLaw::getId, AreaOfLaw::isSinglePointEntry));
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
+        final List<AreaOfLaw> originalCourtAol = getCourtAreasOfLawBySlug(slug);
 
         List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> newAreasOfLawList = getNewAreasOfLaw(areasOfLaw);
         List<CourtAreaOfLaw> newCourtAreasOfLawList = getNewCourtAreasOfLaw(courtEntity, newAreasOfLawList, singlePointEntries);
@@ -63,7 +64,8 @@ public class AdminCourtAreasOfLawService {
             .collect(toList());
 
         adminAuditService.saveAudit(AuditType.findByName("Update court areas of law"),
-                                    new Gson().toJson(areasOfLaw), new Gson().toJson(newAreaOfLawList),
+                                    new Gson().toJson(originalCourtAol),
+                                    new Gson().toJson(newAreaOfLawList),
                                     slug);
         return newAreaOfLawList;
     }

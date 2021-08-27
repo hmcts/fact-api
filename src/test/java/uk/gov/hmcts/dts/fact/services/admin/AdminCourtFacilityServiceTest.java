@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -143,6 +146,7 @@ public class AdminCourtFacilityServiceTest {
     void shouldUpdateCourtFacility() {
         when(courtFacilityRepository.saveAll(any())).thenReturn(COURT_FACILITIES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtFacilityRepository.findByCourtId(anyInt())).thenReturn(COURT_FACILITIES);
         when(courtRepository.save(court)).thenReturn(court);
         when(facilityTypeRepository.findByName(any())).thenReturn(Optional.of(facilityType));
 
@@ -152,7 +156,10 @@ public class AdminCourtFacilityServiceTest {
             .hasSize(FACILITY_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court facilities",
-                                                           new Gson().toJson(INPUT_COURT_FACILITIES),
+                                                           new Gson().toJson(COURT_FACILITIES.stream()
+                                                                                 .map(CourtFacility::getFacility)
+                                                                                 .map(uk.gov.hmcts.dts.fact.model.admin.Facility::new)
+                                                                                 .collect(toList())),
                                                            new Gson().toJson(results), COURT_SLUG);
     }
 

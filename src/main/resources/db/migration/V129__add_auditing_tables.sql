@@ -34,4 +34,8 @@ ALTER SEQUENCE public.admin_audittype_id_seq OWNED BY public.admin_audittype.id;
 ALTER TABLE ONLY public.admin_audittype ALTER COLUMN id SET DEFAULT nextval('public.admin_audittype_id_seq'::regclass);
 
 INSERT INTO public.admin_audittype(name)
-VALUES('Update court areas of law');
+VALUES('Update area of law'), ('Update local authority'), ('Update court areas of law'), ('Create area of law'),
+       ('Update court additional links'), ('Update court addresses and coordinates'),
+       ('Update court contacts'), ('Update court email list'), ('Update court facilities'), ('Update court general info'),
+       ('Update court local authorities'), ('Update court opening times'), ('Create court postcodes'), ('Delete court postcodes'),
+       ('Move court postcodes'), ('Update court court types'), ('Update court details');

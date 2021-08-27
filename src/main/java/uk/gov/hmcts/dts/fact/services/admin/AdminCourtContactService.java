@@ -56,12 +56,13 @@ public class AdminCourtContactService {
     public List<Contact> updateCourtContacts(final String slug, final List<Contact> contacts) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        List<Contact> contactList = saveNewCourtContacts(courtEntity, contacts);
+        List<Contact> originalContactList = getCourtContactsBySlug(slug);
+        List<Contact> newContactList = saveNewCourtContacts(courtEntity, contacts);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court contacts"),
-            new Gson().toJson(contacts),
-            new Gson().toJson(contactList), slug);
-        return contactList;
+            new Gson().toJson(originalContactList),
+            new Gson().toJson(newContactList), slug);
+        return newContactList;
     }
 
     public List<ContactType> getAllCourtContactTypes() {

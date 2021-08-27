@@ -83,7 +83,10 @@ public class AdminCourtAddressService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court addresses and coordinates"),
-            new Gson().toJson(courtAddresses),
+            new Gson().toJson(courtEntity.getAddresses()
+                                  .stream()
+                                  .map(CourtAddress::new)
+                                  .collect(toList())),
             new Gson().toJson(updatedAddresses), slug);
         return updatedAddresses;
     }

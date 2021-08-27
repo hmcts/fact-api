@@ -64,10 +64,14 @@ public class AdminCourtTypesService {
     public List<CourtType> updateCourtCourtTypes(final String slug, final List<CourtType> courtTypes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
+        List<CourtType> existingCourtTypes = courtEntity.getCourtTypes()
+            .stream()
+            .map(CourtType::new)
+            .collect(toList());
         List<CourtType> savedCourtTypeList = saveNewCourtCourtTypes(courtEntity, courtTypes);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court court types"),
-            new Gson().toJson(courtTypes),
+            new Gson().toJson(existingCourtTypes),
             new Gson().toJson(savedCourtTypeList), slug);
         return savedCourtTypeList;
     }

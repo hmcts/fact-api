@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
@@ -100,6 +102,7 @@ public class AdminCourtAreasOfLawServiceTest {
         final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
 
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(anyInt())).thenReturn(COURT_AREA_OF_LAWS);
         when(courtAreaOfLawRepository.saveAll(any())).thenReturn(COURT_AREA_OF_LAWS);
 
         final List<AreaOfLaw> courtAreasOfLawResult =
@@ -111,7 +114,10 @@ public class AdminCourtAreasOfLawServiceTest {
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .containsExactlyElementsOf(areasOfLaw);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court areas of law",
-                                                           new Gson().toJson(areasOfLaw),
+                                                           new Gson().toJson(COURT_AREA_OF_LAWS
+                                                                                 .stream()
+                                                                                 .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry()))
+                                                                                 .collect(toList())),
                                                            new Gson().toJson(courtAreasOfLawResult), COURT_SLUG);
     }
 
