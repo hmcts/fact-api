@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AdminContactTypeControllerTest {
     private static final String BASE_PATH = "/admin/contactTypes";
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @Autowired
     private transient MockMvc mockMvc;
 
@@ -43,7 +45,7 @@ public class AdminContactTypeControllerTest {
     void shouldReturnAllContactTypes() throws Exception {
         when(adminContactTypeService.getAllContactTypes()).thenReturn(CONTACT_TYPES);
 
-        final String allContactTypeJson = new ObjectMapper().writeValueAsString(CONTACT_TYPES);
+        final String allContactTypeJson = OBJECT_MAPPER.writeValueAsString(CONTACT_TYPES);
 
         mockMvc.perform(get(BASE_PATH).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -51,11 +53,11 @@ public class AdminContactTypeControllerTest {
     }
 
     @Test
-    void shouldReturnAnAreaOfLaw() throws Exception {
+    void shouldReturnACourtContactType() throws Exception {
         final ContactType contactType = CONTACT_TYPES.get(0);
         when(adminContactTypeService.getContactType(100)).thenReturn(contactType);
 
-        final String contactTypeJson = new ObjectMapper().writeValueAsString(contactType);
+        final String contactTypeJson = OBJECT_MAPPER.writeValueAsString(contactType);
 
         mockMvc.perform(get(BASE_PATH + "/100").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -75,7 +77,7 @@ public class AdminContactTypeControllerTest {
         final ContactType contactType = CONTACT_TYPES.get(0);
         when(adminContactTypeService.updateContactType(contactType)).thenReturn(contactType);
 
-        final String contactTypeJson = new ObjectMapper().writeValueAsString(contactType);
+        final String contactTypeJson = OBJECT_MAPPER.writeValueAsString(contactType);
 
         mockMvc.perform(put(BASE_PATH)
                             .content(contactTypeJson)
@@ -90,7 +92,7 @@ public class AdminContactTypeControllerTest {
         final ContactType contactType = CONTACT_TYPES.get(0);
         when(adminContactTypeService.updateContactType(contactType)).thenThrow(NotFoundException.class);
 
-        final String contactTypeJson = new ObjectMapper().writeValueAsString(contactType);
+        final String contactTypeJson = OBJECT_MAPPER.writeValueAsString(contactType);
 
         mockMvc.perform(put(BASE_PATH)
                             .content(contactTypeJson)
@@ -104,7 +106,7 @@ public class AdminContactTypeControllerTest {
         final ContactType contactType = CONTACT_TYPES.get(0);
         when(adminContactTypeService.createContactType(contactType)).thenReturn(contactType);
 
-        final String contactTypeJson = new ObjectMapper().writeValueAsString(contactType);
+        final String contactTypeJson = OBJECT_MAPPER.writeValueAsString(contactType);
 
         mockMvc.perform(post(BASE_PATH)
                             .content(contactTypeJson)
@@ -119,7 +121,7 @@ public class AdminContactTypeControllerTest {
         final ContactType contactType = CONTACT_TYPES.get(0);
         when(adminContactTypeService.createContactType(contactType)).thenThrow(DuplicatedListItemException.class);
 
-        final String contactTypeJson = new ObjectMapper().writeValueAsString(contactType);
+        final String contactTypeJson = OBJECT_MAPPER.writeValueAsString(contactType);
 
         mockMvc.perform(post(BASE_PATH)
                             .content(contactTypeJson)
@@ -131,10 +133,10 @@ public class AdminContactTypeControllerTest {
     @Test
     void shouldSuccessfullyDeleteContactType() throws Exception {
         final Integer id = 200;
-        final String idJson = new ObjectMapper().writeValueAsString(id);
+        final String idJson = OBJECT_MAPPER.writeValueAsString(id);
 
         mockMvc.perform(delete(BASE_PATH  + "/" + id)
-                            .content(new ObjectMapper().writeValueAsString(idJson))
+                            .content(OBJECT_MAPPER.writeValueAsString(idJson))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -147,19 +149,19 @@ public class AdminContactTypeControllerTest {
         doThrow(mock(ListItemInUseException.class)).when(adminContactTypeService).deleteContactType(id);
 
         mockMvc.perform(delete(BASE_PATH  + "/" + id)
-                            .content(new ObjectMapper().writeValueAsString(id))
+                            .content(OBJECT_MAPPER.writeValueAsString(id))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isConflict());
     }
 
     @Test
-    void deleteAreaOfLawShouldReturnNotFoundIfIdDoesNotExist() throws Exception {
+    void deleteContactTypeShouldReturnNotFoundIfIdDoesNotExist() throws Exception {
         final Integer id = 300;
         doThrow(mock(NotFoundException.class)).when(adminContactTypeService).deleteContactType(id);
 
         mockMvc.perform(delete(BASE_PATH  + "/" + id)
-                            .content(new ObjectMapper().writeValueAsString(id))
+                            .content(OBJECT_MAPPER.writeValueAsString(id))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());

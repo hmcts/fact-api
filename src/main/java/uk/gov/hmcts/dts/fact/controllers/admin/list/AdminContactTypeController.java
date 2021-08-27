@@ -65,7 +65,6 @@ public class AdminContactTypeController {
     @ApiOperation("Create contact type")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = ContactType.class),
-        @ApiResponse(code = 400, message = "Invalid Contact type", response = String.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 409, message = "Contact type already exists")
@@ -79,7 +78,6 @@ public class AdminContactTypeController {
     @ApiOperation("Update contact type")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = ContactType.class),
-        @ApiResponse(code = 400, message = "Invalid Contact Type", response = String.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Contact type not found")
