@@ -133,7 +133,7 @@ public class AdminContactTypeServiceTest {
 
     @Test
     void shouldDeleteContactType() {
-        when(contactRepository.getContactsByAdminType_Id(any()))
+        when(contactRepository.getContactsByAdminTypeId(any()))
             .thenReturn(Collections.emptyList());
 
         adminContactTypeService.deleteContactType(123);
@@ -152,7 +152,7 @@ public class AdminContactTypeServiceTest {
 
     @Test
     void deleteShouldThrowListItemInUseExceptionIfContactTypeIsUsedByCourt() {
-        when(contactRepository.getContactsByAdminType_Id(any()))
+        when(contactRepository.getContactsByAdminTypeId(any()))
             .thenReturn(Arrays.asList(mock(Contact.class)));
         assertThatThrownBy(() -> adminContactTypeService
             .deleteContactType(100))

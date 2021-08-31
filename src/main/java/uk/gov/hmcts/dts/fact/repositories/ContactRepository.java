@@ -6,5 +6,5 @@ import uk.gov.hmcts.dts.fact.entity.Contact;
 import java.util.List;
 
 public interface ContactRepository extends JpaRepository<Contact, Integer> {
-    List<Contact> getContactsByAdminType_Id(Integer contactTypeId);
+    List<Contact> getContactsByAdminTypeId (Integer contactTypeId);
 }

@@ -93,7 +93,7 @@ public class AdminContactTypeService {
     }
 
     private void checkContactTypeIsNotInUse(Integer contactTypeId) {
-        if (!contactRepository.getContactsByAdminType_Id(contactTypeId).isEmpty()) {
+        if (!contactRepository.getContactsByAdminTypeId(contactTypeId).isEmpty()) {
             throw new ListItemInUseException(contactTypeId.toString());
         }
     }
