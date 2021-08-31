@@ -10,8 +10,8 @@ import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
+import uk.gov.hmcts.dts.fact.repositories.ContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
-import uk.gov.hmcts.dts.fact.repositories.CourtContactRepository;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,12 +23,12 @@ import static java.util.stream.Collectors.toList;
 public class AdminContactTypeService {
 
     private final ContactTypeRepository contactTypeRepository;
-    private final CourtContactRepository courtContactRepository;
+    private final ContactRepository contactRepository;
 
     @Autowired
-    public AdminContactTypeService(final ContactTypeRepository contactTypeRepository, final CourtContactRepository courtContactRepository) {
+    public AdminContactTypeService(final ContactTypeRepository contactTypeRepository, final ContactRepository contactRepository) {
         this.contactTypeRepository = contactTypeRepository;
-        this.courtContactRepository = courtContactRepository;
+        this.contactRepository = contactRepository;
 
     }
 
@@ -93,7 +93,7 @@ public class AdminContactTypeService {
     }
 
     private void checkContactTypeIsNotInUse(Integer contactTypeId) {
-        if (!courtContactRepository.getCourtContactByContactId(contactTypeId).isEmpty()) {
+        if (!contactRepository.getContactsByAdminType_Id(contactTypeId).isEmpty()) {
             throw new ListItemInUseException(contactTypeId.toString());
         }
     }

@@ -10,13 +10,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
+import uk.gov.hmcts.dts.fact.repositories.ContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
-import uk.gov.hmcts.dts.fact.repositories.CourtContactRepository;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class AdminContactTypeServiceTest {
     private ContactTypeRepository contactTypeRepository;
 
     @MockBean
-    private CourtContactRepository courtContactRepository;
+    private ContactRepository contactRepository;
 
     @Test
     void shouldReturnAllContactType() {
@@ -133,7 +133,7 @@ public class AdminContactTypeServiceTest {
 
     @Test
     void shouldDeleteContactType() {
-        when(courtContactRepository.getCourtContactByContactId(any()))
+        when(contactRepository.getContactsByAdminType_Id(any()))
             .thenReturn(Collections.emptyList());
 
         adminContactTypeService.deleteContactType(123);
@@ -152,8 +152,8 @@ public class AdminContactTypeServiceTest {
 
     @Test
     void deleteShouldThrowListItemInUseExceptionIfContactTypeIsUsedByCourt() {
-        when(courtContactRepository.getCourtContactByContactId(any()))
-            .thenReturn(Arrays.asList(mock(CourtContact.class)));
+        when(contactRepository.getContactsByAdminType_Id(any()))
+            .thenReturn(Arrays.asList(mock(Contact.class)));
         assertThatThrownBy(() -> adminContactTypeService
             .deleteContactType(100))
             .isInstanceOf(ListItemInUseException.class);
