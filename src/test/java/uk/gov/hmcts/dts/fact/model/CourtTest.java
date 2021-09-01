@@ -14,9 +14,11 @@ import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.DxCode;
 import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.Facility;
 import uk.gov.hmcts.dts.fact.entity.FacilityType;
@@ -32,8 +34,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CourtTest {
     static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
@@ -73,12 +73,18 @@ class CourtTest {
         courtEntity.setCourtEmails(singletonList(courtEmailEntity));
 
         final Contact contactEntity = new Contact();
-        contactEntity.setDescription("DX");
+        contactEntity.setDescription("Enquiries");
         contactEntity.setNumber("123");
         contactEntity.setExplanation("Explanation of contact");
-        CourtContact courtContactEntity = mock(CourtContact.class);
-        when(courtContactEntity.getContact()).thenReturn(contactEntity);
+        CourtContact courtContactEntity = new CourtContact();
+        courtContactEntity.setContact(contactEntity);
         courtEntity.setCourtContacts(singletonList(courtContactEntity));
+
+        final DxCode dxCodeEntity = new DxCode();
+        dxCodeEntity.setCode("456");
+        CourtDxCode courtDxCodeEntity = new CourtDxCode();
+        courtDxCodeEntity.setDxCode(dxCodeEntity);
+        courtEntity.setCourtDxCodes(singletonList(courtDxCodeEntity));
 
         courtEntity.setAreasOfLaw(singletonList(getAreaOfLaw()));
 
@@ -136,7 +142,8 @@ class CourtTest {
         assertEquals(courtEntity.getInPerson().getAccessScheme(), court.getAccessScheme());
         assertEquals("Visit or contact us", court.getAddresses().get(0).getAddressType());
         assertEquals("http://url", court.getAreasOfLaw().get(0).getExternalLink());
-        assertEquals(courtEntity.getCourtContacts().get(0).getContact().getNumber(), court.getDxNumbers().get(0));
+        assertEquals(courtEntity.getCourtContacts().get(0).getContact().getNumber(), court.getContacts().get(0).getNumber());
+        assertEquals(courtEntity.getCourtDxCodes().get(0).getDxCode().getCode(), court.getDxNumbers().get(0));
 
         assertEquals(welsh ? courtEntity.getCourtApplicationUpdates().get(0).getApplicationUpdate().getTypeCy()
                          : courtEntity.getCourtApplicationUpdates().get(0).getApplicationUpdate().getType(),

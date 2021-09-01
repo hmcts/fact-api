@@ -1,13 +1,20 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
 import com.launchdarkly.shaded.com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
+import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
 import uk.gov.hmcts.dts.fact.util.AuditType;
 
@@ -16,15 +23,27 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Slf4j
 public class AdminAreasOfLawService {
 
     private final AreasOfLawRepository areasOfLawRepository;
     private final AdminAuditService adminAuditService;
+    private final CourtAreaOfLawRepository courtAreaOfLawRepository;
+    private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
+    private final ServiceAreaRepository serviceAreaRepository;
 
     @Autowired
-    public AdminAreasOfLawService(final AreasOfLawRepository areasOfLawRepository,
-                                  final AdminAuditService adminAuditService) {
+    public AdminAreasOfLawService(
+        final AreasOfLawRepository areasOfLawRepository,
+        final CourtAreaOfLawRepository courtAreaOfLawRepository,
+        final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo,
+        final ServiceAreaRepository serviceAreaRepository,
+        final AdminAuditService adminAuditService) {
+
         this.areasOfLawRepository = areasOfLawRepository;
+        this.courtAreaOfLawRepository = courtAreaOfLawRepository;
+        this.courtLocalAuthorityAreaOfLawRepo = courtLocalAuthorityAreaOfLawRepo;
+        this.serviceAreaRepository = serviceAreaRepository;
         this.adminAuditService = adminAuditService;
     }
 
@@ -67,6 +86,20 @@ public class AdminAreasOfLawService {
         return newAreaOfLaw;
     }
 
+    public void deleteAreaOfLaw(final Integer areaOfLawId) {
+        ensureAreaOfLawIsNotInUse(areaOfLawId);
+
+        try {
+            areasOfLawRepository.deleteById(areaOfLawId);
+        } catch (EmptyResultDataAccessException ex) {
+            log.warn("Area of Law could not be deleted because it no longer exists: " + areaOfLawId);
+            throw new NotFoundException(ex);
+        } catch (DataAccessException ex) {
+            log.warn("A data access exception was thrown when trying to delete an area of law: " + areaOfLawId);
+            throw new ListItemInUseException(ex);
+        }
+    }
+
     private void checkIfAreaOfLawAlreadyExists(final String areaOfLawName) {
         if (getAllAreasOfLaw().stream().anyMatch(aol -> aol.getName().equalsIgnoreCase(areaOfLawName))) {
             throw new DuplicatedListItemException("Area of Law already exists: " + areaOfLawName);
@@ -83,6 +116,7 @@ public class AdminAreasOfLawService {
                                                                                    final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity) {
         // Name is not updated because it is not editable.
         entity.setExternalLink(areaOfLaw.getExternalLink());
+        entity.setExternalLinkCy(areaOfLaw.getExternalLink());
         entity.setExternalLinkDescription(areaOfLaw.getExternalLinkDescription());
         entity.setExternalLinkDescriptionCy(areaOfLaw.getExternalLinkDescriptionCy());
         entity.setAltName(areaOfLaw.getAlternativeName());
@@ -91,5 +125,13 @@ public class AdminAreasOfLawService {
         entity.setDisplayNameCy(areaOfLaw.getDisplayNameCy());
         entity.setDisplayExternalLink(areaOfLaw.getDisplayExternalLink());
         return entity;
+    }
+
+    private void ensureAreaOfLawIsNotInUse(Integer areaOfLawId) {
+        if (!courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(areaOfLawId).isEmpty()
+            || !courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(areaOfLawId).isEmpty()
+            || !serviceAreaRepository.findByAreaOfLawId(areaOfLawId).isEmpty()) {
+            throw new ListItemInUseException(areaOfLawId.toString());
+        }
     }
 }

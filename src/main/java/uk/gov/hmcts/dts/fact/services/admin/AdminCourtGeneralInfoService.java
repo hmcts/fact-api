@@ -37,7 +37,7 @@ public class AdminCourtGeneralInfoService {
     public CourtGeneralInfo updateCourtGeneralInfo(final String slug, final CourtGeneralInfo generalInfo) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
+        final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
         courtEntity.setAlert(generalInfo.getAlert());
         courtEntity.setAlertCy(generalInfo.getAlertCy());
 

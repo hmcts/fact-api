@@ -50,7 +50,6 @@ public class AdminCourtContactServiceTest {
     private static final String TEST_EXPLANATION1 = "some explanation";
     private static final String TEST_EXPLANATION2 = "another explanation";
     private static final String TEST_EXPLANATION3 = "yet another explanation";
-    private static final String DX = "DX";
     private static final String NOT_FOUND = "Not found: ";
 
     private static final int CONTACT_COUNT = 4;
@@ -71,8 +70,7 @@ public class AdminCourtContactServiceTest {
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE1, TEST_NUMBER1, TEST_EXPLANATION1, TEST_EXPLANATION1, false),
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE2, TEST_NUMBER2, TEST_EXPLANATION2, TEST_EXPLANATION2, false),
         new uk.gov.hmcts.dts.fact.entity.Contact(CONTACT_TYPE3, TEST_NUMBER3, TEST_EXPLANATION3, TEST_EXPLANATION3, true),
-        new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true),
-        new uk.gov.hmcts.dts.fact.entity.Contact(TEST_TYPE_ID1, TEST_DX_NUMBER, DX, DX, TEST_EXPLANATION1, TEST_EXPLANATION1, false, false, null)
+        new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true)
     );
 
     @Autowired
@@ -95,7 +93,7 @@ public class AdminCourtContactServiceTest {
 
     @BeforeAll
     static void setUp() {
-        for (int i = 0; i < CONTACT_COUNT + 1; i++) {
+        for (int i = 0; i < CONTACT_COUNT; i++) {
             final CourtContact courtContact = mock(CourtContact.class);
             when(courtContact.getContact()).thenReturn(CONTACT_ENTITIES.get(i));
             COURT_CONTACTS.add(courtContact);
@@ -129,17 +127,14 @@ public class AdminCourtContactServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(contactTypeRepository.findAll()).thenReturn(CONTACT_TYPES);
         when(court.getCourtContacts()).thenReturn(COURT_CONTACTS);
-
-        final List<CourtContact> courtContactsWithoutDX = new ArrayList<>(COURT_CONTACTS);
-        courtContactsWithoutDX.removeIf(c -> c.getContact().getDescription().equals(DX));
-        when(courtContactRepository.saveAll(any())).thenReturn(courtContactsWithoutDX);
+        when(courtContactRepository.saveAll(any())).thenReturn(COURT_CONTACTS);
 
         List<Contact> results = adminService.updateCourtContacts(COURT_SLUG, EXPECTED_CONTACTS);
         assertThat(results)
             .hasSize(CONTACT_COUNT)
             .containsExactlyElementsOf(EXPECTED_CONTACTS);
 
-        verify(courtContactRepository).deleteAll(courtContactsWithoutDX);
+        verify(courtContactRepository).deleteAll(COURT_CONTACTS);
         verify(courtContactRepository).saveAll(any());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court contacts",
                                                            new Gson().toJson(EXPECTED_CONTACTS),

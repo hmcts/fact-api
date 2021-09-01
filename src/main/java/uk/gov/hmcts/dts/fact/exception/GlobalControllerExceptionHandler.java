@@ -48,4 +48,9 @@ public class GlobalControllerExceptionHandler {
     ResponseEntity<String> illegalListItemExceptionHandler(final IllegalListItemException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ListItemInUseException.class)
+    ResponseEntity<String> listItemInUseExceptionHandler(final ListItemInUseException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

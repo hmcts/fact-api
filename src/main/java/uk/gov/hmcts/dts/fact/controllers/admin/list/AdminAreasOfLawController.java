@@ -86,4 +86,19 @@ public class AdminAreasOfLawController {
     public ResponseEntity<AreaOfLaw> updateAreaOfLaw(@RequestBody AreaOfLaw areaOfLaw) {
         return ok(adminAreasOfLawService.updateAreaOfLaw(areaOfLaw));
     }
+
+    @DeleteMapping("/{areaOfLawId}")
+    @ApiOperation("Delete area of law")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Area of Law not found"),
+        @ApiResponse(code = 409, message = "Area of Law in use")
+    })
+    @Role({FACT_SUPER_ADMIN})
+    public ResponseEntity deleteAreaOfLaw(@PathVariable Integer areaOfLawId) {
+        adminAreasOfLawService.deleteAreaOfLaw(areaOfLawId);
+        return ok().body(areaOfLawId);
+    }
 }

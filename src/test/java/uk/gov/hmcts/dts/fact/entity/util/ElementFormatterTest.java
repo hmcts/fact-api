@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ElementFormatterTest {
-    private static final String DX = "DX";
-
     private static final String TEST_CONTACT_NUMBER = "123";
     private static final String TEST_CONTACT_DESCRIPTION = "Contact description";
     private static final String TEST_CONTACT_DESCRIPTION_CY = "Contact description cy";
@@ -21,7 +19,6 @@ public class ElementFormatterTest {
     private static final String TEST_CONTACT_ADMIN_DESCRIPTION = "Contact admin description";
     private static final String TEST_CONTACT_ADMIN_DESCRIPTION_CY = "Contact admin description cy";
     private static final ContactType TEST_CONTACT_ADMIN_TYPE = new ContactType(1, TEST_CONTACT_ADMIN_DESCRIPTION, TEST_CONTACT_ADMIN_DESCRIPTION_CY);
-    private static final ContactType TEST_DX_ADMIN_TYPE = new ContactType(1, DX, DX);
 
     private static final String TEST_EMAIL_ADDRESS = "test@test.com";
     private static final String TEST_EMAIL_DESCRIPTION = "Email description";
@@ -45,6 +42,8 @@ public class ElementFormatterTest {
     private static final String TEST_EXTERNAL_LINK_DESCRIPTION = "External link description";
     private static final String TEST_EXTERNAL_LINK_DESCRIPTION_CY = "External link description cy";
 
+    private static final String TEST_DX_CODE = "160040 Strand 4";
+
     private static final String DESCRIPTION_PREFIX = "Description: ";
     private static final String EXPLANATION_PREFIX = "Explanation: ";
     private static final String NUMBER_PREFIX = "Number: ";
@@ -54,6 +53,7 @@ public class ElementFormatterTest {
     private static final String EMAIL_PREFIX = "Email: ";
     private static final String EXTERNAL_LINK_PREFIX = "External link: ";
     private static final String EXTERNAL_LINK_DESCRIPTION_PREFIX = "External link description: ";
+    private static final String DX_CODE_PREFIX = "Code: ";
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForFormatContact() {
@@ -66,10 +66,7 @@ public class ElementFormatterTest {
                          NUMBER_PREFIX + TEST_CONTACT_NUMBER + ", " + DESCRIPTION_PREFIX + TEST_CONTACT_ADMIN_DESCRIPTION),
             Arguments.of(TEST_CONTACT_ADMIN_TYPE,
                          " ",
-                         NUMBER_PREFIX + TEST_CONTACT_NUMBER + ", " + DESCRIPTION_PREFIX + TEST_CONTACT_ADMIN_DESCRIPTION),
-            Arguments.of(TEST_DX_ADMIN_TYPE,
-                         "",
-                         NUMBER_PREFIX + TEST_CONTACT_NUMBER)
+                         NUMBER_PREFIX + TEST_CONTACT_NUMBER + ", " + DESCRIPTION_PREFIX + TEST_CONTACT_ADMIN_DESCRIPTION)
         );
     }
 
@@ -140,5 +137,14 @@ public class ElementFormatterTest {
             + EXTERNAL_LINK_PREFIX + TEST_EXTERNAL_LINK + ", "
             + EXTERNAL_LINK_DESCRIPTION_PREFIX + TEST_EXTERNAL_LINK_DESCRIPTION;
         assertThat(ElementFormatter.formatApplicationUpdate(applicationUpdate)).isEqualTo(expectedResult);
+    }
+
+    @Test
+    void testFormatDxCode() {
+        DxCode dxCode = new DxCode(TEST_DX_CODE, TEST_CONTACT_EXPLANATION, TEST_CONTACT_EXPLANATION_CY);
+        assertThat(ElementFormatter.formatDxCode(dxCode)).isEqualTo(DX_CODE_PREFIX + TEST_DX_CODE + ", " + EXPLANATION_PREFIX + TEST_CONTACT_EXPLANATION);
+
+        dxCode = new DxCode(TEST_DX_CODE, null, null);
+        assertThat(ElementFormatter.formatDxCode(dxCode)).isEqualTo(DX_CODE_PREFIX + TEST_DX_CODE);
     }
 }
