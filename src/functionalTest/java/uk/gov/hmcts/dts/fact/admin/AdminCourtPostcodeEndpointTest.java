@@ -286,7 +286,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DO_NOT_EXIST);
 
-        final var response = doPostRequest(
+        final var response = doDeleteRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson

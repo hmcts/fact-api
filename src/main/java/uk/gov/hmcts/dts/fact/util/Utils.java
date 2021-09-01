@@ -7,7 +7,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import static java.util.Collections.emptyList;
@@ -15,10 +14,6 @@ import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 
 public final class Utils {
-
-    public static final Predicate<uk.gov.hmcts.dts.fact.entity.Contact> NAME_IS_DX = c -> "DX".equalsIgnoreCase(c.getDescription());
-    public static final Predicate<uk.gov.hmcts.dts.fact.entity.Contact> NAME_IS_NOT_DX = NAME_IS_DX.negate();
-
     // The TD postcode area include Scottish Border, Northumberland and Carlisle counties. It is not currently included in the postcode regex to keep it consistently
     // with the implementation on CTF. This regex is currently only used by the deprecated API endpoint (/search/results.json) for the consuming services.
     private static final Pattern SCOTTISH_POSTCODE_AREA_REGEX = Pattern.compile("^(ZE|KW|IV|HS|PH|AB|DD|PA|FK|G[0-9]|KY|KA|DG|EH|ML)", Pattern.CASE_INSENSITIVE);
