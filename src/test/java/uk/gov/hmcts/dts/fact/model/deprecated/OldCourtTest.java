@@ -6,6 +6,7 @@ import uk.gov.hmcts.dts.fact.entity.*;
 
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class OldCourtTest {
@@ -19,6 +20,7 @@ public class OldCourtTest {
     @Test
     void testCreationWithContactNumberAndDxCode() {
         final Court courtEntity = new Court();
+        courtEntity.setAreasOfLawSpoe(emptyList());
 
         final Contact contactEntity = new Contact();
         contactEntity.setDescription(TEST_CONTACT_DESCRIPTION);
@@ -28,6 +30,26 @@ public class OldCourtTest {
         courtContactEntity.setContact(contactEntity);
         courtEntity.setCourtContacts(singletonList(courtContactEntity));
 
+        final CourtType courtType = new CourtType();
+        courtType.setName("Crown court");
+
+        final AddressType addressType = new AddressType();
+        addressType.setName("Visit us");
+
+        final CourtAddress courtAddress = new CourtAddress();
+        courtAddress.setAddress("1 High Street");
+        courtAddress.setTownName("London");
+        courtAddress.setPostcode("SW1A 1AA");
+        courtAddress.setAddressType(addressType);
+
+        final AreaOfLaw areaOfLaw = new AreaOfLaw();
+        areaOfLaw.setName("Adoption");
+
+        courtEntity.setAreasOfLawSpoe(emptyList());
+        courtEntity.setCourtTypes(singletonList(courtType));
+        courtEntity.setAddresses(singletonList(courtAddress));
+        courtEntity.setAreasOfLaw(singletonList(areaOfLaw));
+
         final DxCode dxCodeEntity = new DxCode();
         dxCodeEntity.setCode(TEST_DX_CODE);
         dxCodeEntity.setExplanation(TEST_DX_EXPLANATION);
@@ -36,6 +58,7 @@ public class OldCourtTest {
         courtEntity.setCourtDxCodes(singletonList(courtDxCodeEntity));
 
         final OldCourt oldCourt = new OldCourt(courtEntity);
+        oldCourt.setAreasOfLawSpoe(emptyList());
         final List<uk.gov.hmcts.dts.fact.model.Contact> contacts = oldCourt.getContacts();
 
         final SoftAssertions softly = new SoftAssertions();
