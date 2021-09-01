@@ -174,13 +174,11 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
         final ContactType createdContactType = response.as(ContactType.class);
 
         assertThat(createdContactType.getType()).isEqualTo(expectedContactType.getType());
-        final String deleteJson = objectMapper().writeValueAsString(createdContactType);
 
         //clean up by removing added record
         final var cleanUpResponse = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + createdContactType.getId(),
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            deleteJson
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),""
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
 
@@ -233,48 +231,45 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Delete request tests section. ***************************************************************/
 
     @Test
-    public void adminShouldBeForbiddenForDeletingContactType() throws JsonProcessingException {
+    public void adminShouldBeForbiddenForDeletingContactType() {
 
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,
-            Map.of(AUTHORIZATION, BEARER + authenticatedToken), getTestContactType()
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken), ""
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldRequireATokenWhenDeletingContactType() throws JsonProcessingException {
+    public void shouldRequireATokenWhenDeletingContactType() {
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,
-            getTestContactType()
+            ""
         );
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldNotDeleteContactTypeNotFound() throws JsonProcessingException {
+    public void shouldNotDeleteContactTypeNotFound() {
 
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + 1234,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            getTestContactType()
+            Map.of(AUTHORIZATION, BEARER + superAdminToken), ""
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
     @Test
-    public void shouldNotDeleteContactTypeInUse() throws JsonProcessingException {
+    public void shouldNotDeleteContactTypeInUse() {
 
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            getTestContactType()
+            Map.of(AUTHORIZATION, BEARER + superAdminToken), ""
         );
         assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
     }
 
     /************************************************************* Shared utility methods. ***************************************************************/
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 
     private ContactType getCurrentContactType() {
         final Response response = doGetRequest(
@@ -285,7 +280,6 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     private ContactType getUpdatedContactType() {
-
         return new ContactType(CONTACT_TYPE_ID,
                                CONTACT_TYPE,
                                CONTACT_TYPE_CY);
@@ -297,10 +291,6 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
         );
         return response.body().jsonPath().getList(".", ContactType.class);
-    }
-
-    private String getTestContactType() throws JsonProcessingException {
-        return objectMapper().writeValueAsString(getUpdatedContactType());
     }
 
     private ContactType createContactType() {
