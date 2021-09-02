@@ -52,6 +52,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
+    
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
@@ -89,6 +90,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
+
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
