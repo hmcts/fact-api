@@ -61,9 +61,14 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         final List<Audit> currentAudits = getCurrentAudits();
         assertThat(currentAudits).isNotEmpty();
-        assertThat(currentAudits.get(currentAudits.size() - 2).getActionDataBefore()).isEqualTo(currentAudits.get(currentAudits.size() - 1).getActionDataAfter());
-        assertThat(currentAudits.get(currentAudits.size() - 2).getAction().getName()).isEqualTo(currentAudits.get(currentAudits.size() - 1).getAction().getName());
-        assertThat(currentAudits.get(currentAudits.size() - 2).getAction().getName()).isEqualTo(TEST_AUDIT_NAME);
+
+        int auditListSize = currentAudits.size();
+        int indexActionDataBefore = auditListSize - 2;
+        int indexActionDataAfter = auditListSize - 1;
+
+        assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore()).isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
+        assertThat(currentAudits.get(indexActionDataBefore).getAction().getName()).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
+        assertThat(currentAudits.get(indexActionDataBefore).getAction().getName()).isEqualTo(TEST_AUDIT_NAME);
     }
 
     @Test
