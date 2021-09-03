@@ -23,6 +23,7 @@ public class AdminCourtLocalAuthoritiesService {
     private final CourtRepository courtRepository;
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtLocalAuthoritiesService(final CourtRepository courtRepository,
@@ -62,11 +63,11 @@ public class AdminCourtLocalAuthoritiesService {
 
         adminAuditService.saveAudit(
             AuditType.findByName("Update court local authorities"),
-            new Gson().toJson(originalCourtLocalAuthorities
-                                  .stream()
-                                  .map(la -> new LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
-                                  .collect(toList())),
-            new Gson().toJson(updatedLocalAuthorities), slug);
+            gson.toJson(originalCourtLocalAuthorities
+                            .stream()
+                            .map(la -> new LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
+                            .collect(toList())),
+            gson.toJson(updatedLocalAuthorities), slug);
         return updatedLocalAuthorities;
     }
 

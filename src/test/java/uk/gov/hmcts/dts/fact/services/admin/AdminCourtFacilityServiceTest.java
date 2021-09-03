@@ -60,6 +60,8 @@ public class AdminCourtFacilityServiceTest {
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_1,DESCRIPTION_1,DESCRIPTION_CY_1)
     );
 
+    private final Gson gson = new Gson();
+
     @Autowired
     private AdminCourtFacilityService adminCourtFacilityService;
 
@@ -153,8 +155,8 @@ public class AdminCourtFacilityServiceTest {
             .hasSize(FACILITY_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court facilities",
-                                                           new Gson().toJson(INPUT_COURT_FACILITIES),
-                                                           new Gson().toJson(results),
+                                                           gson.toJson(INPUT_COURT_FACILITIES),
+                                                           gson.toJson(results),
                                                            COURT_SLUG);
     }
 

@@ -21,6 +21,7 @@ public class AdminLocalAuthorityService {
 
     private final LocalAuthorityRepository localAuthorityRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminLocalAuthorityService(final LocalAuthorityRepository localAuthorityRepository,
@@ -55,8 +56,8 @@ public class AdminLocalAuthorityService {
         LocalAuthority newLocalAuthority = new LocalAuthority(localAuthorityRepository.save(existingEntity));
         adminAuditService.saveAudit(
             AuditType.findByName("Update local authority"),
-            new Gson().toJson(originalList),
-            new Gson().toJson(getAllLocalAuthorities()));
+            gson.toJson(originalList),
+            gson.toJson(getAllLocalAuthorities()));
         return newLocalAuthority;
     }
 

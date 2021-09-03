@@ -73,6 +73,8 @@ public class AdminCourtContactServiceTest {
         new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true)
     );
 
+    private final Gson gson = new Gson();
+
     @Autowired
     private AdminCourtContactService adminService;
 
@@ -137,8 +139,8 @@ public class AdminCourtContactServiceTest {
         verify(courtContactRepository).deleteAll(COURT_CONTACTS);
         verify(courtContactRepository).saveAll(any());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court contacts",
-                                                           new Gson().toJson(EXPECTED_CONTACTS),
-                                                           new Gson().toJson(results), COURT_SLUG);
+                                                           gson.toJson(EXPECTED_CONTACTS),
+                                                           gson.toJson(results), COURT_SLUG);
     }
 
     @Test

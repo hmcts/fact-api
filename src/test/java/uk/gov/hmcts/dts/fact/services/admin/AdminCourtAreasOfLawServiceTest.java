@@ -41,6 +41,7 @@ public class AdminCourtAreasOfLawServiceTest {
     private static final String TEST_COURT_AREAS_OF_LAW_PATH = "court-areas-of-law.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final List<CourtAreaOfLaw> COURT_AREA_OF_LAWS = new ArrayList<>();
+    private final Gson gson = new Gson();
 
     @MockBean
     private CourtRepository courtRepository;
@@ -113,11 +114,11 @@ public class AdminCourtAreasOfLawServiceTest {
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .containsExactlyElementsOf(areasOfLaw);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court areas of law",
-                                                           new Gson().toJson(COURT_AREA_OF_LAWS
-                                                                                 .stream()
-                                                                                 .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry()))
-                                                                                 .collect(toList())),
-                                                           new Gson().toJson(courtAreasOfLawResult), COURT_SLUG);
+                                                           gson.toJson(COURT_AREA_OF_LAWS
+                                                                           .stream()
+                                                                           .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), aol.getSinglePointOfEntry()))
+                                                                           .collect(toList())),
+                                                           gson.toJson(courtAreasOfLawResult), COURT_SLUG);
     }
 
     @Test

@@ -29,6 +29,7 @@ public class AdminCourtEmailService {
     private final CourtEmailRepository emailRepository;
     private final EmailTypeRepository emailTypeRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtEmailService(final CourtRepository courtRepository,
@@ -69,11 +70,11 @@ public class AdminCourtEmailService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court email list"),
-            new Gson().toJson(courtEntity.getCourtEmails().stream()
-                                  .map(CourtEmail::getEmail)
-                                  .map(Email::new)
-                                  .collect(toList())),
-            new Gson().toJson(resultEmailList), slug);
+            gson.toJson(courtEntity.getCourtEmails().stream()
+                            .map(CourtEmail::getEmail)
+                            .map(Email::new)
+                            .collect(toList())),
+            gson.toJson(resultEmailList), slug);
         return resultEmailList;
     }
 

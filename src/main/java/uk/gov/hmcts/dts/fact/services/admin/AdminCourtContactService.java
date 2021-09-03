@@ -28,6 +28,7 @@ public class AdminCourtContactService {
     private final CourtContactRepository courtContactRepository;
     private final ContactTypeRepository contactTypeRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtContactService(final CourtRepository courtRepository,
@@ -58,8 +59,8 @@ public class AdminCourtContactService {
         List<Contact> newContactList = saveNewCourtContacts(courtEntity, contacts);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court contacts"),
-            new Gson().toJson(originalContactList),
-            new Gson().toJson(newContactList), slug);
+            gson.toJson(originalContactList),
+            gson.toJson(newContactList), slug);
         return newContactList;
     }
 

@@ -23,6 +23,7 @@ public class AdminCourtAreasOfLawService {
     private final CourtRepository courtRepository;
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtAreasOfLawService(final CourtRepository courtRepository,
@@ -62,8 +63,8 @@ public class AdminCourtAreasOfLawService {
             .collect(toList());
 
         adminAuditService.saveAudit(AuditType.findByName("Update court areas of law"),
-                                    new Gson().toJson(originalCourtAol),
-                                    new Gson().toJson(newAreaOfLawList),
+                                    gson.toJson(originalCourtAol),
+                                    gson.toJson(newAreaOfLawList),
                                     slug);
         return newAreaOfLawList;
     }

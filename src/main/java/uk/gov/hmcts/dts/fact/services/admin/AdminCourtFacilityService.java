@@ -26,6 +26,7 @@ public class AdminCourtFacilityService {
     private final CourtFacilityRepository courtFacilityRepository;
     private final FacilityTypeRepository facilityTypeRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtFacilityService(final CourtRepository courtRepository,
@@ -59,11 +60,11 @@ public class AdminCourtFacilityService {
         List<Facility> newFacilities = saveCourtFacilities(courtEntity, courtFacilities, existingList);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court facilities"),
-            new Gson().toJson(existingList.stream()
-                                  .map(CourtFacility::getFacility)
-                                  .map(Facility::new)
-                                  .collect(toList())),
-            new Gson().toJson(newFacilities), slug);
+            gson.toJson(existingList.stream()
+                            .map(CourtFacility::getFacility)
+                            .map(Facility::new)
+                            .collect(toList())),
+            gson.toJson(newFacilities), slug);
         return newFacilities;
     }
 

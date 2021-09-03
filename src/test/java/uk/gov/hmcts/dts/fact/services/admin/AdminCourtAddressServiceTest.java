@@ -92,6 +92,8 @@ public class AdminCourtAddressServiceTest {
 
     private static final String NOT_FOUND = "Not found: ";
 
+    private final Gson gson = new Gson();
+
     @Autowired
     private AdminCourtAddressService adminCourtAddressService;
 
@@ -181,8 +183,8 @@ public class AdminCourtAddressServiceTest {
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
-                                                           new Gson().toJson(EXPECTED_ADDRESSES),
-                                                           new Gson().toJson(results), COURT_SLUG);
+                                                           gson.toJson(EXPECTED_ADDRESSES),
+                                                           gson.toJson(results), COURT_SLUG);
     }
 
     @Test

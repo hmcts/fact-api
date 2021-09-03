@@ -31,6 +31,7 @@ public class AdminAreasOfLawService {
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
     private final ServiceAreaRepository serviceAreaRepository;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminAreasOfLawService(
@@ -71,8 +72,8 @@ public class AdminAreasOfLawService {
         final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity);
         AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(entity));
         adminAuditService.saveAudit(AuditType.findByName("Update area of law"),
-                                    new Gson().toJson(originalAreasOfLaw),
-                                    new Gson().toJson(getAllAreasOfLaw()));
+                                    gson.toJson(originalAreasOfLaw),
+                                    gson.toJson(getAllAreasOfLaw()));
         return newAreaOfLaw;
     }
 
@@ -80,9 +81,10 @@ public class AdminAreasOfLawService {
     public AreaOfLaw createAreaOfLaw(final AreaOfLaw areaOfLaw) {
         checkIfAreaOfLawAlreadyExists(areaOfLaw.getName());
         AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(createNewAreaOfLawEntityFromModel(areaOfLaw)));
+
         adminAuditService.saveAudit(AuditType.findByName("Create area of law"),
-                                    new Gson().toJson(areaOfLaw),
-                                    new Gson().toJson(newAreaOfLaw));
+                                    gson.toJson(areaOfLaw),
+                                    gson.toJson(newAreaOfLaw));
         return newAreaOfLaw;
     }
 

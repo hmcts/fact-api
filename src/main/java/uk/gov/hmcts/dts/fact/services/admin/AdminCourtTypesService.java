@@ -24,6 +24,7 @@ public class AdminCourtTypesService {
     private final CourtTypeRepository courtTypeRepository;
     private final MapCourtCode mapCourtCode;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtTypesService(final CourtRepository courtRepository,
@@ -71,8 +72,8 @@ public class AdminCourtTypesService {
         List<CourtType> savedCourtTypeList = saveNewCourtCourtTypes(courtEntity, courtTypes);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court court types"),
-            new Gson().toJson(existingCourtTypes),
-            new Gson().toJson(savedCourtTypeList), slug);
+            gson.toJson(existingCourtTypes),
+            gson.toJson(savedCourtTypeList), slug);
         return savedCourtTypeList;
     }
 

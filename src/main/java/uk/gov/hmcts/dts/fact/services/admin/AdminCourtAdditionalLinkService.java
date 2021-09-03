@@ -21,6 +21,7 @@ public class AdminCourtAdditionalLinkService {
     private final CourtRepository courtRepository;
     private final CourtAdditionalLinkRepository courtAdditionalLinkRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     public AdminCourtAdditionalLinkService(final CourtRepository courtRepository,
                                            final CourtAdditionalLinkRepository courtAdditionalLinkRepository,
@@ -54,12 +55,12 @@ public class AdminCourtAdditionalLinkService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court additional links"),
-            new Gson().toJson(courtEntity.getCourtAdditionalLinks()
+            gson.toJson(courtEntity.getCourtAdditionalLinks()
                                   .stream()
                                   .map(CourtAdditionalLink::getAdditionalLink)
                                   .map(AdditionalLink::new)
                                   .collect(toList())),
-            new Gson().toJson(newLinks), slug);
+            gson.toJson(newLinks), slug);
         return newLinks;
     }
 

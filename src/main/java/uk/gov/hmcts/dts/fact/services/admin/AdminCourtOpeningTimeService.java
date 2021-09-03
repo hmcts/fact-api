@@ -26,6 +26,7 @@ public class AdminCourtOpeningTimeService {
     private final CourtRepository courtRepository;
     private final OpeningTypeRepository openingTypeRepository;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtOpeningTimeService(final CourtRepository courtRepository,
@@ -54,8 +55,8 @@ public class AdminCourtOpeningTimeService {
         List<OpeningTime> updatedOpeningTimes = saveNewOpeningTimes(courtEntity, openingTimes);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court opening times"),
-            new Gson().toJson(originalOpeningTimes),
-            new Gson().toJson(updatedOpeningTimes), slug);
+            gson.toJson(originalOpeningTimes),
+            gson.toJson(updatedOpeningTimes), slug);
         return updatedOpeningTimes;
     }
 

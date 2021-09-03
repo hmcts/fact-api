@@ -29,6 +29,7 @@ import static org.mockito.Mockito.*;
 class AdminServiceTest {
 
     private Court courtEntity;
+    private final Gson gson = new Gson();
     private static final String SOME_SLUG = "some-slug";
     private static final Double LATITUDE = 1.0;
     private static final Double LONGITUDE = -3.0;
@@ -117,8 +118,8 @@ class AdminServiceTest {
         assertThat(courtResults.getInfo()).isNotEqualTo(court.getInfo());
         assertThat(courtResults.getInfoCy()).isNotEqualTo(court.getInfoCy());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
-                                                           new Gson().toJson(court),
-                                                           new Gson().toJson(courtResults), SOME_SLUG);
+                                                           gson.toJson(court),
+                                                           gson.toJson(courtResults), SOME_SLUG);
     }
 
     @Test
@@ -134,8 +135,8 @@ class AdminServiceTest {
         assertThat(courtResults.getOpen()).isEqualTo(court.getOpen());
         assertThat(courtResults.getAccessScheme()).isEqualTo(null);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
-                                                           new Gson().toJson(court),
-                                                           new Gson().toJson(courtResults), SOME_SLUG);
+                                                           gson.toJson(court),
+                                                           gson.toJson(courtResults), SOME_SLUG);
     }
 
     @Test
@@ -150,8 +151,8 @@ class AdminServiceTest {
         final uk.gov.hmcts.dts.fact.model.admin.Court courtResults = adminService.save(SOME_SLUG, court);
         assertThat(courtResults.getAccessScheme()).isEqualTo(court.getAccessScheme());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
-                                                           new Gson().toJson(court),
-                                                           new Gson().toJson(courtResults), SOME_SLUG);
+                                                           gson.toJson(court),
+                                                           gson.toJson(courtResults), SOME_SLUG);
     }
 
     @Test

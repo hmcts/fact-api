@@ -37,8 +37,7 @@ public class AdminAuditController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = Audit.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
+        @ApiResponse(code = 403, message = "Forbidden")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<Audit>> getAudits() {

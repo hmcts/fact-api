@@ -78,6 +78,8 @@ public class AdminCourtEmailServiceTest {
         new Email(TEST_EMAIL_ADDRESS3, TEST_EMAIL_EXPLANATION3, TEST_EMAIL_EXPLANATION_CY3, TEST_EMAIL_TYPE3)
     );
 
+    private final Gson gson = new Gson();
+
     @Autowired
     private AdminCourtEmailService adminService;
 
@@ -152,8 +154,8 @@ public class AdminCourtEmailServiceTest {
             .hasSize(EMAIL_COUNT)
             .containsExactlyElementsOf(EXPECTED_EMAILS);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court email list",
-                                                           new Gson().toJson(EXPECTED_EMAILS),
-                                                           new Gson().toJson(emails), COURT_SLUG);
+                                                           gson.toJson(EXPECTED_EMAILS),
+                                                           gson.toJson(emails), COURT_SLUG);
     }
 
     @Test

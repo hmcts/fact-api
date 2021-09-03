@@ -68,6 +68,8 @@ public class AdminCourtAdditionalLinkServiceTest {
 
     private static final String NOT_FOUND = "Not found: ";
 
+    private final Gson gson = new Gson();
+
     @Autowired
     private AdminCourtAdditionalLinkService adminService;
 
@@ -112,12 +114,12 @@ public class AdminCourtAdditionalLinkServiceTest {
 
         verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtId(TEST_COURT_ID);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court additional links",
-                                                           new Gson().toJson(MOCK_COURT.getCourtAdditionalLinks()
-                                                                                 .stream()
-                                                                                 .map(CourtAdditionalLink::getAdditionalLink)
-                                                                                 .map(AdditionalLink::new)
-                                                                                 .collect(toList())),
-                                                           new Gson().toJson(results), TEST_SLUG);
+                                                           gson.toJson(MOCK_COURT.getCourtAdditionalLinks()
+                                                                           .stream()
+                                                                           .map(CourtAdditionalLink::getAdditionalLink)
+                                                                           .map(AdditionalLink::new)
+                                                                           .collect(toList())),
+                                                           gson.toJson(results), TEST_SLUG);
     }
 
     @Test

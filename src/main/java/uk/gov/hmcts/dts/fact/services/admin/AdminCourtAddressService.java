@@ -33,6 +33,7 @@ public class AdminCourtAddressService {
     private final MapitService mapitService;
     private final ValidationService validationService;
     private final AdminAuditService adminAuditService;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtAddressService(final CourtRepository courtRepository,
@@ -83,11 +84,11 @@ public class AdminCourtAddressService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court addresses and coordinates"),
-            new Gson().toJson(courtEntity.getAddresses()
+            gson.toJson(courtEntity.getAddresses()
                                   .stream()
                                   .map(CourtAddress::new)
                                   .collect(toList())),
-            new Gson().toJson(updatedAddresses), slug);
+            gson.toJson(updatedAddresses), slug);
         return updatedAddresses;
     }
 

@@ -50,6 +50,8 @@ public class AdminCourtTypeServiceTest {
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",null)
     );
 
+    private final Gson gson = new Gson();
+
     @MockBean
     private CourtRepository courtRepository;
 
@@ -124,8 +126,8 @@ public class AdminCourtTypeServiceTest {
             .hasSize(COURT_TYPE_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_TYPES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court court types",
-                                                           new Gson().toJson(COURT_TYPES),
-                                                           new Gson().toJson(results), COURT_SLUG);
+                                                           gson.toJson(COURT_TYPES),
+                                                           gson.toJson(results), COURT_SLUG);
     }
 
     @Test
