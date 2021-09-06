@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +28,6 @@ import static org.mockito.Mockito.*;
 class AdminServiceTest {
 
     private Court courtEntity;
-    private final Gson gson = new Gson();
     private static final String SOME_SLUG = "some-slug";
     private static final Double LATITUDE = 1.0;
     private static final Double LONGITUDE = -3.0;
