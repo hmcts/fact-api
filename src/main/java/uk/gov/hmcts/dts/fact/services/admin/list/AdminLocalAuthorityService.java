@@ -57,7 +57,8 @@ public class AdminLocalAuthorityService {
         adminAuditService.saveAudit(
             AuditType.findByName("Update local authority"),
             gson.toJson(originalList),
-            gson.toJson(getAllLocalAuthorities()));
+            gson.toJson(getAllLocalAuthorities()),
+            null);
         return newLocalAuthority;
     }
 

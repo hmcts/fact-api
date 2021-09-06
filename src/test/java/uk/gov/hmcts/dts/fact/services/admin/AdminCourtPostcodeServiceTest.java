@@ -139,7 +139,8 @@ public class AdminCourtPostcodeServiceTest {
                                                            courtPostcodes.stream()
                                                                .map(CourtPostcode::getPostcode)
                                                                .collect(toList()).toString(),
-                                                           emptyList().toString());
+                                                           emptyList().toString(),
+                                                           null);
     }
 
     @Test

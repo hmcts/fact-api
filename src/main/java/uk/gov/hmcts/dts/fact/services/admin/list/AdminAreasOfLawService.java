@@ -73,7 +73,8 @@ public class AdminAreasOfLawService {
         AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(entity));
         adminAuditService.saveAudit(AuditType.findByName("Update area of law"),
                                     gson.toJson(originalAreasOfLaw),
-                                    gson.toJson(getAllAreasOfLaw()));
+                                    gson.toJson(getAllAreasOfLaw()),
+                                    null);
         return newAreaOfLaw;
     }
 
@@ -84,7 +85,8 @@ public class AdminAreasOfLawService {
 
         adminAuditService.saveAudit(AuditType.findByName("Create area of law"),
                                     gson.toJson(areaOfLaw),
-                                    gson.toJson(newAreaOfLaw));
+                                    gson.toJson(newAreaOfLaw),
+                                    null);
         return newAreaOfLaw;
     }
 

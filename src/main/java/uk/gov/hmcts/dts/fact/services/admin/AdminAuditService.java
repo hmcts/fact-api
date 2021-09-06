@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.Audit;
@@ -24,29 +25,12 @@ public class AdminAuditService {
         this.auditTypeRepository = auditTypeRepository;
     }
 
-    public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData() {
+    public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData(int page, int size) {
         return auditRepository
-            .findAll()
+            .findAll(PageRequest.of(page, size))
             .stream()
-            .map(audit -> new uk.gov.hmcts.dts.fact.model.admin.Audit(
-                audit.getId(),
-                audit.getUserEmail(),
-                audit.getAuditType(),
-                audit.getActionDataBefore(),
-                audit.getActionDataAfter(),
-                audit.getLocation(),
-                audit.getCreationTime()
-            )).collect(Collectors.toList());
-    }
-
-    public void saveAudit(String auditType, String auditDataBefore, String auditDataAfter) {
-        auditRepository.save(new Audit(
-            SecurityContextHolder.getContext().getAuthentication().getName(),
-            auditTypeRepository.findByName(auditType),
-            auditDataBefore,
-            auditDataAfter,
-            LocalDateTime.now()
-        ));
+            .map(uk.gov.hmcts.dts.fact.model.admin.Audit::new)
+            .collect(Collectors.toList());
     }
 
     public void saveAudit(String auditType, String auditDataBefore, String auditDataAfter, String auditLocation) {

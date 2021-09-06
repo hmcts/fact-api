@@ -118,7 +118,8 @@ public class AdminCourtPostcodeService {
         adminAuditService.saveAudit(
             AuditType.findByName("Delete court postcodes"),
             originalPostcodes.toString(),
-            getCourtPostcodesBySlug(slug).toString());
+            getCourtPostcodesBySlug(slug).toString(),
+            null);
         return deletedPostcodes;
     }
 

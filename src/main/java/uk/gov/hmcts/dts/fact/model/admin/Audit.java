@@ -23,4 +23,14 @@ public class Audit {
     private String location;
     @JsonProperty("creation_time")
     private LocalDateTime creationTime;
+
+    public Audit(uk.gov.hmcts.dts.fact.entity.Audit audit) {
+        this.id = audit.getId();
+        this.userEmail = audit.getUserEmail();
+        this.action = audit.getAuditType();
+        this.actionDataBefore = audit.getActionDataBefore();
+        this.actionDataAfter = audit.getActionDataAfter();
+        this.location = audit.getLocation();
+        this.creationTime = audit.getCreationTime();
+    }
 }

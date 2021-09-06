@@ -129,6 +129,6 @@ public class AdminCourtAdditionalLinkServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtAdditionalLinks(TEST_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + TEST_SLUG);
-        verify(adminAuditService, never()).saveAudit(anyString(), any(), any());
+        verify(adminAuditService, never()).saveAudit(anyString(), any(), any(), anyString());
     }
 }

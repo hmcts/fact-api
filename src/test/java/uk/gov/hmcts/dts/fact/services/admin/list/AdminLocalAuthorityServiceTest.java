@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -63,7 +64,8 @@ public class AdminLocalAuthorityServiceTest {
             .thenAnswer((Answer<uk.gov.hmcts.dts.fact.entity.LocalAuthority>) invocation -> invocation.getArgument(0));
 
         assertThat(localAuthorityService.updateLocalAuthority(localAuthority.getId(), localAuthority.getName())).isEqualTo(localAuthority);
-        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update local authority", emptyList().toString(),
+                                                           emptyList().toString(), null);
     }
 
     @Test
@@ -75,6 +77,6 @@ public class AdminLocalAuthorityServiceTest {
             .isInstanceOf(NotFoundException.class);
 
         verify(localAuthorityRepository, never()).save(any());
-        verify(adminAuditService, never()).saveAudit(anyString(), any(), any());
+        verify(adminAuditService, never()).saveAudit(anyString(), any(), any(), any());
     }
 }

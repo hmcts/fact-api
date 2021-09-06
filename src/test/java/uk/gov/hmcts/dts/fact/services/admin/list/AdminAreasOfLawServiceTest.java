@@ -160,7 +160,8 @@ public class AdminAreasOfLawServiceTest {
                                                                            .collect(toList())),
                                                            gson.toJson(AREAS_OF_LAW.stream()
                                                                            .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
-                                                                           .collect(toList())));
+                                                                           .collect(toList())),
+                                                           null);
     }
 
     @Test
@@ -175,7 +176,8 @@ public class AdminAreasOfLawServiceTest {
         verify(areasOfLawRepository, never()).save(any());
         verify(adminAuditService, never()).saveAudit("Update area of law",
                                                      gson.toJson(testAreaOfLaw),
-                                                     gson.toJson(testAreaOfLaw));
+                                                     gson.toJson(testAreaOfLaw),
+                                                     null);
     }
 
     @Test
@@ -196,7 +198,8 @@ public class AdminAreasOfLawServiceTest {
         assertThat(areasOfLawService.createAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
         verify(adminAuditService, atLeastOnce()).saveAudit("Create area of law",
                                                            gson.toJson(areaOfLaw),
-                                                           gson.toJson(areaOfLaw));
+                                                           gson.toJson(areaOfLaw),
+                                                           null);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -212,7 +215,8 @@ public class AdminAreasOfLawServiceTest {
             .isInstanceOf(DuplicatedListItemException.class);
         verify(adminAuditService, never()).saveAudit("Create area of law",
                                                      gson.toJson(areaOfLaw),
-                                                     gson.toJson(areaOfLaw));
+                                                     gson.toJson(areaOfLaw),
+                                                     null);
     }
 
     @Test
