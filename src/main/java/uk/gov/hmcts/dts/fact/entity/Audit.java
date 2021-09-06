@@ -34,16 +34,6 @@ public class Audit {
 
     public Audit(String userEmail, final AuditType auditType,
                  String actionDataBefore, String actionDataAfter,
-                 LocalDateTime creationTime) {
-        this.userEmail = userEmail;
-        this.auditType = auditType;
-        this.actionDataBefore = actionDataBefore;
-        this.actionDataAfter = actionDataAfter;
-        this.creationTime = creationTime;
-    }
-
-    public Audit(String userEmail, final AuditType auditType,
-                 String actionDataBefore, String actionDataAfter,
                  String location, LocalDateTime creationTime) {
         this.userEmail = userEmail;
         this.auditType = auditType;

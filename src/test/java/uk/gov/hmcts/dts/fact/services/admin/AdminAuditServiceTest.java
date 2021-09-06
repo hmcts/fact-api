@@ -46,10 +46,10 @@ public class AdminAuditServiceTest {
     static void beforeAll() {
         AUDIT_DATA.add(new Audit("Test String", new AuditType(1, "test"),
                                "data before", "data after",
-                               LocalDateTime.of(1000, 10, 10, 10, 10)));
+                               "some court", LocalDateTime.of(1000, 10, 10, 10, 10)));
         AUDIT_DATA.add(new Audit("Test String 2", new AuditType(1, "test 2"),
                                "data before 2", "data after 2",
-                               LocalDateTime.of(1000, 10, 10, 10, 10)));
+                               "some court", LocalDateTime.of(1000, 10, 10, 10, 10)));
         AUDIT_DATA.get(0).setId(0);
         AUDIT_DATA.get(1).setId(1);
     }
