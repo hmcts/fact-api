@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -25,6 +24,7 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,8 +91,6 @@ public class AdminCourtAddressServiceTest {
     private static final Double LONGITUDE = 2.0;
 
     private static final String NOT_FOUND = "Not found: ";
-
-    private final Gson gson = new Gson();
 
     @Autowired
     private AdminCourtAddressService adminCourtAddressService;
@@ -183,8 +181,8 @@ public class AdminCourtAddressServiceTest {
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
-                                                           gson.toJson(EXPECTED_ADDRESSES),
-                                                           gson.toJson(results), COURT_SLUG);
+                                                           EXPECTED_ADDRESSES,
+                                                           results, COURT_SLUG);
     }
 
     @Test
@@ -216,7 +214,11 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
-        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates", emptyList(),
+            COURT_ADDRESSES_ENTITY.stream()
+                .sorted(Comparator.comparingInt(a -> uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
+                .map(CourtAddress::new)
+                .collect(toList()), "court-slug");
     }
 
     @Test
@@ -234,7 +236,16 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
-        verify(adminAuditService, atLeastOnce()).saveAudit(anyString(), anyString(), anyString(), anyString());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates", MOCK_COURT.getAddresses()
+                                                               .stream()
+                                                               .map(CourtAddress::new)
+                                                               .collect(toList()),
+                                                           COURT_ADDRESSES_ENTITY.stream()
+                                                               .sorted(Comparator.comparingInt(
+                                                                   a -> uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress(
+                                                                       a.getAddressType().getName()) ? 0 : 1))
+                                                               .map(CourtAddress::new)
+                                                               .collect(toList()), COURT_SLUG);
     }
 
     @Test

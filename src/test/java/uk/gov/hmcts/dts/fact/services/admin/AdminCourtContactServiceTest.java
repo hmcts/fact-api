@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,8 +72,6 @@ public class AdminCourtContactServiceTest {
         new uk.gov.hmcts.dts.fact.entity.Contact(null, TEST_NUMBER4, null, null, true)
     );
 
-    private final Gson gson = new Gson();
-
     @Autowired
     private AdminCourtContactService adminService;
 
@@ -139,8 +136,8 @@ public class AdminCourtContactServiceTest {
         verify(courtContactRepository).deleteAll(COURT_CONTACTS);
         verify(courtContactRepository).saveAll(any());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court contacts",
-                                                           gson.toJson(EXPECTED_CONTACTS),
-                                                           gson.toJson(results), COURT_SLUG);
+                                                           EXPECTED_CONTACTS,
+                                                           results, COURT_SLUG);
     }
 
     @Test

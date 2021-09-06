@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ public class AdminAuditService {
 
     private final AuditRepository auditRepository;
     private final AuditTypeRepository auditTypeRepository;
+    private final Gson gson = new Gson();
 
     @Autowired
     public AdminAuditService(AuditRepository auditRepository, AuditTypeRepository auditTypeRepository) {
@@ -33,12 +35,12 @@ public class AdminAuditService {
             .collect(Collectors.toList());
     }
 
-    public void saveAudit(String auditType, String auditDataBefore, String auditDataAfter, String auditLocation) {
+    public void saveAudit(String auditType, Object auditDataBefore, Object auditDataAfter, String auditLocation) {
         auditRepository.save(new Audit(
             SecurityContextHolder.getContext().getAuthentication().getName(),
             auditTypeRepository.findByName(auditType),
-            auditDataBefore,
-            auditDataAfter,
+            gson.toJson(auditDataBefore),
+            gson.toJson(auditDataAfter),
             auditLocation,
             LocalDateTime.now()
         ));

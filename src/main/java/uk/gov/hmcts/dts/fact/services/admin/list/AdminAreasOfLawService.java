@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -31,7 +30,6 @@ public class AdminAreasOfLawService {
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
     private final ServiceAreaRepository serviceAreaRepository;
-    private final Gson gson = new Gson();
 
     @Autowired
     public AdminAreasOfLawService(
@@ -72,8 +70,8 @@ public class AdminAreasOfLawService {
         final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity);
         AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(entity));
         adminAuditService.saveAudit(AuditType.findByName("Update area of law"),
-                                    gson.toJson(originalAreasOfLaw),
-                                    gson.toJson(getAllAreasOfLaw()),
+                                    originalAreasOfLaw,
+                                    getAllAreasOfLaw(),
                                     null);
         return newAreaOfLaw;
     }
@@ -84,8 +82,8 @@ public class AdminAreasOfLawService {
         AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(createNewAreaOfLawEntityFromModel(areaOfLaw)));
 
         adminAuditService.saveAudit(AuditType.findByName("Create area of law"),
-                                    gson.toJson(areaOfLaw),
-                                    gson.toJson(newAreaOfLaw),
+                                    areaOfLaw,
+                                    newAreaOfLaw,
                                     null);
         return newAreaOfLaw;
     }

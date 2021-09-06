@@ -64,8 +64,7 @@ public class AdminLocalAuthorityServiceTest {
             .thenAnswer((Answer<uk.gov.hmcts.dts.fact.entity.LocalAuthority>) invocation -> invocation.getArgument(0));
 
         assertThat(localAuthorityService.updateLocalAuthority(localAuthority.getId(), localAuthority.getName())).isEqualTo(localAuthority);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update local authority", emptyList().toString(),
-                                                           emptyList().toString(), null);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update local authority", emptyList(), emptyList(), null);
     }
 
     @Test

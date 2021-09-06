@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -109,8 +110,8 @@ public class AdminCourtPostcodeServiceTest {
             .hasSize(1)
             .containsExactly(NEW_POSTCODE);
         verify(adminAuditService, atLeastOnce()).saveAudit("Create court postcodes",
-                                                           emptyList().toString(),
-                                                           results.toString(), COURT_SLUG);
+                                                           emptyList(),
+                                                           results, COURT_SLUG);
     }
 
     @Test
@@ -138,8 +139,8 @@ public class AdminCourtPostcodeServiceTest {
         verify(adminAuditService, atLeastOnce()).saveAudit("Delete court postcodes",
                                                            courtPostcodes.stream()
                                                                .map(CourtPostcode::getPostcode)
-                                                               .collect(toList()).toString(),
-                                                           emptyList().toString(),
+                                                               .collect(toList()),
+                                                           emptyList(),
                                                            null);
     }
 
@@ -179,9 +180,14 @@ public class AdminCourtPostcodeServiceTest {
         assertThat(results)
             .hasSize(2)
             .containsExactlyInAnyOrderElementsOf(POSTCODES_TO_BE_MOVED);
+        JsonObject auditData = new JsonObject();
+        auditData.addProperty("moved-from", SOURCE_COURT_SLUG);
+        auditData.addProperty("moved-to", DESTINATION_COURT_SLUG);
+        auditData.addProperty("postcodes", results.toString());
+
         verify(adminAuditService, atLeastOnce()).saveAudit("Move court postcodes",
-                                                           "postcodes moved from: source-slug to destination-slug are: " + results,
-                                                           POSTCODES_TO_BE_DELETED.toString() + " have been moved",
+                                                           auditData,
+                                                           POSTCODES_TO_BE_DELETED,
                                                            SOURCE_COURT_SLUG);
     }
 

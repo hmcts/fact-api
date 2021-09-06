@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,6 @@ public class AdminCourtContactService {
     private final CourtContactRepository courtContactRepository;
     private final ContactTypeRepository contactTypeRepository;
     private final AdminAuditService adminAuditService;
-    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtContactService(final CourtRepository courtRepository,
@@ -59,8 +57,8 @@ public class AdminCourtContactService {
         List<Contact> newContactList = saveNewCourtContacts(courtEntity, contacts);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court contacts"),
-            gson.toJson(originalContactList),
-            gson.toJson(newContactList), slug);
+            originalContactList,
+            newContactList, slug);
         return newContactList;
     }
 
@@ -76,9 +74,7 @@ public class AdminCourtContactService {
         final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = getNewContacts(contacts);
         List<CourtContact> newCourtContacts = getNewCourtContacts(courtEntity, newContacts);
 
-        final List<CourtContact> existingCourtContacts = courtEntity.getCourtContacts()
-            .stream()
-            .collect(toList());
+        final List<CourtContact> existingCourtContacts = new ArrayList<>(courtEntity.getCourtContacts());
 
         courtContactRepository.deleteAll(existingCourtContacts);
         return courtContactRepository.saveAll(newCourtContacts)

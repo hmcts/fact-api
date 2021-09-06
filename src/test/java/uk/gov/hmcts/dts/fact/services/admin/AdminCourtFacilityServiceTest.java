@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,8 +58,6 @@ public class AdminCourtFacilityServiceTest {
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_3,DESCRIPTION_3,DESCRIPTION_CY_3),
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_1,DESCRIPTION_1,DESCRIPTION_CY_1)
     );
-
-    private final Gson gson = new Gson();
 
     @Autowired
     private AdminCourtFacilityService adminCourtFacilityService;
@@ -155,8 +152,8 @@ public class AdminCourtFacilityServiceTest {
             .hasSize(FACILITY_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court facilities",
-                                                           gson.toJson(INPUT_COURT_FACILITIES),
-                                                           gson.toJson(results),
+                                                           INPUT_COURT_FACILITIES,
+                                                           results,
                                                            COURT_SLUG);
     }
 

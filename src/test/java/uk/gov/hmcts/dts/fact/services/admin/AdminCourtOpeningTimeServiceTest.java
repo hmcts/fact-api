@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,7 +56,6 @@ public class AdminCourtOpeningTimeServiceTest {
     private static final uk.gov.hmcts.dts.fact.entity.OpeningType OPENING_TYPE2 = new uk.gov.hmcts.dts.fact.entity.OpeningType(TEST_TYPE_ID2, ENGLISH_TYPE2, WELSH_TYPE2);
     private static final uk.gov.hmcts.dts.fact.entity.OpeningType OPENING_TYPE3 = new uk.gov.hmcts.dts.fact.entity.OpeningType(TEST_TYPE_ID3, ENGLISH_TYPE3, WELSH_TYPE3);
     private static final List<uk.gov.hmcts.dts.fact.entity.OpeningType> OPENING_TYPES = Arrays.asList(OPENING_TYPE1, OPENING_TYPE2, OPENING_TYPE3);
-    private final Gson gson = new Gson();
 
     @Autowired
     private AdminCourtOpeningTimeService adminService;
@@ -115,8 +113,8 @@ public class AdminCourtOpeningTimeServiceTest {
             .hasSize(OPENING_TIME_COUNT)
             .containsExactlyElementsOf(EXPECTED_OPENING_TIMES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court opening times",
-                                                           gson.toJson(EXPECTED_OPENING_TIMES),
-                                                           gson.toJson(results), COURT_SLUG);
+                                                           EXPECTED_OPENING_TIMES,
+                                                           results, COURT_SLUG);
     }
 
     @Test

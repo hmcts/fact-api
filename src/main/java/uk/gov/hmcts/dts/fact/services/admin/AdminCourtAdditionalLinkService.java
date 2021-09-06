@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,8 +7,6 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AdditionalLink;
-import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
-import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAdditionalLinkRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
@@ -24,7 +21,6 @@ public class AdminCourtAdditionalLinkService {
     private final CourtRepository courtRepository;
     private final CourtAdditionalLinkRepository courtAdditionalLinkRepository;
     private final AdminAuditService adminAuditService;
-    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtAdditionalLinkService(final CourtRepository courtRepository,
@@ -59,12 +55,12 @@ public class AdminCourtAdditionalLinkService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court additional links"),
-            gson.toJson(courtEntity.getCourtAdditionalLinks()
+            courtEntity.getCourtAdditionalLinks()
                                   .stream()
                                   .map(CourtAdditionalLink::getAdditionalLink)
                                   .map(AdditionalLink::new)
-                                  .collect(toList())),
-            gson.toJson(newLinks), slug);
+                                  .collect(toList()),
+            newLinks, slug);
         return newLinks;
     }
 

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ public class AdminLocalAuthorityService {
 
     private final LocalAuthorityRepository localAuthorityRepository;
     private final AdminAuditService adminAuditService;
-    private final Gson gson = new Gson();
 
     @Autowired
     public AdminLocalAuthorityService(final LocalAuthorityRepository localAuthorityRepository,
@@ -56,8 +54,8 @@ public class AdminLocalAuthorityService {
         LocalAuthority newLocalAuthority = new LocalAuthority(localAuthorityRepository.save(existingEntity));
         adminAuditService.saveAudit(
             AuditType.findByName("Update local authority"),
-            gson.toJson(originalList),
-            gson.toJson(getAllLocalAuthorities()),
+            originalList,
+            getAllLocalAuthorities(),
             null);
         return newLocalAuthority;
     }

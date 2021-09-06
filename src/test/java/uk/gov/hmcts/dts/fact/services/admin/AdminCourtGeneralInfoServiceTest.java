@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +43,6 @@ public class AdminCourtGeneralInfoServiceTest {
 
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
     private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
-    private final Gson gson = new Gson();
 
     @Autowired
     private AdminCourtGeneralInfoService adminService;
@@ -94,8 +92,8 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court, never()).setDisplayed(anyBoolean());
         verify(inPerson, never()).setAccessScheme(anyBoolean());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
-                                                           gson.toJson(new CourtGeneralInfo(court)),
-                                                           gson.toJson(results), COURT_SLUG);
+                                                           new CourtGeneralInfo(court),
+                                                           results, COURT_SLUG);
     }
 
     @Test
@@ -113,8 +111,8 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court).setDisplayed(true);
         verify(inPerson).setAccessScheme(true);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
-                                                           gson.toJson(new CourtGeneralInfo(court)),
-                                                           gson.toJson(results), COURT_SLUG);
+                                                           new CourtGeneralInfo(court),
+                                                           results, COURT_SLUG);
     }
 
     @Test

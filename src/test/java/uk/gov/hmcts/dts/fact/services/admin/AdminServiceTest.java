@@ -118,8 +118,8 @@ class AdminServiceTest {
         assertThat(courtResults.getInfo()).isNotEqualTo(court.getInfo());
         assertThat(courtResults.getInfoCy()).isNotEqualTo(court.getInfoCy());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
-                                                           gson.toJson(court),
-                                                           gson.toJson(courtResults), SOME_SLUG);
+                                                           court,
+                                                           courtResults, SOME_SLUG);
     }
 
     @Test
@@ -135,8 +135,8 @@ class AdminServiceTest {
         assertThat(courtResults.getOpen()).isEqualTo(court.getOpen());
         assertThat(courtResults.getAccessScheme()).isEqualTo(null);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
-                                                           gson.toJson(court),
-                                                           gson.toJson(courtResults), SOME_SLUG);
+                                                           court,
+                                                           courtResults, SOME_SLUG);
     }
 
     @Test
@@ -151,8 +151,8 @@ class AdminServiceTest {
         final uk.gov.hmcts.dts.fact.model.admin.Court courtResults = adminService.save(SOME_SLUG, court);
         assertThat(courtResults.getAccessScheme()).isEqualTo(court.getAccessScheme());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
-                                                           gson.toJson(court),
-                                                           gson.toJson(courtResults), SOME_SLUG);
+                                                           court,
+                                                           courtResults, SOME_SLUG);
     }
 
     @Test

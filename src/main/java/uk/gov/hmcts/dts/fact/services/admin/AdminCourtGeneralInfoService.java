@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ public class AdminCourtGeneralInfoService {
     private final CourtRepository courtRepository;
     private final RolesProvider rolesProvider;
     private final AdminAuditService adminAuditService;
-    private final Gson gson = new Gson();
 
     @Autowired
     public AdminCourtGeneralInfoService(final CourtRepository courtRepository, final RolesProvider rolesProvider,
@@ -53,8 +51,8 @@ public class AdminCourtGeneralInfoService {
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));
         adminAuditService.saveAudit(
             AuditType.findByName("Update court general info"),
-            gson.toJson(originalGeneralInfo),
-            gson.toJson(updatedGeneralInfo), slug);
+            originalGeneralInfo,
+            updatedGeneralInfo, slug);
         return updatedGeneralInfo;
     }
 }

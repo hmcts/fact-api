@@ -1,7 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -58,8 +57,6 @@ public class AdminAreasOfLawServiceTest {
 
     @MockBean
     private ServiceAreaRepository serviceAreaRepository;
-
-    private final Gson gson = new Gson();
 
     private static final List<AreaOfLaw> AREAS_OF_LAW = Arrays.asList(
         new AreaOfLaw(
@@ -155,12 +152,12 @@ public class AdminAreasOfLawServiceTest {
 
         assertThat(areasOfLawService.updateAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update area of law",
-                                                           gson.toJson(areasOfLawCopy.stream()
-                                                                           .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
-                                                                           .collect(toList())),
-                                                           gson.toJson(AREAS_OF_LAW.stream()
-                                                                           .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
-                                                                           .collect(toList())),
+                                                           areasOfLawCopy.stream()
+                                                               .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
+                                                               .collect(toList()),
+                                                           AREAS_OF_LAW.stream()
+                                                               .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
+                                                               .collect(toList()),
                                                            null);
     }
 
@@ -175,8 +172,8 @@ public class AdminAreasOfLawServiceTest {
 
         verify(areasOfLawRepository, never()).save(any());
         verify(adminAuditService, never()).saveAudit("Update area of law",
-                                                     gson.toJson(testAreaOfLaw),
-                                                     gson.toJson(testAreaOfLaw),
+                                                     testAreaOfLaw,
+                                                     testAreaOfLaw,
                                                      null);
     }
 
@@ -197,8 +194,8 @@ public class AdminAreasOfLawServiceTest {
 
         assertThat(areasOfLawService.createAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
         verify(adminAuditService, atLeastOnce()).saveAudit("Create area of law",
-                                                           gson.toJson(areaOfLaw),
-                                                           gson.toJson(areaOfLaw),
+                                                           areaOfLaw,
+                                                           areaOfLaw,
                                                            null);
     }
 
@@ -214,8 +211,8 @@ public class AdminAreasOfLawServiceTest {
             .createAreaOfLaw(areaOfLaw))
             .isInstanceOf(DuplicatedListItemException.class);
         verify(adminAuditService, never()).saveAudit("Create area of law",
-                                                     gson.toJson(areaOfLaw),
-                                                     gson.toJson(areaOfLaw),
+                                                     areaOfLaw,
+                                                     areaOfLaw,
                                                      null);
     }
 

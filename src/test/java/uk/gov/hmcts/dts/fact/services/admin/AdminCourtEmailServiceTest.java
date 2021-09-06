@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -78,8 +77,6 @@ public class AdminCourtEmailServiceTest {
         new Email(TEST_EMAIL_ADDRESS3, TEST_EMAIL_EXPLANATION3, TEST_EMAIL_EXPLANATION_CY3, TEST_EMAIL_TYPE3)
     );
 
-    private final Gson gson = new Gson();
-
     @Autowired
     private AdminCourtEmailService adminService;
 
@@ -154,8 +151,8 @@ public class AdminCourtEmailServiceTest {
             .hasSize(EMAIL_COUNT)
             .containsExactlyElementsOf(EXPECTED_EMAILS);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court email list",
-                                                           gson.toJson(EXPECTED_EMAILS),
-                                                           gson.toJson(emails), COURT_SLUG);
+                                                           EXPECTED_EMAILS,
+                                                           emails, COURT_SLUG);
     }
 
     @Test

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -68,8 +67,6 @@ public class AdminCourtAdditionalLinkServiceTest {
 
     private static final String NOT_FOUND = "Not found: ";
 
-    private final Gson gson = new Gson();
-
     @Autowired
     private AdminCourtAdditionalLinkService adminService;
 
@@ -114,12 +111,12 @@ public class AdminCourtAdditionalLinkServiceTest {
 
         verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtId(TEST_COURT_ID);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court additional links",
-                                                           gson.toJson(MOCK_COURT.getCourtAdditionalLinks()
+                                                           MOCK_COURT.getCourtAdditionalLinks()
                                                                            .stream()
                                                                            .map(CourtAdditionalLink::getAdditionalLink)
                                                                            .map(AdditionalLink::new)
-                                                                           .collect(toList())),
-                                                           gson.toJson(results), TEST_SLUG);
+                                                                           .collect(toList()),
+                                                           results, TEST_SLUG);
     }
 
     @Test

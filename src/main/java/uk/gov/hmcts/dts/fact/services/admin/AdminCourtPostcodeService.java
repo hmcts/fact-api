@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,8 +95,8 @@ public class AdminCourtPostcodeService {
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Create court postcodes"),
-            originalPostcodes.toString(),
-            newPostcodes.toString(), slug);
+            originalPostcodes,
+            newPostcodes, slug);
         return newPostcodes;
     }
 
@@ -117,8 +118,8 @@ public class AdminCourtPostcodeService {
 
         adminAuditService.saveAudit(
             AuditType.findByName("Delete court postcodes"),
-            originalPostcodes.toString(),
-            getCourtPostcodesBySlug(slug).toString(),
+            originalPostcodes,
+            getCourtPostcodesBySlug(slug),
             null);
         return deletedPostcodes;
     }
@@ -139,14 +140,19 @@ public class AdminCourtPostcodeService {
         for (CourtPostcode courtPostcode : sourceCourtPostcodes) {
             courtPostcode.setCourt(destCourt);
         }
-        List<String> postcodesMoved = courtPostcodeRepository.saveAll(sourceCourtPostcodes)
+        final List<String> postcodesMoved = courtPostcodeRepository.saveAll(sourceCourtPostcodes)
             .stream()
             .map(CourtPostcode::getPostcode)
             .collect(toList());
+        JsonObject auditData = new JsonObject();
+        auditData.addProperty("moved-from", sourceSlug);
+        auditData.addProperty("moved-to", destinationSlug);
+        auditData.addProperty("postcodes", postcodes.toString());
+
         adminAuditService.saveAudit(
             AuditType.findByName("Move court postcodes"),
-            "postcodes moved from: " + sourceSlug + " to " + destinationSlug + " are: " + postcodes.toString(),
-            postcodesMoved + " have been moved", sourceSlug);
+            auditData,
+            postcodesMoved, sourceSlug);
         return postcodesMoved;
     }
 

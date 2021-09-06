@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,8 +49,6 @@ public class AdminCourtTypeServiceTest {
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(2,"test2",null),
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",null)
     );
-
-    private final Gson gson = new Gson();
 
     @MockBean
     private CourtRepository courtRepository;
@@ -126,8 +124,10 @@ public class AdminCourtTypeServiceTest {
             .hasSize(COURT_TYPE_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_TYPES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court court types",
-                                                           gson.toJson(COURT_TYPES),
-                                                           gson.toJson(results), COURT_SLUG);
+                                                           COURT_TYPES.stream()
+                                                               .map(uk.gov.hmcts.dts.fact.model.admin.CourtType::new)
+                                                               .collect(toList()),
+                                                           results, COURT_SLUG);
     }
 
     @Test

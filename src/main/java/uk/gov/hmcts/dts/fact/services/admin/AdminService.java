@@ -29,7 +29,6 @@ public class AdminService {
     private final CourtRepository courtRepository;
     private final RolesProvider rolesProvider;
     private final AdminAuditService adminAuditService;
-    private final Gson gson = new Gson();
 
     @Autowired
     public AdminService(final CourtRepository courtRepository, final RolesProvider rolesProvider,
@@ -107,8 +106,8 @@ public class AdminService {
         Court updatedCourtModel = new Court(updatedCourt);
         adminAuditService.saveAudit(
             AuditType.findByName("Update court details"),
-            gson.toJson(court),
-            gson.toJson(updatedCourtModel), slug);
+            court,
+            updatedCourtModel, slug);
         return updatedCourtModel;
     }
 

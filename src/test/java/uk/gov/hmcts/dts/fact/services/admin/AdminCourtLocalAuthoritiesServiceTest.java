@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +36,6 @@ public class AdminCourtLocalAuthoritiesServiceTest {
     private static final String AREA_OF_LAW = "Area of law one";
     private static final String NON_EXISTENT_AREA_OF_LAW = "Non existent area of law";
     private static final String NOT_FOUND = "Not found: ";
-    private final Gson gson = new Gson();
 
     private static final List<uk.gov.hmcts.dts.fact.model.admin.LocalAuthority> EXPECTED_COURT_LOCAL_AUTHORITIES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(1,"localAuthority1"),
@@ -134,11 +132,11 @@ public class AdminCourtLocalAuthoritiesServiceTest {
             .hasSize(LOCAL_AUTHORITIES_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_LOCAL_AUTHORITIES);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court local authorities",
-                                                           gson.toJson(COURT_LOCAL_AUTHORITIES
-                                                                                 .stream()
-                                                                                 .map(la -> new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
-                                                                                 .collect(toList())),
-                                                           gson.toJson(results), COURT_SLUG);
+                                                           COURT_LOCAL_AUTHORITIES
+                                                               .stream()
+                                                               .map(la -> new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(la.getLocalAuthority().getId(), la.getLocalAuthority().getName()))
+                                                               .collect(toList()),
+                                                           results, COURT_SLUG);
     }
 
     @Test
