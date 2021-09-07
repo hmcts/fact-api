@@ -76,13 +76,37 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnPaginatedResults() {
+    public void shouldReturnPaginatedResults() throws JsonProcessingException {
+
+        var response = doGetRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+
+        // Action: Adding new opening time
+        List<OpeningTime> expectedOpeningTimes = addNewOpeningTime(currentOpeningTimes);
+        String openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
+
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+
+        // Action: Removing the added opening time
+        expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
+        openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
+
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+
         final List<Audit> currentAudits = getCurrentAudits(0,200000);
         assertThat(currentAudits).isNotEmpty();
         float maxSizePerPage = Math.round(currentAudits.size() / 2.0);
 
-        for (int i = 0; i < 2; i++)
-        {
+        for (int i = 0; i < 2; i++) {
+
             final List<Audit> currentPaginatedAudits = getCurrentAudits(i, (int) maxSizePerPage);
             assertThat(currentPaginatedAudits).isNotEmpty();
             boolean  sizeValid = currentPaginatedAudits.size() == maxSizePerPage || currentPaginatedAudits.size() == maxSizePerPage - 1;
@@ -99,7 +123,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldBeForbiddenForGettingAllAudits() {
         final Response response = doGetRequest(
-            ADMIN_AUDIT_ENDPOINT,
+            ADMIN_AUDIT_ENDPOINT + "?page=0&size=20000",
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
