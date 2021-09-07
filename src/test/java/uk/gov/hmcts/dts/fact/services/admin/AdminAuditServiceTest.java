@@ -21,6 +21,7 @@ import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +42,8 @@ public class AdminAuditServiceTest {
     private AuditTypeRepository auditTypeRepository;
 
     private static final List<Audit> AUDIT_DATA = new ArrayList<>();
+    private static final String TEST_LOCATION = "mosh court";
+    private static final String TEST_EMAIL = "kupo email";
 
     @BeforeAll
     static void beforeAll() {
@@ -55,12 +58,35 @@ public class AdminAuditServiceTest {
     }
 
     @Test
-    void shouldGetAllAuditData() {
-        when(auditRepository.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(AUDIT_DATA));
+    void shouldGetAllAuditDataNoDateRange() {
+        when(auditRepository.findAllByLocationContainingAndUserEmailContaining(
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(AUDIT_DATA));
 
         final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
-            adminAuditService.getAllAuditData(0, 10);
+            adminAuditService.getAllAuditData(0, 10, TEST_LOCATION, TEST_EMAIL,
+                                              Optional.empty(), Optional.empty());
 
+        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContaining(
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10));
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(0)));
+        assertThat(results.get(1)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(1)));
+    }
+
+    @Test
+    void shouldGetAllAuditDataWithDateRange() {
+        final LocalDateTime dateFrom = LocalDateTime.of(1000, 10, 10, 10, 10);
+        final LocalDateTime dateTo = LocalDateTime.of(1000, 12, 10, 10, 10);
+        when(auditRepository.findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
+            TEST_LOCATION, TEST_EMAIL, dateFrom, dateTo,
+            PageRequest.of(0, 10))).thenReturn(new PageImpl<>(AUDIT_DATA));
+
+        final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
+            adminAuditService.getAllAuditData(0, 10, TEST_LOCATION, TEST_EMAIL,
+                                              Optional.of(dateFrom), Optional.of(dateTo));
+
+        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
+            TEST_LOCATION, TEST_EMAIL, dateFrom, dateTo, PageRequest.of(0, 10));
         assertThat(results).hasSize(2);
         assertThat(results.get(0)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(0)));
         assertThat(results.get(1)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(1)));

@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,9 +28,14 @@ public class AdminAuditService {
         this.auditTypeRepository = auditTypeRepository;
     }
 
-    public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData(int page, int size) {
-        return auditRepository
-            .findAll(PageRequest.of(page, size))
+    public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData(int page, int size, String location,
+                                                                         String email, Optional<LocalDateTime> dateFrom,
+                                                                         Optional<LocalDateTime> dateTo) {
+        return (dateFrom.isPresent() && dateTo.isPresent()
+            ? auditRepository.findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
+                location, email, dateFrom.get(), dateTo.get(), PageRequest.of(page, size))
+            : auditRepository.findAllByLocationContainingAndUserEmailContaining(
+                location, email, PageRequest.of(page, size)))
             .stream()
             .map(uk.gov.hmcts.dts.fact.model.admin.Audit::new)
             .collect(Collectors.toList());
