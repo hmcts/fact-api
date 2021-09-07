@@ -19,6 +19,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/courts/").authenticated()
                 .antMatchers(HttpMethod.GET, "/courts/all").authenticated()
                 .antMatchers(HttpMethod.GET, "/courts/{slug}/*").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/*").authenticated()
+                .antMatchers(HttpMethod.POST, "/*").authenticated()
                 .antMatchers(HttpMethod.PUT, "/*").authenticated()
             )
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
