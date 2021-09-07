@@ -28,14 +28,16 @@ public class AdminAuditService {
         this.auditTypeRepository = auditTypeRepository;
     }
 
-    public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData(int page, int size, String location,
-                                                                         String email, Optional<LocalDateTime> dateFrom,
+    public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData(int page, int size,
+                                                                         Optional<String> location,
+                                                                         Optional<String> email,
+                                                                         Optional<LocalDateTime> dateFrom,
                                                                          Optional<LocalDateTime> dateTo) {
         return (dateFrom.isPresent() && dateTo.isPresent()
             ? auditRepository.findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
-                location, email, dateFrom.get(), dateTo.get(), PageRequest.of(page, size))
+                location.orElse(""), email.orElse(""), dateFrom.get(), dateTo.get(), PageRequest.of(page, size))
             : auditRepository.findAllByLocationContainingAndUserEmailContaining(
-                location, email, PageRequest.of(page, size)))
+                location.orElse(""), email.orElse(""), PageRequest.of(page, size)))
             .stream()
             .map(uk.gov.hmcts.dts.fact.model.admin.Audit::new)
             .collect(Collectors.toList());

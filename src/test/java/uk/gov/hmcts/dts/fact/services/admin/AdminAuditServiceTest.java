@@ -63,7 +63,8 @@ public class AdminAuditServiceTest {
             TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(AUDIT_DATA));
 
         final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
-            adminAuditService.getAllAuditData(0, 10, TEST_LOCATION, TEST_EMAIL,
+            adminAuditService.getAllAuditData(0, 10,
+                                              Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
                                               Optional.empty(), Optional.empty());
 
         verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContaining(
@@ -82,7 +83,8 @@ public class AdminAuditServiceTest {
             PageRequest.of(0, 10))).thenReturn(new PageImpl<>(AUDIT_DATA));
 
         final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
-            adminAuditService.getAllAuditData(0, 10, TEST_LOCATION, TEST_EMAIL,
+            adminAuditService.getAllAuditData(0, 10,
+                                              Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
                                               Optional.of(dateFrom), Optional.of(dateTo));
 
         verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(

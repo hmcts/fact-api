@@ -80,7 +80,7 @@ public class AdminAuditControllerTest {
     @Test
     void shouldRetrieveAuditsWithOnlyPageAndSize() throws Exception {
 
-        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, null, null,
+        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, Optional.empty(), Optional.empty(),
                                                Optional.empty(), Optional.empty())).thenReturn(AUDIT_LIST);
         mockMvc.perform(get(String.format(BASE_PATH, TEST_PAGE, TEST_SIZE)))
             .andExpect(status().isOk())
@@ -91,7 +91,7 @@ public class AdminAuditControllerTest {
     @Test
     void shouldRetrieveAuditsWithPageSizeLocationAndEmail() throws Exception {
 
-        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, TEST_LOCATION, TEST_EMAIL,
+        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
                                                Optional.empty(), Optional.empty())).thenReturn(AUDIT_LIST);
         mockMvc.perform(get(String.format(BASE_PATH_SEARCH_NO_DATE_RANGE, TEST_PAGE,
                                           TEST_SIZE, TEST_LOCATION, TEST_EMAIL)))
@@ -103,8 +103,8 @@ public class AdminAuditControllerTest {
     @Test
     void shouldRetrieveAuditsWithPageSizeLocationEmailAndDateRange() throws Exception {
 
-        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, TEST_LOCATION,
-                                               TEST_EMAIL, Optional.of(TEST_DATE_FROM),
+        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, Optional.of(TEST_LOCATION),
+                                               Optional.of(TEST_EMAIL), Optional.of(TEST_DATE_FROM),
                                                Optional.of(TEST_DATE_TO))).thenReturn(AUDIT_LIST);
 
         mockMvc.perform(get(String.format(BASE_PATH_SEARCH_WITH_DATE_RANGE, TEST_PAGE,
@@ -118,8 +118,8 @@ public class AdminAuditControllerTest {
     @Test
     void shouldGetABadResponseIfOneDateSpecifiedButNotTheOther() throws Exception {
 
-        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, TEST_LOCATION,
-                                               TEST_EMAIL, Optional.of(TEST_DATE_FROM),
+        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, Optional.of(TEST_LOCATION),
+                                               Optional.of(TEST_EMAIL), Optional.of(TEST_DATE_FROM),
                                                Optional.of(TEST_DATE_TO))).thenReturn(AUDIT_LIST);
 
         mockMvc.perform(get(String.format(BASE_PATH_SEARCH_WITH_DATE_RANGE, TEST_PAGE,

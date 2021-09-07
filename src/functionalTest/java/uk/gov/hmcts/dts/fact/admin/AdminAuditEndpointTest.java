@@ -34,80 +34,44 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Get Request Tests. ****************************************************/
 
     @Test
-    public void shouldReturnAllAudits() throws JsonProcessingException {
-
-        var response = doGetRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-        final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
-
-        // Action: Adding new opening time
-        List<OpeningTime> expectedOpeningTimes = addNewOpeningTime(currentOpeningTimes);
-        String openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
-
-        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
-        List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
-        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
-
-        // Action: Removing the added opening time
-        expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
-        openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
-
-        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
-        updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
-        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
-
-        final List<Audit> currentAudits = getCurrentAudits(0,200000);
-        assertThat(currentAudits).isNotEmpty();
-
-        int auditListSize = currentAudits.size();
-        int indexActionDataBefore = auditListSize - 2;
-        int indexActionDataAfter = auditListSize - 1;
-
-        String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
-        LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
-
-        assertThat(LocalDateTime.now().minusSeconds(5).isBefore(lastAuditTime)).isEqualTo(true);
-        assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore()).isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
-        assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
-        assertThat(actionDataBeforeName).isEqualTo(TEST_AUDIT_NAME);
+    public void shouldReturnAllAuditsForPageAndSize() throws JsonProcessingException {
+        setUpOpeningTimes();
+        checkAuditData("", "", "", "");
     }
 
     @Test
-    public void shouldReturnPaginatedResults() throws JsonProcessingException {
+    public void shouldReturnAllAuditsForPageSizeLocation() throws JsonProcessingException {
+        setUpOpeningTimes();
+        checkAuditData(ADMINISTRATIVE_COURT_SLUG, "", "", "");
+    }
 
-        var response = doGetRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-        final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+    @Test
+    public void shouldReturnAllAuditsForPageSizeLocationEmail() throws JsonProcessingException {
+        setUpOpeningTimes();
+        checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
+                       "", "");
+    }
 
-        // Action: Adding new opening time
-        List<OpeningTime> expectedOpeningTimes = addNewOpeningTime(currentOpeningTimes);
-        String openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
+    @Test
+    public void shouldReturnAllAuditsForPageSizeLocationToAndFromDates() throws JsonProcessingException {
+        setUpOpeningTimes();
+        checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
+                       "2020-01-01T01:01:01.111", "2520-01-01T01:01:01.111");
+    }
 
-        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
-        assertThat(response.statusCode()).isEqualTo(OK.value());
+    @Test
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    public void shouldReturnPaginatedResultsForPageAndSize() throws JsonProcessingException {
 
-        List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
-        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+        setUpOpeningTimes();
 
-        // Action: Removing the added opening time
-        expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
-        openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
-
-        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
-        updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
-        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
-
-        final List<Audit> currentAudits = getCurrentAudits(0,200000);
+        final List<Audit> currentAudits = getCurrentAudits(0,200_000, "", "", "", "");
         assertThat(currentAudits).isNotEmpty();
         float maxSizePerPage = Math.round(currentAudits.size() / 2.0);
 
         for (int i = 0; i < 2; i++) {
 
-            final List<Audit> currentPaginatedAudits = getCurrentAudits(i, (int) maxSizePerPage);
+            final List<Audit> currentPaginatedAudits = getCurrentAudits(i, (int) maxSizePerPage, "", "", "", "");
             assertThat(currentPaginatedAudits).isNotEmpty();
             boolean  sizeValid = currentPaginatedAudits.size() == maxSizePerPage || currentPaginatedAudits.size() == maxSizePerPage - 1;
             assertThat(sizeValid).isEqualTo(true);
@@ -131,9 +95,53 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* utility methods. ***************************************************************/
 
-    private List<Audit> getCurrentAudits(int page, int size) {
+    private void setUpOpeningTimes() throws JsonProcessingException {
+        Response response = doGetRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+
+        // Action: Adding new opening time
+        List<OpeningTime> expectedOpeningTimes = addNewOpeningTime(currentOpeningTimes);
+        String openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
+
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+
+        // Action: Removing the added opening time
+        expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
+        openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
+
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+    }
+
+    private void checkAuditData(String location, String email, String dateFrom, String dateTo) {
+        final List<Audit> currentAudits = getCurrentAudits(0, 200_000, location, email, dateFrom, dateTo);
+        assertThat(currentAudits).isNotEmpty();
+
+        int auditListSize = currentAudits.size();
+        int indexActionDataBefore = auditListSize - 2;
+        int indexActionDataAfter = auditListSize - 1;
+
+        String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
+        LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
+
+        assertThat(LocalDateTime.now().minusSeconds(5).isBefore(lastAuditTime)).isEqualTo(true);
+        assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore()).isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
+        assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
+        assertThat(actionDataBeforeName).isEqualTo(TEST_AUDIT_NAME);
+    }
+
+    private List<Audit> getCurrentAudits(int page, int size, String location, String email,
+                                         String dateFrom, String dateTo) {
         final var response = doGetRequest(
-            ADMIN_AUDIT_ENDPOINT + "?page=" + page + "&size=" + size,
+            ADMIN_AUDIT_ENDPOINT + "?page=" + page + "&size=" + size + "&location="
+                + location + "&email=" + email + "&date-from=" + dateFrom + "&date-to=" + dateTo,
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());

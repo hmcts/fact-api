@@ -49,8 +49,8 @@ public class AdminAuditController {
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<Audit>> getAudits(@RequestParam("page") int page,
                                                  @RequestParam("size") int size,
-                                                 @RequestParam(value = "location", required = false) String location,
-                                                 @RequestParam(value = "email", required = false) String email,
+                                                 @RequestParam(value = "location", required = false) Optional<String> location,
+                                                 @RequestParam(value = "email", required = false) Optional<String> email,
                                                  @RequestParam(value = "date-from", required = false)
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<LocalDateTime> dateFrom,
                                                  @RequestParam(value = "date-to", required = false)
