@@ -46,7 +46,7 @@ public class AdminAuditController {
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden")
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<List<Audit>> getAudits(@RequestParam("page") int page,
                                                  @RequestParam("size") int size,
                                                  @RequestParam(value = "location", required = false) Optional<String> location,
