@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import com.launchdarkly.shaded.com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,11 +34,14 @@ public class AdminAuditService {
                                                                          Optional<String> email,
                                                                          Optional<LocalDateTime> dateFrom,
                                                                          Optional<LocalDateTime> dateTo) {
-        return (dateFrom.isPresent() && dateTo.isPresent()
+
+        Page<Audit> auditPage = (dateFrom.isPresent() && dateTo.isPresent()
             ? auditRepository.findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
-                location.orElse(""), email.orElse(""), dateFrom.get(), dateTo.get(), PageRequest.of(page, size))
+            location.orElse(""), email.orElse(""), dateFrom.get(), dateTo.get(), PageRequest.of(page, size))
             : auditRepository.findAllByLocationContainingAndUserEmailContaining(
-                location.orElse(""), email.orElse(""), PageRequest.of(page, size)))
+            location.orElse(""), email.orElse(""), PageRequest.of(page, size)));
+
+        return auditPage
             .stream()
             .map(uk.gov.hmcts.dts.fact.model.admin.Audit::new)
             .collect(Collectors.toList());

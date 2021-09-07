@@ -25,9 +25,8 @@ public class AdminCourtTypesService {
     private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtTypesService(final CourtRepository courtRepository,
-                                  final CourtTypeRepository courtTypeRepository, final MapCourtCode mapCourtCode,
-                                  final AdminAuditService adminAuditService) {
+    public AdminCourtTypesService(final CourtRepository courtRepository, final CourtTypeRepository courtTypeRepository,
+                                  final MapCourtCode mapCourtCode, final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtTypeRepository = courtTypeRepository;
         this.mapCourtCode = mapCourtCode;

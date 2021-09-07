@@ -21,11 +21,9 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_AUDIT_ENDPOINT = "/admin/audit/";
-
     private static final String OPENING_TIMES_PATH = "/openingTimes";
     private static final String ADMINISTRATIVE_COURT_SLUG = "administrative-court";
     private static final String ADMINISTRATIVE_COURT_OPENING_TIMES_PATH = ADMIN_COURTS_ENDPOINT + ADMINISTRATIVE_COURT_SLUG + OPENING_TIMES_PATH;
-
     private static final String TEST_HOURS = "test hour";
     private static final int BAILIFF_OFFICE_OPEN_TYPE_ID = 5;
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
@@ -40,20 +38,20 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnAllAuditsForPageSizeLocation() throws JsonProcessingException {
+    public void shouldReturnAllAuditsForLocation() throws JsonProcessingException {
         setUpOpeningTimes();
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "", "", "");
     }
 
     @Test
-    public void shouldReturnAllAuditsForPageSizeLocationEmail() throws JsonProcessingException {
+    public void shouldReturnAllAuditsForLocationAndEmail() throws JsonProcessingException {
         setUpOpeningTimes();
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "", "");
     }
 
     @Test
-    public void shouldReturnAllAuditsForPageSizeLocationToAndFromDates() throws JsonProcessingException {
+    public void shouldReturnAllAuditsForLocationEmailAndToAndFromDates() throws JsonProcessingException {
         setUpOpeningTimes();
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "2020-01-01T01:01:01.111", "2520-01-01T01:01:01.111");
@@ -69,6 +67,8 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         assertThat(currentAudits).isNotEmpty();
         float maxSizePerPage = Math.round(currentAudits.size() / 2.0);
 
+        // Test pagination by requesting two separate pages based on the total amount returned above.
+        // For example, total audits = 27. Request page 1, 14 size. Request page 2 13 size.
         for (int i = 0; i < 2; i++) {
 
             final List<Audit> currentPaginatedAudits = getCurrentAudits(i, (int) maxSizePerPage, "", "", "", "");

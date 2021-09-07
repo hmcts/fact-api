@@ -36,8 +36,10 @@ public class AdminCourtAddressService {
     @Autowired
     public AdminCourtAddressService(final CourtRepository courtRepository,
                                     final CourtAddressRepository courtAddressRepository,
-                                    final AdminAddressTypeService addressTypeService, final AdminService adminService,
-                                    final MapitService mapitService, final ValidationService validationService,
+                                    final AdminAddressTypeService addressTypeService,
+                                    final AdminService adminService,
+                                    final MapitService mapitService,
+                                    final ValidationService validationService,
                                     final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtAddressRepository = courtAddressRepository;
