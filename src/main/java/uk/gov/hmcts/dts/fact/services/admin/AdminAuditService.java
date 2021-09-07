@@ -35,11 +35,11 @@ public class AdminAuditService {
                                                                          Optional<LocalDateTime> dateFrom,
                                                                          Optional<LocalDateTime> dateTo) {
 
-        Page<Audit> auditPage = (dateFrom.isPresent() && dateTo.isPresent()
+        Page<Audit> auditPage = dateFrom.isPresent() && dateTo.isPresent()
             ? auditRepository.findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
             location.orElse(""), email.orElse(""), dateFrom.get(), dateTo.get(), PageRequest.of(page, size))
             : auditRepository.findAllByLocationContainingAndUserEmailContaining(
-            location.orElse(""), email.orElse(""), PageRequest.of(page, size)));
+            location.orElse(""), email.orElse(""), PageRequest.of(page, size));
 
         return auditPage
             .stream()
