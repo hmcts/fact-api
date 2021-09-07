@@ -9,13 +9,13 @@ import uk.gov.hmcts.dts.fact.model.admin.Audit;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
-
 
 @ExtendWith(SpringExtension.class)
 public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
@@ -41,9 +41,9 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         // Action: Adding new opening time
         List<OpeningTime> expectedOpeningTimes = addNewOpeningTime(currentOpeningTimes);
-        String json = objectMapper().writeValueAsString(expectedOpeningTimes);
+        String openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
 
-        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
@@ -51,24 +51,67 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         // Action: Removing the added opening time
         expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
-        json = objectMapper().writeValueAsString(expectedOpeningTimes);
+        openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
 
-        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
         assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
 
-        final List<Audit> currentAudits = getCurrentAudits();
+        final List<Audit> currentAudits = getCurrentAudits(0,200000);
         assertThat(currentAudits).isNotEmpty();
 
         int auditListSize = currentAudits.size();
         int indexActionDataBefore = auditListSize - 2;
         int indexActionDataAfter = auditListSize - 1;
 
+        String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
+        LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
+
+        assertThat(LocalDateTime.now().minusSeconds(5).isBefore(lastAuditTime)).isEqualTo(true);
         assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore()).isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
-        assertThat(currentAudits.get(indexActionDataBefore).getAction().getName()).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
-        assertThat(currentAudits.get(indexActionDataBefore).getAction().getName()).isEqualTo(TEST_AUDIT_NAME);
+        assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
+        assertThat(actionDataBeforeName).isEqualTo(TEST_AUDIT_NAME);
+    }
+
+    @Test
+    public void shouldReturnPaginatedResults() throws JsonProcessingException {
+
+        var response = doGetRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+
+        // Action: Adding new opening time
+        List<OpeningTime> expectedOpeningTimes = addNewOpeningTime(currentOpeningTimes);
+        String openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
+
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        List<OpeningTime> updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+
+        // Action: Removing the added opening time
+        expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
+        openingTimeJson = objectMapper().writeValueAsString(expectedOpeningTimes);
+
+        response = doPutRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), openingTimeJson);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        updatedOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
+        assertThat(updatedOpeningTimes).containsExactlyElementsOf(expectedOpeningTimes);
+
+        final List<Audit> currentAudits = getCurrentAudits(0,200000);
+        assertThat(currentAudits).isNotEmpty();
+        float maxSizePerPage = Math.round(currentAudits.size() / 2.0);
+
+        for (int i = 0; i < 2; i++) {
+
+            final List<Audit> currentPaginatedAudits = getCurrentAudits(i, (int) maxSizePerPage);
+            assertThat(currentPaginatedAudits).isNotEmpty();
+            boolean  sizeValid = currentPaginatedAudits.size() == maxSizePerPage || currentPaginatedAudits.size() == maxSizePerPage - 1;
+            assertThat(sizeValid).isEqualTo(true);
+        }
     }
 
     @Test
@@ -80,7 +123,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldBeForbiddenForGettingAllAudits() {
         final Response response = doGetRequest(
-            ADMIN_AUDIT_ENDPOINT,
+            ADMIN_AUDIT_ENDPOINT + "?page=0&size=20000",
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -88,10 +131,10 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* utility methods. ***************************************************************/
 
-    private List<Audit> getCurrentAudits() {
+    private List<Audit> getCurrentAudits(int page, int size) {
         final var response = doGetRequest(
-            ADMIN_AUDIT_ENDPOINT,
-            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
+            ADMIN_AUDIT_ENDPOINT + "?page=" + page + "&size=" + size,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken)
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
         return response.body().jsonPath().getList(".", Audit.class);
