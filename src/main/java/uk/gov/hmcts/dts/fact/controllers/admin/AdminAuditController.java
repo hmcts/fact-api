@@ -50,9 +50,9 @@ public class AdminAuditController {
                                                  @RequestParam("size") int size,
                                                  @RequestParam(value = "location", required = false) Optional<String> location,
                                                  @RequestParam(value = "email", required = false) Optional<String> email,
-                                                 @RequestParam(value = "date-from", required = false)
+                                                 @RequestParam(value = "dateFrom", required = false)
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<LocalDateTime> dateFrom,
-                                                 @RequestParam(value = "date-to", required = false)
+                                                 @RequestParam(value = "dateTo", required = false)
                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Optional<LocalDateTime> dateTo) {
 
         // Return with an error if one or the other is set, but not both

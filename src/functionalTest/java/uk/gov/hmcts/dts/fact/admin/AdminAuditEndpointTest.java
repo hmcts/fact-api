@@ -141,7 +141,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
                                          String dateFrom, String dateTo) {
         final var response = doGetRequest(
             ADMIN_AUDIT_ENDPOINT + "?page=" + page + "&size=" + size + "&location="
-                + location + "&email=" + email + "&date-from=" + dateFrom + "&date-to=" + dateTo,
+                + location + "&email=" + email + "&dateFrom=" + dateFrom + "&dateTo=" + dateTo,
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());

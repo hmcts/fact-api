@@ -45,7 +45,7 @@ public class AdminAuditControllerTest {
         LocalDateTime.of(3000, 10, 10, 10, 10);
     private static final String BASE_PATH = "/admin/audit?page=%d&size=%d";
     private static final String BASE_PATH_SEARCH_NO_DATE_RANGE = BASE_PATH + "&location=%s&email=%s";
-    private static final String BASE_PATH_SEARCH_WITH_DATE_RANGE = BASE_PATH + "&location=%s&email=%s&date-from=%s&date-to=%s";
+    private static final String BASE_PATH_SEARCH_WITH_DATE_RANGE = BASE_PATH + "&location=%s&email=%s&dateFrom=%s&dateTo=%s";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static String auditJson;
 
