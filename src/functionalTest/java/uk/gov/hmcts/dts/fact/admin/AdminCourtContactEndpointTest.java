@@ -21,7 +21,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String CONTACTS_PATH = "/" + "contacts";
-    private static final String CONTACT_TYPES_FULL_PATH = ADMIN_COURTS_ENDPOINT + "contactTypes";
+    private static final String CONTACT_TYPES_FULL_PATH = COURTS_ENDPOINT + "contactTypes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String BIRMINGHAM_CONTACTS_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH;
     private static final String TEST_NUMBER = "test number";
@@ -135,26 +135,6 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-    @Test
-    public void shouldRetrieveAllContactTypes() {
-        final var response = doGetRequest(CONTACT_TYPES_FULL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
-        final List<ContactType> contactTypes = response.body().jsonPath().getList(".", ContactType.class);
-        assertThat(contactTypes).hasSizeGreaterThan(1);
-    }
-
-    @Test
-    public void shouldRequireATokenWhenRetrievingAllContactTypes() {
-        final var response = doGetRequest(CONTACT_TYPES_FULL_PATH);
-        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    }
-
-    @Test
-    public void shouldBeForbiddenForRetrievingContactTypes() {
-        final var response = doGetRequest(CONTACT_TYPES_FULL_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
-        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
-    }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private void verifyCourtContactsAfterUpdate(final List<Contact> expectedContacts) {
