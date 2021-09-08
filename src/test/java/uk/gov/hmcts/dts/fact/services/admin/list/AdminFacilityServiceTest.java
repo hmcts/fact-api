@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminFacilityService.class)
 public class AdminFacilityServiceTest {
@@ -113,7 +114,6 @@ public class AdminFacilityServiceTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     void createShouldThrowDuplicatedListItemExceptionIfFacilityTypeAlreadyExists() {
         final List<FacilityType> allFacilityTypes = Arrays.asList(getFacilityType(900, "Parking", "Parcio"));
 
@@ -173,6 +173,62 @@ public class AdminFacilityServiceTest {
         assertThatThrownBy(() -> adminFacilityService
             .deleteFacilityType(facilityTypeId))
             .isInstanceOf(ListItemInUseException.class);
+    }
+
+    @Test
+    void shouldReorderFacilityTypes() {
+        final List<Integer> existingIdOrder = Arrays.asList(100, 200, 300);
+        final List<Integer> newIdOrder = Arrays.asList(200, 300, 100);
+
+        final List<FacilityType> allFacilityTypes =
+            Arrays.asList(
+                getFacilityType(existingIdOrder.get(0), "Facility Type 1", "Facility Type 1 - cy"),
+                getFacilityType(existingIdOrder.get(1), "Facility Type 2", "Facility Type 2 - cy"),
+                getFacilityType(existingIdOrder.get(2), "Facility Type 3", "Facility Type 3 - cy")
+            );
+
+        when(facilityTypeRepository.findById(100)).thenReturn(Optional.of(allFacilityTypes.get(0)));
+        when(facilityTypeRepository.findById(200)).thenReturn(Optional.of(allFacilityTypes.get(1)));
+        when(facilityTypeRepository.findById(300)).thenReturn(Optional.of(allFacilityTypes.get(2)));
+
+        final List<Integer> actualIdOrder = new LinkedList<>();
+        when(facilityTypeRepository.save(any(FacilityType.class))).then(i -> {
+            FacilityType ft = i.getArgument(0, FacilityType.class);
+            actualIdOrder.add(ft.getId());
+            return ft;
+        });
+
+        adminFacilityService.reorderFacilityTypes(newIdOrder);
+        assertThat(actualIdOrder).containsSequence(newIdOrder);
+    }
+
+    @Test
+    void reorderShouldThrowNotFoundExceptionIfIdDoesNotExist() {
+        final List<Integer> existingIdOrder = Arrays.asList(100, 200, 300);
+        final List<Integer> newIdOrder = Arrays.asList(200, 300, 400); // we're trying to re-order a non-existent id
+
+        final List<FacilityType> allFacilityTypes =
+            Arrays.asList(
+                getFacilityType(existingIdOrder.get(0), "Facility Type 1", "Facility Type 1 - cy"),
+                getFacilityType(existingIdOrder.get(1), "Facility Type 2", "Facility Type 2 - cy"),
+                getFacilityType(existingIdOrder.get(2), "Facility Type 3", "Facility Type 3 - cy")
+            );
+
+        final List<Integer> actualIdOrder = new LinkedList<>();
+        when(facilityTypeRepository.findById(100)).thenReturn(Optional.of(allFacilityTypes.get(0)));
+        when(facilityTypeRepository.findById(200)).thenReturn(Optional.of(allFacilityTypes.get(1)));
+        when(facilityTypeRepository.findById(300)).thenReturn(Optional.of(allFacilityTypes.get(2)));
+        when(facilityTypeRepository.findById(400)).thenReturn(Optional.empty());
+
+        when(facilityTypeRepository.save(any(FacilityType.class))).then(i -> {
+            FacilityType ft = i.getArgument(0, FacilityType.class);
+            actualIdOrder.add(ft.getId());
+            return ft;
+        });
+
+        assertThatThrownBy(() -> adminFacilityService
+            .reorderFacilityTypes(newIdOrder))
+            .isInstanceOf(NotFoundException.class);
     }
 
     private FacilityType getFacilityType(Integer id, String name, String nameCy) {

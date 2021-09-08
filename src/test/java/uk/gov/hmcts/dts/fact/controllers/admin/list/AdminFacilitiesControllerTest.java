@@ -165,6 +165,40 @@ public class AdminFacilitiesControllerTest {
             .andExpect(status().isNotFound());
     }
 
+    @Test
+    void shouldReorderFacilityTypes() throws Exception {
+        final List<FacilityType> facilityTypes = Arrays.asList(
+            getFacilityType(30, "FT1", "FT1cy"),
+            getFacilityType(20, "FT2", "FT2cy"),
+            getFacilityType(10, "FT3", "FT3cy"));
+
+        final List<Integer> newOrder = Arrays.asList(30, 10, 20);
+
+        when(adminFacilityService.reorderFacilityTypes(newOrder)).thenReturn(facilityTypes);
+
+        final String newOrderJson = OBJECT_MAPPER.writeValueAsString(newOrder);
+        final String facilityTypesJson = OBJECT_MAPPER.writeValueAsString(facilityTypes);
+
+        mockMvc.perform(put(BASE_PATH + "/reorder")
+                            .content(newOrderJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(facilityTypesJson));
+    }
+
+    @Test
+    void reorderShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+        final List<Integer> idsInOrder = Arrays.asList(100, 200, 300);
+        doThrow(mock(NotFoundException.class)).when(adminFacilityService).reorderFacilityTypes(idsInOrder);
+
+        mockMvc.perform(put(BASE_PATH + "/reorder")
+                            .content(OBJECT_MAPPER.writeValueAsString(idsInOrder))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
     private FacilityType getFacilityType(Integer id, String name, String nameCy) {
         FacilityType facilityType = new FacilityType();
         facilityType.setId(id);
