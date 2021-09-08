@@ -21,7 +21,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String CONTACTS_PATH = "/" + "contacts";
-    private static final String CONTACT_TYPES_FULL_PATH = COURTS_ENDPOINT + "contactTypes";
+    private static final String CONTACT_TYPES_FULL_PATH = "/admin/contactTypes/";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String BIRMINGHAM_CONTACTS_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH;
     private static final String TEST_NUMBER = "test number";
