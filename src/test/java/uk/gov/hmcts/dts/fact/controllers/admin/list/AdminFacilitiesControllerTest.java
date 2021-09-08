@@ -8,14 +8,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.FacilityType;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminFacilityService;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AdminFacilitiesControllerTest {
 
     private static final String BASE_PATH = "/admin/facilities";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -56,11 +59,118 @@ public class AdminFacilitiesControllerTest {
 
         when(adminFacilityService.getAllFacilityTypes()).thenReturn(mockFacilityTypes);
 
-        final String allFacilityTypesJson = new ObjectMapper().writeValueAsString(mockFacilityTypes);
+        final String allFacilityTypesJson = OBJECT_MAPPER.writeValueAsString(mockFacilityTypes);
 
         mockMvc.perform(get(BASE_PATH).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(allFacilityTypesJson));
     }
 
+    @Test
+    void shouldReturnFacilityTypeForAGivenId() throws Exception {
+        final Integer id = 100;
+        final FacilityType facilityType = getFacilityType(id, "Parking", "Parcio");
+
+        when(adminFacilityService.getFacilityType(id)).thenReturn(facilityType);
+
+        final String facilityTypeJson = OBJECT_MAPPER.writeValueAsString(facilityType);
+
+        mockMvc.perform(get(BASE_PATH + "/" + id)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(facilityTypeJson));
+    }
+
+    @Test
+    void shouldReturnNotFoundIfIdDoesNotExist() throws Exception {
+        final Integer id = 234;
+        when(adminFacilityService.getFacilityType(id)).thenThrow(new NotFoundException(id.toString()));
+
+        mockMvc.perform(get(BASE_PATH + "/" + id)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldUpdateExistingFacilityType() throws Exception {
+        final FacilityType existingFacilityType = getFacilityType(900, "Lift", "Lifft");
+
+        when(adminFacilityService.updateFacilityType(existingFacilityType)).thenReturn(existingFacilityType);
+
+        final String facilityTypeJson = OBJECT_MAPPER.writeValueAsString(existingFacilityType);
+
+        mockMvc.perform(put(BASE_PATH)
+                            .content(facilityTypeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(facilityTypeJson));
+    }
+
+    @Test
+    void updateShouldReturnNotFoundIfFacilityTypeDoesNotExist() throws Exception {
+        final Integer id = 500;
+        final FacilityType existingFacilityType = getFacilityType(id, "Video facilities", "Cyfleusterau fideo");
+
+        when(adminFacilityService.updateFacilityType(existingFacilityType)).thenThrow(new NotFoundException(id.toString()));
+
+        final String facilityTypeJson = OBJECT_MAPPER.writeValueAsString(existingFacilityType);
+
+        mockMvc.perform(put(BASE_PATH)
+                            .content(facilityTypeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldCreateNewFacilityType() throws Exception {
+        final FacilityType newFacilityType = getFacilityType(1200, "NEW Facility Type", "NEW Facility Type (cy)");
+
+        when(adminFacilityService.createFacilityType(newFacilityType)).thenReturn(newFacilityType);
+
+        final String facilityTypeJson = OBJECT_MAPPER.writeValueAsString(newFacilityType);
+
+        mockMvc.perform(post(BASE_PATH)
+                            .content(facilityTypeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json(facilityTypeJson));
+    }
+
+    @Test
+    void shouldDeleteFacilityType() throws Exception {
+        final Integer idToDelete = 543;
+
+        mockMvc.perform(delete(BASE_PATH + "/" + idToDelete).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteShouldReturnConflictWhenFacilityTypeInUse() throws Exception {
+        final Integer idInUse = 321;
+        doThrow(mock(ListItemInUseException.class)).when(adminFacilityService).deleteFacilityType(idInUse);
+
+        mockMvc.perform(delete(BASE_PATH + "/" + idInUse).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
+    }
+
+    @Test
+    void deleteShouldReturnNotFoundResponseIfFacilityTypeDoesNotExist() throws Exception {
+        final Integer idInUse = 321;
+        doThrow(mock(NotFoundException.class)).when(adminFacilityService).deleteFacilityType(idInUse);
+
+        mockMvc.perform(delete(BASE_PATH + "/" + idInUse).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
+    }
+
+    private FacilityType getFacilityType(Integer id, String name, String nameCy) {
+        FacilityType facilityType = new FacilityType();
+        facilityType.setId(id);
+        facilityType.setName(name);
+        facilityType.setNameCy(nameCy);
+        facilityType.setOrder(3);
+        return facilityType;
+    }
 }
