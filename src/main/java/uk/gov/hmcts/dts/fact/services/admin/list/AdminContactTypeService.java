@@ -89,12 +89,11 @@ public class AdminContactTypeService {
 
     private void checkIfUpdatedContactTypeAlreadyExists(final ContactType updatedContactType) {
 
-        final String updatedContactTypeName = updatedContactType.getType();
         final List<ContactType>  contactTypes =  getAllContactTypes();
         contactTypes.remove(updatedContactType);
 
-        if (contactTypes.stream().anyMatch(ct -> ct.getType().equalsIgnoreCase(updatedContactTypeName))) {
-            throw new DuplicatedListItemException("Updated Contact Type already exists: " + updatedContactTypeName);
+        if (contactTypes.stream().anyMatch(ct -> ct.getType().equalsIgnoreCase(updatedContactType.getType()))) {
+            throw new DuplicatedListItemException("Updated Contact Type already exists: " + updatedContactType.getType());
         }
     }
 
