@@ -135,7 +135,7 @@ public class AdminFacilitiesControllerTest {
                             .content(facilityTypeJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andExpect(content().json(facilityTypeJson));
     }
 
