@@ -163,4 +163,54 @@ class AdminCourtsControllerTest {
             .andExpect(content().string("Not found: search criteria"))
             .andReturn();
     }
+
+    @Test
+    void shouldReturnCourtImageFile() throws Exception {
+        final String searchSlug = "some-slug";
+        final String imageFile = "birmingham_district_probate_registry.jpg";
+
+        when(adminService.getCourtImage(searchSlug)).thenReturn(imageFile);
+        mockMvc.perform(get(String.format(URL + "/%s/courtPhoto", searchSlug)))
+            .andExpect(status().isOk())
+            .andExpect(content().string(imageFile))
+            .andReturn();
+    }
+
+    @Test
+    void shouldNotReturnCourtImageFileForUnknownSlug() throws Exception {
+        final String searchSlug = "some-slug";
+
+        when(adminService.getCourtImage(searchSlug)).thenThrow(new NotFoundException("search criteria"));
+        mockMvc.perform(get(String.format(URL + "/%s/courtPhoto", searchSlug)))
+                            .andExpect(status().isNotFound())
+                            .andExpect(content().string("Not found: search criteria"))
+                            .andReturn();
+    }
+
+    @Test
+    void shouldUpdateCourtImageFile() throws Exception {
+        final String searchSlug = "some-slug";
+        final String imageFile = "birmingham_district_probate_registry.jpg";
+
+        mockMvc.perform(put(String.format(URL + "/%s/courtPhoto", searchSlug))
+                            .content(imageFile)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldNotUpdateCourtImageFileForUnknownSlug() throws Exception {
+        final String searchSlug = "some-slug";
+        final String imageFile = "birmingham_district_probate_registry.jpg";
+
+        when(adminService.updateCourtImage(searchSlug, imageFile)).thenThrow(new NotFoundException("search criteria"));
+        mockMvc.perform(put(String.format(URL + "/%s/courtPhoto", searchSlug))
+                            .content(imageFile)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("Not found: search criteria"))
+            .andReturn();
+    }
 }

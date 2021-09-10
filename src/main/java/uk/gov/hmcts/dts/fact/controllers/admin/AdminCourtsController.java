@@ -1,6 +1,8 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,5 +70,31 @@ public class AdminCourtsController {
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug, @RequestBody Court updatedCourt) {
         return ok(adminService.save(slug, updatedCourt));
+    }
+
+    @GetMapping(path = "/{slug}/courtPhoto")
+    @ApiOperation("Find the photo for a court")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Court not Found")
+    })
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    public ResponseEntity<String> getCourtImageBySlug(@PathVariable String slug) {
+        return ok(adminService.getCourtImage(slug));
+    }
+
+    @PutMapping(path = "/{slug}/courtPhoto")
+    @ApiOperation("Update the photo for a court")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Court not Found")
+    })
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug, @RequestBody String imageFile) {
+        return ok(adminService.updateCourtImage(slug, imageFile));
     }
 }
