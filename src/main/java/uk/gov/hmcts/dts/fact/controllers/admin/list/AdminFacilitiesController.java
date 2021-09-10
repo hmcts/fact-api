@@ -79,7 +79,8 @@ public class AdminFacilitiesController {
         @ApiResponse(code = 200, message = "Successful", response = FacilityType.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Facility Type not found")
+        @ApiResponse(code = 404, message = "Facility Type not found"),
+        @ApiResponse(code = 409, message = "Facility Type already exists")
     })
     public ResponseEntity<FacilityType> updateFacilityType(@RequestBody FacilityType facilityType) {
         return ok(adminFacilityService.updateFacilityType(facilityType));

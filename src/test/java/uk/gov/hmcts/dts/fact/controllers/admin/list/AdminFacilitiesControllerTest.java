@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.FacilityType;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @WebMvcTest(AdminFacilitiesController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminFacilitiesControllerTest {
@@ -108,6 +110,22 @@ public class AdminFacilitiesControllerTest {
     }
 
     @Test
+    void updateShouldReturnConflictIfNameIsAlreadyInUse() throws Exception {
+        final Integer id = 500;
+        final FacilityType existingFacilityType = getFacilityType(id, "Video facilities", "Cyfleusterau fideo");
+
+        when(adminFacilityService.updateFacilityType(existingFacilityType)).thenThrow(new DuplicatedListItemException(id.toString()));
+
+        final String facilityTypeJson = OBJECT_MAPPER.writeValueAsString(existingFacilityType);
+
+        mockMvc.perform(put(BASE_PATH)
+                            .content(facilityTypeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
+    }
+
+    @Test
     void updateShouldReturnNotFoundIfFacilityTypeDoesNotExist() throws Exception {
         final Integer id = 500;
         final FacilityType existingFacilityType = getFacilityType(id, "Video facilities", "Cyfleusterau fideo");
@@ -137,6 +155,22 @@ public class AdminFacilitiesControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
             .andExpect(content().json(facilityTypeJson));
+    }
+
+    @Test
+    void createShouldReturnConflictIfNameIsAlreadyInUse() throws Exception {
+        final FacilityType newFacilityType = getFacilityType(1200, "NEW Facility Type", "NEW Facility Type (cy)");
+
+        when(adminFacilityService.createFacilityType(newFacilityType))
+            .thenThrow(new DuplicatedListItemException(newFacilityType.getName()));
+
+        final String facilityTypeJson = OBJECT_MAPPER.writeValueAsString(newFacilityType);
+
+        mockMvc.perform(post(BASE_PATH)
+                            .content(facilityTypeJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
     }
 
     @Test

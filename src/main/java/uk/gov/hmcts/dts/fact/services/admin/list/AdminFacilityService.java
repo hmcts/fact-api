@@ -46,7 +46,7 @@ public class AdminFacilityService {
     }
 
     public FacilityType createFacilityType(FacilityType facilityType) {
-        checkIfFacilityTypeAlreadyExists(facilityType.getName());
+        checkIfFacilityTypeAlreadyExists(null, facilityType.getName());
 
         Optional<Integer> currentMaxOrder = getAllFacilityTypes()
             .stream()
@@ -68,6 +68,8 @@ public class AdminFacilityService {
     public FacilityType updateFacilityType(FacilityType facilityType) {
         uk.gov.hmcts.dts.fact.entity.FacilityType entity = facilityTypeRepository.findById(facilityType.getId())
             .orElseThrow(() -> new NotFoundException(facilityType.getId().toString()));
+
+        checkIfFacilityTypeAlreadyExists(entity.getName(), facilityType.getName());
 
         entity.setName(facilityType.getName());
         entity.setNameCy(facilityType.getNameCy());
@@ -109,9 +111,14 @@ public class AdminFacilityService {
             .collect(toList());
     }
 
-    private void checkIfFacilityTypeAlreadyExists(String name) {
-        if (getAllFacilityTypes().stream().anyMatch(f -> f.getName().equalsIgnoreCase(name))) {
-            throw new DuplicatedListItemException("Facility already exists: " + name);
+    private void checkIfFacilityTypeAlreadyExists(String originalName, String newName) {
+        List<FacilityType> facilityTypes = getAllFacilityTypes();
+        if (originalName != null) {
+            facilityTypes = facilityTypes.stream().filter(f -> !f.getName().equalsIgnoreCase(originalName)).collect(toList());
+        }
+
+        if (facilityTypes.stream().anyMatch(f -> f.getName().equalsIgnoreCase(newName))) {
+            throw new DuplicatedListItemException("Facility already exists: " + newName);
         }
     }
 

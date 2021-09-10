@@ -99,6 +99,27 @@ public class AdminFacilityServiceTest {
     }
 
     @Test
+    void updateShouldThrowDuplicatedListItemExceptionIfFacilityTypeAlreadyExists() {
+        final List<FacilityType> allFacilityTypes = Arrays.asList(
+            getFacilityType(500, "Waiting Room", "Waiting Room cy"),
+            getFacilityType(900, "Refreshments", "Refreshments cy")
+            );
+
+        when(facilityTypeRepository.findAll()).thenReturn(allFacilityTypes);
+        when(facilityTypeRepository.findById(500)).thenReturn(Optional.of(allFacilityTypes.get(0)));
+        when(facilityTypeRepository.findById(900)).thenReturn(Optional.of(allFacilityTypes.get(1)));
+
+        // Try to edit 'Waiting Room' facility type name to 'Refreshments' and cause a duplicate name
+        final uk.gov.hmcts.dts.fact.model.admin.FacilityType facilityType =
+            new uk.gov.hmcts.dts.fact.model.admin.FacilityType(allFacilityTypes.get(0));
+        facilityType.setName("Refreshments");
+
+        assertThatThrownBy(() -> adminFacilityService
+            .updateFacilityType(facilityType))
+            .isInstanceOf(DuplicatedListItemException.class);
+    }
+
+    @Test
     void shouldCreateFacilityType() {
         final uk.gov.hmcts.dts.fact.model.admin.FacilityType facilityType = new uk.gov.hmcts.dts.fact.model.admin.FacilityType();
         facilityType.setName("Security");
