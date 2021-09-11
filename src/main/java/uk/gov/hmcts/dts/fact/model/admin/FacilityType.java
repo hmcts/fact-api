@@ -1,10 +1,11 @@
 package uk.gov.hmcts.dts.fact.model.admin;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class FacilityType {
     private Integer id;
