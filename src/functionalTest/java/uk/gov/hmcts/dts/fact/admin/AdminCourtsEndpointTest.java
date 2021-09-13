@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.response.Response;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.List;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static java.util.Arrays.asList;
@@ -28,7 +30,13 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE = "Birmingham Civil and Family Justice Centre";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
+    private static final String TEST_STRING = "test";
     private static final String COURT_GENERAL_ENDPOINT = "/general";
+    private static final String COURT_PHOTO_ENDPOINT = "/courtPhoto";
+    private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
+    private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
+
+
 
     @Test
     public void shouldRetrieveCourtsForDownload() {
@@ -290,6 +298,96 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         final Court court = getResponse.as(Court.class);
         assertThat(court.getInfo()).isEqualTo(courtInfo.getInfo());
         assertThat(court.getInfoCy()).isEqualTo(courtInfo.getInfoCy());
+    }
+    /************************************************************* court photo GET request tests section. ***************************************************************/
+
+    @Test
+    public void shouldRetrieveCourtPhoto() {
+        final var response = doGetRequest(
+            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        final String courtPhoto = response.getBody().asString();
+        assertThat(courtPhoto).isNotNull();
+        assertThat(courtPhoto).isEqualTo("birmingham_civil_justice_centre_and_family_courts.jpg");
+
+    }
+
+    @Test
+    public void shouldNotRetrieveCourtPhotoWhenCourtSlugNotFound() {
+        final var response = doGetRequest(COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
+
+    @Test
+    public void shouldRequireATokenWhenRetrievingCourtPhoto() {
+        final var response = doGetRequest(BIRMINGHAM_COURT_PHOTO_PATH);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldBeForbiddenForRetrievingCourtPhoto() {
+        final var response = doGetRequest(
+            BIRMINGHAM_COURT_PHOTO_PATH,
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken)
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    /************************************************************* court photo PUT request tests section. ***************************************************************/
+
+    @Test
+    public void shouldUpdateCourtPhoto() {
+        final var response = doGetRequest(
+            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        final String originalCourtPhotoString = response.getBody().asString();
+
+        final var updateResponse = doPutRequest(
+            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            TEST_STRING);
+
+        assertThat(updateResponse.statusCode()).isEqualTo(OK.value());
+        final String courtPhoto = updateResponse.getBody().asString();
+        assertThat(courtPhoto).isNotNull();
+        assertThat(courtPhoto).isEqualTo(TEST_STRING);
+
+        //cleanup
+
+        final var responseTestClean = doPutRequest(
+            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            originalCourtPhotoString);
+        assertThat(responseTestClean.statusCode()).isEqualTo(OK.value());
+        final String originalString = responseTestClean.getBody().asString();
+        assertThat(originalString).isNotNull();
+        assertThat(originalString).isEqualTo(originalCourtPhotoString);
+    }
+
+    @Test
+    public void shouldBeForbiddenForUpdatingCourtPhoto() {
+        final Response response = doPutRequest(
+            BIRMINGHAM_COURT_PHOTO_PATH,
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken), TEST_STRING
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldRequireATokenWhenUpdatingCourtPhoto() {
+        final Response response = doPutRequest(
+            BIRMINGHAM_COURT_PHOTO_PATH, TEST_STRING
+        );
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldNotFoundForPhotoUpdateWhenCourtDoesNotExist() {
+
+        final Response response = doPutRequest(
+            COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            TEST_STRING
+        );
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
     private List<OpeningTime> openingTimes() {
