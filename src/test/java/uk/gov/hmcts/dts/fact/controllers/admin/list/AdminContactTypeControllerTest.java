@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminContactTypeControllerTest {
     private static final String BASE_PATH = "/admin/contactTypes";
+    private static final Integer ID = 100;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -132,10 +133,10 @@ public class AdminContactTypeControllerTest {
 
     @Test
     void shouldSuccessfullyDeleteContactType() throws Exception {
-        final Integer id = 200;
-        final String idJson = OBJECT_MAPPER.writeValueAsString(id);
 
-        mockMvc.perform(delete(BASE_PATH  + "/" + id)
+        final String idJson = OBJECT_MAPPER.writeValueAsString(ID);
+
+        mockMvc.perform(delete(BASE_PATH  + "/" + ID)
                             .content(OBJECT_MAPPER.writeValueAsString(idJson))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -145,11 +146,11 @@ public class AdminContactTypeControllerTest {
 
     @Test
     void shouldReturnConflictIfContactTypeInUse() throws Exception {
-        final Integer id = 500;
-        doThrow(mock(ListItemInUseException.class)).when(adminContactTypeService).deleteContactType(id);
 
-        mockMvc.perform(delete(BASE_PATH  + "/" + id)
-                            .content(OBJECT_MAPPER.writeValueAsString(id))
+        doThrow(mock(ListItemInUseException.class)).when(adminContactTypeService).deleteContactType(ID);
+
+        mockMvc.perform(delete(BASE_PATH  + "/" + ID)
+                            .content(OBJECT_MAPPER.writeValueAsString(ID))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isConflict());
@@ -157,11 +158,11 @@ public class AdminContactTypeControllerTest {
 
     @Test
     void deleteContactTypeShouldReturnNotFoundIfIdDoesNotExist() throws Exception {
-        final Integer id = 300;
-        doThrow(mock(NotFoundException.class)).when(adminContactTypeService).deleteContactType(id);
 
-        mockMvc.perform(delete(BASE_PATH  + "/" + id)
-                            .content(OBJECT_MAPPER.writeValueAsString(id))
+        doThrow(mock(NotFoundException.class)).when(adminContactTypeService).deleteContactType(ID);
+
+        mockMvc.perform(delete(BASE_PATH  + "/" + ID)
+                            .content(OBJECT_MAPPER.writeValueAsString(ID))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
