@@ -75,7 +75,7 @@ public class AdminCourtsController {
     @GetMapping(path = "/{slug}/courtPhoto")
     @ApiOperation("Find the photo for a court")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = String.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found")
@@ -88,7 +88,7 @@ public class AdminCourtsController {
     @PutMapping(path = "/{slug}/courtPhoto")
     @ApiOperation("Update the photo for a court")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = String.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found")

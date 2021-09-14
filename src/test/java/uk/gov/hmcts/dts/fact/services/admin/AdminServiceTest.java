@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
 class AdminServiceTest {
