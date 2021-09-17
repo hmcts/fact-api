@@ -26,6 +26,11 @@ public class CourtDxCode {
     private DxCode dxCode;
     private Integer sort;
 
+    public CourtDxCode(final Court court, final DxCode dxCode) {
+        this.court = court;
+        this.dxCode = dxCode;
+    }
+
     @PrePersist
     @PreUpdate
     @PreRemove
