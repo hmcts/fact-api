@@ -1,14 +1,14 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.*;
-import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
 import uk.gov.hmcts.dts.fact.model.admin.DxCode;
+import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.Arrays;
 import java.util.List;
@@ -120,16 +120,12 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
         final CourtTypesAndCodes courtTypesAndCodesListExpected = updateTest();
         final String expectedJson = objectMapper().writeValueAsString(courtTypesAndCodesListExpected);
 
-        System.out.println("......expected............." + expectedJson);
-
         final var updatedResponse = doPutRequest(
             WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
             expectedJson);
 
         assertThat(updatedResponse.statusCode()).isEqualTo(OK.value());
         final CourtTypesAndCodes updatedCourtTypesAndCodes = updatedResponse.as(CourtTypesAndCodes.class);
-
-        System.out.println(".....updated............." + objectMapper().writeValueAsString(updatedCourtTypesAndCodes));
 
         assertThat(courtTypesAndCodesListExpected).isEqualTo(updatedCourtTypesAndCodes);
 
@@ -173,14 +169,14 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
         final var response = doPutRequest(
-            ADMIN_COURTS_ENDPOINT + "wolverhampton-combined" + COURT_TYPES_AND_CODE_PATH , Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            ADMIN_COURTS_ENDPOINT + "wolverhampton-combined" + COURT_TYPES_AND_CODE_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             testJson
         );
 
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
-    /********************************************** Utility functions *****************************************************************************/
+    /********************************************** Utility functions. *****************************************************************************/
 
     private CourtTypesAndCodes updateTest() {
 
@@ -196,6 +192,4 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
         );
         return response.as(CourtTypesAndCodes.class);
     }
-
-
 }
