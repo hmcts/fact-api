@@ -66,7 +66,7 @@ public class AdminCourtTypesAndCodesService {
         return  courtDxCodesRepository.findByCourtId(courtEntity.getId())
             .stream()
             .map(CourtDxCode::getDxCode)
-            .map(DxCode::new)
+            .map(dc -> new DxCode(dc.getCode(),dc.getExplanation(), dc.getExplanationCy()))
             .collect(toList());
     }
 

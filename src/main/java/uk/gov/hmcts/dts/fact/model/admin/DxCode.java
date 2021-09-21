@@ -16,10 +16,9 @@ public class DxCode {
     private String explanation;
     private String explanationCy;
 
-    public DxCode(final uk.gov.hmcts.dts.fact.entity.DxCode dxCode) {
-        this.id = dxCode.getId();
-        this.code = dxCode.getCode();
-        this.explanation = dxCode.getExplanation();
-        this.explanationCy = dxCode.getExplanationCy();
+    public DxCode(final String code, final String explanation, final String explanationCy) {
+        this.code = code;
+        this.explanation = explanation;
+        this.explanationCy = explanationCy;
     }
 }
