@@ -39,7 +39,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     );
 
     private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(
-        new DxCode(243,"702019 Wolverhampton 4","test","test")
+        new DxCode("702019 Wolverhampton 4","test1","test1")
     );
 
     /************************************************************* GET request tests section. ***************************************************************/
@@ -123,7 +123,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
         System.out.println("......expected............." + expectedJson);
 
         final var updatedResponse = doPutRequest(
-            WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
             expectedJson);
 
         assertThat(updatedResponse.statusCode()).isEqualTo(OK.value());
@@ -131,11 +131,11 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
 
         System.out.println(".....updated............." + objectMapper().writeValueAsString(updatedCourtTypesAndCodes));
 
-        //assertThat(courtTypesAndCodesListExpected).isEqualTo(updatedCourtTypesAndCodes);
+        assertThat(courtTypesAndCodesListExpected).isEqualTo(updatedCourtTypesAndCodes);
 
         //cleanup
         final var cleanUpResponse = doPutRequest(
-            WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
             originalJson);
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
         final CourtTypesAndCodes cleanUpCourtTypesAndCodes = cleanUpResponse.as(CourtTypesAndCodes.class);
