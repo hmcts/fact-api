@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.*;
-import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
-import uk.gov.hmcts.dts.fact.model.admin.DxCode;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.Arrays;
@@ -35,7 +33,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     private static final String TEST_GBS_CODE = "Y288";
 
     private static final List<CourtType> EXPECTED_COURT_TYPE_CODES = Arrays.asList(
-        new CourtType(11419,"County Court",123)
+        new CourtType(11_419,"County Court",123)
     );
 
     private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(
@@ -180,9 +178,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
 
     private CourtTypesAndCodes updateTest() {
 
-        CourtTypesAndCodes updatedCourtTypesAndCodes =  new CourtTypesAndCodes(EXPECTED_COURT_TYPE_CODES,TEST_GBS_CODE,
-                                                                               EXPECTED_COURT_DX_CODES);
-        return updatedCourtTypesAndCodes;
+        return new CourtTypesAndCodes(EXPECTED_COURT_TYPE_CODES,TEST_GBS_CODE, EXPECTED_COURT_DX_CODES);
     }
 
     private CourtTypesAndCodes getCurrentCourtTypesAndCodes() {
