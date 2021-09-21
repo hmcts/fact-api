@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -40,7 +41,6 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(
         new DxCode(243,"702019 Wolverhampton 4","test","test")
     );
-
 
     /************************************************************* GET request tests section. ***************************************************************/
 
@@ -107,7 +107,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     /************************************************************* Court type and code PUT request tests section. ***************************************************************/
 
     @Test
-    public void shouldUpdateTest() throws JsonProcessingException {
+    public void shouldUpdateCourtTypesAndCode() throws JsonProcessingException {
 
         final var response = doGetRequest(
             WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH,
@@ -117,7 +117,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
 
         final CourtTypesAndCodes courtTypesAndCodesListOriginal = response.as(CourtTypesAndCodes.class);
         final String originalJson = objectMapper().writeValueAsString(courtTypesAndCodesListOriginal);
-        final CourtTypesAndCodes courtTypesAndCodesListExpected = updateTest(courtTypesAndCodesListOriginal);
+        final CourtTypesAndCodes courtTypesAndCodesListExpected = updateTest();
         final String expectedJson = objectMapper().writeValueAsString(courtTypesAndCodesListExpected);
 
         System.out.println("......expected............." + expectedJson);
@@ -143,28 +143,59 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
 
     }
 
+    @Test
+    public void shouldRequireATokenWhenUpdatingCourtTypesAndCode() throws JsonProcessingException {
+        final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
+        final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
+        final var response = doPutRequest(
+            WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH,
+            testJson);
 
-    /********************************************** Utility function **************************************************/
-
-    private CourtTypesAndCodes updateTest(final CourtTypesAndCodes test) {
-
-        CourtTypesAndCodes updatedCourtTypesAndCodes =  new CourtTypesAndCodes();
-        updatedCourtTypesAndCodes.setCourtTypes(EXPECTED_COURT_TYPE_CODES);
-        updatedCourtTypesAndCodes.setGbsCode(TEST_GBS_CODE);
-        updatedCourtTypesAndCodes.setDxCodes(EXPECTED_COURT_DX_CODES);
-
-        return updatedCourtTypesAndCodes;
-
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
+    @Test
+    public void shouldBeForbiddenForUpdatingCourtTypesAndCode() throws JsonProcessingException {
+        final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
+        final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
+        final var response = doPutRequest(
+            WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken),
+            testJson);
 
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
 
+    @Test
+    public void shouldNotUpdatingCourtTypesAndCodeForCourtDoesNotExist() throws JsonProcessingException {
+        final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
+        final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
+        final var response = doPutRequest(
+            ADMIN_COURTS_ENDPOINT + "wolverhampton-combined" + COURT_TYPES_AND_CODE_PATH , Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            testJson
+        );
 
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
 
+    /********************************************** Utility functions *****************************************************************************/
 
+    private CourtTypesAndCodes updateTest() {
+
+        CourtTypesAndCodes updatedCourtTypesAndCodes =  new CourtTypesAndCodes(EXPECTED_COURT_TYPE_CODES,TEST_GBS_CODE,
+                                                                               EXPECTED_COURT_DX_CODES);
+        return updatedCourtTypesAndCodes;
+    }
+
+    private CourtTypesAndCodes getCurrentCourtTypesAndCodes() {
+        final Response response = doGetRequest(
+            WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
+        );
+        return response.as(CourtTypesAndCodes.class);
+    }
 
 
 }
