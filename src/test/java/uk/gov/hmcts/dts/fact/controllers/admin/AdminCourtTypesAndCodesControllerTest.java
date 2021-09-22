@@ -79,7 +79,7 @@ public class AdminCourtTypesAndCodesControllerTest {
 
 
     @Test
-    void updateCourtCourtTypesShouldReturnUpdatedCourtCourtTypes() throws Exception {
+    void updateCourtTypesAndCodesShouldReturnUpdatedCourtTypesAndCodes() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_AND_CODES_PATH);
         final CourtTypesAndCodes courtTypesAndCodes = OBJECT_MAPPER.readValue(expectedJson, CourtTypesAndCodes.class);
 
@@ -94,7 +94,7 @@ public class AdminCourtTypesAndCodesControllerTest {
     }
 
     @Test
-    void updateCourtCourtTypesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
+    void updateCourtTypesAndCodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_AND_CODES_PATH);
         final CourtTypesAndCodes courtTypesAndCodes = OBJECT_MAPPER.readValue(expectedJson, CourtTypesAndCodes.class);
 
@@ -109,7 +109,7 @@ public class AdminCourtTypesAndCodesControllerTest {
     }
 
     @Test
-    void updateCourtCourtTypesShouldReturnBadRequestForUnknownCourtType() throws Exception {
+    void updateCourtTypesAndCodesShouldReturnBadRequestForUnknownCourtType() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_AND_CODES_PATH);
         final CourtTypesAndCodes courtTypesAndCodes = OBJECT_MAPPER.readValue(expectedJson, CourtTypesAndCodes.class);
 

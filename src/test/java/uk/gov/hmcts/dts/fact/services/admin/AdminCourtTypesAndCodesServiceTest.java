@@ -57,8 +57,8 @@ public class AdminCourtTypesAndCodesServiceTest {
 
 
     private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(
-        new DxCode(null,"Code 1",null,null),
-        new DxCode(null,"Code 2",null,null)
+        new DxCode("Code 1",null,null),
+        new DxCode("Code 2",null,null)
     );
 
     private static final List<CourtDxCode> EXPECTED_COURT_DX_CODE_ENTITY = Arrays.asList(

@@ -11,14 +11,13 @@ import lombok.NoArgsConstructor;
 @Getter
 public class DxCode {
 
-    private Integer id;
     private String code;
     private String explanation;
     private String explanationCy;
 
-    public DxCode(final String code, final String explanation, final String explanationCy) {
-        this.code = code;
-        this.explanation = explanation;
-        this.explanationCy = explanationCy;
+    public DxCode(final uk.gov.hmcts.dts.fact.entity.DxCode dxCode) {
+        this.code = dxCode.getCode();
+        this.explanation = dxCode.getExplanation();
+        this.explanationCy = dxCode.getExplanationCy();
     }
 }

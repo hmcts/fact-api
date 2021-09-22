@@ -19,13 +19,11 @@
   "gbsCode": "123",
   "dxCodes": [
     {
-      "id": 1,
       "code": "123",
       "explanation": "explanation 1",
       "explanationCy": "explanation cy 1"
     },
     {
-      "id": 2,
       "code": "456",
       "explanation": "explanation 2",
       "explanationCy": "explanation cy 2"
