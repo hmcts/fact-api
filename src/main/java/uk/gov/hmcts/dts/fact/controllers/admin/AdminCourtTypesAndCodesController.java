@@ -34,7 +34,7 @@ public class AdminCourtTypesAndCodesController {
     @GetMapping(path = "/courtTypes")
     @ApiOperation("Return all court types")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = CourtType.class),
+        @ApiResponse(code = 200, message = "Successful", response = CourtType.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
     })
@@ -44,7 +44,7 @@ public class AdminCourtTypesAndCodesController {
     }
 
     @GetMapping(path = "/{slug}/courtTypesAndCodes")
-    @ApiOperation("Find a court's types and codes by slug")
+    @ApiOperation("Find a court's types, GBS code and Dx codes by slug")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = CourtTypesAndCodes.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
@@ -57,7 +57,7 @@ public class AdminCourtTypesAndCodesController {
     }
 
     @PutMapping(path = "/{slug}/courtTypesAndCodes")
-    @ApiOperation("Update a court's types and codes")
+    @ApiOperation("Update a court's types, GBS code and Dx codes")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = CourtTypesAndCodes.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
