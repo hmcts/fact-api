@@ -51,19 +51,19 @@ public class AdminCourtTypesAndCodesServiceTest {
     private static final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> EXPECTED_COURT_TYPES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(1,"test1",null),
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(2,"test2",null),
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",null)
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",1)
     );
 
 
 
     private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(
-        new DxCode("Code 1",null,null),
-        new DxCode("Code 2",null,null)
+        new DxCode("Code 1","explanation1","explanationCy1"),
+        new DxCode("Code 2","explanation2","explanationCy2")
     );
 
     private static final List<CourtDxCode> EXPECTED_COURT_DX_CODE_ENTITY = Arrays.asList(
-        new CourtDxCode(mock(Court.class),new uk.gov.hmcts.dts.fact.entity.DxCode("Code 1",null,null)),
-        new CourtDxCode(mock(Court.class),new uk.gov.hmcts.dts.fact.entity.DxCode("Code 2",null,null))
+        new CourtDxCode(mock(Court.class),new uk.gov.hmcts.dts.fact.entity.DxCode("Code 1","explanation1","explanationCy1")),
+        new CourtDxCode(mock(Court.class),new uk.gov.hmcts.dts.fact.entity.DxCode("Code 2","explanation2","explanationCy2"))
 
     );
     private static final CourtTypesAndCodes EXPECTED_COURT_TYPES_AND_CODES = new CourtTypesAndCodes(EXPECTED_COURT_TYPES,GBS_CODE,EXPECTED_COURT_DX_CODES);

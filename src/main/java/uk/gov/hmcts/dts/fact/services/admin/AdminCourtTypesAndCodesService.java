@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
@@ -70,7 +69,6 @@ public class AdminCourtTypesAndCodesService {
             .collect(toList());
     }
 
-    @Transactional()
     public CourtTypesAndCodes updateCourtTypesAndCodes(final String slug, final CourtTypesAndCodes courtTypesAndCodes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
@@ -102,7 +100,7 @@ public class AdminCourtTypesAndCodesService {
             courtEntity.getCourtTypes().addAll(courtTypeEntity);
         }
 
-        //remove existing code entries for court.
+        //remove existing code entries for court as set by mapCourtCode utility.
         courtEntity.setMagistrateCode(null);
         courtEntity.setCciCode(null);
         courtEntity.setNumber(null);
