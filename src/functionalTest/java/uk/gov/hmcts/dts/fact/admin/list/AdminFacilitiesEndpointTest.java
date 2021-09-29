@@ -17,19 +17,21 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith(SpringExtension.class)
 public class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
 
     private static final String GET_FACILITIES_ENDPOINT = "/admin/facilities/";
 
     private static final int TEST_INTERVIEW_ROOM_ID = 42;
-    private static final int TEST_INTERVIEW_ROOM_ID_NOT_FOUND = 12345;
+    private static final int TEST_INTERVIEW_ROOM_ID_NOT_FOUND = 12_345;
     private static final String TEST_FACILITY_NAME = "Interview room";
     private static final String TEST_FACILITY_NAMECY = "Ystafell gyfweld";
     private static final String TEST_IMAGE = "interview";
     private static final String TEST_IMAGE_DESCRIPTION = "Interview room icon.";
     private static final String TEST_IMAGE_FILE_PATH = "uploads/facility/image_file/53/interview.png";
     private static final int TEST_FACILITY_ORDER = 9;
+    private static final String REORDER = "reorder";
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -258,7 +260,7 @@ public class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
 
         final String expectedJson = objectMapper().writeValueAsString(idListSwap);
         final Response responseResetId = doPutRequest(
-            GET_FACILITIES_ENDPOINT + "reorder",
+            GET_FACILITIES_ENDPOINT + REORDER,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             expectedJson
         );
@@ -277,7 +279,7 @@ public class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
         final String testJson = objectMapper().writeValueAsString(idList);
 
         final Response response = doPutRequest(
-            GET_FACILITIES_ENDPOINT + "reorder",
+            GET_FACILITIES_ENDPOINT + REORDER,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), testJson
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -290,7 +292,7 @@ public class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
         final String testJson = objectMapper().writeValueAsString(idList);
 
         final Response response = doPutRequest(
-            GET_FACILITIES_ENDPOINT + "reorder", testJson);
+            GET_FACILITIES_ENDPOINT + REORDER, testJson);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
@@ -302,7 +304,7 @@ public class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
         final String testJson = objectMapper().writeValueAsString(idList);
 
         final Response response = doPutRequest(
-            GET_FACILITIES_ENDPOINT + "reorder",
+            GET_FACILITIES_ENDPOINT + REORDER,
             Map.of(AUTHORIZATION, BEARER + superAdminToken), testJson
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
