@@ -119,8 +119,9 @@ public class AdminService {
     public String updateCourtImage(final String slug, final String imageFile) {
         final Optional<uk.gov.hmcts.dts.fact.entity.Court> court =
             courtRepository.findBySlug(slug);
-        if (court.isEmpty())
+        if (court.isEmpty()) {
             throw new NotFoundException(slug);
+        }
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
     }
 }
