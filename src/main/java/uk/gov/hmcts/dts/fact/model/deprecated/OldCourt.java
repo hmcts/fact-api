@@ -43,6 +43,8 @@ public class OldCourt {
     private Integer cciCode;
     private Integer magistratesLocationCode;
     private List<String> areasOfLaw;
+    @JsonProperty("areas_of_law_spoe")
+    private List<String> areasOfLawSpoe;
     @JsonProperty("types")
     private List<String> courtTypes;
     private List<Email> emails;
@@ -71,6 +73,8 @@ public class OldCourt {
             .orElseGet(Stream::empty)
             .map(CourtType::getName)
             .collect(toList());
+        this.areasOfLawSpoe = courtEntity.getAreasOfLawSpoe();
+        this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = ofNullable(courtEntity.getCourtEmails())
             .map(Collection::stream)
             .orElseGet(Stream::empty)

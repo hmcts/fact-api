@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.DxCode;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,11 +43,13 @@ public class CourtWithDistanceTest {
         final AreaOfLaw areaOfLaw = new AreaOfLaw();
         areaOfLaw.setName("Adoption");
 
+        COURT_ENTITY.setAreasOfLawSpoe(emptyList());
         COURT_ENTITY.setCourtDxCodes(singletonList(courtDxCode));
         COURT_ENTITY.setCourtTypes(singletonList(courtType));
         COURT_ENTITY.setAddresses(singletonList(courtAddress));
         COURT_ENTITY.setAreasOfLaw(singletonList(areaOfLaw));
 
+        COURT_WITH_DISTANCE_ENTITY.setAreasOfLawSpoe(emptyList());
         COURT_WITH_DISTANCE_ENTITY.setDxCodes(singletonList(dxCode));
         COURT_WITH_DISTANCE_ENTITY.setCourtTypes(singletonList(courtType));
         COURT_WITH_DISTANCE_ENTITY.setAddresses(singletonList(courtAddress));
