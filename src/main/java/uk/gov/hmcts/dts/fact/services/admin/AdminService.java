@@ -112,10 +112,9 @@ public class AdminService {
         courtRepository.updateLatLonBySlug(slug, lat, lon);
     }
 
-    @Transactional
     public String getCourtImage(final String slug) {
-        uk.gov.hmcts.dts.fact.entity.Court
-            court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
+        final uk.gov.hmcts.dts.fact.entity.Court court =
+            courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
         return court.getImageFile();
     }
 
