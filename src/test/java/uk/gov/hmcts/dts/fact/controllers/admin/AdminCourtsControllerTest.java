@@ -28,14 +28,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @WebMvcTest(AdminCourtsController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AdminCourtsControllerTest {
 
     private static final String URL = "/courts";
+    private static final String COURT_PHOTO_URL = "/%s/courtPhoto";
     private static final String TEST_COURT_FILE = "courts.json";
     private static final String TEST_GENERAL_FILE = "birmingham-civil-and-family-justice-centre-general.json";
     private static final String TEST_COURT_ENTITY_FILE = "full-birmingham-civil-and-family-justice-centre-entity.json";
+    private static final String SEARCH_SLUG = "some-slug";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -77,10 +80,8 @@ class AdminCourtsControllerTest {
         final String expectedJson = getResourceAsJson(TEST_GENERAL_FILE);
         final Court courtEntity = OBJECT_MAPPER.readValue(expectedJson, Court.class);
 
-        final String searchSlug = "some-slug";
-
-        when(adminService.getCourtBySlug(searchSlug)).thenReturn(courtEntity);
-        mockMvc.perform(get(String.format(URL + "/%s/general", searchSlug)))
+        when(adminService.getCourtBySlug(SEARCH_SLUG)).thenReturn(courtEntity);
+        mockMvc.perform(get(String.format(URL + "/%s/general", SEARCH_SLUG)))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
             .andReturn();
@@ -116,10 +117,9 @@ class AdminCourtsControllerTest {
         courtEntity.setAlertCy(court.getAlertCy());
         when(adminService.save(any(), any())).thenReturn(new Court(courtEntity));
 
-        final String searchSlug = "some-slug";
         final String json = OBJECT_MAPPER.writeValueAsString(court);
 
-        mockMvc.perform(put(String.format(URL + "/%s/general", searchSlug))
+        mockMvc.perform(put(String.format(URL + "/%s/general", SEARCH_SLUG))
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -154,11 +154,56 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldReturnNotFoundForUnknownSlug() throws Exception {
-        final String searchSlug = "some-slug";
+        final String searchSlug = SEARCH_SLUG;
 
         when(adminService.getCourtBySlug(searchSlug)).thenThrow(new NotFoundException("search criteria"));
 
         mockMvc.perform(get(String.format(URL + "/%s/general", searchSlug)))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("Not found: search criteria"))
+            .andReturn();
+    }
+
+    @Test
+    void shouldReturnCourtImageFile() throws Exception {
+        final String imageFile = "birmingham_district_probate_registry.jpg";
+
+        when(adminService.getCourtImage(SEARCH_SLUG)).thenReturn(imageFile);
+        mockMvc.perform(get(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG)))
+            .andExpect(status().isOk())
+            .andExpect(content().string(imageFile))
+            .andReturn();
+    }
+
+    @Test
+    void shouldNotReturnCourtImageFileForUnknownSlug() throws Exception {
+        when(adminService.getCourtImage(SEARCH_SLUG)).thenThrow(new NotFoundException("search criteria"));
+        mockMvc.perform(get(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG)))
+                            .andExpect(status().isNotFound())
+                            .andExpect(content().string("Not found: search criteria"))
+                            .andReturn();
+    }
+
+    @Test
+    void shouldUpdateCourtImageFile() throws Exception {
+        final String imageFile = "birmingham_district_probate_registry.jpg";
+
+        mockMvc.perform(put(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG))
+                            .content(imageFile)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldNotUpdateCourtImageFileForUnknownSlug() throws Exception {
+        final String imageFile = "birmingham_district_probate_registry.jpg";
+
+        when(adminService.updateCourtImage(SEARCH_SLUG, imageFile)).thenThrow(new NotFoundException("search criteria"));
+        mockMvc.perform(put(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG))
+                            .content(imageFile)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
             .andExpect(content().string("Not found: search criteria"))
             .andReturn();
