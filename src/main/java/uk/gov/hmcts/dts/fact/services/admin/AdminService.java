@@ -13,10 +13,7 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -112,16 +109,19 @@ public class AdminService {
         courtRepository.updateLatLonBySlug(slug, lat, lon);
     }
 
-    @Transactional
     public String getCourtImage(final String slug) {
-        uk.gov.hmcts.dts.fact.entity.Court
-            court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
+        final uk.gov.hmcts.dts.fact.entity.Court court =
+            courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
         return court.getImageFile();
     }
 
     @Transactional
     public String updateCourtImage(final String slug, final String imageFile) {
-        courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
+        final Optional<uk.gov.hmcts.dts.fact.entity.Court> court =
+            courtRepository.findBySlug(slug);
+        if (court.isEmpty()) {
+            throw new NotFoundException(slug);
+        }
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
     }
 }
