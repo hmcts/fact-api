@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.model.admin.EmailType;
 import uk.gov.hmcts.dts.fact.repositories.CourtEmailRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.EmailTypeRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,14 +27,17 @@ public class AdminCourtEmailService {
     private final CourtRepository courtRepository;
     private final CourtEmailRepository emailRepository;
     private final EmailTypeRepository emailTypeRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
     public AdminCourtEmailService(final CourtRepository courtRepository,
                                   final CourtEmailRepository emailRepository,
-                                  final EmailTypeRepository emailTypeRepository) {
+                                  final EmailTypeRepository emailTypeRepository,
+                                  final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.emailRepository = emailRepository;
         this.emailTypeRepository = emailTypeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<Email> getCourtEmailsBySlug(final String slug) {
@@ -56,12 +60,20 @@ public class AdminCourtEmailService {
         // Remove existing emails and then replace with newly updated ones
         emailRepository.deleteAll(courtEntity.getCourtEmails());
 
-        return emailRepository
+        List<Email> resultEmailList = emailRepository
             .saveAll(newCourtEmailList)
             .stream()
             .map(CourtEmail::getEmail)
             .map(Email::new)
             .collect(toList());
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court email list"),
+            courtEntity.getCourtEmails().stream()
+                .map(CourtEmail::getEmail)
+                .map(Email::new)
+                .collect(toList()),
+            resultEmailList, slug);
+        return resultEmailList;
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")

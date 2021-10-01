@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,13 +22,14 @@ import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
+import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,6 +45,9 @@ public class AdminAreasOfLawServiceTest {
 
     @MockBean
     private AreasOfLawRepository areasOfLawRepository;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @MockBean
     private CourtAreaOfLawRepository courtAreaOfLawRepository;
@@ -99,7 +104,7 @@ public class AdminAreasOfLawServiceTest {
         final List<uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw> expectedResult = AREAS_OF_LAW
             .stream()
             .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         assertThat(areasOfLawService.getAllAreasOfLaw()).isEqualTo(expectedResult);
     }
@@ -124,7 +129,16 @@ public class AdminAreasOfLawServiceTest {
     }
 
     @Test
-    void shouldUpdateAreaOfLaw() {
+    void shouldUpdateAreaOfLaw() throws JsonProcessingException {
+        final List<AreaOfLaw> areasOfLawCopy = AREAS_OF_LAW
+            .stream()
+            .map(aol -> new AreaOfLaw(
+                aol.getId(), aol.getName(), aol.getExternalLink(), aol.getExternalLinkCy(),
+                aol.getExternalLinkDescription(), aol.getExternalLinkDescriptionCy(),
+                aol.getAltName(), aol.getAltNameCy(), aol.getDisplayName(), aol.getDisplayNameCy(),
+                aol.getDisplayExternalLink()
+            ))
+            .collect(toList());
         final AreaOfLaw entity = AREAS_OF_LAW.get(0);
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw =
             new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(entity);
@@ -134,8 +148,17 @@ public class AdminAreasOfLawServiceTest {
 
         when(areasOfLawRepository.findById(areaOfLaw.getId())).thenReturn(Optional.of(entity));
         when(areasOfLawRepository.save(entity)).thenReturn(entity);
+        when(areasOfLawRepository.findAll()).thenReturn(AREAS_OF_LAW);
 
         assertThat(areasOfLawService.updateAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update area of law",
+                                                           areasOfLawCopy.stream()
+                                                               .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
+                                                               .collect(toList()),
+                                                           AREAS_OF_LAW.stream()
+                                                               .map(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw::new)
+                                                               .collect(toList()),
+                                                           null);
     }
 
     @Test
@@ -148,6 +171,10 @@ public class AdminAreasOfLawServiceTest {
             .isInstanceOf(NotFoundException.class);
 
         verify(areasOfLawRepository, never()).save(any());
+        verify(adminAuditService, never()).saveAudit("Update area of law",
+                                                     testAreaOfLaw,
+                                                     testAreaOfLaw,
+                                                     null);
     }
 
     @Test
@@ -166,6 +193,10 @@ public class AdminAreasOfLawServiceTest {
             .thenAnswer((Answer<AreaOfLaw>)invocation -> invocation.getArgument(0));
 
         assertThat(areasOfLawService.createAreaOfLaw(areaOfLaw)).isEqualTo(areaOfLaw);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Create area of law",
+                                                           areaOfLaw,
+                                                           areaOfLaw,
+                                                           null);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -179,6 +210,10 @@ public class AdminAreasOfLawServiceTest {
         assertThatThrownBy(() -> areasOfLawService
             .createAreaOfLaw(areaOfLaw))
             .isInstanceOf(DuplicatedListItemException.class);
+        verify(adminAuditService, never()).saveAudit("Create area of law",
+                                                     areaOfLaw,
+                                                     areaOfLaw,
+                                                     null);
     }
 
     @Test

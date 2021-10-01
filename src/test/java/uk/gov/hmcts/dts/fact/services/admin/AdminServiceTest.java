@@ -47,6 +47,9 @@ class AdminServiceTest {
     @MockBean
     private RolesProvider rolesProvider;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @BeforeEach
     void setUp() {
         courtEntity = new Court();
@@ -118,6 +121,9 @@ class AdminServiceTest {
         assertThat(courtResults.getAlertCy()).isEqualTo(court.getAlertCy());
         assertThat(courtResults.getInfo()).isNotEqualTo(court.getInfo());
         assertThat(courtResults.getInfoCy()).isNotEqualTo(court.getInfoCy());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
+                                                           court,
+                                                           courtResults, SOME_SLUG);
     }
 
     @Test
@@ -132,6 +138,9 @@ class AdminServiceTest {
         assertThat(courtResults.getInfoCy()).isEqualTo(court.getInfoCy());
         assertThat(courtResults.getOpen()).isEqualTo(court.getOpen());
         assertThat(courtResults.getAccessScheme()).isEqualTo(null);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
+                                                           court,
+                                                           courtResults, SOME_SLUG);
     }
 
     @Test
@@ -145,6 +154,9 @@ class AdminServiceTest {
         when(courtRepository.save(courtEntity)).thenReturn(courtEntity);
         final uk.gov.hmcts.dts.fact.model.admin.Court courtResults = adminService.save(SOME_SLUG, court);
         assertThat(courtResults.getAccessScheme()).isEqualTo(court.getAccessScheme());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
+                                                           court,
+                                                           courtResults, SOME_SLUG);
     }
 
     @Test
@@ -154,12 +166,14 @@ class AdminServiceTest {
 
         adminService.updateMultipleCourtsInfo(info);
         verify(courtRepository).updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
     void shouldUpdateCourtLatLon() {
         adminService.updateCourtLatLon(SOME_SLUG, LATITUDE, LONGITUDE);
         verify(courtRepository).updateLatLonBySlug(SOME_SLUG, LATITUDE, LONGITUDE);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

@@ -67,7 +67,7 @@ public class FunctionalTestBase {
     }
 
     protected Response doDeleteRequest(final String path, final String body) {
-        return doPutRequest(path, null, body);
+        return doDeleteRequest(path, null, body);
     }
 
     protected Response doDeleteRequest(final String path, final Map<String, String> additionalHeaders, final String body) {
