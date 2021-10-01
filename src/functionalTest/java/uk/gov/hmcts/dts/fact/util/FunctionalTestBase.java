@@ -53,7 +53,7 @@ public class FunctionalTestBase {
     }
 
     protected Response doPostRequest(final String path, final String body) {
-        return doPutRequest(path, null, body);
+        return doPostRequest(path, null, body);
     }
 
     protected Response doPostRequest(final String path, final Map<String, String> additionalHeaders, final String body) {
