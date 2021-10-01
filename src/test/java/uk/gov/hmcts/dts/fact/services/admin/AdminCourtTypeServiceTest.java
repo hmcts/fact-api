@@ -21,12 +21,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtTypesService.class)
@@ -61,6 +61,9 @@ public class AdminCourtTypeServiceTest {
 
     @Autowired
     private AdminCourtTypesService adminCourtTypesService;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Mock
     private Court court;
@@ -109,14 +112,22 @@ public class AdminCourtTypeServiceTest {
     void shouldUpdateCourtCourtTypes() {
         when(court.getCourtTypes()).thenReturn(COURT_TYPES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(court.getCourtTypes()).thenReturn(COURT_TYPES);
         when(mapCourtCode.mapCourtCodesForCourtEntity(anyList(), any())).thenReturn(court);
         when(courtRepository.save(court)).thenReturn(court);
         when(adminCourtTypesService.saveNewCourtCourtTypes(court, EXPECTED_COURT_TYPES)).thenReturn(
             EXPECTED_COURT_TYPES);
 
+        List<uk.gov.hmcts.dts.fact.model.admin.CourtType> results =
+            adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES);
         assertThat(adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES))
             .hasSize(COURT_TYPE_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_TYPES);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court court types",
+                                                           COURT_TYPES.stream()
+                                                               .map(uk.gov.hmcts.dts.fact.model.admin.CourtType::new)
+                                                               .collect(toList()),
+                                                           results, COURT_SLUG);
     }
 
     @Test
@@ -126,6 +137,7 @@ public class AdminCourtTypeServiceTest {
         assertThatThrownBy(() -> adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -137,5 +149,6 @@ public class AdminCourtTypeServiceTest {
         assertThatThrownBy(() -> adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage(TEST_MESSAGE);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 }

@@ -7,12 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.dts.fact.entity.Contact;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
-import uk.gov.hmcts.dts.fact.entity.CourtContact;
-import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.util.Utils;
+import uk.gov.hmcts.dts.fact.model.CourtAddress;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,7 +27,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "lat", "lon", "number", "cci_code", "magistrate_code", "slug", "types", "address",
-    "areas_of_law", "displayed", "hide_aols", "dx_number", "distance"})
+    "areas_of_law", "areas_of_law_spoe", "displayed", "hide_aols", "dx_number", "distance"})
 public class CourtWithDistance {
     private String name;
     private Double lat;
@@ -42,9 +39,11 @@ public class CourtWithDistance {
     @JsonProperty("magistrate_code")
     private Integer magistratesLocationCode;
     private String slug;
+    @JsonProperty("areas_of_law_spoe")
+    private List<String> areasOfLawSpoe;
     @JsonProperty("types")
     private List<String> courtTypes;
-    private uk.gov.hmcts.dts.fact.model.CourtAddress address;
+    private List<CourtAddress> addresses;
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
     private Boolean hideAols;
@@ -52,7 +51,7 @@ public class CourtWithDistance {
     private BigDecimal distance;
 
 
-    public CourtWithDistance(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    public CourtWithDistance(final Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.lat = courtEntity.getLat();
         this.lon = courtEntity.getLon();
@@ -61,16 +60,12 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.slug = courtEntity.getSlug();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtEntity.getAddresses());
+        this.addresses = courtEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.areasOfLawSpoe = courtEntity.getAreasOfLawSpoe();
         this.displayed = courtEntity.getDisplayed();
         this.hideAols = courtEntity.getHideAols();
-        final List<Contact> contacts = ofNullable(courtEntity.getCourtContacts())
-            .map(Collection::stream)
-            .orElseGet(Stream::empty)
-            .map(CourtContact::getContact)
-            .collect(toList());
-        this.dxNumber = this.getDxNumber(contacts);
+        this.dxNumber = getDxNumber(courtEntity);
     }
 
     public CourtWithDistance(final uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtWithDistanceEntity) {
@@ -82,34 +77,30 @@ public class CourtWithDistance {
         this.magistratesLocationCode = courtWithDistanceEntity.getMagistrateCode();
         this.slug = courtWithDistanceEntity.getSlug();
         this.courtTypes = courtWithDistanceEntity.getCourtTypes().stream().map(CourtType::getName).sorted().collect(toList());
-        this.address = this.mapAddress(courtWithDistanceEntity.getAddresses());
+        this.addresses = courtWithDistanceEntity.getAddresses().stream().map(CourtAddress::new).collect(toList());
         this.areasOfLaw = courtWithDistanceEntity.getAreasOfLaw().stream().map(AreaOfLaw::new).collect(toList());
+        this.areasOfLawSpoe = courtWithDistanceEntity.getAreasOfLawSpoe();
         this.displayed = courtWithDistanceEntity.getDisplayed();
         this.hideAols = courtWithDistanceEntity.getHideAols();
-        this.dxNumber = this.getDxNumber(courtWithDistanceEntity.getContacts());
+        this.dxNumber = getDxNumber(courtWithDistanceEntity);
         this.distance = BigDecimal.valueOf(courtWithDistanceEntity.getDistance()).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private String getDxNumber(final List<Contact> contacts) {
-        return contacts.stream()
-            .filter(Utils.NAME_IS_DX)
-            .map(Contact::getNumber)
+    private String getDxNumber(final Court courtEntity) {
+        return ofNullable(courtEntity.getCourtDxCodes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(c -> c.getDxCode().getCode())
             .findFirst()
             .orElse(null);
     }
 
-    private uk.gov.hmcts.dts.fact.model.CourtAddress mapAddress(List<CourtAddress> courtAddresses) {
-        return courtAddresses
-            .stream()
-            .filter(a -> "Postal".equals(a.getAddressType().getName()))
+    private String getDxNumber(final uk.gov.hmcts.dts.fact.entity.CourtWithDistance courtWithDistanceEntity) {
+        return ofNullable(courtWithDistanceEntity.getDxCodes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(DxCode::getCode)
             .findFirst()
-            .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
-            .orElse(
-                courtAddresses
-                    .stream()
-                    .findFirst()
-                    .map(uk.gov.hmcts.dts.fact.model.CourtAddress::new)
-                    .orElse(null)
-            );
+            .orElse(null);
     }
 }

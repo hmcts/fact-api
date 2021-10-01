@@ -164,5 +164,4 @@ public class AdminContactTypeControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
-
 }

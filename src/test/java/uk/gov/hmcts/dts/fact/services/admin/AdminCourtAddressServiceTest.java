@@ -24,6 +24,7 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -112,6 +113,9 @@ public class AdminCourtAddressServiceTest {
     @MockBean
     private ValidationService validationService;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Mock
     private MapitData mapitData;
 
@@ -176,6 +180,9 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+                                                           EXPECTED_ADDRESSES,
+                                                           results, COURT_SLUG);
     }
 
     @Test
@@ -187,6 +194,7 @@ public class AdminCourtAddressServiceTest {
         assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -206,6 +214,11 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates", emptyList(),
+            COURT_ADDRESSES_ENTITY.stream()
+                .sorted(Comparator.comparingInt(a -> uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
+                .map(CourtAddress::new)
+                .collect(toList()), "court-slug");
     }
 
     @Test
@@ -223,6 +236,16 @@ public class AdminCourtAddressServiceTest {
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates", MOCK_COURT.getAddresses()
+                                                               .stream()
+                                                               .map(CourtAddress::new)
+                                                               .collect(toList()),
+                                                           COURT_ADDRESSES_ENTITY.stream()
+                                                               .sorted(Comparator.comparingInt(
+                                                                   a -> uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress(
+                                                                       a.getAddressType().getName()) ? 0 : 1))
+                                                               .map(CourtAddress::new)
+                                                               .collect(toList()), COURT_SLUG);
     }
 
     @Test

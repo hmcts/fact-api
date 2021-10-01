@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -45,6 +46,14 @@ public class CourtWithDistance {
     )
     private List<AreaOfLaw> areasOfLaw;
 
+    @OneToMany
+    @JoinTable(
+        name = "search_courtareaoflawspoe",
+        joinColumns = @JoinColumn(name = COURT_ID),
+        inverseJoinColumns = @JoinColumn(name = "area_of_law_id")
+    )
+    private List<AreaOfLaw> areasOfLawSpoe;
+
     @ManyToMany
     @JoinTable(
         name = "search_courtcourttype",
@@ -68,6 +77,14 @@ public class CourtWithDistance {
         inverseJoinColumns = @JoinColumn(name = "contact_id")
     )
     private List<Contact> contacts;
+
+    @ManyToMany
+    @JoinTable(
+        name = "search_courtdxcode",
+        joinColumns = @JoinColumn(name = COURT_ID),
+        inverseJoinColumns = @JoinColumn(name = "dx_code_id")
+    )
+    private List<DxCode> dxCodes;
 
     @ManyToMany
     @JoinTable(
@@ -95,5 +112,9 @@ public class CourtWithDistance {
     public List<AreaOfLaw> getAreasOfLaw() {
         areasOfLaw.sort(comparing(AreaOfLaw::getName));
         return areasOfLaw;
+    }
+
+    public List<String> getAreasOfLawSpoe() {
+        return areasOfLawSpoe.stream().map(AreaOfLaw::getName).collect(Collectors.toList());
     }
 }

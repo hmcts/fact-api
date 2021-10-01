@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,19 +20,23 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 
 @Service
 public class AdminCourtContactService {
     private final CourtRepository courtRepository;
     private final CourtContactRepository courtContactRepository;
     private final ContactTypeRepository contactTypeRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtContactService(final CourtRepository courtRepository, final CourtContactRepository courtContactRepository, final ContactTypeRepository contactTypeRepository) {
+    public AdminCourtContactService(final CourtRepository courtRepository,
+                                    final CourtContactRepository courtContactRepository,
+                                    final ContactTypeRepository contactTypeRepository,
+                                    final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtContactRepository = courtContactRepository;
         this.contactTypeRepository = contactTypeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<Contact> getCourtContactsBySlug(final String slug) {
@@ -39,7 +44,6 @@ public class AdminCourtContactService {
             .map(c -> c.getCourtContacts()
                 .stream()
                 .map(CourtContact::getContact)
-                .filter(NAME_IS_NOT_DX)
                 .map(Contact::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
@@ -49,7 +53,13 @@ public class AdminCourtContactService {
     public List<Contact> updateCourtContacts(final String slug, final List<Contact> contacts) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        return saveNewCourtContacts(courtEntity, contacts);
+        List<Contact> originalContactList = getCourtContactsBySlug(slug);
+        List<Contact> newContactList = saveNewCourtContacts(courtEntity, contacts);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court contacts"),
+            originalContactList,
+            newContactList, slug);
+        return newContactList;
     }
 
     public List<ContactType> getAllCourtContactTypes() {
@@ -64,16 +74,12 @@ public class AdminCourtContactService {
         final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = getNewContacts(contacts);
         List<CourtContact> newCourtContacts = getNewCourtContacts(courtEntity, newContacts);
 
-        final List<CourtContact> existingCourtContacts = courtEntity.getCourtContacts()
-            .stream()
-            .filter(c -> !c.getContact().getDescription().equalsIgnoreCase("DX"))
-            .collect(toList());
+        final List<CourtContact> existingCourtContacts = new ArrayList<>(courtEntity.getCourtContacts());
 
         courtContactRepository.deleteAll(existingCourtContacts);
         return courtContactRepository.saveAll(newCourtContacts)
             .stream()
             .map(CourtContact::getContact)
-            .filter(NAME_IS_NOT_DX)
             .map(Contact::new)
             .collect(toList());
     }

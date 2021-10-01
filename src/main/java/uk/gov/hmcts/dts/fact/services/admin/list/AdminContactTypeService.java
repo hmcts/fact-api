@@ -60,6 +60,7 @@ public class AdminContactTypeService {
             contactTypeRepository.findById(updatedContactType.getId())
                 .orElseThrow(() -> new NotFoundException(updatedContactType.getId().toString()));
 
+        checkIfUpdatedContactTypeAlreadyExists(updatedContactType);
         contactTypeEntity.setDescription(updatedContactType.getType());
         contactTypeEntity.setDescriptionCy(updatedContactType.getTypeCy());
         return new ContactType(contactTypeRepository.save(contactTypeEntity));
@@ -82,6 +83,16 @@ public class AdminContactTypeService {
     private void checkIfContactTypeAlreadyExists(final String contactTypeName) {
         if (getAllContactTypes().stream().anyMatch(ct -> ct.getType().equalsIgnoreCase(contactTypeName))) {
             throw new DuplicatedListItemException("Contact Type already exists: " + contactTypeName);
+        }
+    }
+
+    private void checkIfUpdatedContactTypeAlreadyExists(final ContactType updatedContactType) {
+
+        final List<ContactType>  contactTypes =  getAllContactTypes();
+        contactTypes.remove(updatedContactType);
+
+        if (contactTypes.stream().anyMatch(ct -> ct.getType().equalsIgnoreCase(updatedContactType.getType()))) {
+            throw new DuplicatedListItemException("Updated Contact Type already exists: " + updatedContactType.getType());
         }
     }
 
