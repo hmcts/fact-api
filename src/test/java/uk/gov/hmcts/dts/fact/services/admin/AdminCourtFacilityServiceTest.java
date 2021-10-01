@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtFacilityService.class)
@@ -70,6 +70,9 @@ public class AdminCourtFacilityServiceTest {
 
     @MockBean
     private CourtFacilityRepository courtFacilityRepository;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Mock
     private Court court;
@@ -139,12 +142,19 @@ public class AdminCourtFacilityServiceTest {
     void shouldUpdateCourtFacility() {
         when(courtFacilityRepository.saveAll(any())).thenReturn(COURT_FACILITIES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtFacilityRepository.findByCourtId(anyInt())).thenReturn(COURT_FACILITIES);
         when(courtRepository.save(court)).thenReturn(court);
         when(facilityTypeRepository.findByName(any())).thenReturn(Optional.of(facilityType));
 
-        assertThat(adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES))
+        List<uk.gov.hmcts.dts.fact.model.admin.Facility> results =
+            adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES);
+        assertThat(results)
             .hasSize(FACILITY_COUNT)
             .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court facilities",
+                                                           INPUT_COURT_FACILITIES,
+                                                           results,
+                                                           COURT_SLUG);
     }
 
     @Test
@@ -155,6 +165,7 @@ public class AdminCourtFacilityServiceTest {
         assertThatThrownBy(() -> adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 }
 

@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -47,6 +47,9 @@ public class AdminCourtAreasOfLawServiceTest {
 
     @MockBean
     private CourtAreaOfLawRepository courtAreaOfLawRepository;
+
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @MockBean
     private CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
@@ -102,6 +105,7 @@ public class AdminCourtAreasOfLawServiceTest {
         final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
 
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(anyInt())).thenReturn(COURT_AREA_OF_LAWS);
         when(courtAreaOfLawRepository.saveAll(any())).thenReturn(COURT_AREA_OF_LAWS);
         when(courtAreaOfLawSpoeRepository.getAllByCourtIdAndAreaOfLawId(anyInt(), any())).thenReturn(new ArrayList<>());
 
@@ -113,6 +117,12 @@ public class AdminCourtAreasOfLawServiceTest {
         assertThat(courtAreasOfLawResult)
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .containsExactlyElementsOf(areasOfLaw);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court areas of law",
+                                                           COURT_AREA_OF_LAWS
+                                                               .stream()
+                                                               .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), false))
+                                                               .collect(toList()),
+                                                           courtAreasOfLawResult, COURT_SLUG);
     }
 
     @Test
@@ -123,5 +133,6 @@ public class AdminCourtAreasOfLawServiceTest {
         assertThatThrownBy(() -> adminCourtAreasOfLawService.updateAreasOfLawForCourt(COURT_SLUG, new ArrayList<>()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 }
