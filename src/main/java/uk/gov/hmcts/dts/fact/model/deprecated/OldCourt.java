@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uk.gov.hmcts.dts.fact.entity.CourtContact;
-import uk.gov.hmcts.dts.fact.entity.CourtEmail;
-import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
-import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.model.Contact;
 import uk.gov.hmcts.dts.fact.model.Email;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
@@ -46,6 +43,8 @@ public class OldCourt {
     private Integer cciCode;
     private Integer magistratesLocationCode;
     private List<String> areasOfLaw;
+    @JsonProperty("areas_of_law_spoe")
+    private List<String> areasOfLawSpoe;
     @JsonProperty("types")
     private List<String> courtTypes;
     private List<Email> emails;
@@ -55,7 +54,7 @@ public class OldCourt {
     private List<OldCourtAddress> addresses;
     private String gbs;
 
-    public OldCourt(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+    public OldCourt(final Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();
         this.info = chooseString(courtEntity.getInfoCy(), courtEntity.getInfo());
@@ -67,27 +66,62 @@ public class OldCourt {
         this.countyLocationCode = courtEntity.getCciCode();
         this.cciCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
-        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(uk.gov.hmcts.dts.fact.entity.AreaOfLaw::getName)
+        this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::getName)
             .collect(toList());
+        this.courtTypes = ofNullable(courtEntity.getCourtTypes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtType::getName)
+            .collect(toList());
+        this.areasOfLawSpoe = courtEntity.getAreasOfLawSpoe();
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
         this.emails = ofNullable(courtEntity.getCourtEmails())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtEmail::getEmail)
             .map(Email::new).collect(toList());
-        this.contacts = ofNullable(courtEntity.getCourtContacts())
-            .map(Collection::stream)
-            .orElseGet(Stream::empty)
-            .map(CourtContact::getContact)
-            .map(Contact::new)
-            .collect(toList());
+        this.contacts = getContactsWithDx(courtEntity);
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtOpeningTime::getOpeningTime)
             .map(OpeningTime::new).collect(toList());
-        this.facilities = courtEntity.getFacilities().stream().map(OldFacility::new).collect(toList());
-        this.addresses = courtEntity.getAddresses().stream().map(OldCourtAddress::new).collect(toList());
+        this.facilities = ofNullable(courtEntity.getFacilities())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(OldFacility::new)
+            .collect(toList());
+        this.addresses = ofNullable(courtEntity.getAddresses())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(OldCourtAddress::new)
+            .collect(toList());
         this.gbs = courtEntity.getGbs();
+    }
+
+    private List<Contact> getContactsWithDx(final Court courtEntity) {
+        List<Contact> contacts = ofNullable(courtEntity.getCourtContacts())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtContact::getContact)
+            .map(Contact::new)
+            .collect(toList());
+
+        List<DxCode> dxCodes = ofNullable(courtEntity.getCourtDxCodes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtDxCode::getDxCode)
+            .collect(toList());
+
+        dxCodes.forEach(dx -> {
+            final uk.gov.hmcts.dts.fact.entity.Contact contactEntity = new uk.gov.hmcts.dts.fact.entity.Contact();
+            contactEntity.setDescription("DX");
+            contactEntity.setExplanation(dx.getExplanation());
+            contactEntity.setExplanationCy(dx.getExplanationCy());
+            contactEntity.setNumber(dx.getCode());
+            contacts.add(new Contact(contactEntity));
+        });
+
+        return contacts;
     }
 }

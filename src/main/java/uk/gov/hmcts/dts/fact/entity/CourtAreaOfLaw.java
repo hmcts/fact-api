@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class CourtAreaOfLaw {
     @Id
     @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtareaoflaw_id_seq", allocationSize = 1)
@@ -24,11 +26,9 @@ public class CourtAreaOfLaw {
     @OneToOne()
     @JoinColumn(name = "court_id")
     private Court court;
-    private Boolean singlePointOfEntry;
 
-    public CourtAreaOfLaw(final AreaOfLaw areaOfLaw, final Court court, boolean singlePointOfEntry) {
+    public CourtAreaOfLaw(final AreaOfLaw areaOfLaw, final Court court) {
         this.areaOfLaw = areaOfLaw;
         this.court = court;
-        this.singlePointOfEntry = singlePointOfEntry;
     }
 }

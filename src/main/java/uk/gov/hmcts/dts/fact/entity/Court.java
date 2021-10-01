@@ -22,6 +22,8 @@ import static java.util.Optional.ofNullable;
 public class Court {
     private static final String COURT_ID = "court_id";
     private static final String COURT_STRING = "court";
+    private static final String SORT = "sort";
+
     @Id
     private Integer id;
     private String name;
@@ -52,6 +54,15 @@ public class Court {
     )
     private List<AreaOfLaw> areasOfLaw;
 
+    @OneToMany
+    @JoinTable(
+        name = "search_courtareaoflawspoe",
+        joinColumns = @JoinColumn(name = COURT_ID),
+        inverseJoinColumns = @JoinColumn(name = "area_of_law_id")
+    )
+    private List<AreaOfLaw> areasOfLawSpoe;
+
+
     @ManyToMany
     @JoinTable(
         name = "search_courtcourttype",
@@ -68,12 +79,16 @@ public class Court {
     @OrderBy("sort_order")
     private List<CourtContact> courtContacts;
 
+    @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
+    @OrderBy(SORT)
+    private List<CourtDxCode> courtDxCodes;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = COURT_STRING, orphanRemoval = true)
-    @OrderBy("sort")
+    @OrderBy(SORT)
     private List<CourtOpeningTime> courtOpeningTimes;
 
     @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
-    @OrderBy("sort")
+    @OrderBy(SORT)
     private List<CourtApplicationUpdate> courtApplicationUpdates;
 
     @ManyToMany
@@ -107,7 +122,7 @@ public class Court {
     private List<CourtPostcode> courtPostcodes;
 
     @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
-    @OrderBy("sort")
+    @OrderBy(SORT)
     private List<CourtAdditionalLink> courtAdditionalLinks;
 
     public List<AreaOfLaw> getAreasOfLaw() {
@@ -116,6 +131,10 @@ public class Court {
             .orElseGet(Stream::empty)
             .sorted(comparing(AreaOfLaw::getName))
             .collect(Collectors.toList());
+    }
+
+    public List<String> getAreasOfLawSpoe() {
+        return areasOfLawSpoe.stream().map(AreaOfLaw::getName).collect(Collectors.toList());
     }
 
     public boolean isInPerson() {

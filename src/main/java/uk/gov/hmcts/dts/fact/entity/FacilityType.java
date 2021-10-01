@@ -3,10 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "admin_facilitytype")
@@ -15,6 +12,8 @@ import javax.persistence.Table;
 public class FacilityType {
 
     @Id
+    @SequenceGenerator(name = "seq-gen", sequenceName = "search_facility_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     private String name;
     @Column(name = "name_cy")

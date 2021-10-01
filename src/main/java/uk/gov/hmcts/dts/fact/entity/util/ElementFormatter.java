@@ -6,19 +6,27 @@ import uk.gov.hmcts.dts.fact.entity.*;
 import static java.lang.String.format;
 
 public final class ElementFormatter {
-    private static final String DX = "DX";
 
     private ElementFormatter() {
     }
 
     public static String formatContact(final Contact contact) {
-        final StringBuffer formatted = new StringBuffer(format("Number: %s", contact.getNumber()));
-        final String description = contact.getDescription(contact);
-        if (!DX.equalsIgnoreCase(description)) {
-            formatted.append(format(", Description: %s", description));
-        }
+        final StringBuffer formatted = new StringBuffer(format(
+            "Number: %s, Description: %s",
+            contact.getNumber(),
+            contact.getDescription(contact)
+        ));
+
         if (StringUtils.isNotBlank(contact.getExplanation())) {
             formatted.append(format(", Explanation: %s", contact.getExplanation()));
+        }
+        return formatted.toString();
+    }
+
+    public static String formatDxCode(final DxCode dx) {
+        final StringBuffer formatted = new StringBuffer(format("Code: %s", dx.getCode()));
+        if (StringUtils.isNotBlank(dx.getExplanation())) {
+            formatted.append(format(", Explanation: %s", dx.getExplanation()));
         }
         return formatted.toString();
     }

@@ -8,6 +8,7 @@ import lombok.Setter;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -16,7 +17,6 @@ import uk.gov.hmcts.dts.fact.entity.util.ElementFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -25,18 +25,14 @@ import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_DX;
-import static uk.gov.hmcts.dts.fact.util.Utils.NAME_IS_NOT_DX;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(SnakeCaseStrategy.class)
-@SuppressWarnings({"PMD.TooManyFields", "PMD.UnnecessaryFullyQualifiedName"})
+@SuppressWarnings("PMD.TooManyFields")
 public class CourtForDownload {
-    private static final String DX = "DX";
     private String name;
     private String open;
     private String updated;
@@ -89,13 +85,10 @@ public class CourtForDownload {
             .map(CourtEmail::getEmail)
             .map(ElementFormatter::formatEmail)
             .collect(joining(lineSeparator()));
-        final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts = ofNullable(courtEntity.getCourtContacts())
+        this.contacts = ofNullable(courtEntity.getCourtContacts())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtContact::getContact)
-            .collect(toList());
-        this.contacts = contacts.stream()
-            .filter(NAME_IS_NOT_DX)
             .map(ElementFormatter::formatContact)
             .collect(joining(lineSeparator()));
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
@@ -110,9 +103,11 @@ public class CourtForDownload {
             .map(CourtApplicationUpdate::getApplicationUpdate)
             .map(ElementFormatter::formatApplicationUpdate)
             .collect(joining(lineSeparator()));
-        this.dxNumber = contacts.stream()
-            .filter(NAME_IS_DX)
-            .map(ElementFormatter::formatContact)
+        this.dxNumber = ofNullable(courtEntity.getCourtDxCodes())
+            .map(Collection::stream)
+            .orElseGet(Stream::empty)
+            .map(CourtDxCode::getDxCode)
+            .map(ElementFormatter::formatDxCode)
             .collect(joining(lineSeparator()));
     }
 
