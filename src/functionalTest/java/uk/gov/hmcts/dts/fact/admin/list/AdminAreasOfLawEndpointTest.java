@@ -266,7 +266,7 @@ public class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenDeletingAreaOfLaw() throws JsonProcessingException {
-        final var response = doDeleteRequest(
+        final Response response = doDeleteRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT + AREA_OF_LAW_ID_HOUSING_POSSESSION,
             getTestAreasOfLawJson()
         );

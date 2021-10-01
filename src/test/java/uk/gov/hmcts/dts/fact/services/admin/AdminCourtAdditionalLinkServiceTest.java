@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,6 +76,9 @@ public class AdminCourtAdditionalLinkServiceTest {
     @MockBean
     private CourtAdditionalLinkRepository courtAdditionalLinkRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Test
     void shouldRetrieveCourtAdditionalLinks() {
         when(MOCK_COURT.getCourtAdditionalLinks()).thenReturn(COURT_ADDITIONAL_LINKS);
@@ -96,6 +100,7 @@ public class AdminCourtAdditionalLinkServiceTest {
     @Test
     void shouldUpdateCourtAdditionalLinks() {
         when(MOCK_COURT.getId()).thenReturn(TEST_COURT_ID);
+        when(MOCK_COURT.getCourtAdditionalLinks()).thenReturn(COURT_ADDITIONAL_LINKS);
         when(courtRepository.findBySlug(TEST_SLUG)).thenReturn(Optional.of(MOCK_COURT));
         when(courtAdditionalLinkRepository.saveAll(any())).thenReturn(COURT_ADDITIONAL_LINKS);
 
@@ -105,6 +110,13 @@ public class AdminCourtAdditionalLinkServiceTest {
             .containsAnyElementsOf(EXPECTED_ADDITIONAL_LINKS);
 
         verify(courtAdditionalLinkRepository).deleteCourtAdditionalLinksByCourtId(TEST_COURT_ID);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court additional links",
+                                                           MOCK_COURT.getCourtAdditionalLinks()
+                                                                           .stream()
+                                                                           .map(CourtAdditionalLink::getAdditionalLink)
+                                                                           .map(AdditionalLink::new)
+                                                                           .collect(toList()),
+                                                           results, TEST_SLUG);
     }
 
     @Test
@@ -114,5 +126,6 @@ public class AdminCourtAdditionalLinkServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtAdditionalLinks(TEST_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + TEST_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), any(), any(), anyString());
     }
 }

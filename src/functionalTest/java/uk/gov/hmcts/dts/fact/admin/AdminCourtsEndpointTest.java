@@ -36,8 +36,6 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
     private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
 
-
-
     @Test
     public void shouldRetrieveCourtsForDownload() {
         final var response = given()

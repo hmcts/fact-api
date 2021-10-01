@@ -25,8 +25,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtOpeningTimeService.class)
@@ -67,6 +66,8 @@ public class AdminCourtOpeningTimeServiceTest {
     @MockBean
     private OpeningTypeRepository openingTypeRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Mock
     private Court court;
@@ -107,9 +108,13 @@ public class AdminCourtOpeningTimeServiceTest {
         when(court.getCourtOpeningTimes()).thenReturn(COURT_OPENING_TIMES);
         when(courtRepository.save(court)).thenReturn(court);
 
+        List<OpeningTime> results = adminService.updateCourtOpeningTimes(COURT_SLUG, EXPECTED_OPENING_TIMES);
         assertThat(adminService.updateCourtOpeningTimes(COURT_SLUG, EXPECTED_OPENING_TIMES))
             .hasSize(OPENING_TIME_COUNT)
             .containsExactlyElementsOf(EXPECTED_OPENING_TIMES);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court opening times",
+                                                           EXPECTED_OPENING_TIMES,
+                                                           results, COURT_SLUG);
     }
 
     @Test
@@ -119,6 +124,7 @@ public class AdminCourtOpeningTimeServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtOpeningTimes(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

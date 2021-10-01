@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.*;
 
@@ -20,14 +21,16 @@ public class AdminCourtAreasOfLawService {
 
     private final CourtRepository courtRepository;
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
+    private final AdminAuditService adminAuditService;
     private final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
 
     @Autowired
     public AdminCourtAreasOfLawService(final CourtRepository courtRepository, final CourtAreaOfLawRepository courtAreaOfLawRepository,
-                                       final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository) {
+                                       final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository, final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtAreaOfLawRepository = courtAreaOfLawRepository;
         this.courtAreaOfLawSpoeRepository = courtAreaOfLawSpoeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<AreaOfLaw> getCourtAreasOfLawBySlug(final String slug) {
@@ -47,13 +50,14 @@ public class AdminCourtAreasOfLawService {
     public List<AreaOfLaw> updateAreasOfLawForCourt(final String slug, final List<AreaOfLaw> areasOfLaw) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
+        final List<AreaOfLaw> originalCourtAol = getCourtAreasOfLawBySlug(slug);
 
         List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> newAreasOfLawList = getNewAreasOfLaw(areasOfLaw);
         List<CourtAreaOfLaw> newCourtAreasOfLawList = getNewCourtAreasOfLaw(courtEntity, newAreasOfLawList);
 
         courtAreaOfLawRepository.deleteCourtAreaOfLawByCourtId(courtEntity.getId());
 
-        return courtAreaOfLawRepository
+        List<AreaOfLaw> newAreaOfLawList = courtAreaOfLawRepository
             .saveAll(newCourtAreasOfLawList)
             .stream()
             .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(),
@@ -62,6 +66,12 @@ public class AdminCourtAreasOfLawService {
                                           .findAny()
                                           .isPresent()))
             .collect(toList());
+
+        adminAuditService.saveAudit(AuditType.findByName("Update court areas of law"),
+                                    originalCourtAol,
+                                    newAreaOfLawList,
+                                    slug);
+        return newAreaOfLawList;
     }
 
     private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewAreasOfLaw(final List<AreaOfLaw> areasOfLaw) {

@@ -12,11 +12,9 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -25,13 +23,15 @@ import static java.util.stream.Collectors.toList;
 public class AdminService {
 
     private final CourtRepository courtRepository;
-
     private final RolesProvider rolesProvider;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminService(final CourtRepository courtRepository, final RolesProvider rolesProvider) {
+    public AdminService(final CourtRepository courtRepository, final RolesProvider rolesProvider,
+                        final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<CourtReference> getAllCourtReferences() {
@@ -99,7 +99,12 @@ public class AdminService {
         }
 
         uk.gov.hmcts.dts.fact.entity.Court updatedCourt = courtRepository.save(courtEntity);
-        return new Court(updatedCourt);
+        Court updatedCourtModel = new Court(updatedCourt);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court details"),
+            court,
+            updatedCourtModel, slug);
+        return updatedCourtModel;
     }
 
     @Transactional
@@ -112,16 +117,19 @@ public class AdminService {
         courtRepository.updateLatLonBySlug(slug, lat, lon);
     }
 
-    @Transactional
     public String getCourtImage(final String slug) {
-        uk.gov.hmcts.dts.fact.entity.Court
-            court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
+        final uk.gov.hmcts.dts.fact.entity.Court court =
+            courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
         return court.getImageFile();
     }
 
     @Transactional
     public String updateCourtImage(final String slug, final String imageFile) {
-        courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
+        final Optional<uk.gov.hmcts.dts.fact.entity.Court> court =
+            courtRepository.findBySlug(slug);
+        if (court.isEmpty()) {
+            throw new NotFoundException(slug);
+        }
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
     }
 }
