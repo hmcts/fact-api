@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
@@ -21,8 +22,10 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
 class AdminServiceTest {
@@ -31,7 +34,9 @@ class AdminServiceTest {
     private static final String SOME_SLUG = "some-slug";
     private static final Double LATITUDE = 1.0;
     private static final Double LONGITUDE = -3.0;
+    private static final String IMAGE_FILE = "some-image.jpeg";
     private static uk.gov.hmcts.dts.fact.model.admin.Court court;
+    private static final String NOT_FOUND = "Not found: ";
 
     @Autowired
     private AdminService adminService;
@@ -53,6 +58,7 @@ class AdminServiceTest {
         courtEntity.setNameCy("some-name-cy");
         courtEntity.setInfo("some-info");
         courtEntity.setInfoCy("some-info-cy");
+        courtEntity.setImageFile("some-image.jpeg");
         courtEntity.setAlert("some-urgent-message");
         courtEntity.setAlertCy("some-urgent-message-cy");
         courtEntity.setDisplayed(true);
@@ -168,5 +174,46 @@ class AdminServiceTest {
         adminService.updateCourtLatLon(SOME_SLUG, LATITUDE, LONGITUDE);
         verify(courtRepository).updateLatLonBySlug(SOME_SLUG, LATITUDE, LONGITUDE);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void shouldReturnCourtImage() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(courtEntity));
+
+        String fileName = adminService.getCourtImage(SOME_SLUG);
+
+        verify(courtRepository, atMostOnce()).findBySlug(SOME_SLUG);
+        assertThat(fileName).isEqualTo(IMAGE_FILE);
+    }
+
+    @Test
+    void shouldNotReturnImageIfCourtNotFound() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.getCourtImage(SOME_SLUG))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + SOME_SLUG);
+    }
+
+    @Test
+    void shouldUpdateCourtImage() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(courtEntity));
+        when(courtRepository.updateCourtImageBySlug(SOME_SLUG, IMAGE_FILE)).thenReturn(IMAGE_FILE);
+
+        String fileName = adminService.updateCourtImage(SOME_SLUG, IMAGE_FILE);
+
+        verify(courtRepository, atMostOnce()).findBySlug(SOME_SLUG);
+        verify(courtRepository, atMostOnce()).updateCourtImageBySlug(SOME_SLUG, IMAGE_FILE);
+
+        assertThat(fileName).isEqualTo(IMAGE_FILE);
+    }
+
+    @Test
+    void shouldNotUpdateImageIfCourtNotFound() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminService.updateCourtImage(SOME_SLUG, IMAGE_FILE))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + SOME_SLUG);
     }
 }
