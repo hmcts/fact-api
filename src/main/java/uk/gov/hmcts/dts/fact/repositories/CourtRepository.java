@@ -21,6 +21,9 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     @Query("UPDATE Court SET lat = :lat, lon = :lon WHERE slug = :slug")
     void updateLatLonBySlug(String slug, Double lat, Double lon);
 
+    @Query(value = "UPDATE search_court SET image_file = :imageFile WHERE slug = :slug RETURNING image_file", nativeQuery = true)
+    String updateCourtImageBySlug(String slug, String imageFile);
+
     List<Court> findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(String prefix, boolean active);
 
     @Query(nativeQuery = true,

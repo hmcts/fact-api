@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "admin_contacttype")
@@ -18,6 +15,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class ContactType extends ElementType {
     @Id
+    @SequenceGenerator(name = "seq-gen", sequenceName = "admin_contacttype_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     @Column(name = "name")
     private String description;

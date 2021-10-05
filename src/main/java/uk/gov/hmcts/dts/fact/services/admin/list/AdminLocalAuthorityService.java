@@ -7,6 +7,8 @@ import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
+import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +19,13 @@ import static java.util.stream.Collectors.toList;
 public class AdminLocalAuthorityService {
 
     private final LocalAuthorityRepository localAuthorityRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminLocalAuthorityService(final LocalAuthorityRepository localAuthorityRepository) {
+    public AdminLocalAuthorityService(final LocalAuthorityRepository localAuthorityRepository,
+                                      final AdminAuditService adminAuditService) {
         this.localAuthorityRepository = localAuthorityRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<LocalAuthority> getAllLocalAuthorities() {
@@ -43,9 +48,16 @@ public class AdminLocalAuthorityService {
         checkIfLocalAuthorityAlreadyExists(localAuthorityId, name);
 
         // Change local authority entity name
+        final List<LocalAuthority> originalList = getAllLocalAuthorities();
         final uk.gov.hmcts.dts.fact.entity.LocalAuthority existingEntity = localAuthorityEntity.get();
         existingEntity.setName(name);
-        return new LocalAuthority(localAuthorityRepository.save(existingEntity));
+        LocalAuthority newLocalAuthority = new LocalAuthority(localAuthorityRepository.save(existingEntity));
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update local authority"),
+            originalList,
+            getAllLocalAuthorities(),
+            null);
+        return newLocalAuthority;
     }
 
     private void checkIfLocalAuthorityAlreadyExists(final Integer localAuthorityId, final String localAuthorityName) {

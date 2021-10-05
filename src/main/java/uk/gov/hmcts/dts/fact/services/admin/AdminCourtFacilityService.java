@@ -10,8 +10,11 @@ import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.repositories.CourtFacilityRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.FacilityTypeRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
@@ -21,12 +24,17 @@ public class AdminCourtFacilityService {
     private final CourtRepository courtRepository;
     private final CourtFacilityRepository courtFacilityRepository;
     private final FacilityTypeRepository facilityTypeRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtFacilityService(final CourtRepository courtRepository, final CourtFacilityRepository courtFacilityRepository, final FacilityTypeRepository facilityTypeRepository) {
+    public AdminCourtFacilityService(final CourtRepository courtRepository,
+                                     final CourtFacilityRepository courtFacilityRepository,
+                                     final FacilityTypeRepository facilityTypeRepository,
+                                     final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtFacilityRepository = courtFacilityRepository;
         this.facilityTypeRepository = facilityTypeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -46,16 +54,24 @@ public class AdminCourtFacilityService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        return saveCourtFacilities(courtEntity, courtFacilities);
+        List<CourtFacility> existingList = getExistingCourtFacilities(courtEntity);
+        List<Facility> newFacilities = saveCourtFacilities(courtEntity, courtFacilities, existingList);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court facilities"),
+            existingList.stream()
+                            .map(CourtFacility::getFacility)
+                            .map(Facility::new)
+                            .collect(toList()),
+            newFacilities, slug);
+        return newFacilities;
     }
 
-    protected List<Facility> saveCourtFacilities(final Court courtEntity, final List<Facility> courtFacilities) {
+    protected List<Facility> saveCourtFacilities(final Court courtEntity, final List<Facility> courtFacilities,
+                                                 final List<CourtFacility> existingList) {
 
         final List<uk.gov.hmcts.dts.fact.entity.Facility> facilitiesEntities = getNewFacilityEntity(courtFacilities);
 
         final List<CourtFacility> courtFacilitiesEntities = getNewCourtFacilityEntity(courtEntity, facilitiesEntities);
-
-        final List<CourtFacility> existingList = getExistingCourtFacilities(courtEntity);
 
         //remove existing court facilities and add updated facilities
         courtFacilityRepository.deleteAll(existingList);
@@ -73,7 +89,9 @@ public class AdminCourtFacilityService {
 
         return facilities.stream()
             .map(f -> new uk.gov.hmcts.dts.fact.entity.Facility(f.getName(),f.getDescription(), f.getDescriptionCy(),
-                                                                facilityTypeRepository.findByName(f.getName()).orElse(null)))
+                                                                Objects.requireNonNull(facilityTypeRepository.findByName(
+                                                                    f.getName()).orElse(null))
+            ))
             .collect(toList());
     }
 
@@ -84,7 +102,7 @@ public class AdminCourtFacilityService {
     }
 
     private List<CourtFacility> getExistingCourtFacilities(final Court courtEntity) {
-        return courtFacilityRepository.findByCourtId(courtEntity.getId()).stream().collect(toList());
+        return new ArrayList<>(courtFacilityRepository.findByCourtId(courtEntity.getId()));
     }
 
 }

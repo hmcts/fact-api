@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.Contact;
-import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtContactService;
 
 import java.util.List;
@@ -43,10 +42,4 @@ public class AdminCourtContactController {
         return ok(adminService.updateCourtContacts(slug, contacts));
     }
 
-    @GetMapping(path = "/contactTypes")
-    @ApiOperation("Retrieve all court contact types")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<ContactType>> getAllCourtContactTypes() {
-        return ok(adminService.getAllCourtContactTypes());
-    }
 }
