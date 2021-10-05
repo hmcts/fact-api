@@ -89,6 +89,9 @@ public class AdminCourtEmailServiceTest {
     @MockBean
     private EmailTypeRepository emailTypeRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Mock
     private Court court;
 
@@ -147,6 +150,9 @@ public class AdminCourtEmailServiceTest {
         assertThat(emails)
             .hasSize(EMAIL_COUNT)
             .containsExactlyElementsOf(EXPECTED_EMAILS);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court email list",
+                                                           EXPECTED_EMAILS,
+                                                           emails, COURT_SLUG);
     }
 
     @Test
@@ -156,6 +162,7 @@ public class AdminCourtEmailServiceTest {
         assertThatThrownBy(() -> adminService.updateEmailListForCourt(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

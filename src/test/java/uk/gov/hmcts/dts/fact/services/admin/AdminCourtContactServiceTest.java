@@ -84,6 +84,9 @@ public class AdminCourtContactServiceTest {
     @MockBean
     private ContactTypeRepository contactTypeRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
+
     @Mock
     private Court court;
 
@@ -125,12 +128,16 @@ public class AdminCourtContactServiceTest {
         when(court.getCourtContacts()).thenReturn(COURT_CONTACTS);
         when(courtContactRepository.saveAll(any())).thenReturn(COURT_CONTACTS);
 
-        assertThat(adminService.updateCourtContacts(COURT_SLUG, EXPECTED_CONTACTS))
+        List<Contact> results = adminService.updateCourtContacts(COURT_SLUG, EXPECTED_CONTACTS);
+        assertThat(results)
             .hasSize(CONTACT_COUNT)
             .containsExactlyElementsOf(EXPECTED_CONTACTS);
 
         verify(courtContactRepository).deleteAll(COURT_CONTACTS);
         verify(courtContactRepository).saveAll(any());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court contacts",
+                                                           EXPECTED_CONTACTS,
+                                                           results, COURT_SLUG);
     }
 
     @Test
@@ -140,6 +147,7 @@ public class AdminCourtContactServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtContacts(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @Test

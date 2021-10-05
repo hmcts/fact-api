@@ -14,6 +14,8 @@ import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
+import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ import static java.util.stream.Collectors.toList;
 public class AdminAreasOfLawService {
 
     private final AreasOfLawRepository areasOfLawRepository;
+    private final AdminAuditService adminAuditService;
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
     private final ServiceAreaRepository serviceAreaRepository;
@@ -33,12 +36,14 @@ public class AdminAreasOfLawService {
         final AreasOfLawRepository areasOfLawRepository,
         final CourtAreaOfLawRepository courtAreaOfLawRepository,
         final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo,
-        final ServiceAreaRepository serviceAreaRepository) {
+        final ServiceAreaRepository serviceAreaRepository,
+        final AdminAuditService adminAuditService) {
 
         this.areasOfLawRepository = areasOfLawRepository;
         this.courtAreaOfLawRepository = courtAreaOfLawRepository;
         this.courtLocalAuthorityAreaOfLawRepo = courtLocalAuthorityAreaOfLawRepo;
         this.serviceAreaRepository = serviceAreaRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public AreaOfLaw getAreaOfLaw(final Integer id) {
@@ -61,15 +66,26 @@ public class AdminAreasOfLawService {
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawEntity =
             areasOfLawRepository.findById(updatedAreaOfLaw.getId())
             .orElseThrow(() -> new NotFoundException(updatedAreaOfLaw.getId().toString()));
-
+        final List<AreaOfLaw> originalAreasOfLaw = getAllAreasOfLaw();
         final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity);
-        return new AreaOfLaw(areasOfLawRepository.save(entity));
+        AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(entity));
+        adminAuditService.saveAudit(AuditType.findByName("Update area of law"),
+                                    originalAreasOfLaw,
+                                    getAllAreasOfLaw(),
+                                    null);
+        return newAreaOfLaw;
     }
 
     @Transactional
     public AreaOfLaw createAreaOfLaw(final AreaOfLaw areaOfLaw) {
         checkIfAreaOfLawAlreadyExists(areaOfLaw.getName());
-        return new AreaOfLaw(areasOfLawRepository.save(createNewAreaOfLawEntityFromModel(areaOfLaw)));
+        AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(createNewAreaOfLawEntityFromModel(areaOfLaw)));
+
+        adminAuditService.saveAudit(AuditType.findByName("Create area of law"),
+                                    areaOfLaw,
+                                    newAreaOfLaw,
+                                    null);
+        return newAreaOfLaw;
     }
 
     public void deleteAreaOfLaw(final Integer areaOfLawId) {

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.launchdarkly.shaded.com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import uk.gov.hmcts.dts.fact.exception.PostcodeExistedException;
 import uk.gov.hmcts.dts.fact.exception.PostcodeNotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.CourtPostcodeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.util.List;
@@ -26,11 +28,15 @@ import static uk.gov.hmcts.dts.fact.util.Utils.upperCaseAndStripAllSpaces;
 public class AdminCourtPostcodeService {
     private final CourtRepository courtRepository;
     private final CourtPostcodeRepository courtPostcodeRepository;
+    private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtPostcodeService(final CourtRepository courtRepository, final CourtPostcodeRepository courtPostcodeRepository) {
+    public AdminCourtPostcodeService(final CourtRepository courtRepository,
+                                     final CourtPostcodeRepository courtPostcodeRepository,
+                                     final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtPostcodeRepository = courtPostcodeRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public void checkPostcodesExist(final String slug, final List<String> postcodes) {
@@ -75,7 +81,11 @@ public class AdminCourtPostcodeService {
     @Transactional()
     public List<String> addCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
-        return createNewCourtPostcodesEntity(courtEntity, postcodes).stream()
+        final List<String> originalPostcodes = courtEntity.getCourtPostcodes()
+            .stream()
+            .map(CourtPostcode::getPostcode)
+            .collect(toList());
+        List<String> newPostcodes = createNewCourtPostcodesEntity(courtEntity, postcodes).stream()
             .filter(p -> !postcodeExists(
                 courtEntity,
                 p.getPostcode()
@@ -83,18 +93,35 @@ public class AdminCourtPostcodeService {
             .map(courtPostcodeRepository::save)
             .map(CourtPostcode::getPostcode)
             .collect(toList());
+        adminAuditService.saveAudit(
+            AuditType.findByName("Create court postcodes"),
+            originalPostcodes,
+            newPostcodes, slug);
+        return newPostcodes;
     }
 
     @Transactional()
     public int deleteCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
-        return postcodes.stream()
+        final List<String> originalPostcodes = courtEntity.getCourtPostcodes()
+            .stream()
+            .map(CourtPostcode::getPostcode)
+            .collect(toList());
+
+        int deletedPostcodes = postcodes.stream()
             .map(p -> courtPostcodeRepository.deleteByCourtIdAndPostcode(
                 courtEntity.getId(),
                 upperCaseAndStripAllSpaces(p)
             ))
             .mapToInt(List::size)
             .sum();
+
+        adminAuditService.saveAudit(
+            AuditType.findByName("Delete court postcodes"),
+            originalPostcodes,
+            getCourtPostcodesBySlug(slug),
+            null);
+        return deletedPostcodes;
     }
 
     @Transactional()
@@ -113,10 +140,20 @@ public class AdminCourtPostcodeService {
         for (CourtPostcode courtPostcode : sourceCourtPostcodes) {
             courtPostcode.setCourt(destCourt);
         }
-        return courtPostcodeRepository.saveAll(sourceCourtPostcodes)
+        final List<String> postcodesMoved = courtPostcodeRepository.saveAll(sourceCourtPostcodes)
             .stream()
             .map(CourtPostcode::getPostcode)
             .collect(toList());
+        JsonObject auditData = new JsonObject();
+        auditData.addProperty("moved-from", sourceSlug);
+        auditData.addProperty("moved-to", destinationSlug);
+        auditData.addProperty("postcodes", postcodes.toString());
+
+        adminAuditService.saveAudit(
+            AuditType.findByName("Move court postcodes"),
+            auditData,
+            postcodesMoved, sourceSlug);
+        return postcodesMoved;
     }
 
     private boolean postcodeExists(final Court court, final String postcode) {

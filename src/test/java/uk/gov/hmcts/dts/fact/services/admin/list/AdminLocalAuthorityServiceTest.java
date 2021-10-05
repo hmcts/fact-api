@@ -11,12 +11,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
+import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,6 +34,8 @@ public class AdminLocalAuthorityServiceTest {
     @MockBean
     private LocalAuthorityRepository localAuthorityRepository;
 
+    @MockBean
+    private AdminAuditService adminAuditService;
 
     @Test
     void shouldReturnAllLocalAuthorities() {
@@ -60,6 +64,7 @@ public class AdminLocalAuthorityServiceTest {
             .thenAnswer((Answer<uk.gov.hmcts.dts.fact.entity.LocalAuthority>) invocation -> invocation.getArgument(0));
 
         assertThat(localAuthorityService.updateLocalAuthority(localAuthority.getId(), localAuthority.getName())).isEqualTo(localAuthority);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update local authority", emptyList(), emptyList(), null);
     }
 
     @Test
@@ -71,5 +76,6 @@ public class AdminLocalAuthorityServiceTest {
             .isInstanceOf(NotFoundException.class);
 
         verify(localAuthorityRepository, never()).save(any());
+        verify(adminAuditService, never()).saveAudit(anyString(), any(), any(), any());
     }
 }
