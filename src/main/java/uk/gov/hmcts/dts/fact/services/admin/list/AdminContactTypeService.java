@@ -61,7 +61,6 @@ public class AdminContactTypeService {
                 .orElseThrow(() -> new NotFoundException(updatedContactType.getId().toString()));
 
         checkIfUpdatedContactTypeAlreadyExists(updatedContactType);
-
         contactTypeEntity.setDescription(updatedContactType.getType());
         contactTypeEntity.setDescriptionCy(updatedContactType.getTypeCy());
         return new ContactType(contactTypeRepository.save(contactTypeEntity));
@@ -96,7 +95,6 @@ public class AdminContactTypeService {
             throw new DuplicatedListItemException("Updated Contact Type already exists: " + updatedContactType.getType());
         }
     }
-
 
     private uk.gov.hmcts.dts.fact.entity.ContactType createNewContactTypeEntityFromModel(final ContactType contactType) {
         final uk.gov.hmcts.dts.fact.entity.ContactType entity = new uk.gov.hmcts.dts.fact.entity.ContactType();

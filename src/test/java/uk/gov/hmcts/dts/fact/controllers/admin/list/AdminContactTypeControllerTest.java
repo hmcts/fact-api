@@ -133,7 +133,6 @@ public class AdminContactTypeControllerTest {
 
     @Test
     void shouldSuccessfullyDeleteContactType() throws Exception {
-
         final String idJson = OBJECT_MAPPER.writeValueAsString(ID);
 
         mockMvc.perform(delete(BASE_PATH  + "/" + ID)
@@ -146,7 +145,6 @@ public class AdminContactTypeControllerTest {
 
     @Test
     void shouldReturnConflictIfContactTypeInUse() throws Exception {
-
         doThrow(mock(ListItemInUseException.class)).when(adminContactTypeService).deleteContactType(ID);
 
         mockMvc.perform(delete(BASE_PATH  + "/" + ID)
@@ -158,7 +156,6 @@ public class AdminContactTypeControllerTest {
 
     @Test
     void deleteContactTypeShouldReturnNotFoundIfIdDoesNotExist() throws Exception {
-
         doThrow(mock(NotFoundException.class)).when(adminContactTypeService).deleteContactType(ID);
 
         mockMvc.perform(delete(BASE_PATH  + "/" + ID)
@@ -167,5 +164,4 @@ public class AdminContactTypeControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
     }
-
 }
