@@ -20,7 +20,7 @@
     <cve>CVE-2018-1258</cve>
     <cve>CVE-2020-13943</cve>
   </suppress>
-  <suppress until="2030-09-23">
+  <suppress until="2021-11-23">
     <notes><![CDATA[
      Suppressing until Springboot dependency upgrade solved
    ]]></notes>
