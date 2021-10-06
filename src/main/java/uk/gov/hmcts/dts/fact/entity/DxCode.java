@@ -27,5 +27,7 @@ public class DxCode {
         this.code = code;
         this.explanation = explanation;
         this.explanationCy = explanationCy;
+        this.inLeaflet = true;
     }
+
 }

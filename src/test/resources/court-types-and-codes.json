@@ -1,0 +1,33 @@
+{
+  "types": [
+    {
+      "id": 1,
+      "name": "Magistrates' Court",
+      "code": null
+    },
+    {
+      "id": 2,
+      "name": "County Court",
+      "code": 113
+    },
+    {
+      "id": 3,
+      "name": "Crown Court",
+      "code": null
+    }
+    ],
+  "gbsCode": "123",
+  "dxCodes": [
+    {
+      "code": "123",
+      "explanation": "explanation 1",
+      "explanationCy": "explanation cy 1"
+    },
+    {
+      "code": "456",
+      "explanation": "explanation 2",
+      "explanationCy": "explanation cy 2"
+    }
+    ]
+}
+
