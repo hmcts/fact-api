@@ -29,6 +29,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
     private static final String TEST_AUDIT_NAME = "Update court opening times";
 
+
     /************************************************************* Get Request Tests. ****************************************************/
 
     @Test
