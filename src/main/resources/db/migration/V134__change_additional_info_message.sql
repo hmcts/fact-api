@@ -1,0 +1,3 @@
+UPDATE public.search_court sc
+SET info = 'Scammers are using automated messages mimicking HMCTS phone numbers to demand payment. If you receive an automated call don''t pay anything; report it to Action Fraud <a href="https://www.gov.uk/government/news/scammers-using-hmcts-telephone-numbers">https://www.gov.uk/government/news/scammers-using-hmcts-telephone-numbers</a>',
+    info_cy = 'Mae sgamwyr yn defnyddio negeseuon awtomataidd sy''n dynwared rhifau ffôn GLlTEM i fynnu taliad. Os ydych chi''n derbyn galwad awtomataidd peidiwch â thalu unrhyw beth; rhowch wybod i Action Fraud ar unwaith: <a href= "https://www.gov.uk/government/news/scammers-using-hmcts-telephone-numbers">https://www.gov.uk/government/news/scammers-using-hmcts-telephone-numbers</a>'
