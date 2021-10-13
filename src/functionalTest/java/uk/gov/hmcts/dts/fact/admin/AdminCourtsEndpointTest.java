@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.admin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -74,8 +75,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        String slug = response.jsonPath().get("[0].slug");
-        assertThat(slug).isEqualTo("greenwich-magistrates-court");
+        List<String> slugs = response.jsonPath().getList("slug");
+        Assertions.assertTrue(slugs.contains("greenwich-magistrates-court"));
     }
 
     @Test
