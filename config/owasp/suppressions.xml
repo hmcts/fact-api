@@ -3,6 +3,7 @@
   <suppress>
     <cve>CVE-2020-5421</cve>
     <cve>CVE-2020-25638</cve>
+    <cve>CVE-2021-22112</cve>
     <cve>CVE-2020-17527</cve>
     <cve>CVE-2008-1392</cve>
     <cve>CVE-2009-0177</cve>
