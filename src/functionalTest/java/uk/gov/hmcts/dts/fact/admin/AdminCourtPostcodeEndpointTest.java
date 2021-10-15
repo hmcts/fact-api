@@ -42,8 +42,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final String CONFLICT_POSTCODE = "B75";
 
     private static final List<String> POSTCODES_VALID = Arrays.asList(
-        "B16 4BH",
-        "B164JS"
+        "B1 1BZ",
+        "B1 1DA"
     );
     private static final List<String> POSTCODES_INVALID = Arrays.asList(
         "ba62rt345435435",
@@ -64,9 +64,9 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         "SE91AD"
     );
     private static final List<String> POSTCODES_DUPLICATE = Arrays.asList(
-        "B154JS",
-        "B154BH",
-        "B15 4JS"
+        "B1 1BZ",
+        "B1 1DB",
+        "B1 1DD"
     );
     private static final List<String> POSTCODES_TO_MOVE = Arrays.asList(
         "B742SR",
