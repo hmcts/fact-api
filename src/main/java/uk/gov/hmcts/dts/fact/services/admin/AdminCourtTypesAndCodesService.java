@@ -83,11 +83,6 @@ public class AdminCourtTypesAndCodesService {
         //save CourtTypesAndGbsCodes
         final Court amendedCourtEntity = saveCourtTypesAndGbsCodes(courtEntity,courtTypesAndCode,courtTypeEntities);
 
-        //save court dx codes if request is by SuperAdmin
-//        if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
-//            saveCourtDxCodes(amendedCourtEntity, getNewDxCodeEntity(courtTypesAndCode.getDxCodes()));
-//        }
-
         saveCourtDxCodes(amendedCourtEntity, getNewDxCodeEntity(courtTypesAndCode.getDxCodes()));
 
         return new CourtTypesAndCodes(getCourtCourtTypes(amendedCourtEntity), amendedCourtEntity.getGbs(), getCourtDxCodes(amendedCourtEntity));
@@ -107,10 +102,6 @@ public class AdminCourtTypesAndCodesService {
         courtEntity.setCciCode(null);
         courtEntity.setNumber(null);
 
-        //set court gbs code only if request is by SuperAdmin
-//        if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
-//            courtEntity.setGbs(courtTypesAndCode.getGbsCode());
-//        }
         courtEntity.setGbs(courtTypesAndCode.getGbsCode());
 
         final Court amendedCourtEntity = mapCourtCode.mapCourtCodesForCourtEntity(courtTypesAndCode.getCourtTypes(), courtEntity);
