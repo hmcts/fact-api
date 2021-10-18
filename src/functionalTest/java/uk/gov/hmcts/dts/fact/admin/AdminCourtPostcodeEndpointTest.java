@@ -64,9 +64,9 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         "SE91AD"
     );
     private static final List<String> POSTCODES_DUPLICATE = Arrays.asList(
-        "B26 1BH",
-        "B26 1BS",
-        "B26 1DA"
+        "B21 0PA",
+        "B21 0PD",
+        "B21 0PP"
     );
     private static final List<String> POSTCODES_TO_MOVE = Arrays.asList(
         "B742SR",
