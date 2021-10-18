@@ -27,9 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -131,7 +129,7 @@ public class AdminCourtTypesAndCodesServiceTest {
 
 
     @Test
-    void ShouldUpdateCourtTypesAndCodes() {
+    void shouldUpdateCourtTypesAndCodes() {
         when(court.getCourtTypes()).thenReturn(COURT_TYPES);
         when(court.getGbs()).thenReturn(GBS_CODE);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));

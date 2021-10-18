@@ -17,7 +17,7 @@ import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+
 
 @Service
 public class AdminCourtTypesAndCodesService {
