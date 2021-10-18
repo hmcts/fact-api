@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -25,17 +24,14 @@ public class AdminCourtTypesAndCodesService {
     private final CourtTypeRepository courtTypeRepository;
     private final MapCourtCode mapCourtCode;
     private final CourtDxCodesRepository courtDxCodesRepository;
-    private final RolesProvider rolesProvider;
 
     @Autowired
     public AdminCourtTypesAndCodesService(final CourtRepository courtRepository, final CourtTypeRepository courtTypeRepository,
-                                          final MapCourtCode mapCourtCode, final CourtDxCodesRepository courtDxCodesRepository,
-                                          final RolesProvider rolesProvider) {
+                                          final MapCourtCode mapCourtCode, final CourtDxCodesRepository courtDxCodesRepository) {
         this.courtRepository = courtRepository;
         this.courtTypeRepository = courtTypeRepository;
         this.mapCourtCode = mapCourtCode;
         this.courtDxCodesRepository = courtDxCodesRepository;
-        this.rolesProvider = rolesProvider;
     }
 
     public List<CourtType> getAllCourtTypes() {
