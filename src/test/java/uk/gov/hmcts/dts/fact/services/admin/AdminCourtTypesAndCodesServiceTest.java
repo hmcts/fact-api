@@ -129,27 +129,9 @@ public class AdminCourtTypesAndCodesServiceTest {
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 
-    @Test
-    void adminCanUpdateCourtTypesOnly() {
-        when(court.getCourtTypes()).thenReturn(COURT_TYPES);
-        when(court.getGbs()).thenReturn(GBS_CODE);
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(mapCourtCode.mapCourtCodesForCourtTypeModel(anyList(), any())).thenReturn(EXPECTED_COURT_TYPES);
-        when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_ADMIN));
-        when(courtRepository.save(court)).thenReturn(court);
-        when(adminCourtTypesAndCodesService.getCourtDxCodes(court)).thenReturn(EXPECTED_COURT_DX_CODES);
-        when(adminCourtTypesAndCodesService.saveCourtTypesAndGbsCodes(court,EXPECTED_COURT_TYPES_AND_CODES,EXPECTED_COURT_TYPES_ENTITY)).thenReturn(court);
-        when(courtDxCodesRepository.findByCourtId(any())).thenReturn(EXPECTED_COURT_DX_CODE_ENTITY);
-
-        assertThat(adminCourtTypesAndCodesService.updateCourtTypesAndCodes(COURT_SLUG, EXPECTED_COURT_TYPES_AND_CODES))
-            .isEqualTo(EXPECTED_COURT_TYPES_AND_CODES);
-
-        verify(court, never()).setGbs(anyString());
-        verify(courtDxCodesRepository, never()).saveAll(EXPECTED_COURT_DX_CODE_ENTITY);
-    }
 
     @Test
-    void superAdminCanUpdateCourtTypesAndCodes() {
+    void ShouldUpdateCourtTypesAndCodes() {
         when(court.getCourtTypes()).thenReturn(COURT_TYPES);
         when(court.getGbs()).thenReturn(GBS_CODE);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
