@@ -18,7 +18,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
-@SuppressWarnings("PMD.SystemPrintln")
 @ExtendWith(SpringExtension.class)
 public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
@@ -33,9 +32,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     @BeforeEach
     public void setUpTestData() throws JsonProcessingException {
-        for (int i = 0; i < 2; i++) {
-            setUpOpeningTimes();
-        }
+        setUpOpeningTimes();
     }
 
     /************************************************************* Get Request Tests. ****************************************************/
@@ -132,20 +129,16 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
         LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
-
-        System.out.println("before name: " + actionDataBeforeName);
-        System.out.println("Time now -5: " + LocalDateTime.now().minusSeconds(5));
-        System.out.println("last audit time: " + lastAuditTime);
-        System.out.println("Audit before action: " + currentAudits.get(indexActionDataBefore).getActionDataBefore());
-        System.out.println("Audit after action: " + currentAudits.get(indexActionDataAfter).getActionDataAfter());
-        System.out.println("Action data before name same as after?: " + currentAudits.get(indexActionDataAfter).getAction().getName());
-        System.out.println("Action before name is expected to be " + TEST_AUDIT_NAME + " and is: " + actionDataBeforeName);
-
         assertThat(LocalDateTime.now().minusSeconds(60).isBefore(lastAuditTime)).isEqualTo(true);
         assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore())
             .isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
         assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
-        assertThat(actionDataBeforeName).isEqualTo(TEST_AUDIT_NAME);
+
+        if (!location.isEmpty()) {
+            // Without a name / location, we can get a non-opening hour audit because of tests
+            // running at the same time, yet they will be create/remove, so the above will still apply
+            assertThat(actionDataBeforeName).isEqualTo(TEST_AUDIT_NAME);
+        }
     }
 
     private List<Audit> getCurrentAudits(int page, int size, String location, String email,
