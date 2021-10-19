@@ -18,6 +18,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
+@SuppressWarnings("PMD.SystemPrintln")
 @ExtendWith(SpringExtension.class)
 public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
