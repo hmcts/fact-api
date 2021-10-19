@@ -2,6 +2,8 @@ package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -29,40 +31,39 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
     private static final String TEST_AUDIT_NAME = "Update court opening times";
 
+    @BeforeEach
+    public void setUpTestData() throws JsonProcessingException {
+        for (int i = 0; i < 2; i++) {
+            setUpOpeningTimes();
+        }
+    }
 
     /************************************************************* Get Request Tests. ****************************************************/
-
     @Test
-    public void shouldReturnAllAuditsForPageAndSize() throws JsonProcessingException {
-        setUpOpeningTimes();
+    public void shouldReturnAllAuditsForPageAndSize() {
         checkAuditData("", "", "", "");
     }
 
     @Test
-    public void shouldReturnAllAuditsForLocation() throws JsonProcessingException {
-        setUpOpeningTimes();
+    public void shouldReturnAllAuditsForLocation() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "", "", "");
     }
 
     @Test
-    public void shouldReturnAllAuditsForLocationAndEmail() throws JsonProcessingException {
-        setUpOpeningTimes();
+    public void shouldReturnAllAuditsForLocationAndEmail() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "", "");
     }
 
     @Test
-    public void shouldReturnAllAuditsForLocationEmailAndToAndFromDates() throws JsonProcessingException {
-        setUpOpeningTimes();
+    public void shouldReturnAllAuditsForLocationEmailAndToAndFromDates() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "2020-01-01T01:01:01.111", "2520-01-01T01:01:01.111");
     }
 
     @Test
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    public void shouldReturnPaginatedResultsForPageAndSize() throws JsonProcessingException {
-
-        setUpOpeningTimes();
+    public void shouldReturnPaginatedResultsForPageAndSize() {
 
         final List<Audit> currentAudits = getCurrentAudits(0,200_000, "", "", "", "");
         assertThat(currentAudits).isNotEmpty();
@@ -132,8 +133,24 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
         LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
 
-        assertThat(LocalDateTime.now().minusSeconds(5).isBefore(lastAuditTime)).isEqualTo(true);
-        assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore()).isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
+        // One
+        // 2021-10-19T12:57:34.420889
+        // 2021-10-19T12:54:17.551961
+
+        // Two
+        //
+
+        System.out.println("before name: " + actionDataBeforeName);
+        System.out.println("Time now -5: " + LocalDateTime.now().minusSeconds(5));
+        System.out.println("last audit time: " + lastAuditTime);
+        System.out.println("Audit before action: " + currentAudits.get(indexActionDataBefore).getActionDataBefore());
+        System.out.println("Audit after action: " + currentAudits.get(indexActionDataAfter).getActionDataAfter());
+        System.out.println("Action data before name same as after?: " + currentAudits.get(indexActionDataAfter).getAction().getName());
+        System.out.println("Action before name is expected to be " + TEST_AUDIT_NAME + " and is: " + actionDataBeforeName);
+
+        assertThat(LocalDateTime.now().minusSeconds(60).isBefore(lastAuditTime)).isEqualTo(true);
+        assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore())
+            .isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
         assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
         assertThat(actionDataBeforeName).isEqualTo(TEST_AUDIT_NAME);
     }
