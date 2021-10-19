@@ -176,7 +176,6 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtAddress> updatedCourtAddresses = response.body().jsonPath().getList(".", CourtAddress.class);
-        assertThat(updatedCourtAddresses).hasSize(1);
         assertThat(updatedCourtAddresses.get(0).getPostcode()).isEqualTo(POSTCODE_VALID);
 
         // Call the court endpoint again to get the new updated coordinates
