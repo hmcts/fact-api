@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -132,7 +131,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
         LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
-        
+
         System.out.println("before name: " + actionDataBeforeName);
         System.out.println("Time now -5: " + LocalDateTime.now().minusSeconds(5));
         System.out.println("last audit time: " + lastAuditTime);
