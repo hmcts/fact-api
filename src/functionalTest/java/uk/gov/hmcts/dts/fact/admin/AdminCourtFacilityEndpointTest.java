@@ -33,8 +33,8 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT + GREENWICH_MAGISTRATES_COURT_SLUG
         + FACILITIES_PATH;
 
-    private static final String TEST_FACILITY_NAME1 = "Lift";
-    private static final String TEST_FACILITY_NAME2 = "Refreshments";
+    private static final Integer TEST_FACILITY_ID_1 = 45;
+    private static final Integer TEST_FACILITY_ID_2 = 50;
     private static final String TEST_FACILITY_DESCRIPTION = "TEST";
     private static final String TEST_FACILITY_DESCRIPTION_CY = "TESTCY";
 
@@ -147,7 +147,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     private List<Facility> updateFacilities(final List<Facility> facilities) {
         final List<Facility> updatedFacilities = new ArrayList<>(facilities);
         Facility facility = new Facility();
-        facility.setName(TEST_FACILITY_NAME1);
+        facility.setId(TEST_FACILITY_ID_1);
         facility.setDescription(TEST_FACILITY_DESCRIPTION);
         facility.setDescriptionCy(TEST_FACILITY_DESCRIPTION_CY);
         updatedFacilities.add(facility);
@@ -156,19 +156,19 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     private static String getTestFacilities() throws JsonProcessingException {
         final List<Facility> facilities = Arrays.asList(
-            new Facility(TEST_FACILITY_NAME1, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY),
-            new Facility(TEST_FACILITY_NAME2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)
+            new Facility(TEST_FACILITY_ID_1, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY),
+            new Facility(TEST_FACILITY_ID_2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)
         );
         return objectMapper().writeValueAsString(facilities);
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<Facility> getExpectedFacilities(final List<Facility> facilities) {
-        final Map<String, FacilityType> facilityTypeMap = getFacilityTypes().stream()
-            .collect(toMap(FacilityType::getName, type -> type));
+        final Map<Integer, FacilityType> facilityTypeMap = getFacilityTypes().stream()
+            .collect(toMap(FacilityType::getId, type -> type));
         // Sort the facilities by the facility type sort order
         return facilities.stream()
-            .sorted(Comparator.comparingInt(f -> facilityTypeMap.get(f.getName()).getOrder()))
+            .sorted(Comparator.comparingInt(f -> facilityTypeMap.get(f.getId()).getOrder()))
             .collect(toList());
     }
 
