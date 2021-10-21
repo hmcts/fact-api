@@ -44,9 +44,8 @@ public class Facility {
     )
     private FacilityType facilityType;
 
-    public Facility(final String name, final String description, final String descriptionCy,final FacilityType facilityType) {
-        this.id = facilityType.getId();
-        this.name = name;
+    public Facility(final String description, final String descriptionCy,final FacilityType facilityType) {
+        this.name = facilityType.getName();
         this.nameCy = facilityType.getNameCy();
         this.description = description;
         this.descriptionCy = descriptionCy;
