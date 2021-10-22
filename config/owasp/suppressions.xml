@@ -12,7 +12,6 @@
     <cve>CVE-2009-1244</cve>
     <cve>CVE-2009-1805</cve>
     <cve>CVE-2021-24122</cve>
-    <cve>CVE-2021-42340</cve>
   </suppress>
   <suppress until="2030-01-01">
     <notes><![CDATA[

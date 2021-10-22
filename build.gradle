@@ -206,16 +206,16 @@ ext.libraries = [
 ]
 
 dependencies {
-  implementation('org.apache.tomcat.embed:tomcat-embed-core') {
-    version {
-      strictly '9.0.48'
-    }
-  }
-  implementation('org.apache.tomcat.embed:tomcat-embed-websocket') {
-    version {
-      strictly '9.0.48'
-    }
-  }
+//  implementation('org.apache.tomcat.embed:tomcat-embed-core') {
+//    version {
+//      strictly '9.0.54'
+//    }
+//  }
+//  implementation('org.apache.tomcat.embed:tomcat-embed-websocket') {
+//    version {
+//      strictly '9.0.54'
+//    }
+//  }
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
@@ -239,8 +239,11 @@ dependencies {
   compile group: 'org.apache.logging.log4j', name: 'log4j-api'
   compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
 
-  compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
-  compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket'
+//  compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
+//  compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket'
+
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.54'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.54'
 
   compile group: 'org.projectlombok', name: 'lombok'
   annotationProcessor 'org.projectlombok:lombok'
