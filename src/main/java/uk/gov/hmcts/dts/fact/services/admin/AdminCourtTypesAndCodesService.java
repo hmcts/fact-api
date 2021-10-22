@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -17,7 +16,7 @@ import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+
 
 @Service
 public class AdminCourtTypesAndCodesService {
@@ -25,17 +24,14 @@ public class AdminCourtTypesAndCodesService {
     private final CourtTypeRepository courtTypeRepository;
     private final MapCourtCode mapCourtCode;
     private final CourtDxCodesRepository courtDxCodesRepository;
-    private final RolesProvider rolesProvider;
 
     @Autowired
     public AdminCourtTypesAndCodesService(final CourtRepository courtRepository, final CourtTypeRepository courtTypeRepository,
-                                          final MapCourtCode mapCourtCode, final CourtDxCodesRepository courtDxCodesRepository,
-                                          final RolesProvider rolesProvider) {
+                                          final MapCourtCode mapCourtCode, final CourtDxCodesRepository courtDxCodesRepository) {
         this.courtRepository = courtRepository;
         this.courtTypeRepository = courtTypeRepository;
         this.mapCourtCode = mapCourtCode;
         this.courtDxCodesRepository = courtDxCodesRepository;
-        this.rolesProvider = rolesProvider;
     }
 
     public List<CourtType> getAllCourtTypes() {
@@ -83,10 +79,7 @@ public class AdminCourtTypesAndCodesService {
         //save CourtTypesAndGbsCodes
         final Court amendedCourtEntity = saveCourtTypesAndGbsCodes(courtEntity,courtTypesAndCode,courtTypeEntities);
 
-        //save court dx codes if request is by SuperAdmin
-        if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
-            saveCourtDxCodes(amendedCourtEntity, getNewDxCodeEntity(courtTypesAndCode.getDxCodes()));
-        }
+        saveCourtDxCodes(amendedCourtEntity, getNewDxCodeEntity(courtTypesAndCode.getDxCodes()));
 
         return new CourtTypesAndCodes(getCourtCourtTypes(amendedCourtEntity), amendedCourtEntity.getGbs(), getCourtDxCodes(amendedCourtEntity));
     }
@@ -105,10 +98,7 @@ public class AdminCourtTypesAndCodesService {
         courtEntity.setCciCode(null);
         courtEntity.setNumber(null);
 
-        //set court gbs code only if request is by SuperAdmin
-        if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
-            courtEntity.setGbs(courtTypesAndCode.getGbsCode());
-        }
+        courtEntity.setGbs(courtTypesAndCode.getGbsCode());
 
         final Court amendedCourtEntity = mapCourtCode.mapCourtCodesForCourtEntity(courtTypesAndCode.getCourtTypes(), courtEntity);
 
