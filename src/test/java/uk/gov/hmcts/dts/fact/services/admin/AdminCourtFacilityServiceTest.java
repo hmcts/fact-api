@@ -36,9 +36,9 @@ public class AdminCourtFacilityServiceTest {
     private static final List<CourtFacility> COURT_FACILITIES = new ArrayList<>();
     private static final String NOT_FOUND = "Not found: ";
 
-    private static final String FACILITY_1 = "Facility1";
-    private static final String FACILITY_2 = "Facility2";
-    private static final String FACILITY_3 = "Facility3";
+    private static final int FACILITY_ID_1 = 1;
+    private static final int FACILITY_ID_2 = 2;
+    private static final int FACILITY_ID_3 = 3;
     private static final String DESCRIPTION_1 = "Description1";
     private static final String DESCRIPTION_CY_1 = "DescriptionCy1";
     private static final String DESCRIPTION_2 = "Description2";
@@ -47,16 +47,16 @@ public class AdminCourtFacilityServiceTest {
     private static final String DESCRIPTION_CY_3 = "DescriptionCy3";
 
     private static final List<uk.gov.hmcts.dts.fact.model.admin.Facility> INPUT_COURT_FACILITIES = Arrays.asList(
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_1,DESCRIPTION_1,DESCRIPTION_CY_1),
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_2,DESCRIPTION_2,DESCRIPTION_CY_2),
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_3,DESCRIPTION_3,DESCRIPTION_CY_3)
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1,DESCRIPTION_1,DESCRIPTION_CY_1),
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_2,DESCRIPTION_2,DESCRIPTION_CY_2),
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3,DESCRIPTION_3,DESCRIPTION_CY_3)
     );
 
     // The expected facility results are sorted based on the sort order of the facility types and not necessary the same as the input order
     private static final List<uk.gov.hmcts.dts.fact.model.admin.Facility> EXPECTED_COURT_FACILITIES = Arrays.asList(
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_2,DESCRIPTION_2,DESCRIPTION_CY_2),
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_3,DESCRIPTION_3,DESCRIPTION_CY_3),
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_1,DESCRIPTION_1,DESCRIPTION_CY_1)
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_2,DESCRIPTION_2,DESCRIPTION_CY_2),
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3,DESCRIPTION_3,DESCRIPTION_CY_3),
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1,DESCRIPTION_1,DESCRIPTION_CY_1)
     );
 
     @Autowired
@@ -96,9 +96,9 @@ public class AdminCourtFacilityServiceTest {
         facilityType3.setName("FacilityType3");
         facilityType3.setOrder(2);
 
-        final Facility facility1 = new Facility("Facility1", "Description1", "DescriptionCy1", facilityType1);
-        final Facility facility2 = new Facility("Facility2", "Description2", "DescriptionCy2", facilityType2);
-        final Facility facility3 = new Facility("Facility3", "Description3", "DescriptionCy3", facilityType3);
+        final Facility facility1 = new Facility("Description1", "DescriptionCy1", facilityType1);
+        final Facility facility2 = new Facility("Description2", "DescriptionCy2", facilityType2);
+        final Facility facility3 = new Facility("Description3", "DescriptionCy3", facilityType3);
 
         FACILITIES.add(facility1);
         FACILITIES.add(facility2);
@@ -144,7 +144,7 @@ public class AdminCourtFacilityServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtFacilityRepository.findByCourtId(anyInt())).thenReturn(COURT_FACILITIES);
         when(courtRepository.save(court)).thenReturn(court);
-        when(facilityTypeRepository.findByName(any())).thenReturn(Optional.of(facilityType));
+        when(facilityTypeRepository.findById(any())).thenReturn(Optional.of(facilityType));
 
         List<uk.gov.hmcts.dts.fact.model.admin.Facility> results =
             adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES);

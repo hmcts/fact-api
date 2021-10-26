@@ -88,9 +88,9 @@ public class AdminCourtFacilityService {
     private List<uk.gov.hmcts.dts.fact.entity.Facility> getNewFacilityEntity(final List<Facility> facilities) {
 
         return facilities.stream()
-            .map(f -> new uk.gov.hmcts.dts.fact.entity.Facility(f.getName(),f.getDescription(), f.getDescriptionCy(),
-                                                                Objects.requireNonNull(facilityTypeRepository.findByName(
-                                                                    f.getName()).orElse(null))
+            .map(f -> new uk.gov.hmcts.dts.fact.entity.Facility(f.getDescription(), f.getDescriptionCy(),
+                                                                Objects.requireNonNull(facilityTypeRepository.findById(
+                                                                    f.getId()).orElse(null))
             ))
             .collect(toList());
     }
