@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Facility {
-    private String name;
+    private Integer id;
     private String description;
     private String descriptionCy;
 
     public Facility(uk.gov.hmcts.dts.fact.entity.Facility facility) {
-        this.name = facility.getName();
+        this.id = facility.getFacilityType().getId();
         this.description = facility.getDescription();
         this.descriptionCy = facility.getDescriptionCy();
     }
