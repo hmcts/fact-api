@@ -11,6 +11,7 @@ import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
 import java.util.List;
@@ -94,7 +95,7 @@ public class AdminCourtsController {
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug, @RequestBody String imageFile) {
-        return ok(adminService.updateCourtImage(slug, imageFile));
+    public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug, @RequestBody ImageFile imageFile) {
+        return ok(adminService.updateCourtImage(slug, imageFile.getImageName()));
     }
 }
