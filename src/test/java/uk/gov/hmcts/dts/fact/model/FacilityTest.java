@@ -11,14 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FacilityTest {
     static uk.gov.hmcts.dts.fact.entity.Facility entity;
+    static uk.gov.hmcts.dts.fact.entity.FacilityType facilityType;
 
     @BeforeAll
     static void setUp() {
+        facilityType = new uk.gov.hmcts.dts.fact.entity.FacilityType();
+        facilityType.setName("A name");
+        facilityType.setNameCy("A name but in Welsh");
+
         entity = new uk.gov.hmcts.dts.fact.entity.Facility();
-        entity.setName("A name");
-        entity.setNameCy("A name but in Welsh");
         entity.setDescription("A description");
         entity.setDescriptionCy("A description in Welsh");
+        entity.setFacilityType(facilityType);
     }
 
     @ParameterizedTest
@@ -30,7 +34,7 @@ class FacilityTest {
         }
 
         Facility facility = new Facility(entity);
-        assertEquals(welsh ? entity.getNameCy() : entity.getName(), facility.getName());
+        assertEquals(welsh ? entity.getFacilityType().getNameCy() : entity.getFacilityType().getName(), facility.getName());
         assertEquals(welsh ? entity.getDescriptionCy() : entity.getDescription(), facility.getDescription());
 
         LocaleContextHolder.resetLocaleContext();

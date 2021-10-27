@@ -29,7 +29,6 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import java.util.List;
 import java.util.Locale;
 
-import static java.lang.Integer.MAX_VALUE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -161,7 +160,6 @@ class CourtTest {
         assertEquals(2, facility.getOrder());
         assertEquals(5, court.getFacilities().get(1).getOrder());
         assertEquals(10, court.getFacilities().get(2).getOrder());
-        assertEquals(MAX_VALUE, court.getFacilities().get(3).getOrder());
 
         assertEquals(courtEntity.getServiceAreas().get(0).getName(), court.getServiceAreas().get(0));
 
@@ -264,13 +262,14 @@ class CourtTest {
         return asList(
             createFacilityWithOrderOf(10),
             createFacilityWithOrderOf(2),
-            createFacilityWithOrderOf(5),
-            createFacilityWith(null)
+            createFacilityWithOrderOf(5)
         );
     }
 
     private static Facility createFacilityWithOrderOf(final int order) {
         final FacilityType facilityType = new FacilityType();
+        facilityType.setName("Facility");
+        facilityType.setNameCy("FacilityCy");
         facilityType.setOrder(order);
         return createFacilityWith(facilityType);
     }
