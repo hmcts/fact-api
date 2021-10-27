@@ -17,7 +17,7 @@ public class Facility {
 
     public Facility(uk.gov.hmcts.dts.fact.entity.Facility facility) {
         this.description = chooseString(facility.getDescriptionCy(), facility.getDescription());
-        this.name = chooseString(facility.getNameCy(), facility.getName());
+        this.name = chooseString(facility.getFacilityType().getNameCy(), facility.getFacilityType().getName());
         this.order = ofNullable(facility.getFacilityType())
             .map(FacilityType::getOrder)
             .orElse(MAX_VALUE);
