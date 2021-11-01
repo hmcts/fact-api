@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
 import java.util.Collections;
@@ -186,10 +187,18 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldUpdateCourtImageFile() throws Exception {
-        final String imageFile = "birmingham_district_probate_registry.jpg";
+        ObjectMapper mapper = new ObjectMapper();
+
+        final ImageFile imageFile = new ImageFile();
+        imageFile.setImageName("birmingham_district_probate_registry.jpg");
+
+        String json = mapper.writeValueAsString(imageFile);
+        final String imageFileName = "birmingham_district_probate_registry.jpg";
+
+        when(adminService.updateCourtImage(SEARCH_SLUG, imageFile.getImageName())).thenReturn(imageFileName);
 
         mockMvc.perform(put(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG))
-                            .content(imageFile)
+                            .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
@@ -197,11 +206,16 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldNotUpdateCourtImageFileForUnknownSlug() throws Exception {
-        final String imageFile = "birmingham_district_probate_registry.jpg";
+        ObjectMapper mapper = new ObjectMapper();
 
-        when(adminService.updateCourtImage(SEARCH_SLUG, imageFile)).thenThrow(new NotFoundException("search criteria"));
+        final ImageFile imageFile = new ImageFile();
+        imageFile.setImageName("birmingham_district_probate_registry.jpg");
+
+        String json = mapper.writeValueAsString(imageFile);
+
+        when(adminService.updateCourtImage(SEARCH_SLUG, imageFile.getImageName())).thenThrow(new NotFoundException("search criteria"));
         mockMvc.perform(put(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG))
-                            .content(imageFile)
+                            .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
