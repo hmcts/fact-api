@@ -10,7 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
-import uk.gov.hmcts.dts.fact.services.admin.AdminCourtTypesService;
+import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtTypesAndCodesService;
 
 import java.util.List;
 
@@ -22,17 +23,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
-@WebMvcTest(AdminCourtTypesController.class)
+@WebMvcTest(AdminCourtTypesAndCodesController.class)
 @AutoConfigureMockMvc(addFilters = false)
 
-public class AdminCourtTypesControllerTest {
+public class AdminCourtTypesAndCodesControllerTest {
 
 
     private static final String BASE_PATH = "/admin/courts/";
-    private static final String CHILD_PATH = "/courtTypes";
-    private static final String CHILD_PATH_ALL = "courtTypes/all";
+    private static final String COURT_TYPES_AND_CODES_PATH = "/courtTypesAndCodes";
+    private static final String COURT_TYPES_PATH = "courtTypes";
     private static final String TEST_SLUG = "unknownSlug";
     private static final String TEST_COURT_TYPES_PATH = "court-types.json";
+    private static final String TEST_COURT_TYPES_AND_CODES_PATH = "court-types-and-codes.json";
     private static final String TEST_UNKNOWN_COURT_TYPE_MESSAGE = "Court type not found";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -40,7 +42,7 @@ public class AdminCourtTypesControllerTest {
     private transient MockMvc mockMvc;
 
     @MockBean
-    private AdminCourtTypesService adminService;
+    private AdminCourtTypesAndCodesService adminService;
 
     @Test
     void shouldReturnAllCourtTypes() throws Exception {
@@ -49,41 +51,41 @@ public class AdminCourtTypesControllerTest {
 
         when(adminService.getAllCourtTypes()).thenReturn(courtTypes);
 
-        mockMvc.perform(get(BASE_PATH + CHILD_PATH_ALL))
+        mockMvc.perform(get(BASE_PATH + COURT_TYPES_PATH))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson));
     }
 
     @Test
-    void shouldReturnCourtCourtTypes() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_PATH);
-        final List<CourtType> courtTypes = asList(OBJECT_MAPPER.readValue(expectedJson, CourtType[].class));
+    void shouldReturnCourtTypesAndCodes() throws Exception {
+        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_AND_CODES_PATH);
+        final CourtTypesAndCodes courtTypesAndCodes = OBJECT_MAPPER.readValue(expectedJson, CourtTypesAndCodes.class);
 
-        when(adminService.getCourtCourtTypesBySlug(TEST_SLUG)).thenReturn(courtTypes);
+        when(adminService.getCourtTypesAndCodes(TEST_SLUG)).thenReturn(courtTypesAndCodes);
 
-        mockMvc.perform(get(BASE_PATH + TEST_SLUG + CHILD_PATH))
+        mockMvc.perform(get(BASE_PATH + TEST_SLUG + COURT_TYPES_AND_CODES_PATH))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson));
     }
 
     @Test
-    void retrieveCourtCourtTypesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
-        when(adminService.getCourtCourtTypesBySlug(TEST_SLUG)).thenThrow(new NotFoundException(TEST_SLUG));
+    void retrieveCourtTypesAndCodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
+        when(adminService.getCourtTypesAndCodes(TEST_SLUG)).thenThrow(new NotFoundException(TEST_SLUG));
 
-        mockMvc.perform(get(BASE_PATH + TEST_SLUG + CHILD_PATH))
+        mockMvc.perform(get(BASE_PATH + TEST_SLUG + COURT_TYPES_AND_CODES_PATH))
             .andExpect(status().isNotFound())
             .andExpect(content().string("Not found: " + TEST_SLUG));
     }
 
 
     @Test
-    void updateCourtCourtTypesShouldReturnUpdatedCourtCourtTypes() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_PATH);
-        final List<CourtType> courtTypes = asList(OBJECT_MAPPER.readValue(expectedJson, CourtType[].class));
+    void updateCourtTypesAndCodesShouldReturnUpdatedCourtTypesAndCodes() throws Exception {
+        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_AND_CODES_PATH);
+        final CourtTypesAndCodes courtTypesAndCodes = OBJECT_MAPPER.readValue(expectedJson, CourtTypesAndCodes.class);
 
-        when(adminService.updateCourtCourtTypes(TEST_SLUG, courtTypes)).thenReturn(courtTypes);
+        when(adminService.updateCourtTypesAndCodes(TEST_SLUG, courtTypesAndCodes)).thenReturn(courtTypesAndCodes);
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + COURT_TYPES_AND_CODES_PATH)
                             .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -92,13 +94,13 @@ public class AdminCourtTypesControllerTest {
     }
 
     @Test
-    void updateCourtCourtTypesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_PATH);
-        final List<CourtType> courtTypes = asList(OBJECT_MAPPER.readValue(expectedJson, CourtType[].class));
+    void updateCourtTypesAndCodesShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
+        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_AND_CODES_PATH);
+        final CourtTypesAndCodes courtTypesAndCodes = OBJECT_MAPPER.readValue(expectedJson, CourtTypesAndCodes.class);
 
-        when(adminService.updateCourtCourtTypes(TEST_SLUG, courtTypes)).thenThrow(new NotFoundException(TEST_SLUG));
+        when(adminService.updateCourtTypesAndCodes(TEST_SLUG, courtTypesAndCodes)).thenThrow(new NotFoundException(TEST_SLUG));
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + COURT_TYPES_AND_CODES_PATH)
                             .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -107,13 +109,13 @@ public class AdminCourtTypesControllerTest {
     }
 
     @Test
-    void updateCourtCourtTypesShouldReturnBadRequestForUnknownCourtType() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_PATH);
-        final List<CourtType> courtTypes = asList(OBJECT_MAPPER.readValue(expectedJson, CourtType[].class));
+    void updateCourtTypesAndCodesShouldReturnBadRequestForUnknownCourtType() throws Exception {
+        final String expectedJson = getResourceAsJson(TEST_COURT_TYPES_AND_CODES_PATH);
+        final CourtTypesAndCodes courtTypesAndCodes = OBJECT_MAPPER.readValue(expectedJson, CourtTypesAndCodes.class);
 
-        when(adminService.updateCourtCourtTypes(TEST_SLUG, courtTypes)).thenThrow(new IllegalArgumentException(TEST_UNKNOWN_COURT_TYPE_MESSAGE));
+        when(adminService.updateCourtTypesAndCodes(TEST_SLUG, courtTypesAndCodes)).thenThrow(new IllegalArgumentException(TEST_UNKNOWN_COURT_TYPE_MESSAGE));
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + COURT_TYPES_AND_CODES_PATH)
                             .content(expectedJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))

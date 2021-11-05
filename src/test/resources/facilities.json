@@ -1,16 +1,16 @@
 [
   {
-    "name": "Facility1",
+    "id": 1,
     "description": "Facility1",
     "descriptionCy": "Facility1"
   },
   {
-    "name": "Facility2",
+    "id": 2,
     "description": "Facility2",
     "descriptionCy": "Facility2"
   },
   {
-    "name": "Facility3",
+    "id": 3,
     "description": "Facility3",
     "descriptionCy": "Facility3"
   }

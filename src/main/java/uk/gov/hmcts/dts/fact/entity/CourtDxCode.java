@@ -14,17 +14,22 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 public class CourtDxCode {
-    @Id()
+    @Id
     @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtdxcode_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")
     private Court court;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "dx_code_id")
     private DxCode dxCode;
     private Integer sort;
+
+    public CourtDxCode(final Court court, final DxCode dxCode) {
+        this.court = court;
+        this.dxCode = dxCode;
+    }
 
     @PrePersist
     @PreUpdate

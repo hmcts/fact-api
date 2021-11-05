@@ -1,8 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -10,6 +12,7 @@ import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.List;
@@ -35,8 +38,6 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_PHOTO_ENDPOINT = "/courtPhoto";
     private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
     private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
-
-
 
     @Test
     public void shouldRetrieveCourtsForDownload() {
@@ -76,8 +77,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        String slug = response.jsonPath().get("[0].slug");
-        assertThat(slug).isEqualTo("greenwich-magistrates-court");
+        List<String> slugs = response.jsonPath().getList("slug");
+        Assertions.assertTrue(slugs.contains("greenwich-magistrates-court"));
     }
 
     @Test
@@ -337,15 +338,17 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* court photo PUT request tests section. ***************************************************************/
 
     @Test
-    public void shouldUpdateCourtPhoto() {
+    public void shouldUpdateCourtPhoto() throws JsonProcessingException {
         final var response = doGetRequest(
             BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final String originalCourtPhotoString = response.getBody().asString();
 
+        ImageFile imageFile = new ImageFile();
+        imageFile.setImageName(TEST_STRING);
         final var updateResponse = doPutRequest(
             BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
-            TEST_STRING);
+            objectMapper().writeValueAsString(imageFile));
 
         assertThat(updateResponse.statusCode()).isEqualTo(OK.value());
         final String courtPhoto = updateResponse.getBody().asString();
@@ -353,10 +356,10 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         assertThat(courtPhoto).isEqualTo(TEST_STRING);
 
         //cleanup
-
+        imageFile.setImageName(originalCourtPhotoString);
         final var responseTestClean = doPutRequest(
             BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
-            originalCourtPhotoString);
+            objectMapper().writeValueAsString(imageFile));
         assertThat(responseTestClean.statusCode()).isEqualTo(OK.value());
         final String originalString = responseTestClean.getBody().asString();
         assertThat(originalString).isNotNull();
@@ -364,28 +367,33 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingCourtPhoto() {
+    public void shouldBeForbiddenForUpdatingCourtPhoto() throws JsonProcessingException {
+        ImageFile imageFile = new ImageFile();
+        imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
             BIRMINGHAM_COURT_PHOTO_PATH,
-            Map.of(AUTHORIZATION, BEARER + forbiddenToken), TEST_STRING
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken), objectMapper().writeValueAsString(imageFile)
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtPhoto() {
+    public void shouldRequireATokenWhenUpdatingCourtPhoto() throws JsonProcessingException {
+        ImageFile imageFile = new ImageFile();
+        imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH, TEST_STRING
+            BIRMINGHAM_COURT_PHOTO_PATH, objectMapper().writeValueAsString(imageFile)
         );
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldNotFoundForPhotoUpdateWhenCourtDoesNotExist() {
-
+    public void shouldNotFoundForPhotoUpdateWhenCourtDoesNotExist() throws JsonProcessingException {
+        ImageFile imageFile = new ImageFile();
+        imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
             COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            TEST_STRING
+            objectMapper().writeValueAsString(imageFile)
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }

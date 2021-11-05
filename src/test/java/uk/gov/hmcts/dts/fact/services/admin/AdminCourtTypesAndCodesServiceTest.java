@@ -9,34 +9,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
+import uk.gov.hmcts.dts.fact.model.admin.DxCode;
+import uk.gov.hmcts.dts.fact.repositories.CourtDxCodesRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 import uk.gov.hmcts.dts.fact.util.MapCourtCode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
-@ContextConfiguration(classes = AdminCourtTypesService.class)
-public class AdminCourtTypeServiceTest {
+@ContextConfiguration(classes = AdminCourtTypesAndCodesService.class)
+public class AdminCourtTypesAndCodesServiceTest {
 
     private static final int COURT_TYPE_COUNT = 3;
     private static final List<CourtType> COURT_TYPES = new ArrayList<>();
     private static final String COURT_SLUG = "some slug";
     private static final String NOT_FOUND = "Not found: ";
-    private static final String TEST_MESSAGE = "Test Message";
+    private static final String GBS_CODE = "123";
 
     private static final List<CourtType> EXPECTED_COURT_TYPES_ENTITY = Arrays.asList(
         new CourtType(1,"test1"),
@@ -47,8 +49,24 @@ public class AdminCourtTypeServiceTest {
     private static final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> EXPECTED_COURT_TYPES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(1,"test1",null),
         new uk.gov.hmcts.dts.fact.model.admin.CourtType(2,"test2",null),
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",null)
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",1)
     );
+
+
+
+    private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(
+        new DxCode("Code 1","explanation1","explanationCy1"),
+        new DxCode("Code 2","explanation2","explanationCy2")
+    );
+
+    private static final List<CourtDxCode> EXPECTED_COURT_DX_CODE_ENTITY = Arrays.asList(
+        new CourtDxCode(mock(Court.class),new uk.gov.hmcts.dts.fact.entity.DxCode("Code 1","explanation1","explanationCy1")),
+        new CourtDxCode(mock(Court.class),new uk.gov.hmcts.dts.fact.entity.DxCode("Code 2","explanation2","explanationCy2"))
+
+    );
+    private static final CourtTypesAndCodes EXPECTED_COURT_TYPES_AND_CODES = new CourtTypesAndCodes(EXPECTED_COURT_TYPES,GBS_CODE,EXPECTED_COURT_DX_CODES);
+
+
 
     @MockBean
     private CourtRepository courtRepository;
@@ -59,8 +77,14 @@ public class AdminCourtTypeServiceTest {
     @MockBean
     private MapCourtCode mapCourtCode;
 
+    @MockBean
+    private CourtDxCodesRepository courtDxCodesRepository;
+
+    @MockBean
+    private RolesProvider rolesProvider;
+
     @Autowired
-    private AdminCourtTypesService adminCourtTypesService;
+    private AdminCourtTypesAndCodesService adminCourtTypesAndCodesService;
 
     @Mock
     private Court court;
@@ -78,64 +102,59 @@ public class AdminCourtTypeServiceTest {
 
         when(courtTypeRepository.findAll()).thenReturn(EXPECTED_COURT_TYPES_ENTITY);
 
-        assertThat(adminCourtTypesService.getAllCourtTypes())
+        assertThat(adminCourtTypesAndCodesService.getAllCourtTypes())
             .hasSize(COURT_TYPE_COUNT)
             .first()
             .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtType.class);
     }
 
     @Test
-    void shouldReturnCourtCourtTypes() {
+    void shouldReturnACourtsTypesAndCodes() {
         when(court.getCourtTypes()).thenReturn(COURT_TYPES);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(mapCourtCode.mapCourtCodesForCourtTypeModel(anyList(), any())).thenReturn(EXPECTED_COURT_TYPES);
 
-        assertThat(adminCourtTypesService.getCourtCourtTypesBySlug(COURT_SLUG))
-            .hasSize(COURT_TYPE_COUNT)
-            .first()
-            .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtType.class);
+        assertThat(adminCourtTypesAndCodesService.getCourtTypesAndCodes(COURT_SLUG))
+            .isInstanceOf(CourtTypesAndCodes.class);
     }
 
     @Test
-    void shouldReturnNotFoundWhenRetrievingCourtTypesForNonExistentCourt() {
+    void shouldReturnNotFoundWhenRetrievingCourtTypesAndCodesForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> adminCourtTypesService.getCourtCourtTypesBySlug(COURT_SLUG))
+        assertThatThrownBy(() -> adminCourtTypesAndCodesService.getCourtTypesAndCodes(COURT_SLUG))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 
+
     @Test
-    void shouldUpdateCourtCourtTypes() {
+    void shouldUpdateCourtTypesAndCodes() {
         when(court.getCourtTypes()).thenReturn(COURT_TYPES);
+        when(court.getGbs()).thenReturn(GBS_CODE);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(mapCourtCode.mapCourtCodesForCourtTypeModel(anyList(), any())).thenReturn(EXPECTED_COURT_TYPES);
         when(mapCourtCode.mapCourtCodesForCourtEntity(anyList(), any())).thenReturn(court);
+        when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
         when(courtRepository.save(court)).thenReturn(court);
-        when(adminCourtTypesService.saveNewCourtCourtTypes(court, EXPECTED_COURT_TYPES)).thenReturn(
-            EXPECTED_COURT_TYPES);
+        when(adminCourtTypesAndCodesService.getCourtDxCodes(court)).thenReturn(EXPECTED_COURT_DX_CODES);
+        when(adminCourtTypesAndCodesService.saveCourtTypesAndGbsCodes(court,EXPECTED_COURT_TYPES_AND_CODES,EXPECTED_COURT_TYPES_ENTITY)).thenReturn(court);
+        when(courtDxCodesRepository.findByCourtId(any())).thenReturn(EXPECTED_COURT_DX_CODE_ENTITY);
+        when(courtDxCodesRepository.saveAll(EXPECTED_COURT_DX_CODE_ENTITY)).thenReturn(EXPECTED_COURT_DX_CODE_ENTITY);
 
-        assertThat(adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES))
-            .hasSize(COURT_TYPE_COUNT)
-            .containsExactlyElementsOf(EXPECTED_COURT_TYPES);
+        assertThat(adminCourtTypesAndCodesService.updateCourtTypesAndCodes(COURT_SLUG, EXPECTED_COURT_TYPES_AND_CODES))
+            .isEqualTo(EXPECTED_COURT_TYPES_AND_CODES);
+
     }
 
     @Test
-    void shouldReturnNotFoundWhenUpdatingCourtTypesForNonExistentCourt() {
+    void shouldReturnNotFoundWhenUpdatingCourtTypesAndCodesForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, any()))
+        assertThatThrownBy(() -> adminCourtTypesAndCodesService.updateCourtTypesAndCodes(COURT_SLUG, any()))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
     }
 
-    @Test
-    void shouldReturnIllegalArgumentForUnknownCourtType() {
-        when(court.getCourtTypes()).thenReturn(COURT_TYPES);
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
-        when(mapCourtCode.mapCourtCodesForCourtEntity(anyList(), any())).thenThrow(new IllegalArgumentException(TEST_MESSAGE));
 
-        assertThatThrownBy(() -> adminCourtTypesService.updateCourtCourtTypes(COURT_SLUG, EXPECTED_COURT_TYPES))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage(TEST_MESSAGE);
-    }
 }

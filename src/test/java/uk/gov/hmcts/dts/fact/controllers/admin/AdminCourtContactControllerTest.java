@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.Contact;
-import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtContactService;
 
 import java.util.List;
@@ -28,10 +27,8 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 public class AdminCourtContactControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CONTACTS_PATH = "/" + "contacts";
-    private static final String CONTACT_TYPE_PATH = "contactTypes";
     private static final String TEST_SLUG = "unknownSlug";
     private static final String TEST_CONTACTS_FILE = "contacts.json";
-    private static final String TEST_CONTACT_TYPES_FILE = "contact-types.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -91,15 +88,5 @@ public class AdminCourtContactControllerTest {
             .andExpect(content().string("Not found: " + TEST_SLUG));
     }
 
-    @Test
-    void retrieveContactTypesShouldReturnAllContactTypes() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_CONTACT_TYPES_FILE);
-        final List<ContactType> contactTypes = asList(OBJECT_MAPPER.readValue(expectedJson, ContactType[].class));
 
-        when(adminService.getAllCourtContactTypes()).thenReturn(contactTypes);
-
-        mockMvc.perform(get(BASE_PATH + CONTACT_TYPE_PATH))
-            .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson));
-    }
 }
