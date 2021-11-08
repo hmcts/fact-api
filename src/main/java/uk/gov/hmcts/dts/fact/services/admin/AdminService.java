@@ -125,7 +125,6 @@ public class AdminService {
 
     @Transactional
     public String updateCourtImage(final String slug, final String imageFile) {
-        courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
         final Optional<uk.gov.hmcts.dts.fact.entity.Court> court =
             courtRepository.findBySlug(slug);
         if (court.isEmpty()) {
