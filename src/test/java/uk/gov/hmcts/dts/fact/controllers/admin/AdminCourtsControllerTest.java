@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
 import java.util.Collections;
@@ -33,12 +34,13 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 @AutoConfigureMockMvc(addFilters = false)
 class AdminCourtsControllerTest {
 
-    private static final String URL = "/courts";
-    private static final String COURT_PHOTO_URL = "/%s/courtPhoto";
+    private static final String TEST_URL = "/courts";
+    private static final String TEST_COURT_PHOTO_URL = "/%s/courtPhoto";
     private static final String TEST_COURT_FILE = "courts.json";
+    private static final String TEST_COURT_PHOTO_NAME = "birmingham_district_probate_registry.jpg";
     private static final String TEST_GENERAL_FILE = "birmingham-civil-and-family-justice-centre-general.json";
     private static final String TEST_COURT_ENTITY_FILE = "full-birmingham-civil-and-family-justice-centre-entity.json";
-    private static final String SEARCH_SLUG = "some-slug";
+    private static final String TEST_SEARCH_SLUG = "some-slug";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -54,7 +56,7 @@ class AdminCourtsControllerTest {
         final List<CourtReference> courts = asList(OBJECT_MAPPER.readValue(expectedJson, CourtReference[].class));
 
         when(adminService.getAllCourtReferences()).thenReturn(courts);
-        mockMvc.perform(get(URL + "/all"))
+        mockMvc.perform(get(TEST_URL + "/all"))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
             .andReturn();
@@ -68,7 +70,7 @@ class AdminCourtsControllerTest {
         final List<CourtForDownload> courtsForDownloads = asList(courtForDownload1, courtForDownload2);
 
         when(adminService.getAllCourtsForDownload()).thenReturn(courtsForDownloads);
-        mockMvc.perform(get(URL + "/"))
+        mockMvc.perform(get(TEST_URL + "/"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(2)))
             .andReturn();
@@ -80,8 +82,8 @@ class AdminCourtsControllerTest {
         final String expectedJson = getResourceAsJson(TEST_GENERAL_FILE);
         final Court courtEntity = OBJECT_MAPPER.readValue(expectedJson, Court.class);
 
-        when(adminService.getCourtBySlug(SEARCH_SLUG)).thenReturn(courtEntity);
-        mockMvc.perform(get(String.format(URL + "/%s/general", SEARCH_SLUG)))
+        when(adminService.getCourtBySlug(TEST_SEARCH_SLUG)).thenReturn(courtEntity);
+        mockMvc.perform(get(String.format(TEST_URL + "/%s/general", TEST_SEARCH_SLUG)))
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
             .andReturn();
@@ -119,7 +121,7 @@ class AdminCourtsControllerTest {
 
         final String json = OBJECT_MAPPER.writeValueAsString(court);
 
-        mockMvc.perform(put(String.format(URL + "/%s/general", SEARCH_SLUG))
+        mockMvc.perform(put(String.format(TEST_URL + "/%s/general", TEST_SEARCH_SLUG))
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -144,7 +146,7 @@ class AdminCourtsControllerTest {
 
         String json = mapper.writeValueAsString(courtInfo);
 
-        mockMvc.perform(put(URL + "/info")
+        mockMvc.perform(put(TEST_URL + "/info")
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -154,11 +156,11 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldReturnNotFoundForUnknownSlug() throws Exception {
-        final String searchSlug = SEARCH_SLUG;
+        final String searchSlug = TEST_SEARCH_SLUG;
 
         when(adminService.getCourtBySlug(searchSlug)).thenThrow(new NotFoundException("search criteria"));
 
-        mockMvc.perform(get(String.format(URL + "/%s/general", searchSlug)))
+        mockMvc.perform(get(String.format(TEST_URL + "/%s/general", searchSlug)))
             .andExpect(status().isNotFound())
             .andExpect(content().string("Not found: search criteria"))
             .andReturn();
@@ -166,19 +168,18 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldReturnCourtImageFile() throws Exception {
-        final String imageFile = "birmingham_district_probate_registry.jpg";
 
-        when(adminService.getCourtImage(SEARCH_SLUG)).thenReturn(imageFile);
-        mockMvc.perform(get(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG)))
+        when(adminService.getCourtImage(TEST_SEARCH_SLUG)).thenReturn(TEST_COURT_PHOTO_NAME);
+        mockMvc.perform(get(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG)))
             .andExpect(status().isOk())
-            .andExpect(content().string(imageFile))
+            .andExpect(content().string(TEST_COURT_PHOTO_NAME))
             .andReturn();
     }
 
     @Test
     void shouldNotReturnCourtImageFileForUnknownSlug() throws Exception {
-        when(adminService.getCourtImage(SEARCH_SLUG)).thenThrow(new NotFoundException("search criteria"));
-        mockMvc.perform(get(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG)))
+        when(adminService.getCourtImage(TEST_SEARCH_SLUG)).thenThrow(new NotFoundException("search criteria"));
+        mockMvc.perform(get(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG)))
                             .andExpect(status().isNotFound())
                             .andExpect(content().string("Not found: search criteria"))
                             .andReturn();
@@ -186,10 +187,17 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldUpdateCourtImageFile() throws Exception {
-        final String imageFile = "birmingham_district_probate_registry.jpg";
+        ObjectMapper mapper = new ObjectMapper();
 
-        mockMvc.perform(put(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG))
-                            .content(imageFile)
+        final ImageFile imageFile = new ImageFile();
+        imageFile.setImageName(TEST_COURT_PHOTO_NAME);
+
+        String json = mapper.writeValueAsString(imageFile);
+
+        when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenReturn(TEST_COURT_PHOTO_NAME);
+
+        mockMvc.perform(put(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG))
+                            .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
@@ -197,11 +205,16 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldNotUpdateCourtImageFileForUnknownSlug() throws Exception {
-        final String imageFile = "birmingham_district_probate_registry.jpg";
+        ObjectMapper mapper = new ObjectMapper();
 
-        when(adminService.updateCourtImage(SEARCH_SLUG, imageFile)).thenThrow(new NotFoundException("search criteria"));
-        mockMvc.perform(put(String.format(URL + COURT_PHOTO_URL, SEARCH_SLUG))
-                            .content(imageFile)
+        final ImageFile imageFile = new ImageFile();
+        imageFile.setImageName(TEST_COURT_PHOTO_NAME);
+
+        String json = mapper.writeValueAsString(imageFile);
+
+        when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenThrow(new NotFoundException("search criteria"));
+        mockMvc.perform(put(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG))
+                            .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
