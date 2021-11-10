@@ -26,5 +26,7 @@
    ]]></notes>
     <cve>CVE-2021-28170</cve>
     <cve>CVE-2021-22119</cve>
+    <cve>CVE-2021-22096</cve>
+
   </suppress>
 </suppressions>
