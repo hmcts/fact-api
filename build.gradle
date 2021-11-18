@@ -178,6 +178,10 @@ dependencyManagement {
     dependencySet(group: 'commons-io', version: '2.11.0') {
       entry 'commons-io'
     }
+    // CVE-2021-22044
+    dependencySet(group: 'org.springframework.cloud', version: '3.0.5') {
+      entry 'spring-cloud-openfeign-core'
+    }
   }
   imports {
     mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.4'
@@ -232,8 +236,8 @@ dependencies {
   compile group: 'org.apache.logging.log4j', name: 'log4j-api'
   compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
 
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.54'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.13'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.55'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.55'
 
   compile group: 'org.projectlombok', name: 'lombok'
   annotationProcessor 'org.projectlombok:lombok'
