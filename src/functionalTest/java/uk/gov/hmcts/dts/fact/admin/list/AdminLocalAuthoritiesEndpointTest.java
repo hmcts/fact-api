@@ -54,7 +54,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
         // Edit second local authority
         final LocalAuthority secondLocalAuthority = localAuthorities.get(1);
         final String path = LOCAL_AUTHORITIES_ENDPOINT + "/" + secondLocalAuthority.getId();
-        final Response response = doPutRequest(path, Map.of(AUTHORIZATION, BEARER + superAdminToken), secondLocalAuthority.getName());
+        final Response response = doPutRequest(path, Map.of(AUTHORIZATION, BEARER + superAdminToken, "Content-Type", "text/plain"), secondLocalAuthority.getName());
         final LocalAuthority updatedLocalAuthority = response.as(LocalAuthority.class);
         assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedLocalAuthority.getName()).isEqualTo(secondLocalAuthority.getName());

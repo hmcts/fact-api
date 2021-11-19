@@ -321,9 +321,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             postcodesToMoveJson
         );
 
-        softly.assertThat(response.statusCode()).isEqualTo(OK.value());
         movedPostcodes = response.body().jsonPath().getList(".", String.class);
-
+        softly.assertThat(response.statusCode()).isEqualTo(OK.value());
         softly.assertThat(movedPostcodes).containsExactlyElementsOf(POSTCODES_TO_MOVE);
         softly.assertThat(getCurrentPostcodes(WOLVERHAMPTON_COMBINED_COURT_CENTRE_SLUG))
             .doesNotContainAnyElementsOf(POSTCODES_TO_MOVE);
@@ -359,9 +358,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             postcodesToMoveJson
         );
-        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
-
         final List<String> notFoundPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
         assertThat(notFoundPostcodes).hasSize(1)
             .first()
             .isEqualTo(NOT_FOUND_POSTCODE);
@@ -385,8 +383,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             postcodesToMoveJson
         );
 
-        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
         final List<String> duplicatedPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
         assertThat(duplicatedPostcodes).containsExactly(CONFLICT_POSTCODE);
 
         // Clean up by deleting postcode added to the Wolverhampton court
@@ -407,8 +405,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             invalidPostcodesToMoveJson
         );
 
-        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
         final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
     }
 
