@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.internal.RestAssuredResponseImpl;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,7 +85,6 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        assertThat(response.body().toString()).isEqualTo("test");
         final List<CourtAddress> updatedCourtAddress = response.body().jsonPath().getList(".", CourtAddress.class);
         assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress);
