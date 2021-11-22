@@ -13,6 +13,14 @@ java:
   environment:
     RUN_DB_MIGRATION_ON_STARTUP: true
     DB_OPTIONS:
+  keyVaults:
+    fact:
+      resourceGroup: fact
+      secrets:
+        - name: mapit-key
+          alias: MAPIT_KEY
+        - name: launchdarkly-sdk-key
+          alias: LAUNCH_DARKLY_SDK_KEY
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
