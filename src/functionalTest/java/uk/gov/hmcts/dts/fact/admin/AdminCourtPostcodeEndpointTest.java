@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.response.Response;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -154,9 +155,13 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldNotCreateDuplicatePostcodes() throws JsonProcessingException {
 
+        // Clean up both destination court postcodes if lingering from previous run failure
+        cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_DUPLICATE));
+
+        // Add initial postcode for test
         final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DUPLICATE);
-        final var response = doPostRequest(
+        Response response = doPostRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
@@ -298,8 +303,12 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldMovePostcodesToADifferentCourt() throws JsonProcessingException {
+
+        // Clean up both destination court postcodes if lingering from previous run failure
+        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_TO_MOVE));
+
         final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
-        var response = doPutRequest(
+        Response response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             postcodesToMoveJson
@@ -352,6 +361,10 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldNotMovePostcodesIfNotInSourceCourts() throws JsonProcessingException {
+
+        // Clean up both destination court postcodes if lingering from previous run failure
+        cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND));
+
         final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND);
         var response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
@@ -367,6 +380,10 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JsonProcessingException {
+
+        // Clean up both destination court postcodes if lingering from previous run failure
+        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(CONFLICT_POSTCODE));
+
         // Add a conflicting postcode to the Wolverhampton court before moving from Birmingham court
         final String postcodesToAddJson = objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE));
         var response = doPostRequest(
@@ -423,5 +440,15 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static String getTestPostcodesJson() throws JsonProcessingException {
         final List<String> postcodes = Arrays.asList("B140", "B141", "B142");
         return objectMapper().writeValueAsString(postcodes);
+    }
+
+    private void cleanUpTestData(String path, String jsonToSend) {
+        // Clean up both destination court postcodes if lingering
+        Response response = doDeleteRequest(
+            path,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            jsonToSend
+        );
+        assertThat(response.statusCode()).isIn(OK.value(), NOT_FOUND.value());
     }
 }
