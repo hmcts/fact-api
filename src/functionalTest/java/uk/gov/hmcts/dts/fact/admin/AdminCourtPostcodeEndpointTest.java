@@ -302,10 +302,11 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldMovePostcodesToADifferentCourt() throws JsonProcessingException {
 
-        // Clean up both destination court postcodes if lingering from previous run failure
-        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_TO_MOVE));
-
         final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
+
+        // Clean up both destination court postcodes if lingering from previous run failure
+        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, postcodesToMoveJson);
+
         Response response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
@@ -313,7 +314,6 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         );
         final SoftAssertions softly = new SoftAssertions();
         softly.assertThat(response.statusCode()).isEqualTo(OK.value());
-
         List<String> movedPostcodes = response.body().jsonPath().getList(".", String.class);
         softly.assertThat(movedPostcodes).containsExactlyElementsOf(POSTCODES_TO_MOVE);
         softly.assertThat(getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG))
@@ -380,7 +380,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     public void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JsonProcessingException {
 
         // Clean up both destination court postcodes if lingering from previous run failure
-        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(CONFLICT_POSTCODE));
+        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE)));
 
         // Add a conflicting postcode to the Wolverhampton court before moving from Birmingham court
         final String postcodesToAddJson = objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE));
