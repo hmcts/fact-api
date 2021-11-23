@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
-import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtOpeningTimeService;
 
 import java.util.List;
@@ -28,10 +27,8 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 public class AdminCourtOpeningTimeControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
-    private static final String OPENING_TYPES_PATH = "openingTypes";
     private static final String TEST_SLUG = "unknownSlug";
     private static final String TEST_OPENING_TIMES_FILE = "opening-times.json";
-    private static final String TEST_OPENING_TYPES_FILE = "opening-types.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -91,15 +88,5 @@ public class AdminCourtOpeningTimeControllerTest {
             .andExpect(content().string("Not found: " + TEST_SLUG));
     }
 
-    @Test
-    void retrieveOpeningTypesShouldReturnAllOpeningTypes() throws Exception {
-        final String expectedJson = getResourceAsJson(TEST_OPENING_TYPES_FILE);
-        final List<OpeningType> openingTypes = asList(OBJECT_MAPPER.readValue(expectedJson, OpeningType[].class));
 
-        when(adminService.getAllCourtOpeningTypes()).thenReturn(openingTypes);
-
-        mockMvc.perform(get(BASE_PATH + OPENING_TYPES_PATH))
-            .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson));
-    }
 }
