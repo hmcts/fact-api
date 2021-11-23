@@ -9,6 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,235 +39,235 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         + COURT_POSTCODES_PATH;
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT
         + "birmingham-civil-and-fay-justice-centre" + COURT_POSTCODES_PATH;
-    //    private static final String NOT_FOUND_POSTCODE = "B119";
+    private static final String NOT_FOUND_POSTCODE = "B119";
     private static final String CONFLICT_POSTCODE = "B75";
 
-    //    private static final List<String> POSTCODES_VALID = Arrays.asList(
-    //        "B26 1EE",
-    //        "B26 1EJ"
-    //    );
-    //    private static final List<String> POSTCODES_INVALID = Arrays.asList(
-    //        "ba62rt345435435",
-    //        "da163rtgghg",
-    //        "B144JS"
-    //    );
-    //    private static final List<String> POSTCODES_INVALID_RESPONSE = Arrays.asList(
-    //        "ba62rt345435435",
-    //        "da163rtgghg"
-    //    );
-    //    private static final List<String> POSTCODES_ALREADY_THERE = Arrays.asList(
-    //        "B139",
-    //        "B144"
-    //    );
+    private static final List<String> POSTCODES_VALID = Arrays.asList(
+        "B26 1EE",
+        "B26 1EJ"
+    );
+    private static final List<String> POSTCODES_INVALID = Arrays.asList(
+        "ba62rt345435435",
+        "da163rtgghg",
+        "B144JS"
+    );
+    private static final List<String> POSTCODES_INVALID_RESPONSE = Arrays.asList(
+        "ba62rt345435435",
+        "da163rtgghg"
+    );
+    private static final List<String> POSTCODES_ALREADY_THERE = Arrays.asList(
+        "B139",
+        "B144"
+    );
     private static final List<String> POSTCODES_DO_NOT_EXIST = Arrays.asList(
         "SE91AA",
         "SE91AB",
         "SE91AD"
     );
-    //    private static final List<String> POSTCODES_DUPLICATE = Arrays.asList(
-    //        "B21 0PA",
-    //        "B21 0PD",
-    //        "B21 0PP"
-    //    );
+    private static final List<String> POSTCODES_DUPLICATE = Arrays.asList(
+        "B21 0PA",
+        "B21 0PD",
+        "B21 0PP"
+    );
     private static final List<String> POSTCODES_TO_MOVE = Arrays.asList(
         "B742SR",
         "B75"
     );
 
-    //    private static final List<String> POSTCODES_TO_MOVE_NOT_FOUND = Arrays.asList(
-    //        "B75",
-    //        NOT_FOUND_POSTCODE
-    //    );
+    private static final List<String> POSTCODES_TO_MOVE_NOT_FOUND = Arrays.asList(
+        "B75",
+        NOT_FOUND_POSTCODE
+    );
 
     /************************************************************* GET request tests section. ***************************************************************/
-    //    @Test
-    //    public void shouldRetrieveCourtPostcodes() {
-    //        final var response = doGetRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-    //        assertThat(response.statusCode()).isEqualTo(OK.value());
-    //        assertThat(response.body().jsonPath().getList(".", String.class)).hasSizeGreaterThan(1);
-    //    }
-    //
-    //    @Test
-    //    public void shouldNotRetrievePostcodesWhenCourtSlugNotFound() {
-    //        final var response = doGetRequest(COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-    //        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
-    //    }
-    //
-    //    @Test
-    //    public void shouldRequireATokenWhenRetrievingCourtPostcodes() {
-    //        final var response = doGetRequest(BIRMINGHAM_COURT_POSTCODES_PATH);
-    //        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    //    }
-    //
-    //    @Test
-    //    public void shouldBeForbiddenForRetrievingCourtPostcodes() {
-    //        final var response = doGetRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + forbiddenToken)
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
-    //    }
-    //
-    //    /************************************************************* POST request tests section. ***************************************************************/
-    //    @Test
-    //    public void shouldCreateValidPostcodes() throws JsonProcessingException {
-    //
-    //        final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
-    //        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_VALID);
-    //        final var response = doPostRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            updatedJson
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(CREATED.value());
-    //        final List<String> updatedCourtPostcodes = response.body().jsonPath().getList(
-    //            ".",
-    //            String.class
-    //        );
-    //        final List<String> trimmedPostcodes = POSTCODES_VALID.stream().map(x -> x.replaceAll(" ", "")).collect(
-    //            Collectors.toList());
-    //
-    //        assertThat(updatedCourtPostcodes).containsExactlyElementsOf(trimmedPostcodes);
-    //
-    //        //clean up by removing added record
-    //        final var cleanUpResponse = doDeleteRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            updatedJson
-    //        );
-    //        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
-    //        assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(POSTCODES_VALID.size());
-    //
-    //        final var responseAfterClean = doGetRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
-    //        );
-    //
-    //        final List<String> cleanCourtPostcodes = responseAfterClean.body().jsonPath().getList(
-    //            ".",
-    //            String.class
-    //        );
-    //        assertThat(cleanCourtPostcodes).containsExactlyElementsOf(currentPostcodes);
-    //    }
-    //
-    //    @Test
-    //    public void shouldNotCreateDuplicatePostcodes() throws JsonProcessingException {
-    //
-    //        // Clean up both destination court postcodes if lingering from previous run failure
-    //        cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_DUPLICATE));
-    //
-    //        // Add initial postcode for test
-    //        final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
-    //        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DUPLICATE);
-    //        Response response = doPostRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            updatedJson
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(CREATED.value());
-    //        final List<String> updatedCourtPostcodes = response.body().jsonPath().getList(
-    //            ".",
-    //            String.class
-    //        );
-    //
-    //        //Checking only unique values updated in database
-    //        final Set<String> trimmedPostcodes = POSTCODES_DUPLICATE.stream().map(x -> x.replaceAll(" ", "")).collect(
-    //            Collectors.toSet());
-    //        assertThat(updatedCourtPostcodes).containsExactlyInAnyOrderElementsOf(trimmedPostcodes);
-    //
-    //        //clean up by removing added record
-    //        final var cleanUpResponse = doDeleteRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            updatedJson
-    //        );
-    //        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
-    //        assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(trimmedPostcodes.size());
-    //
-    //        final var responseAfterClean = doGetRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
-    //        );
-    //
-    //        final List<String> cleanCourtPostcodes = responseAfterClean.body().jsonPath().getList(
-    //            ".",
-    //            String.class
-    //        );
-    //        assertThat(cleanCourtPostcodes).containsExactlyElementsOf(currentPostcodes);
-    //    }
-    //
-    //    @Test
-    //    public void shouldNotCreateInvalidPostcodes() throws JsonProcessingException {
-    //
-    //        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
-    //
-    //        final var response = doPostRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            updatedJson
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-    //        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
-    //        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
-    //    }
-    //
-    //    @Test
-    //    public void adminShouldBeForbiddenForCreatingPostcodes() throws JsonProcessingException {
-    //
-    //        final var response = doPostRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + authenticatedToken), getTestPostcodesJson()
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
-    //    }
-    //
-    //    @Test
-    //    public void shouldRequireATokenWhenCreatingCourtPostcodes() throws JsonProcessingException {
-    //        final var response = doPostRequest(BIRMINGHAM_COURT_POSTCODES_PATH, getTestPostcodesJson());
-    //        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    //    }
-    //
-    //    @Test
-    //    public void shouldNotBeAbleToCreatePostcodesWhenCourtNotFound() throws JsonProcessingException {
-    //
-    //        final var response = doPostRequest(
-    //            COURT_NOT_FIND_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            getTestPostcodesJson()
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
-    //    }
-    //
-    //
-    //    @Test
-    //    public void shouldNotBeAbleToCreatePostcodesAlreadyExist() throws JsonProcessingException {
-    //
-    //        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_ALREADY_THERE);
-    //
-    //        final var response = doPostRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            updatedJson
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
-    //    }
+    @Test
+    public void shouldRetrieveCourtPostcodes() {
+        final var response = doGetRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        assertThat(response.body().jsonPath().getList(".", String.class)).hasSizeGreaterThan(1);
+    }
+
+    @Test
+    public void shouldNotRetrievePostcodesWhenCourtSlugNotFound() {
+        final var response = doGetRequest(COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
+
+    @Test
+    public void shouldRequireATokenWhenRetrievingCourtPostcodes() {
+        final var response = doGetRequest(BIRMINGHAM_COURT_POSTCODES_PATH);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldBeForbiddenForRetrievingCourtPostcodes() {
+        final var response = doGetRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken)
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    /************************************************************* POST request tests section. ***************************************************************/
+    @Test
+    public void shouldCreateValidPostcodes() throws JsonProcessingException {
+
+        final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_VALID);
+        final var response = doPostRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+        final List<String> updatedCourtPostcodes = response.body().jsonPath().getList(
+            ".",
+            String.class
+        );
+        final List<String> trimmedPostcodes = POSTCODES_VALID.stream().map(x -> x.replaceAll(" ", "")).collect(
+            Collectors.toList());
+
+        assertThat(updatedCourtPostcodes).containsExactlyElementsOf(trimmedPostcodes);
+
+        //clean up by removing added record
+        final var cleanUpResponse = doDeleteRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+        assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(POSTCODES_VALID.size());
+
+        final var responseAfterClean = doGetRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
+        );
+
+        final List<String> cleanCourtPostcodes = responseAfterClean.body().jsonPath().getList(
+            ".",
+            String.class
+        );
+        assertThat(cleanCourtPostcodes).containsExactlyElementsOf(currentPostcodes);
+    }
+
+    @Test
+    public void shouldNotCreateDuplicatePostcodes() throws JsonProcessingException {
+
+        // Clean up both destination court postcodes if lingering from previous run failure
+        cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_DUPLICATE));
+
+        // Add initial postcode for test
+        final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DUPLICATE);
+        Response response = doPostRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+        final List<String> updatedCourtPostcodes = response.body().jsonPath().getList(
+            ".",
+            String.class
+        );
+
+        //Checking only unique values updated in database
+        final Set<String> trimmedPostcodes = POSTCODES_DUPLICATE.stream().map(x -> x.replaceAll(" ", "")).collect(
+            Collectors.toSet());
+        assertThat(updatedCourtPostcodes).containsExactlyInAnyOrderElementsOf(trimmedPostcodes);
+
+        //clean up by removing added record
+        final var cleanUpResponse = doDeleteRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+        assertThat(cleanUpResponse.getBody().as(int.class)).isEqualTo(trimmedPostcodes.size());
+
+        final var responseAfterClean = doGetRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
+        );
+
+        final List<String> cleanCourtPostcodes = responseAfterClean.body().jsonPath().getList(
+            ".",
+            String.class
+        );
+        assertThat(cleanCourtPostcodes).containsExactlyElementsOf(currentPostcodes);
+    }
+
+    @Test
+    public void shouldNotCreateInvalidPostcodes() throws JsonProcessingException {
+
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
+
+        final var response = doPostRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
+    }
+
+    @Test
+    public void adminShouldBeForbiddenForCreatingPostcodes() throws JsonProcessingException {
+
+        final var response = doPostRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken), getTestPostcodesJson()
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldRequireATokenWhenCreatingCourtPostcodes() throws JsonProcessingException {
+        final var response = doPostRequest(BIRMINGHAM_COURT_POSTCODES_PATH, getTestPostcodesJson());
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldNotBeAbleToCreatePostcodesWhenCourtNotFound() throws JsonProcessingException {
+
+        final var response = doPostRequest(
+            COURT_NOT_FIND_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            getTestPostcodesJson()
+        );
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
+
+
+    @Test
+    public void shouldNotBeAbleToCreatePostcodesAlreadyExist() throws JsonProcessingException {
+
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_ALREADY_THERE);
+
+        final var response = doPostRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
+    }
 
     /************************************************************* Delete request tests section. ***************************************************************/
-    //    @Test
-    //    public void shouldNotDeleteInvalidPostcodes() throws JsonProcessingException {
-    //
-    //        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
-    //
-    //        final var response = doDeleteRequest(
-    //            BIRMINGHAM_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            updatedJson
-    //        );
-    //        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-    //        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
-    //        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
-    //}
+    @Test
+    public void shouldNotDeleteInvalidPostcodes() throws JsonProcessingException {
+
+        final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
+
+        final var response = doDeleteRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            updatedJson
+        );
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
+    }
 
     @Test
     public void adminShouldBeForbiddenForDeletingPostcodes() throws JsonProcessingException {
@@ -357,24 +358,24 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
-    //    @Test
-    //    public void shouldNotMovePostcodesIfNotInSourceCourts() throws JsonProcessingException {
-    //
-    //        // Clean up both destination court postcodes if lingering from previous run failure
-    //        cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND));
-    //
-    //        final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND);
-    //        var response = doPutRequest(
-    //            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            postcodesToMoveJson
-    //        );
-    //        final List<String> notFoundPostcodes = response.body().jsonPath().getList(".", String.class);
-    //        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
-    //        assertThat(notFoundPostcodes).hasSize(1)
-    //            .first()
-    //            .isEqualTo(NOT_FOUND_POSTCODE);
-    //    }
+    @Test
+    public void shouldNotMovePostcodesIfNotInSourceCourts() throws JsonProcessingException {
+
+        // Clean up both destination court postcodes if lingering from previous run failure
+        cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND));
+
+        final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND);
+        var response = doPutRequest(
+            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            postcodesToMoveJson
+        );
+        final List<String> notFoundPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+        assertThat(notFoundPostcodes).hasSize(1)
+            .first()
+            .isEqualTo(NOT_FOUND_POSTCODE);
+    }
 
     @Test
     public void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JsonProcessingException {
@@ -411,19 +412,19 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
     }
 
-    //    @Test
-    //    public void shouldNotMoveInvalidPostcodes() throws JsonProcessingException {
-    //        final String invalidPostcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
-    //        final var response = doPutRequest(
-    //            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
-    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-    //            invalidPostcodesToMoveJson
-    //        );
-    //
-    //        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
-    //        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-    //        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
-    //    }
+    @Test
+    public void shouldNotMoveInvalidPostcodes() throws JsonProcessingException {
+        final String invalidPostcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
+        final var response = doPutRequest(
+            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            invalidPostcodesToMoveJson
+        );
+
+        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
+    }
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
