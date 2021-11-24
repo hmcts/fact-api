@@ -10,7 +10,6 @@ import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.*;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
@@ -39,7 +38,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT
         + "birmingham-civil-and-fay-justice-centre" + COURT_POSTCODES_PATH;
     // private static final String NOT_FOUND_POSTCODE = "B119";
-    private static final String CONFLICT_POSTCODE = "B75";
+    // private static final String CONFLICT_POSTCODE = "B75";
 
     //    private static final List<String> POSTCODES_VALID = Arrays.asList(
     //        "B26 1EE",
@@ -303,11 +302,21 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     public void shouldMovePostcodesToADifferentCourt() throws JsonProcessingException {
 
         final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
+        Response response = doGetRequest(
+            BIRMINGHAM_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        assertThat(response.body().jsonPath().getList(".", String.class)).containsAll(POSTCODES_TO_MOVE);
+
+        response = doGetRequest(
+            WOLVERHAMPTON_COURT_POSTCODES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        assertThat(response.body().jsonPath().getList(".", String.class))
+            .doesNotContainAnyElementsOf(POSTCODES_TO_MOVE);
 
         // Clean up both destination court postcodes if lingering from previous run failure
-        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, postcodesToMoveJson);
+        // cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, postcodesToMoveJson);
 
-        Response response = doPutRequest(
+        response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             postcodesToMoveJson
@@ -376,40 +385,40 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     //            .isEqualTo(NOT_FOUND_POSTCODE);
     //    }
 
-    @Test
-    public void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JsonProcessingException {
-
-        // Clean up both destination court postcodes if lingering from previous run failure
-        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE)));
-
-        // Add a conflicting postcode to the Wolverhampton court before moving from Birmingham court
-        final String postcodesToAddJson = objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE));
-        var response = doPostRequest(
-            WOLVERHAMPTON_COURT_POSTCODES_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            postcodesToAddJson
-        );
-        assertThat(response.statusCode()).isEqualTo(CREATED.value());
-
-        final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
-        response = doPutRequest(
-            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            postcodesToMoveJson
-        );
-
-        final List<String> duplicatedPostcodes = response.body().jsonPath().getList(".", String.class);
-        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
-        assertThat(duplicatedPostcodes).containsExactly(CONFLICT_POSTCODE);
-
-        // Clean up by deleting postcode added to the Wolverhampton court
-        response = doDeleteRequest(
-            WOLVERHAMPTON_COURT_POSTCODES_PATH,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            postcodesToAddJson
-        );
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-    }
+    //    @Test
+    //    public void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JsonProcessingException {
+    //
+    //        // Clean up both destination court postcodes if lingering from previous run failure
+    //        cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE)));
+    //
+    //        // Add a conflicting postcode to the Wolverhampton court before moving from Birmingham court
+    //        final String postcodesToAddJson = objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE));
+    //        var response = doPostRequest(
+    //            WOLVERHAMPTON_COURT_POSTCODES_PATH,
+    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+    //            postcodesToAddJson
+    //        );
+    //        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+    //
+    //        final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
+    //        response = doPutRequest(
+    //            BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
+    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+    //            postcodesToMoveJson
+    //        );
+    //
+    //        final List<String> duplicatedPostcodes = response.body().jsonPath().getList(".", String.class);
+    //        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
+    //        assertThat(duplicatedPostcodes).containsExactly(CONFLICT_POSTCODE);
+    //
+    //        // Clean up by deleting postcode added to the Wolverhampton court
+    //        response = doDeleteRequest(
+    //            WOLVERHAMPTON_COURT_POSTCODES_PATH,
+    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+    //            postcodesToAddJson
+    //        );
+    //        assertThat(response.statusCode()).isEqualTo(OK.value());
+    //    }
 
     //    @Test
     //    public void shouldNotMoveInvalidPostcodes() throws JsonProcessingException {
@@ -440,13 +449,13 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     //        return objectMapper().writeValueAsString(postcodes);
     //    }
 
-    private void cleanUpTestData(String path, String jsonToSend) {
-        // Clean up both destination court postcodes if lingering
-        Response response = doDeleteRequest(
-            path,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            jsonToSend
-        );
-        assertThat(response.statusCode()).isIn(OK.value(), NOT_FOUND.value());
-    }
+    //    private void cleanUpTestData(String path, String jsonToSend) {
+    //        // Clean up both destination court postcodes if lingering
+    //        Response response = doDeleteRequest(
+    //            path,
+    //            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+    //            jsonToSend
+    //        );
+    //        assertThat(response.statusCode()).isIn(OK.value(), NOT_FOUND.value());
+    //    }
 }
