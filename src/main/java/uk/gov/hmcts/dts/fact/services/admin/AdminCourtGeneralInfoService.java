@@ -41,6 +41,7 @@ public class AdminCourtGeneralInfoService {
         courtEntity.setAlertCy(generalInfo.getAlertCy());
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
+            courtEntity.setName(generalInfo.getName());
             courtEntity.setInfo(generalInfo.getInfo());
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());

@@ -34,6 +34,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ContextConfiguration(classes = AdminCourtGeneralInfoService.class)
 public class AdminCourtGeneralInfoServiceTest {
+    private static final String COURT_NAME = "Test court name";
     private static final String COURT_SLUG = "some slug";
     private static final String COURT_ALERT = "English alert";
     private static final String COURT_ALERT_CY = "Welsh alert";
@@ -41,8 +42,8 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final String COURT_INFO_CY = "Welsh info";
     private static final String NOT_FOUND = "Not found: ";
 
-    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
-    private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
+    private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
 
     @Autowired
     private AdminCourtGeneralInfoService adminService;
@@ -87,6 +88,7 @@ public class AdminCourtGeneralInfoServiceTest {
         assertThat(results).isEqualTo(
             OUTPUT_COURT_GENERAL_INFO);
 
+        verify(court, never()).setName(anyString());
         verify(court, never()).setInfo(anyString());
         verify(court, never()).setInfoCy(anyString());
         verify(court, never()).setDisplayed(anyBoolean());
@@ -106,6 +108,7 @@ public class AdminCourtGeneralInfoServiceTest {
         assertThat(results).isEqualTo(
             OUTPUT_COURT_GENERAL_INFO);
 
+        verify(court).setName(COURT_NAME);
         verify(court).setInfo(COURT_INFO);
         verify(court).setInfoCy(COURT_INFO_CY);
         verify(court).setDisplayed(true);
@@ -160,6 +163,7 @@ public class AdminCourtGeneralInfoServiceTest {
     }
 
     private void setUpCourtGeneralInfo() {
+        when(court.getName()).thenReturn(COURT_NAME);
         when(court.getAlert()).thenReturn(COURT_ALERT);
         when(court.getAlertCy()).thenReturn(COURT_ALERT_CY);
         when(court.getInfo()).thenReturn(COURT_INFO);
