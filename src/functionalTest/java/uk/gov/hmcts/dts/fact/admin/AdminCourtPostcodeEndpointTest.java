@@ -315,9 +315,6 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.body().jsonPath().getList(".", String.class))
             .doesNotContainAnyElementsOf(POSTCODES_TO_MOVE);
 
-        // Clean up both destination court postcodes if lingering from previous run failure
-        // cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, postcodesToMoveJson);
-
         response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),

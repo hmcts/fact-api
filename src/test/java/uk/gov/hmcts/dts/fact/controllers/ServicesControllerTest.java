@@ -44,7 +44,7 @@ class ServicesControllerTest {
         final String expected = new String(readAllBytes(path));
 
         when(serviceService.getAllServices()).thenReturn(services);
-        mockMvc.perform(get(URL))
+        mockMvc.perform(get(URL + "/"))
             .andExpect(status().isOk())
             .andExpect(content().json(expected));
     }
@@ -54,7 +54,6 @@ class ServicesControllerTest {
 
         final Path path = Paths.get("src/integrationTest/resources/service.json");
         final Service service = OBJECT_MAPPER.readValue(path.toFile(), Service.class);
-
         final String expected = new String(readAllBytes(path));
 
         when(serviceService.getService(matches("money"))).thenReturn(service);
