@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
-import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
-    private static final String OPENING_TYPES_FULL_PATH = ADMIN_COURTS_ENDPOINT + "openingTypes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String BIRMINGHAM_OPENING_TIMES_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH;
     private static final String TEST_HOURS = "test hour";
@@ -111,20 +109,6 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-    @Test
-    public void shouldGetAllOpeningTypes() {
-        final var response = doGetRequest(OPENING_TYPES_FULL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
-        final List<OpeningType> openingTypes = response.body().jsonPath().getList(".", OpeningType.class);
-        assertThat(openingTypes).hasSizeGreaterThan(1);
-    }
-
-    @Test
-    public void shouldRequireATokenWhenGettingAllOpeningTypes() {
-        final var response = doGetRequest(OPENING_TYPES_FULL_PATH);
-        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
-    }
 
     private List<OpeningTime> addNewOpeningTime(List<OpeningTime> openingTimes) {
         List<OpeningTime> updatedOpeningTimes = new ArrayList<>(openingTimes);

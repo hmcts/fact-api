@@ -13,7 +13,6 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
-import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.OpeningTypeRepository;
 
@@ -127,17 +126,5 @@ public class AdminCourtOpeningTimeServiceTest {
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
-    @Test
-    void shouldReturnAllOpeningTypesInAlphabeticalOrder() {
-        when(openingTypeRepository.findAll()).thenReturn(OPENING_TYPES);
 
-        final List<OpeningType> results = adminService.getAllCourtOpeningTypes();
-        assertThat(results).hasSize(OPENING_TYPES.size());
-        assertThat(results.get(0).getType()).isEqualTo(ENGLISH_TYPE3);
-        assertThat(results.get(0).getTypeCy()).isEqualTo(WELSH_TYPE3);
-        assertThat(results.get(1).getType()).isEqualTo(ENGLISH_TYPE2);
-        assertThat(results.get(1).getTypeCy()).isEqualTo(WELSH_TYPE2);
-        assertThat(results.get(2).getType()).isEqualTo(ENGLISH_TYPE1);
-        assertThat(results.get(2).getTypeCy()).isEqualTo(WELSH_TYPE1);
-    }
 }
