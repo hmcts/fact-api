@@ -15,7 +15,6 @@ public class FeignConfiguration {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-        log.info("API Key is: " + key);
         return template -> template.header("X-Api-Key", key);
     }
 }

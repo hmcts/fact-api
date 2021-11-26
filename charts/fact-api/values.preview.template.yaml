@@ -17,8 +17,10 @@ java:
     fact:
       resourceGroup: fact
       secrets:
-        - mapit-key
-        - launchdarkly-sdk-key
+        - name: mapit-key
+          alias: MAPIT_KEY
+        - name: launchdarkly-sdk-key
+          alias: LAUNCH_DARKLY_SDK_KEY
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
