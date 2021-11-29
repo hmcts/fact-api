@@ -13,6 +13,8 @@ management:
 
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
+  config:
+    import: "optional:configtree:/mnt/secrets/fact/"
   application:
     name: FACT API
   datasource:
@@ -48,6 +50,8 @@ hibernate:
 
 dbMigration:
   runOnStartup: ${RUN_DB_MIGRATION_ON_STARTUP:true}
+
+
 
 mapit:
   key: ${MAPIT_KEY:}
