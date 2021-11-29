@@ -15,7 +15,6 @@ java:
     targetCPUUtilizationPercentage: 80 # Default is 80% target CPU utilization
   keyVaults:
     fact:
-      resourceGroup: fact
       secrets:
         - name: AppInsightsInstrumentationKey
           alias: APPINSIGHTS_INSTRUMENTATIONKEY

@@ -9,11 +9,6 @@ def component = "api"
 
 GradleBuilder builder = new GradleBuilder(this, product)
 
-def vaultOverrides = [
-  'preview' : 'aat',
-  'spreview': 'saat'
-]
-
 def secrets = [
   'fact-${env}': [
     secret("oauth-client-secret", "OAUTH_SECRET"),
@@ -40,7 +35,6 @@ withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
   enableDbMigration('fact')
   syncBranchesWithMaster(branchesToSync)
-  overrideVaultEnvironments(vaultOverrides)
 
   after('test') {
     builder.gradle('integration')

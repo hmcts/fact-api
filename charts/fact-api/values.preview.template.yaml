@@ -15,7 +15,6 @@ java:
     DB_OPTIONS:
   keyVaults:
     fact:
-      resourceGroup: fact
       secrets:
         - name: mapit-key
           alias: MAPIT_KEY
