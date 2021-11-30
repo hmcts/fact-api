@@ -50,6 +50,7 @@ public class AdminCourtGeneralInfoService {
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
             courtEntity.setName(generalInfo.getName());
+            courtEntity.setSlug(convertNameToSlug(generalInfo.getName()));
             courtEntity.setInfo(generalInfo.getInfo());
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());
@@ -76,5 +77,9 @@ public class AdminCourtGeneralInfoService {
         if (getAllCourtGeneralInfo().stream().anyMatch(generalInfo -> generalInfo.getName().equalsIgnoreCase(courtName))) {
             throw new DuplicatedListItemException("Court name already exists: " + courtName);
         }
+    }
+
+    private String convertNameToSlug(final String courtName) {
+        return courtName.toLowerCase().replaceAll("[^a-z0-9 ]", "").replace(" ", "-");
     }
 }
