@@ -22,7 +22,9 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_COURT_GENERAL_INFO_PATH = "/generalInfo";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
+
     private static final CourtGeneralInfo EXPECTED_ADMIN_COURT_INFO = new CourtGeneralInfo(
+        "Admin name",
         true,
         true,
         false,
@@ -32,6 +34,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Welsh Admin Alert"
     );
     private static final CourtGeneralInfo EXPECTED_SUPER_ADMIN_COURT_INFO = new CourtGeneralInfo(
+        "Super Admin name",
         true,
         true,
         false,
@@ -57,6 +60,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final CourtGeneralInfo generalInfo = response.as(CourtGeneralInfo.class);
+        assertThat(generalInfo.getName()).isEqualTo(expectedCourtDetails.getName());
         assertThat(generalInfo.getOpen()).isEqualTo(expectedCourtDetails.getOpen());
         assertThat(generalInfo.getInPerson()).isEqualTo(expectedCourtDetails.getInPerson());
         assertThat(generalInfo.getAccessScheme()).isEqualTo(expectedCourtDetails.getAccessScheme());
@@ -86,6 +90,8 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(result.getAlertCy()).isEqualTo(EXPECTED_ADMIN_COURT_INFO.getAlertCy());
         assertThat(result.getInfo()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getInfo());
         assertThat(result.getInfoCy()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getInfoCy());
+        assertThat(result.getName()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getName());
+
     }
 
     @Test
@@ -99,6 +105,8 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(result.getAlertCy()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getAlertCy());
         assertThat(result.getInfo()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getInfo());
         assertThat(result.getInfoCy()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getInfoCy());
+        assertThat(result.getName()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getName());
+
     }
 
     @Test
