@@ -15,11 +15,13 @@ java:
     targetCPUUtilizationPercentage: 80 # Default is 80% target CPU utilization
   keyVaults:
     fact:
-      resourceGroup: fact
       secrets:
-        - AppInsightsInstrumentationKey
-        - mapit-key
-        - launchdarkly-sdk-key
+        - name: AppInsightsInstrumentationKey
+          alias: APPINSIGHTS_INSTRUMENTATIONKEY
+        - name: mapit-key
+          alias: MAPIT_KEY
+        - name: launchdarkly-sdk-key
+          alias: LAUNCH_DARKLY_SDK_KEY
   environment:
     POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
     DB_OPTIONS: ?sslmode=require&gssEncMode=disable
