@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -16,16 +17,21 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
@@ -60,6 +66,54 @@ class AdminCourtsControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
             .andReturn();
+    }
+
+    @Test
+    void shouldAddNewCourt() throws Exception {
+        Court expectedCourt = new Court();
+        String testCourtName = "test court";
+        String testSlugName = "test-court";
+        when(adminService.addNewCourt(testCourtName, testSlugName)).thenReturn(expectedCourt);
+        when(adminService.convertNameToSlug(testCourtName)).thenReturn(testSlugName);
+        mockMvc.perform(post(TEST_URL + "/")
+                            .content(testCourtName))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.uri", is("/courts/" + testSlugName + "/general")))
+            .andReturn();
+    }
+
+    @Test
+    void shouldAddNewCourtWithApostrophesAndHyphens() throws Exception {
+        Court expectedCourt = new Court();
+        String testCourtName = "test court''-";
+        String testSlugName = "test-court''-name-";
+        when(adminService.addNewCourt(testCourtName, testSlugName))
+            .thenReturn(expectedCourt);
+        when(adminService.convertNameToSlug(testCourtName)).thenReturn(testSlugName);
+        mockMvc.perform(post(TEST_URL + "/")
+                            .content(testCourtName))
+            .andExpect(status().isCreated())
+            .andReturn();
+    }
+
+    @Test
+    void shouldNotAddNewCourtWithInvalidPostcode() throws Exception {
+        Court expectedCourt = new Court();
+        when(adminService.addNewCourt("test court%$-", "test-court%$-")).thenReturn(expectedCourt);
+        try {
+            mockMvc.perform(post(TEST_URL + "/")
+                                .content("test court%$-"));
+        } catch (NestedServletException e) {
+            assertThrows(ConstraintViolationException.class, () -> {
+                throw e.getCause();
+            });
+            assertThat(e.getMessage())
+                .containsPattern("Request processing failed; nested exception is "
+                                     + "javax.validation.ConstraintViolationException: addNewCourt.newCourtName: "
+                                     + "Court name is not valid, should only contain a combination of characters, "
+                                     + "numbers, apostrophes or hyphens");
+        }
+        verifyNoInteractions(adminService);
     }
 
     @Test

@@ -132,4 +132,18 @@ public class AdminService {
         }
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
     }
+
+    public Court addNewCourt(String newCourtName, String newCourtSlug) {
+
+        Court newCourt = new Court();
+        newCourt.setName(newCourtName);
+        newCourt.setSlug(newCourtSlug);
+        final Optional<uk.gov.hmcts.dts.fact.entity.Court> court =
+            courtRepository.save(newCourt);
+        return newCourt;
+    }
+
+    public String convertNameToSlug(final String courtName) {
+        return courtName.toLowerCase().replaceAll("[^A-Za-z0-9 -]", "").replace(" ", "-");
+    }
 }
