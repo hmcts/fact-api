@@ -13,7 +13,6 @@ java:
   environment:
     RUN_DB_MIGRATION_ON_STARTUP: true
     POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
-    DB_OPTIONS: ?sslmode=require&gssEncMode=disable
     POSTGRES_DATABASE: "{{ .Values.postgresql.postgresqlDatabase}}"
     POSTGRES_USER: "{{ .Values.postgresql.postgresqlUsername}}"
     POSTGRES_PASSWORD: "{{ .Values.postgresql.postgresqlPassword}}"
