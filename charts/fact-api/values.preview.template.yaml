@@ -10,6 +10,13 @@ java:
         CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
         CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
     initdbUser: postgres
+  keyVaults:
+    fact:
+      secrets:
+        - name: mapit-key
+          alias: MAPIT_KEY
+        - name: launchdarkly-sdk-key
+          alias: LAUNCH_DARKLY_SDK_KEY
   environment:
     RUN_DB_MIGRATION_ON_STARTUP: true
     POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
