@@ -39,7 +39,7 @@ public class AdminCourtGeneralInfoController {
     @PutMapping()
     @ApiOperation("Update court general information")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
+        @ApiResponse(code = 200, message = "Successful", response = CourtGeneralInfo.class),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found"),
