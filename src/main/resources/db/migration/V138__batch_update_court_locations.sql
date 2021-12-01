@@ -1,4 +1,4 @@
-UPDATE search_courtaddress SET postcode = 'HR1 2HX' FROM search_court WHERE slug = 'hereford-crown-court';
+UPDATE search_courtaddress SET postcode = 'HR1 2HX' WHERE postcode = 'HR1 1HY';
 
 UPDATE search_court SET lat = 53.48048062143129, lon = -2.239108916299376 FROM search_courtaddress
 WHERE slug = 'agricultural-land-and-drainage-first-tier-tribunal-property-chamber'
