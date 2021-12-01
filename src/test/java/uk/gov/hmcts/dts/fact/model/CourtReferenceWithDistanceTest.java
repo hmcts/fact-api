@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,14 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CourtReferenceWithDistanceTest {
     static CourtWithDistance courtEntity;
+    static AreaOfLaw areaOfLaw;
+    static List<AreaOfLaw> areasOflaw;
 
     @BeforeAll
     static void setUp() {
+        areaOfLaw = new AreaOfLaw();
+        areasOflaw = new ArrayList<>();
+        areasOflaw.add(areaOfLaw);
         courtEntity = new CourtWithDistance();
         courtEntity.setName("Name");
         courtEntity.setSlug("name-slug");
         courtEntity.setNameCy("Name in Welsh");
         courtEntity.setDistance(2.2);
+        courtEntity.setAreasOfLawSpoe(areasOflaw);
+
     }
 
     @ParameterizedTest
