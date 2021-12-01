@@ -18,19 +18,19 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class CourtReferenceWithDistanceTest {
     static CourtWithDistance courtEntity;
     static AreaOfLaw areaOfLaw;
-    static List<AreaOfLaw> areasOflaw;
+    static List<AreaOfLaw> areasOfLaw;
 
     @BeforeAll
     static void setUp() {
         areaOfLaw = new AreaOfLaw();
-        areasOflaw = new ArrayList<>();
-        areasOflaw.add(areaOfLaw);
+        areasOfLaw = new ArrayList<>();
+        areasOfLaw.add(areaOfLaw);
         courtEntity = new CourtWithDistance();
         courtEntity.setName("Name");
         courtEntity.setSlug("name-slug");
         courtEntity.setNameCy("Name in Welsh");
         courtEntity.setDistance(2.2);
-        courtEntity.setAreasOfLawSpoe(areasOflaw);
+        courtEntity.setAreasOfLawSpoe(areasOfLaw);
 
     }
 
