@@ -25,7 +25,10 @@ public class Court {
     private static final String SORT = "sort";
 
     @Id
+    @SequenceGenerator(name = "seq-court-gen", sequenceName = "public.search_court_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-court-gen")
     private Integer id;
+
     private String name;
     private String nameCy;
     private String slug;
@@ -42,6 +45,7 @@ public class Court {
     private Integer number;
     private Integer cciCode;
     private Integer magistrateCode;
+    private Boolean welshEnabled;
     private Boolean hideAols;
     @UpdateTimestamp
     private Timestamp updatedAt;
