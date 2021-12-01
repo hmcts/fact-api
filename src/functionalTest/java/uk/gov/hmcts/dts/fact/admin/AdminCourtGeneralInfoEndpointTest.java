@@ -95,7 +95,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateAllCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
+    public void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
                                           new ObjectMapper().writeValueAsString(EXPECTED_SUPER_ADMIN_COURT_INFO));
         assertThat(response.statusCode()).isEqualTo(OK.value());
