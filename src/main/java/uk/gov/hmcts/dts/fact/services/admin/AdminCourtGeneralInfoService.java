@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +10,9 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
+
+import java.util.List;
+import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
@@ -80,6 +82,6 @@ public class AdminCourtGeneralInfoService {
     }
 
     private String convertNameToSlug(final String courtName) {
-        return courtName.toLowerCase().replaceAll("[^a-z0-9 ]", "").replace(" ", "-");
+        return courtName.toLowerCase(Locale.getDefault()).replaceAll("[^a-z0-9 ]", "").replace(" ", "-");
     }
 }

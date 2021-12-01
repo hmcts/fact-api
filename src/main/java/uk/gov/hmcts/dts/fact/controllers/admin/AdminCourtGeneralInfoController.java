@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtGeneralInfoService;
 
