@@ -15,6 +15,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
+import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
 import javax.validation.ConstraintViolationException;
@@ -29,8 +30,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
@@ -73,13 +73,18 @@ class AdminCourtsControllerTest {
         Court expectedCourt = new Court();
         String testCourtName = "test court";
         String testSlugName = "test-court";
+        NewCourt newCourt = new NewCourt();
+        newCourt.setNewCourtName(testCourtName);
         when(adminService.addNewCourt(testCourtName, testSlugName)).thenReturn(expectedCourt);
         when(adminService.convertNameToSlug(testCourtName)).thenReturn(testSlugName);
         mockMvc.perform(post(TEST_URL + "/")
-                            .content(testCourtName))
+                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.uri", is("/courts/" + testSlugName + "/general")))
             .andReturn();
+        verify(adminService, atMostOnce()).convertNameToSlug(testCourtName);
+        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
     }
 
     @Test
@@ -87,22 +92,32 @@ class AdminCourtsControllerTest {
         Court expectedCourt = new Court();
         String testCourtName = "test court''-";
         String testSlugName = "test-court''-name-";
+        NewCourt newCourt = new NewCourt();
+        newCourt.setNewCourtName(testCourtName);
         when(adminService.addNewCourt(testCourtName, testSlugName))
             .thenReturn(expectedCourt);
         when(adminService.convertNameToSlug(testCourtName)).thenReturn(testSlugName);
         mockMvc.perform(post(TEST_URL + "/")
-                            .content(testCourtName))
+                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
             .andReturn();
+        verify(adminService, atMostOnce()).convertNameToSlug(testCourtName);
+        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
     }
 
     @Test
     void shouldNotAddNewCourtWithInvalidPostcode() throws Exception {
         Court expectedCourt = new Court();
+        NewCourt newCourt = new NewCourt();
+        newCourt.setNewCourtName("test court%$-");
         when(adminService.addNewCourt("test court%$-", "test-court%$-")).thenReturn(expectedCourt);
         try {
             mockMvc.perform(post(TEST_URL + "/")
-                                .content("test court%$-"));
+                                .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .accept(MediaType.APPLICATION_JSON_VALUE));
         } catch (NestedServletException e) {
             assertThrows(ConstraintViolationException.class, () -> {
                 throw e.getCause();

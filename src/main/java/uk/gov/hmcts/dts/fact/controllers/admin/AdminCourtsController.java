@@ -16,6 +16,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
+import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
 import javax.validation.Valid;
@@ -72,17 +73,13 @@ public class AdminCourtsController {
         return ok(adminService.getCourtBySlug(slug));
     }
 
-    @PostMapping(path = "/")
+    @PostMapping()
     @ApiOperation("Add a new court")
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity<Court> addNewCourt(
-        @Pattern(regexp = "^[a-zA-Z0-9-' ]*$",
-            message = "Court name is not valid, should only contain a combination of characters, " +
-                "numbers, apostrophes or hyphens")
-        @RequestBody String newCourtName) {
-        String newCourtSlug = adminService.convertNameToSlug(newCourtName);
+    public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
+        String newCourtSlug = adminService.convertNameToSlug(newCourt.getNewCourtName());
         return created(URI.create("/courts/" + newCourtSlug + "/general"))
-            .body(adminService.addNewCourt(newCourtName, newCourtSlug));
+            .body(adminService.addNewCourt(newCourt.getNewCourtName(), newCourtSlug));
     }
 
     @PutMapping(path = "/{slug}/general")

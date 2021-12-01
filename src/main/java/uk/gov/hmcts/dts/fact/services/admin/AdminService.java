@@ -134,13 +134,19 @@ public class AdminService {
     }
 
     public Court addNewCourt(String newCourtName, String newCourtSlug) {
-
-        Court newCourt = new Court();
+        uk.gov.hmcts.dts.fact.entity.Court newCourt =
+            new uk.gov.hmcts.dts.fact.entity.Court();
         newCourt.setName(newCourtName);
         newCourt.setSlug(newCourtSlug);
-        final Optional<uk.gov.hmcts.dts.fact.entity.Court> court =
+        newCourt.setDisplayed(true);
+        final uk.gov.hmcts.dts.fact.entity.Court court =
             courtRepository.save(newCourt);
-        return newCourt;
+        Court createdCourtModel = new Court(court);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Create new court"),
+            null,
+            createdCourtModel, newCourtSlug);
+        return createdCourtModel;
     }
 
     public String convertNameToSlug(final String courtName) {
