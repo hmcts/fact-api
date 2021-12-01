@@ -62,6 +62,7 @@ public class CourtService {
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
         this.fallbackProximitySearch = fallbackProximitySearch;
+
     }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
@@ -168,6 +169,17 @@ public class CourtService {
             .searchWith(serviceArea, mapitData, postcode);
 
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
+    }
+
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final String areaOfLaw) {
+        ServiceAreaWithCourtReferencesWithDistance results = this.getNearestCourtsByPostcodeSearch(postcode, serviceArea);
+        results.setCourts(results.getCourts()
+                              .stream()
+                              .filter(c -> c.getAreasOfLawSpoe().contains(areaOfLaw))
+                              .findFirst()
+                              .stream()
+                              .collect(toList()));
+        return results;
     }
 
     public List<CourtReference> getCourtsByPrefixAndActiveSearch(String prefix) {
