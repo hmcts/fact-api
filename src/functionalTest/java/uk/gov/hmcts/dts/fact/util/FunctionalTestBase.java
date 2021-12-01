@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.CollectionUtils;
+import uk.gov.hmcts.dts.fact.Application;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static io.restassured.RestAssured.given;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
-@SpringBootTest(classes = {OAuthClient.class})
+@SpringBootTest(classes = {Application.class, OAuthClient.class}, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class FunctionalTestBase {
     protected static final String CONTENT_TYPE_VALUE = "application/json";
 

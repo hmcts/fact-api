@@ -51,7 +51,8 @@ public class AdminCourtPostcodeService {
             .filter(p -> !sourcePostcodes.contains(upperCaseAndStripAllSpaces(p)))
             .collect(toList());
         if (!CollectionUtils.isEmpty(invalidPostcodes)) {
-            log.warn("Postcodes do not exist in source table: {}", invalidPostcodes);
+            log.warn("Postcodes do not exist for specified slug (for requested deletion). "
+                         + "Postcodes not found are: {}", invalidPostcodes);
             throw new PostcodeNotFoundException(invalidPostcodes);
         }
     }
