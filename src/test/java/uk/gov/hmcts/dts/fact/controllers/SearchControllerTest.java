@@ -81,6 +81,14 @@ class SearchControllerTest {
     }
 
     @Test
+    void shouldSearchCourtsByPostcodeAndChildrenServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=childcare-arrangements"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("OX1 1RZ", "childcare-arrangements", "Children");
+    }
+
+    @Test
     void shouldSearchCourtsByPostcodeOnly() throws Exception {
         mockMvc.perform(get(format("%s/%s", BASE_URL, "results/sw1a2by")))
             .andExpect(status().isOk());
