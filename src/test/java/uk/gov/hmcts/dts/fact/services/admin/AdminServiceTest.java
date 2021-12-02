@@ -8,7 +8,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
-import uk.gov.hmcts.dts.fact.entity.AuditType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
@@ -229,8 +228,8 @@ class AdminServiceTest {
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
-        verify(adminAuditService).saveAudit( "Create new court", null,
-                                             returnedCourt, SOME_SLUG);
+        verify(adminAuditService).saveAudit("Create new court", null,
+                                            returnedCourt, SOME_SLUG);
         verify(courtRepository).save(any(Court.class));
     }
 
