@@ -30,6 +30,11 @@ public final class Utils {
         return "";
     }
 
+    public static String convertNameToSlug(final String courtName) {
+        return courtName.toLowerCase(Locale.getDefault())
+            .replaceAll("[^A-Za-z0-9 -]", "").replace(" ", "-");
+    }
+
     public static String decodeUrlFromString(String url) {
         if (url != null) {
             return URLDecoder.decode(url, StandardCharsets.UTF_8);
