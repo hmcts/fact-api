@@ -162,7 +162,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
             response.as(ServiceAreaWithCourtReferencesWithDistance.class);
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(1);
-        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().get(0)).isEqualTo(
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
             "Birmingham Civil and Family Justice Centre");
     }
 
