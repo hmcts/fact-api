@@ -15,6 +15,7 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
+import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.net.URI;
 import java.util.List;
@@ -73,7 +74,7 @@ public class AdminCourtsController {
     @ApiOperation("Add a new court")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
-        String newCourtSlug = adminService.convertNameToSlug(newCourt.getNewCourtName());
+        String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
         return created(URI.create("/courts/" + newCourtSlug + "/general"))
             .body(adminService.addNewCourt(newCourt.getNewCourtName(), newCourtSlug));
     }

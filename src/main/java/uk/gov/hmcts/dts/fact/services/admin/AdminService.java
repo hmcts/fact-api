@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
-import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -14,6 +13,7 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
+import uk.gov.hmcts.dts.fact.util.RepoUtils;
 
 import java.util.*;
 
@@ -135,7 +135,7 @@ public class AdminService {
     }
 
     public Court addNewCourt(String newCourtName, String newCourtSlug) {
-        checkIfCourtAlreadyExists(newCourtSlug);
+        RepoUtils.checkIfCourtAlreadyExists(courtRepository, newCourtSlug);
         uk.gov.hmcts.dts.fact.entity.Court newCourt =
             new uk.gov.hmcts.dts.fact.entity.Court();
         newCourt.setName(newCourtName);
@@ -151,16 +151,5 @@ public class AdminService {
             null,
             createdCourtModel, newCourtSlug);
         return createdCourtModel;
-    }
-
-    private void checkIfCourtAlreadyExists(String courtSlugToCheck) {
-        if (courtRepository.findBySlug(courtSlugToCheck).isPresent()) {
-            throw new DuplicatedListItemException("Court already exists with slug: " + courtSlugToCheck);
-        }
-    }
-
-    public String convertNameToSlug(final String courtName) {
-        return courtName.toLowerCase(Locale.getDefault())
-            .replaceAll("[^A-Za-z0-9 -]", "").replace(" ", "-");
     }
 }

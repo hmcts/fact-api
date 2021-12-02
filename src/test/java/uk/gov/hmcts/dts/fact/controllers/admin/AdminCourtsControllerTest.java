@@ -74,14 +74,12 @@ class AdminCourtsControllerTest {
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName(testCourtName);
         when(adminService.addNewCourt(testCourtName, testSlugName)).thenReturn(expectedCourt);
-        when(adminService.convertNameToSlug(testCourtName)).thenReturn(testSlugName);
         mockMvc.perform(post(TEST_URL + "/")
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
             .andReturn();
-        verify(adminService, atMostOnce()).convertNameToSlug(testCourtName);
         verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
     }
 
@@ -94,14 +92,12 @@ class AdminCourtsControllerTest {
         newCourt.setNewCourtName(testCourtName);
         when(adminService.addNewCourt(testCourtName, testSlugName))
             .thenReturn(expectedCourt);
-        when(adminService.convertNameToSlug(testCourtName)).thenReturn(testSlugName);
         mockMvc.perform(post(TEST_URL + "/")
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
             .andReturn();
-        verify(adminService, atMostOnce()).convertNameToSlug(testCourtName);
         verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
     }
 

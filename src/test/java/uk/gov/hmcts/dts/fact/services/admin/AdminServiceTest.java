@@ -216,13 +216,4 @@ class AdminServiceTest {
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + SOME_SLUG);
     }
-
-    @Test
-    void createSlugCombinationsMatch() {
-        assertThat(adminService.convertNameToSlug("test court 123")).isEqualTo("test-court-123");
-        assertThat(adminService.convertNameToSlug("test court 123''")).isEqualTo("test-court-123");
-        assertThat(adminService.convertNameToSlug("test court 123-")).isEqualTo("test-court-123-");
-    }
-
-
 }
