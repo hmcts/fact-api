@@ -18,7 +18,7 @@ import javax.validation.constraints.Pattern;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class NewCourt {
     @Pattern(regexp = "^[a-zA-Z0-9-' ]*$",
-        message = "Court name is not valid, should only contain a combination of characters, " +
-            "numbers, apostrophes or hyphens")
+        message = "Court name is not valid, should only contain a combination of characters, "
+            + "numbers, apostrophes or hyphens")
     private String newCourtName;
 }

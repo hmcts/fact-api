@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -161,6 +160,7 @@ public class AdminService {
     }
 
     public String convertNameToSlug(final String courtName) {
-        return courtName.toLowerCase().replaceAll("[^A-Za-z0-9 -]", "").replace(" ", "-");
+        return courtName.toLowerCase(Locale.getDefault())
+            .replaceAll("[^A-Za-z0-9 -]", "").replace(" ", "-");
     }
 }
