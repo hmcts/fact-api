@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 @ContextConfiguration(classes = AdminCourtGeneralInfoService.class)
 public class AdminCourtGeneralInfoServiceTest {
     private static final String COURT_NAME = "Test court name";
+    private static final String COURT_DUPLICATED_NAME = "test-court-name-duplicate";
     private static final String COURT_SLUG = "some slug";
     private static final String COURT_ALERT = "English alert";
     private static final String COURT_ALERT_CY = "Welsh alert";
@@ -43,6 +45,7 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final String NOT_FOUND = "Not found: ";
 
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
     private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
 
     @Autowired
@@ -146,6 +149,19 @@ public class AdminCourtGeneralInfoServiceTest {
             Arguments.of(true, false, false),
             Arguments.of(true, true, true)
         );
+    }
+
+    @Test
+    void shouldReturnErrorIfCourtNameIsADuplicated() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        when(courtRepository.findBySlug(COURT_DUPLICATED_NAME)).thenReturn(Optional.of(court));
+        when(court.getName()).thenReturn(COURT_NAME);
+
+        assertThatThrownBy(() -> adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME))
+            .isInstanceOf(DuplicatedListItemException.class)
+            .hasMessage("Court already exists with slug: " + COURT_DUPLICATED_NAME);
+
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 
     @ParameterizedTest
