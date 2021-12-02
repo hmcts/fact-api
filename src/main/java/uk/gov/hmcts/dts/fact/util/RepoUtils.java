@@ -5,7 +5,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 public final class RepoUtils {
 
-    protected RepoUtils() {
+    private RepoUtils() {
         // This constructor is intentionally empty. Nothing special is needed here.
     }
 
