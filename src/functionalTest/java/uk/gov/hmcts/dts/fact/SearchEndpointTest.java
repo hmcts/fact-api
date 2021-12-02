@@ -152,4 +152,18 @@ public class SearchEndpointTest extends FunctionalTestBase {
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts()).isSortedAccordingTo(Comparator.comparing(
             CourtReferenceWithDistance::getDistance));
     }
+
+    @Test
+    public void shouldRetrieveSpoeCourtReferenceByPostcodeAndServiceArea() {
+        final String serviceArea = "childcare-arrangements";
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=B1 1AA&serviceArea=" + serviceArea);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(1);
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
+            "Birmingham Civil and Family Justice Centre");
+    }
+
 }
