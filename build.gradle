@@ -4,11 +4,11 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'org.springframework.boot' version '2.3.11.RELEASE'
-  id 'org.owasp.dependencycheck' version '6.2.2'
+  id 'org.springframework.boot' version '2.5.7'
+  id 'org.owasp.dependencycheck' version '6.5.0.1'
   id 'com.github.ben-manes.versions' version '0.39.0'
   id 'org.sonarqube' version '3.3'
-  id 'org.flywaydb.flyway' version '8.0.2'
+  id 'org.flywaydb.flyway' version '8.1.0'
 }
 
 group = 'uk.gov.hmcts.dts'
@@ -179,6 +179,10 @@ dependencyManagement {
       entry 'commons-io'
     }
   }
+  imports {
+    // 2021 released Nov 30 for spring boot 2.6.0 support
+    mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2020.0.4'
+  }
 }
 
 repositories {
@@ -188,7 +192,7 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.8.1',
+  junit           : '5.8.2',
   junitPlatform   : '1.8.1',
   reformLogging   : '5.1.5',
   springBoot      : springBoot.class.package.implementationVersion,
@@ -213,13 +217,13 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.6.RELEASE'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.0.3'
 
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
 
   implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformLogging
   implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformLogging
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.9.RELEASE'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'uk.gov.hmcts.reform', name: 'properties-volume-spring-boot-starter', version: '0.1.0'
   implementation group: 'org.flywaydb', name: 'flyway-core'
   implementation group: 'org.postgresql', name: 'postgresql'
@@ -229,8 +233,8 @@ dependencies {
   compile group: 'org.apache.logging.log4j', name: 'log4j-api'
   compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
 
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.54'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.54'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.55'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.55'
 
   compile group: 'org.projectlombok', name: 'lombok'
   annotationProcessor 'org.projectlombok:lombok'
@@ -243,16 +247,15 @@ dependencies {
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
-  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.16.1'
-  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.16.1'
+  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.16.2'
+  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.16.2'
 
 
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured'
-  functionalTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.16.1'
-  functionalTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.16.1'
-
+  functionalTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.16.2'
+  functionalTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.16.2'
 
   smokeTestImplementation sourceSets.main.runtimeClasspath
   smokeTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'

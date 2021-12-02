@@ -10,9 +10,20 @@ java:
         CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
         CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
     initdbUser: postgres
+  keyVaults:
+    fact:
+      secrets:
+        - name: mapit-key
+          alias: MAPIT_KEY
+        - name: launchdarkly-sdk-key
+          alias: LAUNCH_DARKLY_SDK_KEY
   environment:
     RUN_DB_MIGRATION_ON_STARTUP: true
-    DB_OPTIONS:
+    POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
+    POSTGRES_DATABASE: "{{ .Values.postgresql.postgresqlDatabase}}"
+    POSTGRES_USER: "{{ .Values.postgresql.postgresqlUsername}}"
+    POSTGRES_PASSWORD: "{{ .Values.postgresql.postgresqlPassword}}"
+    OAUTH_PROVIDER_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}

@@ -84,9 +84,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
         final List<CourtAddress> updatedCourtAddress = response.body().jsonPath().getList(".", CourtAddress.class);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress);
 
         //clean up by removing added record
@@ -137,9 +136,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-
         final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(invalidPostcodes).containsExactly(POSTCODES_INVALID);
 
         // Test that the addresses are not updated, i.e. the original addresses remain
@@ -173,9 +171,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             updatedJson
         );
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-
         final List<CourtAddress> updatedCourtAddresses = response.body().jsonPath().getList(".", CourtAddress.class);
+        assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedCourtAddresses.get(0).getPostcode()).isEqualTo(POSTCODE_VALID);
 
         // Call the court endpoint again to get the new updated coordinates
