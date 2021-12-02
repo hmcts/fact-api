@@ -557,4 +557,41 @@ class CourtServiceTest {
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
     }
+
+    @Test
+    void shouldReturnNearestCourtsByAreaOfLawSinglePointOfEntry() {
+
+        final String serviceAreaSlug = CHILDREN;
+        final ServiceArea serviceArea = mock(ServiceArea.class);
+        final MapitData mapitData = mock(MapitData.class);
+        final Search search = mock(Search.class);
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
+            List<String> areasOfLawSpoeList = new ArrayList<>();
+            areasOfLawSpoeList.add(CHILDREN);
+            when(mock.getAreasOfLawSpoe()).thenReturn(areasOfLawSpoeList);
+            courts.add(mock);
+        }
+
+        when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
+        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
+        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
+        when(search.searchWith(serviceArea, mapitData, JE2_4BA)).thenReturn(courts);
+
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
+            JE2_4BA,
+            serviceAreaSlug,
+            CHILDREN
+        );
+
+        assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
+        assertThat(results.getCourts().size()).isEqualTo(1);
+        assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+    }
+
+
+
 }

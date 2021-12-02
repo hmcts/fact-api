@@ -29,6 +29,7 @@ import static org.springframework.http.ResponseEntity.ok;
 public class SearchController {
 
     private final CourtService courtService;
+    private static final String CHILDRENAREAOFLAW = "Children";
 
     @Autowired
     public SearchController(final CourtService courtService) {
@@ -83,7 +84,11 @@ public class SearchController {
         @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
-            return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get()));
+            if (serviceAreaSlug.get().equals("childcare-arrangements")) {
+                return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW));
+            } else {
+                return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get()));
+            }
         } else {
             return badRequest().build();
         }
