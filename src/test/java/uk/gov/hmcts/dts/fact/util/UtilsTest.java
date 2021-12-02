@@ -22,6 +22,13 @@ class UtilsTest {
     }
 
     @Test
+    void createSlugCombinationsMatch() {
+        assertThat(convertNameToSlug("test court 123")).isEqualTo("test-court-123");
+        assertThat(convertNameToSlug("test court 123''")).isEqualTo("test-court-123");
+        assertThat(convertNameToSlug("test court 123-")).isEqualTo("test-court-123-");
+    }
+
+    @Test
     void testUrlDecoder() {
         String text = "https%3A//www.gov.uk/test-url";
         assertEquals("https://www.gov.uk/test-url", decodeUrlFromString(text));
