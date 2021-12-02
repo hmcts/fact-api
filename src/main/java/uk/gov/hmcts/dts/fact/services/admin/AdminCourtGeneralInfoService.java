@@ -39,10 +39,8 @@ public class AdminCourtGeneralInfoService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-       final String newSlug = Utils.convertNameToSlug(generalInfo.getName());
-
         if (!courtEntity.getName().equals(generalInfo.getName())) {
-            RepoUtils.checkIfCourtAlreadyExists(courtRepository, newSlug);
+            RepoUtils.checkIfCourtAlreadyExists(courtRepository, Utils.convertNameToSlug(generalInfo.getName()));
         }
 
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
@@ -51,7 +49,7 @@ public class AdminCourtGeneralInfoService {
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
             courtEntity.setName(generalInfo.getName());
-            courtEntity.setSlug(newSlug);
+            courtEntity.setSlug(Utils.convertNameToSlug(generalInfo.getName()));
             courtEntity.setInfo(generalInfo.getInfo());
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());
