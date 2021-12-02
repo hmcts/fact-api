@@ -112,7 +112,7 @@ class AdminCourtsControllerTest {
                                 .content(OBJECT_MAPPER.writeValueAsString(newCourt))
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .accept(MediaType.APPLICATION_JSON_VALUE));
-        } catch (NestedServletException e) {
+        } catch (Exception e) {
             assertThrows(ConstraintViolationException.class, () -> {
                 throw e.getCause();
             });

@@ -8,8 +8,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
+import uk.gov.hmcts.dts.fact.entity.AuditType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.*;
 class AdminServiceTest {
 
     private Court courtEntity;
+    private static final String SOME_COURT = "some court";
     private static final String SOME_SLUG = "some-slug";
     private static final Double LATITUDE = 1.0;
     private static final Double LONGITUDE = -3.0;
@@ -215,5 +218,30 @@ class AdminServiceTest {
         assertThatThrownBy(() -> adminService.updateCourtImage(SOME_SLUG, IMAGE_FILE))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + SOME_SLUG);
+    }
+
+    @Test
+    void shouldAddNewCourtSuccess() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
+        when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
+        uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
+            adminService.addNewCourt(SOME_COURT, SOME_SLUG);
+        assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
+        assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
+        assertThat(returnedCourt.getOpen()).isTrue();
+        verify(adminAuditService).saveAudit( "Create new court", null,
+                                             returnedCourt, SOME_SLUG);
+        verify(courtRepository).save(any(Court.class));
+    }
+
+    @Test
+    void shouldNotAddNewCourtIfAlreadyExists() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(new Court()));
+        assertThatThrownBy(() -> adminService.addNewCourt(SOME_COURT, SOME_SLUG))
+            .isInstanceOf(DuplicatedListItemException.class)
+            .hasMessage("Court already exists with slug: " + SOME_SLUG);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(),
+                                                     anyString(), anyString());
+        verify(courtRepository, never()).save(any(Court.class));
     }
 }
