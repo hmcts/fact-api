@@ -72,6 +72,12 @@ public class AdminCourtsController {
 
     @PostMapping()
     @ApiOperation("Add a new court")
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = Court.class),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 409, message = "Court already exists")
+    })
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
         String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
