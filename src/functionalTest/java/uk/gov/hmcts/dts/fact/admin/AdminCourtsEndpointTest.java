@@ -10,9 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
-import uk.gov.hmcts.dts.fact.model.admin.Court;
-import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
-import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
+import uk.gov.hmcts.dts.fact.model.admin.*;
+import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.List;
@@ -38,6 +37,10 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_PHOTO_ENDPOINT = "/courtPhoto";
     private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
     private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
+    private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new name");
+    private static final String EXPECTED_NEW_SLUG = "new-name";
+
+
 
     @Test
     public void shouldRetrieveCourtsForDownload() {
@@ -396,6 +399,51 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             objectMapper().writeValueAsString(imageFile)
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
+    /************************************************************* court POST request tests section. ***************************************************************/
+
+    @Test
+    public void shouldCreateNewCourt() throws JsonProcessingException {
+        EXPECTED_NEW_COURT.setNewCourtName("new name");
+        final String newCourtNameJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
+        final var response = doPostRequest(
+            COURTS_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            newCourtNameJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+        final Court court = response.as(Court.class);
+        assertThat(court.getName()).isEqualTo(EXPECTED_NEW_COURT.getNewCourtName());
+        assertThat(court.getSlug()).isEqualTo(EXPECTED_NEW_SLUG);
+    }
+
+    @Test
+    public void shouldNotCreateCourtThatAlreadyExist() throws JsonProcessingException {
+        EXPECTED_NEW_COURT.setNewCourtName("aldershot Justice Centre");
+        final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
+        final Response response = doPostRequest(
+            COURTS_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken), testJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
+    }
+
+    @Test
+    public void adminShouldBeForbiddenToCreateCourt() throws JsonProcessingException {
+        final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
+        final Response response = doPostRequest(
+            COURTS_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken), testJson
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldRequireATokenWhenCreatingNewCourt() throws JsonProcessingException {
+        final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
+        final Response response = doPostRequest(
+            COURTS_ENDPOINT, testJson);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     private List<OpeningTime> openingTimes() {
