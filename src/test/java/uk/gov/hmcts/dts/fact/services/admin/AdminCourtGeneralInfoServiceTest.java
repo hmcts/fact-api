@@ -20,6 +20,7 @@ import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.RepoUtils;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -157,7 +158,7 @@ public class AdminCourtGeneralInfoServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtRepository.findBySlug(COURT_DUPLICATED_NAME)).thenReturn(Optional.of(court));
         when(court.getName()).thenReturn(COURT_NAME);
-        assertThatThrownBy(() -> checkIfCourtAlreadyExists(courtRepository, COURT_DUPLICATED_NAME))
+        assertThatThrownBy(() -> RepoUtils.checkIfCourtAlreadyExists(courtRepository, COURT_DUPLICATED_NAME))
             .isInstanceOf(DuplicatedListItemException.class)
             .hasMessage("Court already exists with slug: " + COURT_DUPLICATED_NAME);
 
