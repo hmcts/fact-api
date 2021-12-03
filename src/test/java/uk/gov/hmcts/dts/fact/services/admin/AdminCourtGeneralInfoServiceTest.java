@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
@@ -164,6 +165,24 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
         verify(courtRepository).findBySlug(COURT_SLUG);
         verify(courtRepository).findBySlug(COURT_DUPLICATED_NAME);
+    }
+
+    @Test
+    void checkIfUpdatedCourtIsValidShouldReturnErrorIfNameIsDuplicated() {
+        when(courtRepository.findBySlug(COURT_DUPLICATED_NAME))
+            .thenReturn(Optional.of(new Court()));
+        assertThatThrownBy(() -> adminService.checkIfUpdatedCourtIsValid(COURT_SLUG, COURT_DUPLICATED_NAME))
+            .isInstanceOf(DuplicatedListItemException.class)
+            .hasMessage("Court already exists with slug: " + COURT_DUPLICATED_NAME);
+        verify(courtRepository, atMostOnce()).findBySlug(COURT_SLUG);
+    }
+
+    @Test
+    void checkIfUpdatedCourtIsValidShouldNotReturnErrorIfNameIsNotDuplicated() {
+        when(courtRepository.findBySlug(COURT_NAME))
+            .thenReturn(Optional.empty());
+        assertDoesNotThrow(() -> adminService.checkIfUpdatedCourtIsValid(COURT_SLUG, COURT_NAME));
+        verify(courtRepository, atMostOnce()).findBySlug(COURT_SLUG);
     }
 
     @ParameterizedTest

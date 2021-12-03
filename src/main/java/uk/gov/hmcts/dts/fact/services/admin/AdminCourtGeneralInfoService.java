@@ -39,9 +39,7 @@ public class AdminCourtGeneralInfoService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        if (!courtEntity.getName().equals(generalInfo.getName())) {
-            RepoUtils.checkIfCourtAlreadyExists(courtRepository, Utils.convertNameToSlug(generalInfo.getName()));
-        }
+        checkIfUpdatedCourtIsValid(courtEntity.getName(), generalInfo.getName());
 
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
         courtEntity.setAlert(generalInfo.getAlert());
@@ -63,5 +61,17 @@ public class AdminCourtGeneralInfoService {
             originalGeneralInfo,
             updatedGeneralInfo, slug);
         return updatedGeneralInfo;
+    }
+
+    /**
+     * Compare the base court name to that of the new name and if they don't match (i.e. the name has been updated) then
+     * check if the new name exists in the database. If the name exists an exception is thrown.
+     * @param originalCourtName base court name
+     * @param newCourtName to be compared to originalCourtName
+     */
+    public void checkIfUpdatedCourtIsValid(final String originalCourtName, final String newCourtName) {
+        if (!originalCourtName.equals(newCourtName)) {
+            RepoUtils.checkIfCourtAlreadyExists(courtRepository, Utils.convertNameToSlug(newCourtName));
+        }
     }
 }
