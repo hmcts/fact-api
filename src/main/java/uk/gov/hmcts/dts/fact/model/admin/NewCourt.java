@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.model.admin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Validated
 @Getter
@@ -17,6 +19,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class NewCourt {
+    @Size(min = 1, max = 200)
     @Pattern(regexp = "^[a-zA-Z0-9-' ]*$",
         message = "Court name is not valid, should only contain a combination of characters, "
             + "numbers, apostrophes or hyphens")
