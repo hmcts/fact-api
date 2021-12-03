@@ -30,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.util.RepoUtils.checkIfCourtAlreadyExists;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -156,8 +157,7 @@ public class AdminCourtGeneralInfoServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtRepository.findBySlug(COURT_DUPLICATED_NAME)).thenReturn(Optional.of(court));
         when(court.getName()).thenReturn(COURT_NAME);
-
-        assertThatThrownBy(() -> adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME))
+        assertThatThrownBy(() -> checkIfCourtAlreadyExists(courtRepository, COURT_DUPLICATED_NAME))
             .isInstanceOf(DuplicatedListItemException.class)
             .hasMessage("Court already exists with slug: " + COURT_DUPLICATED_NAME);
 
