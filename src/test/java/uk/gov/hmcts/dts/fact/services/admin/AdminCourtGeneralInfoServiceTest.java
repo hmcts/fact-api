@@ -46,6 +46,7 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final String NOT_FOUND = "Not found: ";
 
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
     private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
 
     @Autowired
@@ -157,6 +158,10 @@ public class AdminCourtGeneralInfoServiceTest {
         when(courtRepository.findBySlug(COURT_DUPLICATED_NAME)).thenReturn(Optional.of(court));
         when(court.getName()).thenReturn(COURT_NAME);
         assertThatThrownBy(() -> checkIfCourtAlreadyExists(courtRepository, COURT_DUPLICATED_NAME))
+            .isInstanceOf(DuplicatedListItemException.class)
+            .hasMessage("Court already exists with slug: " + COURT_DUPLICATED_NAME);
+
+        assertThatThrownBy(() -> adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME))
             .isInstanceOf(DuplicatedListItemException.class)
             .hasMessage("Court already exists with slug: " + COURT_DUPLICATED_NAME);
 
