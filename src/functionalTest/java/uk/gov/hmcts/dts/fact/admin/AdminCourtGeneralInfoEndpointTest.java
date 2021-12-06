@@ -21,7 +21,9 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_COURT_GENERAL_INFO_PATH = "/generalInfo";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
+    private static final String ADMINISTRATIVE_COURT_SLUG = "administrative-court";
     private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
+    private static final String ADMINISTRATIVE_COURT_INFO_PATH = ADMIN_COURTS_ENDPOINT + ADMINISTRATIVE_COURT_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
 
     private static final CourtGeneralInfo EXPECTED_ADMIN_COURT_INFO = new CourtGeneralInfo(
         "Admin name",
@@ -82,7 +84,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateSelectedCourtGeneralInfoAsAdmin() {
-        final var response = doPutRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), adminCourtInfoJson);
+        final var response = doPutRequest(ADMINISTRATIVE_COURT_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), adminCourtInfoJson);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final CourtGeneralInfo result = response.as(CourtGeneralInfo.class);
@@ -96,7 +98,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
-        final var response = doPutRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
+        final var response = doPutRequest(ADMINISTRATIVE_COURT_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
                                           new ObjectMapper().writeValueAsString(EXPECTED_SUPER_ADMIN_COURT_INFO));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
