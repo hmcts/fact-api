@@ -31,7 +31,8 @@ public enum AuditType {
     MOVE_COURT_POSTCODES("Move court postcodes"),
     CREATE_OPENING_TYPE("Create opening type"),
     UPDATE_OPENING_TYPE("Update opening type"),
-    DELETE_OPENING_TYPE("Delete opening type");
+    DELETE_OPENING_TYPE("Delete opening type"),
+    CREATE_NEW_COURT("Create new court");
 
     private final String name;
 

@@ -14,18 +14,21 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
+import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 
 import java.util.Collections;
 import java.util.List;
+import javax.validation.ConstraintViolationException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
@@ -60,6 +63,65 @@ class AdminCourtsControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson))
             .andReturn();
+    }
+
+    @Test
+    void shouldAddNewCourt() throws Exception {
+        Court expectedCourt = new Court();
+        String testCourtName = "test court";
+        String testSlugName = "test-court";
+        NewCourt newCourt = new NewCourt();
+        newCourt.setNewCourtName(testCourtName);
+        when(adminService.addNewCourt(testCourtName, testSlugName)).thenReturn(expectedCourt);
+        mockMvc.perform(post(TEST_URL + "/")
+                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isCreated())
+            .andReturn();
+        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
+    }
+
+    @Test
+    void shouldAddNewCourtWithApostrophesAndHyphens() throws Exception {
+        Court expectedCourt = new Court();
+        String testCourtName = "test court''-";
+        String testSlugName = "test-court''-name-";
+        NewCourt newCourt = new NewCourt();
+        newCourt.setNewCourtName(testCourtName);
+        when(adminService.addNewCourt(testCourtName, testSlugName))
+            .thenReturn(expectedCourt);
+        mockMvc.perform(post(TEST_URL + "/")
+                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isCreated())
+            .andReturn();
+        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
+    }
+
+    @Test
+    void shouldNotAddNewCourtWithInvalidPostcode() throws Exception {
+        Court expectedCourt = new Court();
+        NewCourt newCourt = new NewCourt();
+        newCourt.setNewCourtName("test court%$-");
+        when(adminService.addNewCourt("test court%$-", "test-court%$-")).thenReturn(expectedCourt);
+        try {
+            mockMvc.perform(post(TEST_URL + "/")
+                                .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                .accept(MediaType.APPLICATION_JSON_VALUE));
+        } catch (Exception e) {
+            assertThrows(ConstraintViolationException.class, () -> {
+                throw e.getCause();
+            });
+            assertThat(e.getMessage())
+                .containsPattern("Request processing failed; nested exception is "
+                                     + "javax.validation.ConstraintViolationException: addNewCourt.newCourtName: "
+                                     + "Court name is not valid, should only contain a combination of characters, "
+                                     + "numbers, apostrophes or hyphens");
+        }
+        verifyNoInteractions(adminService);
     }
 
     @Test
