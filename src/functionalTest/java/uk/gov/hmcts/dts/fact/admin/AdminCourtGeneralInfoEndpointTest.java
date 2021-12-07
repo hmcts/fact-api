@@ -20,10 +20,12 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @ExtendWith(SpringExtension.class)
 public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_COURT_GENERAL_INFO_PATH = "/generalInfo";
-    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
-    private static final String ADMINISTRATIVE_COURT_SLUG = "administrative-court";
-    private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
-    private static final String ADMINISTRATIVE_COURT_INFO_PATH = ADMIN_COURTS_ENDPOINT + ADMINISTRATIVE_COURT_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
+    // Do not use these court slugs on other tests, as the slug gets changed on the database. If you do,
+    // make sure to add a cleanup below first
+    private static final String BIRMINGHAM_MAGISTRATES_COURT_SLUG = "birmingham-magistrates-court";
+    private static final String ASHFORD_TRIBUNAL_HEARING_CENTRE_SLUG = "ashford-tribunal-hearing-centre";
+    private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
+    private static final String ADMINISTRATIVE_COURT_INFO_PATH = ADMIN_COURTS_ENDPOINT + ASHFORD_TRIBUNAL_HEARING_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
 
     private static final CourtGeneralInfo EXPECTED_ADMIN_COURT_INFO = new CourtGeneralInfo(
         "Admin name",
@@ -55,7 +57,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRetrieveCourtGeneralInfo() {
-        var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
+        var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG);
         final Court expectedCourtDetails = response.as(Court.class);
 
         response = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
