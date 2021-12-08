@@ -6,22 +6,26 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
+import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
+import uk.gov.hmcts.dts.fact.util.Utils;
 
+import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 
-import static org.springframework.http.ResponseEntity.noContent;
-import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.*;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
-
+@Validated
 @RestController
 @RequestMapping(
     path = "/courts",
@@ -64,6 +68,21 @@ public class AdminCourtsController {
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(adminService.getCourtBySlug(slug));
+    }
+
+    @PostMapping()
+    @ApiOperation("Add a new court")
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = Court.class),
+        @ApiResponse(code = 401, message = "Unauthorized"),
+        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 409, message = "Court already exists")
+    })
+    @Role({FACT_SUPER_ADMIN})
+    public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
+        String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
+        return created(URI.create("/courts/" + newCourtSlug + "/general"))
+            .body(adminService.addNewCourt(newCourt.getNewCourtName(), newCourtSlug));
     }
 
     @PutMapping(path = "/{slug}/general")

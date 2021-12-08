@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
+import uk.gov.hmcts.dts.fact.util.RepoUtils;
 
 import java.util.*;
 
@@ -131,5 +132,24 @@ public class AdminService {
             throw new NotFoundException(slug);
         }
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
+    }
+
+    public Court addNewCourt(String newCourtName, String newCourtSlug) {
+        RepoUtils.checkIfCourtAlreadyExists(courtRepository, newCourtSlug);
+        uk.gov.hmcts.dts.fact.entity.Court newCourt =
+            new uk.gov.hmcts.dts.fact.entity.Court();
+        newCourt.setName(newCourtName);
+        newCourt.setSlug(newCourtSlug);
+        newCourt.setDisplayed(true);
+        newCourt.setHideAols(false);
+        newCourt.setWelshEnabled(false);
+        final uk.gov.hmcts.dts.fact.entity.Court court =
+            courtRepository.save(newCourt);
+        Court createdCourtModel = new Court(court);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Create new court"),
+            null,
+            createdCourtModel, newCourtSlug);
+        return createdCourtModel;
     }
 }
