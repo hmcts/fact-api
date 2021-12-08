@@ -23,9 +23,9 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     // Do not use these court slugs on other tests, as the slug gets changed on the database. If you do,
     // make sure to add a cleanup below first
     private static final String BIRMINGHAM_MAGISTRATES_COURT_SLUG = "birmingham-magistrates-court";
-    private static final String ASHFORD_TRIBUNAL_HEARING_CENTRE_SLUG = "ashford-tribunal-hearing-centre";
+    private static final String TEST_SLUG = "super-admin-name";
     private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
-    private static final String ADMINISTRATIVE_COURT_INFO_PATH = ADMIN_COURTS_ENDPOINT + ASHFORD_TRIBUNAL_HEARING_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
+    private static final String TEST_PATH = ADMIN_COURTS_ENDPOINT + TEST_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
     private static final CourtGeneralInfo EXPECTED_ADMIN_COURT_INFO = new CourtGeneralInfo(
         "Admin name",
         true,
@@ -100,7 +100,13 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
-        final var response = doPutRequest(ADMINISTRATIVE_COURT_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
+
+        final var orgResponse = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(orgResponse.statusCode()).isEqualTo(OK.value());
+        final CourtGeneralInfo generalInfo = orgResponse.as(CourtGeneralInfo.class);
+        final String originalJson = objectMapper().writeValueAsString(generalInfo);
+
+        final var response = doPutRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
                                           new ObjectMapper().writeValueAsString(EXPECTED_SUPER_ADMIN_COURT_INFO));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -111,6 +117,11 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(result.getInfoCy()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getInfoCy());
         assertThat(result.getName()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getName());
 
+        // clean up step
+        final var cleanUpResponse = doPutRequest(TEST_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken), originalJson);
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+        final CourtGeneralInfo orgGeneralInfo = cleanUpResponse.as(CourtGeneralInfo.class);
+        assertThat(orgGeneralInfo.getName()).isEqualTo(generalInfo.getName());
     }
 
     @Test
