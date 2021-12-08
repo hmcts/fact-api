@@ -36,8 +36,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_PHOTO_ENDPOINT = "/courtPhoto";
     private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
     private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
-    private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new name");
-    private static final String EXPECTED_NEW_SLUG = "new-name";
+    private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new court");
+    private static final String EXPECTED_NEW_SLUG = "new-court";
 
 
 
@@ -403,7 +403,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldCreateNewCourt() throws JsonProcessingException {
-        EXPECTED_NEW_COURT.setNewCourtName("new name");
+        EXPECTED_NEW_COURT.setNewCourtName("new court");
         final String newCourtNameJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final var response = doPostRequest(
             COURTS_ENDPOINT,
