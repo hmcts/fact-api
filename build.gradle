@@ -233,7 +233,7 @@ dependencies {
   compile group: 'org.apache.logging.log4j', name: 'log4j-api'
   compile group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j'
 
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.55'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.0.14'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '9.0.55'
 
   compile group: 'org.projectlombok', name: 'lombok'
