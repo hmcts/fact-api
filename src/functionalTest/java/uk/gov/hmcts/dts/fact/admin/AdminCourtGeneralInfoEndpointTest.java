@@ -37,16 +37,6 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Admin Alert",
         "Welsh Admin Alert"
     );
-    private static final CourtGeneralInfo EXPECTED_SUPER_ADMIN_COURT_INFO = new CourtGeneralInfo(
-        "Super Admin name",
-        true,
-        true,
-        false,
-        "Super Admin Info",
-        "Super Welsh Admin Info",
-        "Super Admin Alert",
-        "Super Welsh Admin Alert"
-    );
 
     private static String adminCourtInfoJson;
 
@@ -97,21 +87,6 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(result.getName()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getName());
 
     }
-
-//    @Test
-//    public void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
-//        final var response = doPutRequest(ADMINISTRATIVE_COURT_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
-//                                          new ObjectMapper().writeValueAsString(EXPECTED_SUPER_ADMIN_COURT_INFO));
-//        assertThat(response.statusCode()).isEqualTo(OK.value());
-//
-//        final CourtGeneralInfo result = response.as(CourtGeneralInfo.class);
-//        assertThat(result.getAlert()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getAlert());
-//        assertThat(result.getAlertCy()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getAlertCy());
-//        assertThat(result.getInfo()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getInfo());
-//        assertThat(result.getInfoCy()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getInfoCy());
-//        assertThat(result.getName()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getName());
-//
-//    }
 
     @Test
     public void shouldRequireATokenWhenUpdatingCourtGeneralInfo() {
