@@ -23,10 +23,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     // Do not use these court slugs on other tests, as the slug gets changed on the database. If you do,
     // make sure to add a cleanup below first
     private static final String BIRMINGHAM_MAGISTRATES_COURT_SLUG = "birmingham-magistrates-court";
-    private static final String ASHFORD_TRIBUNAL_HEARING_CENTRE_SLUG = "ashford-tribunal-hearing-centre";
     private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
-    private static final String ADMINISTRATIVE_COURT_INFO_PATH = ADMIN_COURTS_ENDPOINT + ASHFORD_TRIBUNAL_HEARING_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
-
     private static final CourtGeneralInfo EXPECTED_ADMIN_COURT_INFO = new CourtGeneralInfo(
         "Admin name",
         true,
@@ -76,7 +73,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateSelectedCourtGeneralInfoAsAdmin() {
-        final var response = doPutRequest(ADMINISTRATIVE_COURT_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), adminCourtInfoJson);
+        final var response = doPutRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), adminCourtInfoJson);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final CourtGeneralInfo result = response.as(CourtGeneralInfo.class);
