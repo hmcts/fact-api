@@ -36,7 +36,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_PHOTO_ENDPOINT = "/courtPhoto";
     private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
     private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
-    private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new name", true);
+    private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new court", true);
+    private static final String EXPECTED_NEW_SLUG = "new-court";
 
     @Test
     public void shouldRetrieveCourtsForDownload() {
@@ -398,6 +399,39 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     /************************************************************* court POST request tests section. ***************************************************************/
+
+    @Test
+    public void shouldCreateNewCourt() throws JsonProcessingException {
+        EXPECTED_NEW_COURT.setNewCourtName("new court");
+        final String newCourtNameJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
+        final var response = doPostRequest(
+            COURTS_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            newCourtNameJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+        final Court court = response.as(Court.class);
+        assertThat(court.getName()).isEqualTo(EXPECTED_NEW_COURT.getNewCourtName());
+        assertThat(court.getSlug()).isEqualTo(EXPECTED_NEW_SLUG);
+
+        //clean up by removing added court
+
+        final var cleanUpResponse = doDeleteRequest(
+            COURTS_ENDPOINT  + EXPECTED_NEW_SLUG,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),newCourtNameJson
+        );
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+
+        final var responseAfterClean = doGetRequest(
+            "/courts/all",
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken)
+        );
+        assertThat(responseAfterClean.statusCode()).isEqualTo(OK.value());
+
+        List<String> slugs = responseAfterClean.jsonPath().getList("slug");
+        assertThat(slugs).doesNotContain(EXPECTED_NEW_SLUG);
+    }
+
 
     @Test
     public void shouldNotCreateCourtThatAlreadyExist() throws JsonProcessingException {
