@@ -9,6 +9,8 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
+import uk.gov.hmcts.dts.fact.util.RepoUtils;
+import uk.gov.hmcts.dts.fact.util.Utils;
 
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
@@ -36,11 +38,16 @@ public class AdminCourtGeneralInfoService {
     public CourtGeneralInfo updateCourtGeneralInfo(final String slug, final CourtGeneralInfo generalInfo) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
+
+        checkIfUpdatedCourtIsValid(courtEntity.getName(), generalInfo.getName());
+
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
         courtEntity.setAlert(generalInfo.getAlert());
         courtEntity.setAlertCy(generalInfo.getAlertCy());
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
+            courtEntity.setName(generalInfo.getName());
+            courtEntity.setSlug(Utils.convertNameToSlug(generalInfo.getName()));
             courtEntity.setInfo(generalInfo.getInfo());
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());
@@ -54,5 +61,17 @@ public class AdminCourtGeneralInfoService {
             originalGeneralInfo,
             updatedGeneralInfo, slug);
         return updatedGeneralInfo;
+    }
+
+    /**
+     * Compare the base court name to that of the new name and if they don't match (i.e. the name has been updated) then
+     * check if the new name exists in the database. If the name exists an exception is thrown.
+     * @param originalCourtName base court name
+     * @param newCourtName to be compared to originalCourtName
+     */
+    public void checkIfUpdatedCourtIsValid(final String originalCourtName, final String newCourtName) {
+        if (!originalCourtName.equals(newCourtName)) {
+            RepoUtils.checkIfCourtAlreadyExists(courtRepository, Utils.convertNameToSlug(newCourtName));
+        }
     }
 }
