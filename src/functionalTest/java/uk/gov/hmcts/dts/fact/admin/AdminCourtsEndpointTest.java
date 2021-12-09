@@ -399,22 +399,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
-    /************************************************************* court POST request tests section. ***************************************************************/
 
-    @Test
-    public void shouldCreateNewCourt() throws JsonProcessingException {
-        EXPECTED_NEW_COURT.setNewCourtName("new court");
-        final String newCourtNameJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
-        final var response = doPostRequest(
-            COURTS_ENDPOINT,
-            Map.of(AUTHORIZATION, BEARER + superAdminToken),
-            newCourtNameJson
-        );
-        assertThat(response.statusCode()).isEqualTo(CREATED.value());
-        final Court court = response.as(Court.class);
-        assertThat(court.getName()).isEqualTo(EXPECTED_NEW_COURT.getNewCourtName());
-        assertThat(court.getSlug()).isEqualTo(EXPECTED_NEW_SLUG);
-    }
+    /************************************************************* court POST request tests section. ***************************************************************/
 
     @Test
     public void shouldNotCreateCourtThatAlreadyExist() throws JsonProcessingException {
