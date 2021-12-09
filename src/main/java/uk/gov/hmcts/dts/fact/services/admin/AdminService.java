@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,6 @@ import java.util.*;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-@Slf4j
 @Service
 public class AdminService {
 
