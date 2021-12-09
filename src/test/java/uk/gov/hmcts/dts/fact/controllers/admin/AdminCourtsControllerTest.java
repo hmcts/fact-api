@@ -71,10 +71,7 @@ class AdminCourtsControllerTest {
         String testSlugName = "test-court";
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName(testCourtName);
-        mockMvc.perform(delete(TEST_URL + "/")
-                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .accept(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(delete(TEST_URL + "/" + testSlugName))
             .andExpect(status().isOk())
             .andExpect(content().string("Court with slug: test-court has been deleted"))
             .andReturn();

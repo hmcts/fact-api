@@ -87,7 +87,7 @@ public class AdminCourtsController {
             .body(adminService.addNewCourt(newCourt.getNewCourtName(), newCourtSlug, newCourt.getServiceCentre()));
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{slug}")
     @ApiOperation("Add a new court")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Deleted"),
@@ -95,10 +95,9 @@ public class AdminCourtsController {
         @ApiResponse(code = 403, message = FORBIDDEN)
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity deleteCourt(@Valid @RequestBody NewCourt newCourt) {
-        String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
-        adminService.deleteCourt(newCourtSlug);
-        return ok().body("Court with slug: " + newCourtSlug + " has been deleted");
+    public ResponseEntity deleteCourt(@PathVariable String slug) {
+        adminService.deleteCourt(slug);
+        return ok().body("Court with slug: " + slug + " has been deleted");
     }
 
     @PutMapping(path = "/{slug}/general")
