@@ -27,6 +27,7 @@ public class AdminCourtGeneralInfoControllerTest {
     private static final String CHILD_PATH = "/generalInfo";
     private static final String TEST_SLUG = "unknownSlug";
     private static final CourtGeneralInfo COURT_GENERAL_INFO = new CourtGeneralInfo(
+        "Test court name",
         true,
         true,
         true,
