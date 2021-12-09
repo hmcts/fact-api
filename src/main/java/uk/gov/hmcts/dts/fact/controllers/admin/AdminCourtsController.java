@@ -88,7 +88,7 @@ public class AdminCourtsController {
     }
 
     @DeleteMapping("/{slug}")
-    @ApiOperation("Add a new court")
+    @ApiOperation("Delete a court")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Deleted"),
         @ApiResponse(code = 401, message = UNAUTHORISED),
