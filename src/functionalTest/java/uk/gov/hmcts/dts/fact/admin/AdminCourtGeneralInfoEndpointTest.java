@@ -20,9 +20,14 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @ExtendWith(SpringExtension.class)
 public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_COURT_GENERAL_INFO_PATH = "/generalInfo";
-    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
-    private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
+    // Do not use these court slugs on other tests, as the slug gets changed on the database. If you do,
+    // make sure to add a cleanup below first
+    private static final String BIRMINGHAM_MAGISTRATES_COURT_SLUG = "birmingham-magistrates-court";
+    private static final String TEST_SLUG = "super-admin-name";
+    private static final String BIRMINGHAM_GENERAL_INFO_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
+    private static final String TEST_PATH = ADMIN_COURTS_ENDPOINT + TEST_SLUG + ADMIN_COURT_GENERAL_INFO_PATH;
     private static final CourtGeneralInfo EXPECTED_ADMIN_COURT_INFO = new CourtGeneralInfo(
+        "Admin name",
         true,
         true,
         false,
@@ -32,6 +37,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Welsh Admin Alert"
     );
     private static final CourtGeneralInfo EXPECTED_SUPER_ADMIN_COURT_INFO = new CourtGeneralInfo(
+        "Super Admin name",
         true,
         true,
         false,
@@ -50,19 +56,21 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRetrieveCourtGeneralInfo() {
-        var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
+        var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG);
         final Court expectedCourtDetails = response.as(Court.class);
 
         response = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final CourtGeneralInfo generalInfo = response.as(CourtGeneralInfo.class);
+        assertThat(generalInfo.getName()).isEqualTo(expectedCourtDetails.getName());
         assertThat(generalInfo.getOpen()).isEqualTo(expectedCourtDetails.getOpen());
         assertThat(generalInfo.getInPerson()).isEqualTo(expectedCourtDetails.getInPerson());
         assertThat(generalInfo.getAccessScheme()).isEqualTo(expectedCourtDetails.getAccessScheme());
         assertThat(generalInfo.getInfo()).isEqualTo(expectedCourtDetails.getInfo());
         assertThat(generalInfo.getAlert()).isEqualTo(expectedCourtDetails.getAlert());
     }
+
 
     @Test
     public void shouldRequireATokenWhenRetrievingCourtGeneralInfo() {
@@ -86,10 +94,18 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(result.getAlertCy()).isEqualTo(EXPECTED_ADMIN_COURT_INFO.getAlertCy());
         assertThat(result.getInfo()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getInfo());
         assertThat(result.getInfoCy()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getInfoCy());
+        assertThat(result.getName()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getName());
+
     }
 
     @Test
-    public void shouldUpdateAllCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
+    public void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
+
+        final var orgResponse = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        assertThat(orgResponse.statusCode()).isEqualTo(OK.value());
+        final CourtGeneralInfo generalInfo = orgResponse.as(CourtGeneralInfo.class);
+        final String originalJson = objectMapper().writeValueAsString(generalInfo);
+
         final var response = doPutRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken),
                                           new ObjectMapper().writeValueAsString(EXPECTED_SUPER_ADMIN_COURT_INFO));
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -99,6 +115,13 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(result.getAlertCy()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getAlertCy());
         assertThat(result.getInfo()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getInfo());
         assertThat(result.getInfoCy()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getInfoCy());
+        assertThat(result.getName()).isEqualTo(EXPECTED_SUPER_ADMIN_COURT_INFO.getName());
+
+        // clean up step
+        final var cleanUpResponse = doPutRequest(TEST_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken), originalJson);
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+        final CourtGeneralInfo orgGeneralInfo = cleanUpResponse.as(CourtGeneralInfo.class);
+        assertThat(orgGeneralInfo.getName()).isEqualTo(generalInfo.getName());
     }
 
     @Test
