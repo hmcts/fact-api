@@ -66,7 +66,6 @@ public class Court {
     )
     private List<AreaOfLaw> areasOfLawSpoe;
 
-
     @ManyToMany
     @JoinTable(
         name = "search_courtcourttype",

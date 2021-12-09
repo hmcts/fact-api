@@ -172,6 +172,8 @@ public class AdminService {
     public void deleteCourt(String courtSlug) {
         uk.gov.hmcts.dts.fact.entity.Court court =
             courtRepository.findBySlug(courtSlug).orElseThrow(() -> new NotFoundException(courtSlug));
+        adminAuditService.saveAudit(AuditType.findByName("Delete existing court"), new Court(court),
+                                    null, courtSlug);
         courtRepository.deleteById(court.getId());
     }
 }

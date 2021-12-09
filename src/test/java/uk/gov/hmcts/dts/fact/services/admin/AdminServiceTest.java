@@ -215,7 +215,6 @@ class AdminServiceTest {
     @Test
     void shouldNotUpdateImageIfCourtNotFound() {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
-
         assertThatThrownBy(() -> adminService.updateCourtImage(SOME_SLUG, IMAGE_FILE))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + SOME_SLUG);
@@ -227,6 +226,9 @@ class AdminServiceTest {
         assertDoesNotThrow(() -> adminService.deleteCourt(SOME_SLUG));
         verify(courtRepository).findBySlug(SOME_SLUG);
         verify(courtRepository).deleteById(courtEntity.getId());
+        verify(adminAuditService).saveAudit(anyString(),
+                                            any(uk.gov.hmcts.dts.fact.model.admin.Court.class),
+                                            any(), anyString());
     }
 
     @Test
