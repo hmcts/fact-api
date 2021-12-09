@@ -66,20 +66,37 @@ class AdminCourtsControllerTest {
     }
 
     @Test
+    void shouldDeleteCourt() throws Exception {
+        String testCourtName = "test court";
+        String testSlugName = "test-court";
+        NewCourt newCourt = new NewCourt();
+        newCourt.setNewCourtName(testCourtName);
+        mockMvc.perform(delete(TEST_URL + "/")
+                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(content().string("Court with slug: test-court has been deleted"))
+            .andReturn();
+        verify(adminService, atMostOnce()).deleteCourt(testSlugName);
+    }
+
+    @Test
     void shouldAddNewCourt() throws Exception {
         Court expectedCourt = new Court();
         String testCourtName = "test court";
         String testSlugName = "test-court";
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName(testCourtName);
-        when(adminService.addNewCourt(testCourtName, testSlugName)).thenReturn(expectedCourt);
+        newCourt.setServiceCentre(false);
+        when(adminService.addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre())).thenReturn(expectedCourt);
         mockMvc.perform(post(TEST_URL + "/")
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
             .andReturn();
-        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
+        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre());
     }
 
     @Test
@@ -89,7 +106,8 @@ class AdminCourtsControllerTest {
         String testSlugName = "test-court''-name-";
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName(testCourtName);
-        when(adminService.addNewCourt(testCourtName, testSlugName))
+        newCourt.setServiceCentre(true);
+        when(adminService.addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre()))
             .thenReturn(expectedCourt);
         mockMvc.perform(post(TEST_URL + "/")
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
@@ -97,7 +115,7 @@ class AdminCourtsControllerTest {
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
             .andReturn();
-        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName);
+        verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre());
     }
 
     @Test
@@ -105,7 +123,8 @@ class AdminCourtsControllerTest {
         Court expectedCourt = new Court();
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName("test court%$-");
-        when(adminService.addNewCourt("test court%$-", "test-court%$-")).thenReturn(expectedCourt);
+        newCourt.setServiceCentre(false);
+        when(adminService.addNewCourt("test court%$-", "test-court%$-", newCourt.getServiceCentre())).thenReturn(expectedCourt);
         try {
             mockMvc.perform(post(TEST_URL + "/")
                                 .content(OBJECT_MAPPER.writeValueAsString(newCourt))

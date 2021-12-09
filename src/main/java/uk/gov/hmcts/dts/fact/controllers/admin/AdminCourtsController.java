@@ -34,6 +34,8 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminCourtsController {
 
     private final AdminService adminService;
+    private static final String FORBIDDEN = "Forbidden";
+    private static final String UNAUTHORISED = "Unauthorised";
 
     @Autowired
     public AdminCourtsController(final AdminService adminService) {
@@ -74,15 +76,29 @@ public class AdminCourtsController {
     @ApiOperation("Add a new court")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = Court.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 401, message = UNAUTHORISED),
+        @ApiResponse(code = 403, message = FORBIDDEN),
         @ApiResponse(code = 409, message = "Court already exists")
     })
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
         String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
         return created(URI.create("/courts/" + newCourtSlug + "/general"))
-            .body(adminService.addNewCourt(newCourt.getNewCourtName(), newCourtSlug));
+            .body(adminService.addNewCourt(newCourt.getNewCourtName(), newCourtSlug, newCourt.getServiceCentre()));
+    }
+
+    @DeleteMapping()
+    @ApiOperation("Add a new court")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Deleted"),
+        @ApiResponse(code = 401, message = UNAUTHORISED),
+        @ApiResponse(code = 403, message = FORBIDDEN)
+    })
+    @Role({FACT_SUPER_ADMIN})
+    public ResponseEntity deleteCourt(@Valid @RequestBody NewCourt newCourt) {
+        String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
+        adminService.deleteCourt(newCourtSlug);
+        return ok().body("Court with slug: " + newCourtSlug + " has been deleted");
     }
 
     @PutMapping(path = "/{slug}/general")
@@ -96,8 +112,8 @@ public class AdminCourtsController {
     @ApiOperation("Find the photo for a court")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = String.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 401, message = UNAUTHORISED),
+        @ApiResponse(code = 403, message = FORBIDDEN),
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
@@ -109,8 +125,8 @@ public class AdminCourtsController {
     @ApiOperation("Update the photo for a court")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful", response = String.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 401, message = UNAUTHORISED),
+        @ApiResponse(code = 403, message = FORBIDDEN),
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})

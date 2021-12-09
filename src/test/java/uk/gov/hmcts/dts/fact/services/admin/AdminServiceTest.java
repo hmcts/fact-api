@@ -24,6 +24,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("PMD.TooManyMethods")
@@ -55,6 +56,7 @@ class AdminServiceTest {
     @BeforeEach
     void setUp() {
         courtEntity = new Court();
+        courtEntity.setId(100);
         courtEntity.setSlug("slug");
         courtEntity.setName("some-name");
         courtEntity.setNameCy("some-name-cy");
@@ -220,23 +222,56 @@ class AdminServiceTest {
     }
 
     @Test
-    void shouldAddNewCourtSuccess() {
+    void shouldDeleteCourtIfSlugExists() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(courtEntity));
+        assertDoesNotThrow(() -> adminService.deleteCourt(SOME_SLUG));
+        verify(courtRepository).findBySlug(SOME_SLUG);
+        verify(courtRepository).deleteById(courtEntity.getId());
+    }
+
+    @Test
+    void shouldNotDeleteCourtIfNoCourtExists() {
+        String notFoundSlugError = "a slug error";
+        when(courtRepository.findBySlug(SOME_SLUG)).thenThrow(new NotFoundException(notFoundSlugError));
+        assertThatThrownBy(() -> adminService.deleteCourt(SOME_SLUG))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NOT_FOUND + notFoundSlugError);
+    }
+
+    @Test
+    void shouldAddNewCourtSuccessInPerson() {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
         when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
         uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
-            adminService.addNewCourt(SOME_COURT, SOME_SLUG);
+            adminService.addNewCourt(SOME_COURT, SOME_SLUG, false);
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
+        assertThat(returnedCourt.getInPerson()).isTrue();
         verify(adminAuditService).saveAudit("Create new court", null,
                                             returnedCourt, SOME_SLUG);
-        verify(courtRepository).save(any(Court.class));
+        verify(courtRepository, times(2)).save(any(Court.class));
+    }
+
+    @Test
+    void shouldAddNewCourtSuccessNotInPerson() {
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
+        when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
+        uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
+            adminService.addNewCourt(SOME_COURT, SOME_SLUG, true);
+        assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
+        assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
+        assertThat(returnedCourt.getOpen()).isTrue();
+        assertThat(returnedCourt.getInPerson()).isFalse();
+        verify(adminAuditService).saveAudit("Create new court", null,
+                                            returnedCourt, SOME_SLUG);
+        verify(courtRepository, times(2)).save(any(Court.class));
     }
 
     @Test
     void shouldNotAddNewCourtIfAlreadyExists() {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(new Court()));
-        assertThatThrownBy(() -> adminService.addNewCourt(SOME_COURT, SOME_SLUG))
+        assertThatThrownBy(() -> adminService.addNewCourt(SOME_COURT, SOME_SLUG, false))
             .isInstanceOf(DuplicatedListItemException.class)
             .hasMessage("Court already exists with slug: " + SOME_SLUG);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(),

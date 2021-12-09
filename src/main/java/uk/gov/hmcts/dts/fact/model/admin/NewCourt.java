@@ -23,4 +23,5 @@ public class NewCourt {
         message = "Court name is not valid, should only contain a combination of characters, "
             + "numbers, apostrophes or hyphens")
     private String newCourtName;
+    private Boolean serviceCentre;
 }

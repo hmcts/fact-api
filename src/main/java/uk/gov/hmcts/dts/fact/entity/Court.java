@@ -108,7 +108,7 @@ public class Court {
 
     private String gbs;
 
-    @OneToOne(mappedBy = "courtId")
+    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "courtId")
     private InPerson inPerson;
 
     @ManyToMany
