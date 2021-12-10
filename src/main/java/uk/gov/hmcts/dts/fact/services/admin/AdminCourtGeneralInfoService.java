@@ -39,13 +39,12 @@ public class AdminCourtGeneralInfoService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        checkIfUpdatedCourtIsValid(courtEntity.getName(), generalInfo.getName());
-
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
         courtEntity.setAlert(generalInfo.getAlert());
         courtEntity.setAlertCy(generalInfo.getAlertCy());
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
+            checkIfUpdatedCourtIsValid(courtEntity.getName(), generalInfo.getName());
             courtEntity.setName(generalInfo.getName());
             courtEntity.setSlug(Utils.convertNameToSlug(generalInfo.getName()));
             courtEntity.setInfo(generalInfo.getInfo());
