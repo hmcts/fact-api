@@ -415,7 +415,6 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         assertThat(court.getSlug()).isEqualTo(EXPECTED_NEW_SLUG);
 
         //clean up by removing added court
-
         final var cleanUpResponse = doDeleteRequest(
             COURTS_ENDPOINT  + EXPECTED_NEW_SLUG,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),newCourtNameJson
@@ -459,6 +458,27 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final Response response = doPostRequest(
             COURTS_ENDPOINT, testJson);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    /************************************************************* Delete request tests section. ***************************************************************/
+
+    @Test
+    public void adminShouldBeForbiddenForDeletingCourt() {
+
+        final var response = doDeleteRequest(
+            COURTS_ENDPOINT + EXPECTED_NEW_SLUG,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken), ""
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldRequireATokenWhenDeletingOpeningCourt() {
+        final var response = doDeleteRequest(
+            COURTS_ENDPOINT + EXPECTED_NEW_SLUG,
+            ""
+        );
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
