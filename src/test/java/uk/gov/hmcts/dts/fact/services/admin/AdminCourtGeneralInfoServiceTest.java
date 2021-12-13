@@ -154,6 +154,7 @@ public class AdminCourtGeneralInfoServiceTest {
 
     @Test
     void shouldReturnErrorIfCourtNameIsADuplicated() {
+        when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtRepository.findBySlug(COURT_DUPLICATED_NAME)).thenReturn(Optional.of(court));
         when(court.getName()).thenReturn(COURT_NAME);
