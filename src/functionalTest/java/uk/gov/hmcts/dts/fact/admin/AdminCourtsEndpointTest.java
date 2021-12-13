@@ -32,6 +32,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE = "Birmingham Civil and Family Justice Centre";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String TEST_STRING = "test";
+    private static final String ALL_COURT_ENDPOINT = "/courts/all";
     private static final String COURT_GENERAL_ENDPOINT = "/general";
     private static final String COURT_PHOTO_ENDPOINT = "/courtPhoto";
     private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
@@ -73,7 +74,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get("/courts/all")
+            .get(ALL_COURT_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -87,7 +88,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .when()
-            .get("/courts/all")
+            .get(ALL_COURT_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -100,7 +101,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
-            .get("/courts/all")
+            .get(ALL_COURT_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -422,7 +423,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
 
         final var responseAfterClean = doGetRequest(
-            "/courts/all",
+            ALL_COURT_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
         assertThat(responseAfterClean.statusCode()).isEqualTo(OK.value());
