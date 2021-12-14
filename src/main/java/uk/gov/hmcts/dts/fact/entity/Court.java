@@ -66,7 +66,6 @@ public class Court {
     )
     private List<AreaOfLaw> areasOfLawSpoe;
 
-
     @ManyToMany
     @JoinTable(
         name = "search_courtcourttype",
@@ -108,7 +107,7 @@ public class Court {
 
     private String gbs;
 
-    @OneToOne(mappedBy = "courtId")
+    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "courtId")
     private InPerson inPerson;
 
     @ManyToMany

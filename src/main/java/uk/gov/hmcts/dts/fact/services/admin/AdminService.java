@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
@@ -28,7 +29,8 @@ public class AdminService {
     private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminService(final CourtRepository courtRepository, final RolesProvider rolesProvider,
+    public AdminService(final CourtRepository courtRepository,
+                        final RolesProvider rolesProvider,
                         final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
@@ -134,7 +136,8 @@ public class AdminService {
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
     }
 
-    public Court addNewCourt(String newCourtName, String newCourtSlug) {
+    @Transactional
+    public Court addNewCourt(String newCourtName, String newCourtSlug, Boolean serviceCentre) {
         RepoUtils.checkIfCourtAlreadyExists(courtRepository, newCourtSlug);
         uk.gov.hmcts.dts.fact.entity.Court newCourt =
             new uk.gov.hmcts.dts.fact.entity.Court();
@@ -142,14 +145,35 @@ public class AdminService {
         newCourt.setSlug(newCourtSlug);
         newCourt.setDisplayed(true);
         newCourt.setHideAols(false);
-        newCourt.setWelshEnabled(false);
-        final uk.gov.hmcts.dts.fact.entity.Court court =
-            courtRepository.save(newCourt);
-        Court createdCourtModel = new Court(court);
+        newCourt.setWelshEnabled(true);
+
+        // By default the court will be in person unless the "service centre" flag is ticked
+        // in which case we can skip this, as it will then default to false
+        InPerson inPerson = new InPerson();
+        inPerson.setIsInPerson(!serviceCentre);
+        inPerson.setAccessScheme(false);
+
+        // Save the court to generate the ID and then link the search_court and search_inperson tables
+        // together through the court_id column relationship
+        inPerson.setCourtId(courtRepository.save(newCourt));
+        newCourt.setInPerson(inPerson);
+
+        Court createdCourtModel = new Court(courtRepository.save(newCourt));
+
         adminAuditService.saveAudit(
             AuditType.findByName("Create new court"),
             null,
             createdCourtModel, newCourtSlug);
+
         return createdCourtModel;
+    }
+
+    @Transactional
+    public void deleteCourt(String courtSlug) {
+        uk.gov.hmcts.dts.fact.entity.Court court =
+            courtRepository.findBySlug(courtSlug).orElseThrow(() -> new NotFoundException(courtSlug));
+        adminAuditService.saveAudit(AuditType.findByName("Delete existing court"), new Court(court),
+                                    null, courtSlug);
+        courtRepository.deleteById(court.getId());
     }
 }
