@@ -245,7 +245,8 @@ class AdminServiceTest {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
         when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
         uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
-            adminService.addNewCourt(SOME_COURT, SOME_SLUG, false);
+            adminService.addNewCourt(SOME_COURT, SOME_SLUG, false,
+                                     LONGITUDE, LATITUDE);
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
@@ -260,7 +261,8 @@ class AdminServiceTest {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
         when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
         uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
-            adminService.addNewCourt(SOME_COURT, SOME_SLUG, true);
+            adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
+                                     LONGITUDE, LATITUDE);
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
@@ -273,7 +275,8 @@ class AdminServiceTest {
     @Test
     void shouldNotAddNewCourtIfAlreadyExists() {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(new Court()));
-        assertThatThrownBy(() -> adminService.addNewCourt(SOME_COURT, SOME_SLUG, false))
+        assertThatThrownBy(() -> adminService.addNewCourt(SOME_COURT, SOME_SLUG, false,
+                                                          LONGITUDE, LATITUDE))
             .isInstanceOf(DuplicatedListItemException.class)
             .hasMessage("Court already exists with slug: " + SOME_SLUG);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(),

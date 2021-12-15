@@ -137,7 +137,8 @@ public class AdminService {
     }
 
     @Transactional
-    public Court addNewCourt(String newCourtName, String newCourtSlug, Boolean serviceCentre) {
+    public Court addNewCourt(String newCourtName, String newCourtSlug, Boolean serviceCentre,
+                             double lon, double lat) {
         RepoUtils.checkIfCourtAlreadyExists(courtRepository, newCourtSlug);
         uk.gov.hmcts.dts.fact.entity.Court newCourt =
             new uk.gov.hmcts.dts.fact.entity.Court();
@@ -146,6 +147,8 @@ public class AdminService {
         newCourt.setDisplayed(true);
         newCourt.setHideAols(false);
         newCourt.setWelshEnabled(true);
+        newCourt.setLon(lon);
+        newCourt.setLat(lat);
 
         // By default the court will be in person unless the "service centre" flag is ticked
         // in which case we can skip this, as it will then default to false
