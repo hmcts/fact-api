@@ -84,7 +84,9 @@ public class AdminCourtsController {
     public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
         String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
         return created(URI.create("/courts/" + newCourtSlug + "/general"))
-            .body(adminService.addNewCourt(newCourt.getNewCourtName(), newCourtSlug, newCourt.getServiceCentre()));
+            .body(adminService.addNewCourt(newCourt.getNewCourtName(),
+                                           newCourtSlug, newCourt.getServiceCentre(),
+                                           newCourt.getLon(), newCourt.getLat()));
     }
 
     @DeleteMapping("/{slug}")
