@@ -66,6 +66,10 @@ public class AdminAreasOfLawService {
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawEntity =
             areasOfLawRepository.findById(updatedAreaOfLaw.getId())
             .orElseThrow(() -> new NotFoundException(updatedAreaOfLaw.getId().toString()));
+
+        checkIfAreaOfLawAlreadyExists(updatedAreaOfLaw.getDisplayName());
+        checkIfAreaOfLawAlreadyExists(updatedAreaOfLaw.getAlternativeName());
+
         final List<AreaOfLaw> originalAreasOfLaw = getAllAreasOfLaw();
         final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = updateEntityPropertiesFromModel(updatedAreaOfLaw, areaOfLawEntity);
         AreaOfLaw newAreaOfLaw = new AreaOfLaw(areasOfLawRepository.save(entity));
