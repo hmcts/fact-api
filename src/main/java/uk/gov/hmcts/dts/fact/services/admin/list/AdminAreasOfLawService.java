@@ -69,6 +69,8 @@ public class AdminAreasOfLawService {
 
         if (!updatedAreaOfLaw.getName().equalsIgnoreCase(updatedAreaOfLaw.getDisplayName())){
             checkIfAreaOfLawAlreadyExists(updatedAreaOfLaw.getDisplayName());
+        }
+        else if (!updatedAreaOfLaw.getName().equalsIgnoreCase(updatedAreaOfLaw.getAlternativeName())){
             checkIfAreaOfLawAlreadyExists(updatedAreaOfLaw.getAlternativeName());
         }
 
