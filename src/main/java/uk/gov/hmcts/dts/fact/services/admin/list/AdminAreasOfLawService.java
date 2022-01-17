@@ -67,10 +67,10 @@ public class AdminAreasOfLawService {
             areasOfLawRepository.findById(updatedAreaOfLaw.getId())
             .orElseThrow(() -> new NotFoundException(updatedAreaOfLaw.getId().toString()));
 
-        if (!updatedAreaOfLaw.getName().equalsIgnoreCase(updatedAreaOfLaw.getDisplayName())){
+        if (!updatedAreaOfLaw.getName().equalsIgnoreCase(updatedAreaOfLaw.getDisplayName())) {
             checkIfAreaOfLawAlreadyExists(updatedAreaOfLaw.getDisplayName());
         }
-        else if (!updatedAreaOfLaw.getName().equalsIgnoreCase(updatedAreaOfLaw.getAlternativeName())){
+        else if (!updatedAreaOfLaw.getName().equalsIgnoreCase(updatedAreaOfLaw.getAlternativeName())) {
             checkIfAreaOfLawAlreadyExists(updatedAreaOfLaw.getAlternativeName());
         }
 
