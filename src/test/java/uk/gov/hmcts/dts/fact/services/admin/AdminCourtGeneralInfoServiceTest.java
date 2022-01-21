@@ -138,7 +138,7 @@ public class AdminCourtGeneralInfoServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
 
         final CourtGeneralInfo result = adminService.getCourtGeneralInfoBySlug(COURT_SLUG);
-        assertThat(result.getInPerson()).isEqualTo(false);
+        assertThat(result.getInPerson()).isEqualTo(null);
         assertThat(result.getAccessScheme()).isEqualTo(false);
     }
 
