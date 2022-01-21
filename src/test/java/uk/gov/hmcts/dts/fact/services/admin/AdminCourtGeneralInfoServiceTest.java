@@ -148,7 +148,9 @@ public class AdminCourtGeneralInfoServiceTest {
             Arguments.of(false, false, false),
             Arguments.of(false, true, false),
             Arguments.of(true, false, false),
-            Arguments.of(true, true, true)
+            Arguments.of(true, true, true),
+            Arguments.of(null, false, false),
+            Arguments.of(null, true, false)
         );
     }
 
