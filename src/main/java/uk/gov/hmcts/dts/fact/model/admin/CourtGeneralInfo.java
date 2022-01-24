@@ -26,8 +26,8 @@ public class CourtGeneralInfo {
     public CourtGeneralInfo(Court court) {
         this.name = court.getName();
         this.open = court.getDisplayed();
-        this.inPerson = court.getInPerson() != null && court.getInPerson().getIsInPerson();
-        this.accessScheme = this.inPerson && court.getInPerson().getAccessScheme();
+        this.inPerson = court.getInPerson() == null ? null : court.getInPerson().getIsInPerson();
+        this.accessScheme = this.inPerson != null && this.inPerson && court.getInPerson().getAccessScheme();
         this.info = court.getInfo();
         this.infoCy = court.getInfoCy();
         this.alert = court.getAlert();
