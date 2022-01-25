@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
@@ -40,6 +41,8 @@ public class AdminCourtGeneralInfoService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
+        System.out.println(generalInfo);
+
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
         courtEntity.setAlert(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlert()));
         courtEntity.setAlertCy(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlertCy()));
@@ -53,6 +56,8 @@ public class AdminCourtGeneralInfoService {
             courtEntity.setDisplayed(generalInfo.getOpen());
             if (courtEntity.getInPerson() != null && courtEntity.getInPerson().getIsInPerson()) {
                 courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
+            } else {
+                InPerson inPerson = new InPerson();
             }
         }
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));

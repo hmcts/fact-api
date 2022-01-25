@@ -45,9 +45,9 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final String COURT_INFO_CY = "Welsh info";
     private static final String NOT_FOUND = "Not found: ";
 
-    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
-    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
-    private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY, false);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY, false);
+    private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY, false);
 
     @Autowired
     private AdminCourtGeneralInfoService adminService;
