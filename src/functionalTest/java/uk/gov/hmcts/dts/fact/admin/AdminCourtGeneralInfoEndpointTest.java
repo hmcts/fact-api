@@ -34,7 +34,8 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Admin Info",
         "Welsh Admin Info",
         "Admin Alert",
-        "Welsh Admin Alert"
+        "Welsh Admin Alert",
+        false
     );
     private static final CourtGeneralInfo EXPECTED_SUPER_ADMIN_COURT_INFO = new CourtGeneralInfo(
         "Super Admin name",
@@ -44,7 +45,8 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Super Admin Info",
         "Super Welsh Admin Info",
         "Super Admin Alert",
-        "Super Welsh Admin Alert"
+        "Super Welsh Admin Alert",
+        false
     );
 
     private static String adminCourtInfoJson;

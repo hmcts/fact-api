@@ -41,8 +41,6 @@ public class AdminCourtGeneralInfoService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        System.out.println(generalInfo);
-
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
         courtEntity.setAlert(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlert()));
         courtEntity.setAlertCy(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlertCy()));
@@ -54,10 +52,17 @@ public class AdminCourtGeneralInfoService {
             courtEntity.setInfo(generalInfo.getInfo());
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());
-            if (courtEntity.getInPerson() != null && courtEntity.getInPerson().getIsInPerson()) {
-                courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
-            } else {
+
+            if (courtEntity.getInPerson() == null) {
+                // Cater for new Scenario post covid, where courts can be both in person
+                // and not in person, yet still be classed as not being a service centre
                 InPerson inPerson = new InPerson();
+                inPerson.setIsInPerson(false);
+                inPerson.setCourtId(courtEntity);
+                inPerson.setAccessScheme(generalInfo.getAccessScheme());
+                courtEntity.setInPerson(inPerson);
+            } else {
+                courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
             }
         }
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));

@@ -146,7 +146,7 @@ public class AdminCourtGeneralInfoServiceTest {
     private static Stream<Arguments> parametersForInPersonTest() {
         return Stream.of(
             Arguments.of(false, false, false),
-            Arguments.of(false, true, false),
+            Arguments.of(false, true, true),
             Arguments.of(true, false, false),
             Arguments.of(true, true, true)
         );
