@@ -57,7 +57,7 @@ public class AdminCourtGeneralInfoService {
                 // Cater for new Scenario post covid, where courts can be both in person
                 // and not in person, yet still be classed as not being a service centre
                 InPerson inPerson = new InPerson();
-                inPerson.setIsInPerson(false);
+                inPerson.setIsInPerson(true);
                 inPerson.setCourtId(courtEntity);
                 inPerson.setAccessScheme(generalInfo.getAccessScheme());
                 courtEntity.setInPerson(inPerson);
