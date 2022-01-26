@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -22,12 +23,13 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
@@ -120,6 +122,30 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
+    }
+
+    @Test
+    void superAdminCanUpdateAllCourtGeneralInfoWhenInPersonNull() {
+        setUpCourtGeneralInfo();
+        when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
+        when(court.getInPerson()).thenReturn(null);
+        when(courtRepository.save(court)).thenReturn(court);
+
+        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO);
+        ArgumentCaptor<InPerson> inPersonArgumentCaptor = ArgumentCaptor.forClass(InPerson.class);
+        verify(court, times(1)).setInPerson(inPersonArgumentCaptor.capture());
+        verify(court).setName(COURT_NAME);
+        verify(court).setInfo(COURT_INFO);
+        verify(court).setInfoCy(COURT_INFO_CY);
+        verify(court).setInPerson(any(InPerson.class));
+        verify(court).setDisplayed(true);
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+                                                           new CourtGeneralInfo(court),
+                                                           results, COURT_SLUG);
+        List<InPerson> capturedInPerson = inPersonArgumentCaptor.getAllValues();
+        assertEquals(1, capturedInPerson.size());
+        assertTrue(capturedInPerson.get(0).getIsInPerson());
+        assertTrue(capturedInPerson.get(0).getAccessScheme());
     }
 
     @Test
