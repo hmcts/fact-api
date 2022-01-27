@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
@@ -51,7 +52,16 @@ public class AdminCourtGeneralInfoService {
             courtEntity.setInfo(generalInfo.getInfo());
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());
-            if (courtEntity.getInPerson() != null && courtEntity.getInPerson().getIsInPerson()) {
+
+            if (courtEntity.getInPerson() == null) {
+                // Cater for new Scenario post covid, where courts can be both in person
+                // and not in person, yet still be classed as not being a service centre
+                InPerson inPerson = new InPerson();
+                inPerson.setIsInPerson(true);
+                inPerson.setCourtId(courtEntity);
+                inPerson.setAccessScheme(generalInfo.getAccessScheme());
+                courtEntity.setInPerson(inPerson);
+            } else {
                 courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
             }
         }

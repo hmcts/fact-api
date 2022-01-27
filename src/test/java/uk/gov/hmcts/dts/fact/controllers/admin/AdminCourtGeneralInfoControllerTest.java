@@ -34,7 +34,8 @@ public class AdminCourtGeneralInfoControllerTest {
         "English info",
         "Welsh info",
         "English alert",
-        "Welsh alert"
+        "Welsh alert",
+        false
     );
 
     private static String courtGeneralInfoJson;

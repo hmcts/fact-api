@@ -22,15 +22,17 @@ public class CourtGeneralInfo {
     private String alert;
     @JsonProperty("alert_cy")
     private String alertCy;
+    private boolean serviceCentre;
 
     public CourtGeneralInfo(Court court) {
         this.name = court.getName();
         this.open = court.getDisplayed();
         this.inPerson = court.getInPerson() != null && court.getInPerson().getIsInPerson();
-        this.accessScheme = this.inPerson && court.getInPerson().getAccessScheme();
+        this.accessScheme = court.getInPerson() != null && court.getInPerson().getAccessScheme();
         this.info = court.getInfo();
         this.infoCy = court.getInfoCy();
         this.alert = court.getAlert();
         this.alertCy = court.getAlertCy();
+        this.serviceCentre = court.getServiceAreas().size() > 0;
     }
 }
