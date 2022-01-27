@@ -40,7 +40,6 @@ public class Court {
     @JsonProperty("types")
     private List<CourtType> courtTypes;
 
-
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.slug = courtEntity.getSlug();
         this.name = courtEntity.getName();
