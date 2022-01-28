@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "AreaOfLaw1",
+    "singlePointEntry": true
+  },
+  {
+    "id": 2,
+    "name": "AreaOfLaw2",
+    "singlePointEntry": true
+  },
+  {
+    "id": 3,
+    "name": "AreaOfLaw3",
+    "singlePointEntry": true
+  }
+]
