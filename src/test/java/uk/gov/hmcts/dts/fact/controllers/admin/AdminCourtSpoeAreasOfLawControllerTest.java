@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.model.admin.SpoeAreaOfLaw;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtSpoeAreasOfLawService;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class AdminCourtSpoeAreasOfLawControllerTest {
     @Test
     void shouldReturnAllSpoeAreasOfLaw() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+        final List<SpoeAreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, SpoeAreaOfLaw[].class));
 
         when(adminService.getAllSpoeAreasOfLaw()).thenReturn(spoeAreasOfLaw);
 
@@ -55,7 +55,7 @@ public class AdminCourtSpoeAreasOfLawControllerTest {
     @Test
     void shouldReturnCourtSpoeAreasOfLaw() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+        final List<SpoeAreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, SpoeAreaOfLaw[].class));
 
         when(adminService.getCourtSpoeAreasOfLawBySlug(TEST_SLUG)).thenReturn(spoeAreasOfLaw);
 
@@ -76,7 +76,7 @@ public class AdminCourtSpoeAreasOfLawControllerTest {
     @Test
     void updateCourtSpoeAreasOfLawShouldReturnUpdatedCourtSpoeAreasOfLaw() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+        final List<SpoeAreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, SpoeAreaOfLaw[].class));
 
         when(adminService.updateSpoeAreasOfLawForCourt(TEST_SLUG, spoeAreasOfLaw)).thenReturn(spoeAreasOfLaw);
 
@@ -91,7 +91,7 @@ public class AdminCourtSpoeAreasOfLawControllerTest {
     @Test
     void updateCourtSpoeAreasOfLawShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
         final String jsonBody = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(jsonBody, AreaOfLaw[].class));
+        final List<SpoeAreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(jsonBody, SpoeAreaOfLaw[].class));
         when(adminService.updateSpoeAreasOfLawForCourt(TEST_SLUG, spoeAreasOfLaw))
             .thenThrow(new NotFoundException(TEST_SLUG));
 

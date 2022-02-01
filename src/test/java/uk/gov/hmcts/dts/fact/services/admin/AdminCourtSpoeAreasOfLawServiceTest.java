@@ -14,7 +14,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.model.admin.SpoeAreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
@@ -42,7 +42,7 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     private static final String TEST_COURT_AREAS_OF_LAW_PATH = "court-spoe-areas-of-law.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final List<CourtAreaOfLawSpoe> COURT_SPOE_AREA_OF_LAWS = new ArrayList<>();
-    private static final List<AreaOfLaw> DUPLICATED_SPOE_LIST = new ArrayList<>();
+    private static final List<SpoeAreaOfLaw> DUPLICATED_SPOE_LIST = new ArrayList<>();
 
     @MockBean
     private CourtRepository courtRepository;
@@ -82,11 +82,11 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     void shouldReturnAllSpoeAreasOfLaw() {
         when(courtAreaOfLawSpoeRepository.findAll()).thenReturn(COURT_SPOE_AREA_OF_LAWS);
 
-        final List<AreaOfLaw> results = adminCourtSpoeAreasOfLawService.getAllSpoeAreasOfLaw();
+        final List<SpoeAreaOfLaw> results = adminCourtSpoeAreasOfLawService.getAllSpoeAreasOfLaw();
         assertThat(results)
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .first()
-            .isInstanceOf(AreaOfLaw.class);
+            .isInstanceOf(SpoeAreaOfLaw.class);
         assertThat(results.get(0).getId()).isNotNull();
         assertThat(results.get(0).getName()).isNotEmpty();
     }
@@ -97,11 +97,11 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(anyInt())).thenReturn(COURT_SPOE_AREA_OF_LAWS);
 
 
-        final List<AreaOfLaw> results = adminCourtSpoeAreasOfLawService.getCourtSpoeAreasOfLawBySlug(COURT_SLUG);
+        final List<SpoeAreaOfLaw> results = adminCourtSpoeAreasOfLawService.getCourtSpoeAreasOfLawBySlug(COURT_SLUG);
         assertThat(results)
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .first()
-            .isInstanceOf(AreaOfLaw.class);
+            .isInstanceOf(SpoeAreaOfLaw.class);
 
         assertThat(results.get(0).isSinglePointEntry()).isEqualTo(true);
     }
@@ -119,13 +119,13 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     @Test
     void shouldUpdateCourtSpoeAreasOfLaw() throws IOException {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+        final List<SpoeAreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, SpoeAreaOfLaw[].class));
 
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(anyInt())).thenReturn(COURT_SPOE_AREA_OF_LAWS);
         when(courtAreaOfLawSpoeRepository.saveAll(any())).thenReturn(COURT_SPOE_AREA_OF_LAWS);
 
-        final List<AreaOfLaw> courtAreasOfLawResult =
+        final List<SpoeAreaOfLaw> courtAreasOfLawResult =
             adminCourtSpoeAreasOfLawService.updateSpoeAreasOfLawForCourt(COURT_SLUG, areasOfLaw);
         verify(courtAreaOfLawSpoeRepository).deleteAllByCourtId(court.getId());
         verify(courtAreaOfLawSpoeRepository).saveAll(anyIterable());
@@ -136,7 +136,7 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court spoe areas of law",
                                                            COURT_SPOE_AREA_OF_LAWS
                                                                .stream()
-                                                               .map(aol -> new AreaOfLaw(aol.getAreaOfLaw(), true))
+                                                               .map(aol -> new SpoeAreaOfLaw(aol.getAreaOfLaw()))
                                                                .collect(toList()),
                                                            courtAreasOfLawResult, COURT_SLUG);
     }
@@ -155,10 +155,10 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     @Test
     void shouldThrowDuplicatedListItemExceptionIfDuplicatedExists()  {
 
-        AreaOfLaw areaOfLawOne = new AreaOfLaw();
+        SpoeAreaOfLaw areaOfLawOne = new SpoeAreaOfLaw();
         areaOfLawOne.setId(1);
         areaOfLawOne.setName("AreaOfLaw1");
-        AreaOfLaw areaOfLawTwo = new AreaOfLaw();
+        SpoeAreaOfLaw areaOfLawTwo = new SpoeAreaOfLaw();
         areaOfLawTwo.setId(1);
         areaOfLawTwo.setName("AreaOfLaw1");
         DUPLICATED_SPOE_LIST.add(areaOfLawOne);

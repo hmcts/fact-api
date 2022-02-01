@@ -7,7 +7,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.model.admin.SpoeAreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
@@ -31,42 +31,40 @@ public class AdminCourtSpoeAreasOfLawService {
         this.adminAuditService = adminAuditService;
     }
 
-    public List<AreaOfLaw> getAllSpoeAreasOfLaw() {
+    public List<SpoeAreaOfLaw> getAllSpoeAreasOfLaw() {
         return courtAreaOfLawSpoeRepository.findAll()
             .stream()
             .map(CourtAreaOfLawSpoe::getAreaOfLaw).distinct()
-            .map(AreaOfLaw::new)
+            .map(SpoeAreaOfLaw::new)
             .collect(toList());
     }
 
-    public List<AreaOfLaw> getCourtSpoeAreasOfLawBySlug(final String slug) {
+    public List<SpoeAreaOfLaw> getCourtSpoeAreasOfLawBySlug(final String slug) {
 
         Court court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
         return  courtAreaOfLawSpoeRepository.getAllByCourtId(court.getId())
             .stream()
-            .map(CourtAreaOfLawSpoe::getAreaOfLaw)
-            .map(aol -> new AreaOfLaw(aol,true))
+            .map(aol -> new SpoeAreaOfLaw(aol.getAreaOfLaw()))
             .collect(toList());
     }
 
     @Transactional()
-    public List<AreaOfLaw> updateSpoeAreasOfLawForCourt(final String slug, final List<AreaOfLaw> areasOfLaw) {
+    public List<SpoeAreaOfLaw> updateSpoeAreasOfLawForCourt(final String slug, final List<SpoeAreaOfLaw> areasOfLaw) {
         checkIfSpoeAreasOfLawHasDuplicateEntries(areasOfLaw);
 
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
-        final List<AreaOfLaw> originalCourtAol = getCourtSpoeAreasOfLawBySlug(slug);
+        final List<SpoeAreaOfLaw> originalCourtAol = getCourtSpoeAreasOfLawBySlug(slug);
 
         List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> newAreasOfLawSpoeList = getNewSpoeAreasOfLaw(areasOfLaw);
         List<CourtAreaOfLawSpoe> newCourtSpoeAreasOfLawList = getNewCourtSpoeAreasOfLaw(courtEntity, newAreasOfLawSpoeList);
 
         courtAreaOfLawSpoeRepository.deleteAllByCourtId(courtEntity.getId());
 
-        List<AreaOfLaw> newSpoeAreaOfLawList = courtAreaOfLawSpoeRepository
+        List<SpoeAreaOfLaw> newSpoeAreaOfLawList = courtAreaOfLawSpoeRepository
             .saveAll(newCourtSpoeAreasOfLawList)
             .stream()
-            .map(CourtAreaOfLawSpoe::getAreaOfLaw)
-            .map(aol -> new AreaOfLaw(aol,true))
+            .map(csaol -> new SpoeAreaOfLaw(csaol.getAreaOfLaw()))
             .collect(toList());
 
         adminAuditService.saveAudit(AuditType.findByName("Update court spoe areas of law"),
@@ -76,7 +74,7 @@ public class AdminCourtSpoeAreasOfLawService {
         return newSpoeAreaOfLawList;
     }
 
-    private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewSpoeAreasOfLaw(final List<AreaOfLaw> areasOfLaw) {
+    private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewSpoeAreasOfLaw(final List<SpoeAreaOfLaw> areasOfLaw) {
         return areasOfLaw.stream()
             .map(e -> new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(e.getId(), e.getName())).collect(toList());
     }
@@ -91,7 +89,7 @@ public class AdminCourtSpoeAreasOfLawService {
         return newCourtSpoeAreasOfLawList;
     }
 
-    private void checkIfSpoeAreasOfLawHasDuplicateEntries(final List<AreaOfLaw> areasOfLaw) {
+    private void checkIfSpoeAreasOfLawHasDuplicateEntries(final List<SpoeAreaOfLaw> areasOfLaw) {
 
         if (areasOfLaw.stream().distinct().count() != areasOfLaw.size()) {
             throw new DuplicatedListItemException("Duplicate single point of entries exist");

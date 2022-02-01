@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.model.admin.SpoeAreaOfLaw;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.*;
@@ -42,7 +43,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
-        final List<AreaOfLaw> areaOfLaw = response.body().jsonPath().getList(".", AreaOfLaw.class);
+        final List<SpoeAreaOfLaw> areaOfLaw = response.body().jsonPath().getList(".", SpoeAreaOfLaw.class);
         assertThat(areaOfLaw).hasSizeGreaterThan(1);
     }
 
@@ -102,8 +103,8 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
 
     @Test
     public void shouldUpdateCourtSpoeAreaOfLaw() throws JsonProcessingException {
-        final List<AreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
-        final List<AreaOfLaw> expectedCourtAreasOfLaw = updateCourtAreasOfLaw(currentCourtSpoeAreaOfLaw);
+        final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
+        final List<SpoeAreaOfLaw> expectedCourtAreasOfLaw = updateCourtAreasOfLaw(currentCourtSpoeAreaOfLaw);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAreasOfLaw);
         final String originalJson = objectMapper().writeValueAsString(currentCourtSpoeAreaOfLaw);
         final var response = doPutRequest(
@@ -113,9 +114,9 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
-        final List<AreaOfLaw> updatedCourtAreaOfLaw = response.body().jsonPath().getList(
+        final List<SpoeAreaOfLaw> updatedCourtAreaOfLaw = response.body().jsonPath().getList(
             ".",
-            AreaOfLaw.class
+            SpoeAreaOfLaw.class
         );
         assertThat(updatedCourtAreaOfLaw.get(0).getName()).isEqualTo(expectedCourtAreasOfLaw.get(0).getName());
         assertThat(updatedCourtAreaOfLaw.get(0).getId()).isEqualTo(expectedCourtAreasOfLaw.get(0).getId());
@@ -139,7 +140,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
 
     @Test
     public void shouldRequireATokenWhenUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
-        final List<AreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
+        final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
         final String testJson = objectMapper().writeValueAsString(currentCourtSpoeAreaOfLaw);
         final var response = doPutRequest(ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH, testJson);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -147,7 +148,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
 
     @Test
     public void shouldBeForbiddenForUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
-        final List<AreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
+        final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
         final String testJson = objectMapper().writeValueAsString(currentCourtSpoeAreaOfLaw);
         final var response = doPutRequest(
             ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
@@ -158,7 +159,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
 
     @Test
     public void shouldnotUpdateAndReturnNotFoundWhenSpoeCourtDoesNotExist() throws JsonProcessingException {
-        final List<AreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
+        final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
         final String testJson = objectMapper().writeValueAsString(currentCourtSpoeAreaOfLaw);
         final Response response = doPutRequest(
             ABERYSTWYTH_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
@@ -174,20 +175,18 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
-    private List<AreaOfLaw> getCurrentSpoeAreaOflaw() {
+    private List<SpoeAreaOfLaw> getCurrentSpoeAreaOflaw() {
         final var response = doGetRequest(
             ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
         );
-        return response.body().jsonPath().getList(".", AreaOfLaw.class);
+        return response.body().jsonPath().getList(".", SpoeAreaOfLaw.class);
     }
 
 
-    private List<AreaOfLaw> updateCourtAreasOfLaw(final List<AreaOfLaw> courtAreaOfLaw) {
-        final AreaOfLaw areaOfLaw = new AreaOfLaw(TEST_SPOE_AREA_OF_LAW_ID,TEST_SPOE_AREA_OF_LAW_NAME,TEST_SINGLE_POINT_OF_ENTRY,
-                                                  "","","","",
-                                                  "","","","");
-        final List<AreaOfLaw> updatedAreaOfLaw = new ArrayList<>(courtAreaOfLaw);
+    private List<SpoeAreaOfLaw> updateCourtAreasOfLaw(final List<SpoeAreaOfLaw> courtAreaOfLaw) {
+        final SpoeAreaOfLaw areaOfLaw = new SpoeAreaOfLaw(TEST_SPOE_AREA_OF_LAW_ID,TEST_SPOE_AREA_OF_LAW_NAME,TEST_SINGLE_POINT_OF_ENTRY);
+        final List<SpoeAreaOfLaw> updatedAreaOfLaw = new ArrayList<>(courtAreaOfLaw);
         updatedAreaOfLaw.add(areaOfLaw);
         return updatedAreaOfLaw;
     }

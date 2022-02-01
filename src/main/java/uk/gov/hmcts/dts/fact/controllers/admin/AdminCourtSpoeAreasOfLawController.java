@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.model.admin.SpoeAreaOfLaw;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtSpoeAreasOfLawService;
 
 import java.util.List;
@@ -32,40 +32,40 @@ public class AdminCourtSpoeAreasOfLawController {
     @GetMapping(path = "/SpoeAreasOfLaw")
     @ApiOperation("Return all spoe areas of law")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = SpoeAreaOfLaw.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity<List<AreaOfLaw>> getAllAreasOfLaw() {
+    public ResponseEntity<List<SpoeAreaOfLaw>> getAllAreasOfLaw() {
         return ok(adminCourtAreasOfLawSpoeService.getAllSpoeAreasOfLaw());
     }
 
     @GetMapping(path = "/{slug}/SpoeAreasOfLaw")
     @ApiOperation("Find the spoe areas of law for a court")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = SpoeAreaOfLaw.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity<List<AreaOfLaw>> getCourtAreasOfLaw(@PathVariable String slug) {
+    public ResponseEntity<List<SpoeAreaOfLaw>> getCourtAreasOfLaw(@PathVariable String slug) {
         return ok(adminCourtAreasOfLawSpoeService.getCourtSpoeAreasOfLawBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/SpoeAreasOfLaw")
     @ApiOperation("Update the spoe areas of law for a court")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "Successful", response = SpoeAreaOfLaw.class, responseContainer = "List"),
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found"),
         @ApiResponse(code = 409, message = "Duplicate single point of entries exist")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity<List<AreaOfLaw>> updateCourtAreasOfLaw(@PathVariable String slug,
-                                                                 @RequestBody List<AreaOfLaw> areasOfLaw) {
+    public ResponseEntity<List<SpoeAreaOfLaw>> updateCourtAreasOfLaw(@PathVariable String slug,
+                                                                     @RequestBody List<SpoeAreaOfLaw> areasOfLaw) {
         return ok(adminCourtAreasOfLawSpoeService.updateSpoeAreasOfLawForCourt(slug, areasOfLaw));
     }
 }
