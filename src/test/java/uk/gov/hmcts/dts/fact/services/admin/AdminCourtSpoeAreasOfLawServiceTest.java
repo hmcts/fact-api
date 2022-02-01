@@ -82,10 +82,13 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     void shouldReturnAllSpoeAreasOfLaw() {
         when(courtAreaOfLawSpoeRepository.findAll()).thenReturn(COURT_SPOE_AREA_OF_LAWS);
 
-        assertThat(adminCourtSpoeAreasOfLawService.getAllSpoeAreasOfLaw())
+        final List<AreaOfLaw> results = adminCourtSpoeAreasOfLawService.getAllSpoeAreasOfLaw();
+        assertThat(results)
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .first()
             .isInstanceOf(AreaOfLaw.class);
+        assertThat(results.get(0).getId()).isNotNull();
+        assertThat(results.get(0).getName()).isNotEmpty();
     }
 
     @Test
@@ -93,10 +96,14 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(anyInt())).thenReturn(COURT_SPOE_AREA_OF_LAWS);
 
-        assertThat(adminCourtSpoeAreasOfLawService.getCourtSpoeAreasOfLawBySlug(COURT_SLUG))
+
+        final List<AreaOfLaw> results = adminCourtSpoeAreasOfLawService.getCourtSpoeAreasOfLawBySlug(COURT_SLUG);
+        assertThat(results)
             .hasSize(COURT_AREAS_OF_LAW_COUNT)
             .first()
             .isInstanceOf(AreaOfLaw.class);
+
+        assertThat(results.get(0).isSinglePointEntry()).isEqualTo(true);
     }
 
     @Test
