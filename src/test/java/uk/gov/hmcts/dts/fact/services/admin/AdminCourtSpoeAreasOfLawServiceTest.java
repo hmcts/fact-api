@@ -12,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
-import uk.gov.hmcts.dts.fact.entity.FacilityType;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
@@ -21,7 +20,6 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -146,7 +144,7 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     }
 
     @Test
-    void ShouldThrowDuplicatedListItemExceptionIfSpoeIsDuplicatedExists() throws IOException {
+    void shouldThrowDuplicatedListItemExceptionIfDuplicatedExists() throws IOException {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
         final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
 
