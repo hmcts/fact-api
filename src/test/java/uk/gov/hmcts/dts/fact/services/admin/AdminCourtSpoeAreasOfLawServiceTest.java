@@ -38,9 +38,11 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     private static final String COURT_SLUG = "some slug";
     private static final int COURT_AREAS_OF_LAW_COUNT = 3;
     private static final String NOT_FOUND = "Not found: ";
+    private static final String DUPLICATE_ERROR = "Duplicate single point of entries exist";
     private static final String TEST_COURT_AREAS_OF_LAW_PATH = "court-spoe-areas-of-law.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final List<CourtAreaOfLawSpoe> COURT_SPOE_AREA_OF_LAWS = new ArrayList<>();
+    private static final List<AreaOfLaw> DUPLICATED_SPOE_LIST = new ArrayList<>();
 
     @MockBean
     private CourtRepository courtRepository;
@@ -110,7 +112,7 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     @Test
     void shouldUpdateCourtSpoeAreasOfLaw() throws IOException {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class)).subList(0,3);
+        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
 
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(anyInt())).thenReturn(COURT_SPOE_AREA_OF_LAWS);
@@ -144,15 +146,21 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     }
 
     @Test
-    void shouldThrowDuplicatedListItemExceptionIfDuplicatedExists() throws IOException {
-        final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+    void shouldThrowDuplicatedListItemExceptionIfDuplicatedExists()  {
 
-
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+        AreaOfLaw areaOfLawOne = new AreaOfLaw();
+        areaOfLawOne.setId(1);
+        areaOfLawOne.setName("AreaOfLaw1");
+        AreaOfLaw areaOfLawTwo = new AreaOfLaw();
+        areaOfLawTwo.setId(1);
+        areaOfLawTwo.setName("AreaOfLaw1");
+        DUPLICATED_SPOE_LIST.add(areaOfLawOne);
+        DUPLICATED_SPOE_LIST.add(areaOfLawTwo);
 
         assertThatThrownBy(() -> adminCourtSpoeAreasOfLawService
-            .updateSpoeAreasOfLawForCourt(COURT_SLUG, areasOfLaw))
-            .isInstanceOf(DuplicatedListItemException.class);
+            .updateSpoeAreasOfLawForCourt(COURT_SLUG, DUPLICATED_SPOE_LIST))
+            .isInstanceOf(DuplicatedListItemException.class)
+            .hasMessage(DUPLICATE_ERROR);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 }
