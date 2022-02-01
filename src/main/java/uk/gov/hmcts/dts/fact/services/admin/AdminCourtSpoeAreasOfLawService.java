@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
+import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
@@ -50,6 +51,8 @@ public class AdminCourtSpoeAreasOfLawService {
 
     @Transactional()
     public List<AreaOfLaw> updateSpoeAreasOfLawForCourt(final String slug, final List<AreaOfLaw> areasOfLaw) {
+        checkIfSpoeAreasOfLawHasDuplicateEntries(areasOfLaw);
+
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
         final List<AreaOfLaw> originalCourtAol = getCourtSpoeAreasOfLawBySlug(slug);
@@ -86,6 +89,13 @@ public class AdminCourtSpoeAreasOfLawService {
             newCourtSpoeAreasOfLawList.add(new CourtAreaOfLawSpoe(areaOfLaw, court));
         }
         return newCourtSpoeAreasOfLawList;
+    }
+
+    private void checkIfSpoeAreasOfLawHasDuplicateEntries(final List<AreaOfLaw> areasOfLaw) {
+
+        if (areasOfLaw.stream().distinct().count() != areasOfLaw.size()) {
+            throw new DuplicatedListItemException("Duplicate single point of entries exist");
+        }
     }
 }
 

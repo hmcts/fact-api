@@ -12,6 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
+import uk.gov.hmcts.dts.fact.entity.FacilityType;
+import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
@@ -19,6 +21,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,7 +112,7 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
     @Test
     void shouldUpdateCourtSpoeAreasOfLaw() throws IOException {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
-        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class)).subList(0,3);
 
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(anyInt())).thenReturn(COURT_SPOE_AREA_OF_LAWS);
@@ -140,5 +143,18 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void ShouldThrowDuplicatedListItemExceptionIfSpoeIsDuplicatedExists() throws IOException {
+        final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
+        final List<AreaOfLaw> areasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
+
+
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
+
+        assertThatThrownBy(() -> adminCourtSpoeAreasOfLawService
+            .updateSpoeAreasOfLawForCourt(COURT_SLUG, areasOfLaw))
+            .isInstanceOf(DuplicatedListItemException.class);
     }
 }
