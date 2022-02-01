@@ -53,7 +53,7 @@ public class AdminCourtSpoeAreasOfLawControllerTest {
 
 
     @Test
-    void shouldReturnCourSpoeAreasOfLaw() throws Exception {
+    void shouldReturnCourtSpoeAreasOfLaw() throws Exception {
         final String expectedJson = getResourceAsJson(TEST_COURT_AREAS_OF_LAW_PATH);
         final List<AreaOfLaw> spoeAreasOfLaw = asList(OBJECT_MAPPER.readValue(expectedJson, AreaOfLaw[].class));
 
