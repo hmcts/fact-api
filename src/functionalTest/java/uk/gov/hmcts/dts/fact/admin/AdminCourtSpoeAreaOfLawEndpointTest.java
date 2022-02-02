@@ -140,16 +140,14 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
 
     @Test
     public void shouldRequireATokenWhenUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
-        final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
-        final String testJson = objectMapper().writeValueAsString(currentCourtSpoeAreaOfLaw);
+        final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final var response = doPutRequest(ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH, testJson);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
-        final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
-        final String testJson = objectMapper().writeValueAsString(currentCourtSpoeAreaOfLaw);
+        final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final var response = doPutRequest(
             ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), testJson
@@ -159,8 +157,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
 
     @Test
     public void shouldnotUpdateAndReturnNotFoundWhenSpoeCourtDoesNotExist() throws JsonProcessingException {
-        final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
-        final String testJson = objectMapper().writeValueAsString(currentCourtSpoeAreaOfLaw);
+        final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final Response response = doPutRequest(
             ABERYSTWYTH_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
@@ -168,10 +165,17 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
-
-
-
-
+    @Test
+    public void shouldNotUpdateSpoeAreaOfLawForTheCourtThatAlreadyExist() throws JsonProcessingException {
+        final String testJson = objectMapper()
+            .writeValueAsString(updateCourtAreasOfLaw(updateCourtAreasOfLaw(getCurrentSpoeAreaOflaw())));
+        final Response response = doPutRequest(
+            ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            testJson
+        );
+        assertThat(response.statusCode()).isEqualTo(CONFLICT.value());
+    }
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
@@ -182,7 +186,6 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
         );
         return response.body().jsonPath().getList(".", SpoeAreaOfLaw.class);
     }
-
 
     private List<SpoeAreaOfLaw> updateCourtAreasOfLaw(final List<SpoeAreaOfLaw> courtAreaOfLaw) {
         final SpoeAreaOfLaw areaOfLaw = new SpoeAreaOfLaw(TEST_SPOE_AREA_OF_LAW_ID,TEST_SPOE_AREA_OF_LAW_NAME,TEST_SINGLE_POINT_OF_ENTRY);
