@@ -18,7 +18,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
-
+@SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts";
