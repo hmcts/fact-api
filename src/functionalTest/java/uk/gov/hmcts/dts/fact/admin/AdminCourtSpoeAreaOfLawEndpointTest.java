@@ -165,6 +165,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
+
     @Test
     public void shouldNotUpdateSpoeAreaOfLawForTheCourtThatAlreadyExist() throws JsonProcessingException {
         final String testJson = objectMapper()
