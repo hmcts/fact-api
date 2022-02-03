@@ -24,4 +24,9 @@ public class CourtAreaOfLawSpoe {
     @OneToOne()
     @JoinColumn(name = "court_id")
     private Court court;
+
+    public CourtAreaOfLawSpoe(final AreaOfLaw areaOfLaw, final Court court) {
+        this.areaOfLaw = areaOfLaw;
+        this.court = court;
+    }
 }

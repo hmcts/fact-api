@@ -33,7 +33,8 @@ public enum AuditType {
     UPDATE_OPENING_TYPE("Update opening type"),
     DELETE_OPENING_TYPE("Delete opening type"),
     CREATE_NEW_COURT("Create new court"),
-    DELETE_EXISTING_COURT("Delete existing court");
+    DELETE_EXISTING_COURT("Delete existing court"),
+    UPDATE_COURT_SPOE_AREAS_OF_LAW("Update court spoe areas of law");
 
     private final String name;
 
