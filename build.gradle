@@ -238,7 +238,7 @@ dependencies {
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.0'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.1'
 
   implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20211018.2'
 
