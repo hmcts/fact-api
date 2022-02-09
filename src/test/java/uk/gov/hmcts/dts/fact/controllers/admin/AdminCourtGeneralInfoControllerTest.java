@@ -35,6 +35,8 @@ public class AdminCourtGeneralInfoControllerTest {
         "Welsh info",
         "English alert",
         "Welsh alert",
+        "intro paragraph",
+        "intro paragraph cy",
         false
     );
 
