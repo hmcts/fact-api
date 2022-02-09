@@ -35,6 +35,7 @@ import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ContextConfiguration(classes = AdminCourtGeneralInfoService.class)
@@ -49,6 +50,7 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final String NOT_FOUND = "Not found: ";
     private static final String INTRO_PARAGRAPH = "Intro paragraph";
     private static final String INTRO_PARAGRAPH_CY = "Intro paragraph cy";
+    private static final String AUDIT_TYPE = "Update court general info";
 
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true,
                                                                                                 COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
@@ -111,7 +113,7 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court, never()).setInfoCy(anyString());
         verify(court, never()).setDisplayed(anyBoolean());
         verify(inPerson, never()).setAccessScheme(anyBoolean());
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
     }
@@ -133,7 +135,7 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(inPerson).setAccessScheme(true);
         verify(court.getServiceCentre(), atLeastOnce()).getIntroParagraph();
         verify(court.getServiceCentre(), atLeastOnce()).getIntroParagraphCy();
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
     }
@@ -153,7 +155,7 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court).setInfoCy(COURT_INFO_CY);
         verify(court).setServiceCentre(any(ServiceCentre.class));
         verify(court).setDisplayed(true);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
         List<ServiceCentre> capturedInPerson = serviceCentreArgumentCaptor.getAllValues();
@@ -177,7 +179,7 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court).setInfoCy(COURT_INFO_CY);
         verify(court).setInPerson(any(InPerson.class));
         verify(court).setDisplayed(true);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
         List<InPerson> capturedInPerson = inPersonArgumentCaptor.getAllValues();

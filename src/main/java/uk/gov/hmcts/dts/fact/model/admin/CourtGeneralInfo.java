@@ -38,9 +38,9 @@ public class CourtGeneralInfo {
         this.alert = court.getAlert();
         this.alertCy = court.getAlertCy();
         this.serviceCentre = court.getServiceAreas().size() > 0;
-        this.scIntroParagraph = court.getServiceCentre() != null
-            ? court.getServiceCentre().getIntroParagraph(): "";
-        this.scIntroParagraphCy = court.getServiceCentre() != null
-            ? court.getServiceCentre().getIntroParagraphCy() : "";
+        this.scIntroParagraph = court.getServiceCentre() == null
+            ? "" : court.getServiceCentre().getIntroParagraph();
+        this.scIntroParagraphCy = court.getServiceCentre() == null
+            ? "" : court.getServiceCentre().getIntroParagraphCy();
     }
 }
