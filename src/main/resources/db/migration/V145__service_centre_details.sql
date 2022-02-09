@@ -2,8 +2,8 @@ CREATE TABLE public.search_servicecentre
 (
     id             integer PRIMARY KEY    NOT NULL,
     court_id       integer                NOT NULL,
-    intro_paragraph character varying(250),
-    intro_paragraph_cy character varying(250)
+    intro_paragraph character varying(300),
+    intro_paragraph_cy character varying(300)
 );
 
 CREATE SEQUENCE public.search_servicecentre_id_seq
