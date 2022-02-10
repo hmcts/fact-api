@@ -158,6 +158,7 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court).setInfoCy(COURT_INFO_CY);
         verify(court).setServiceCentre(any(ServiceCentre.class));
         verify(court).setDisplayed(true);
+        verify(court, atLeastOnce()).getServiceCentre();
         verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
