@@ -55,6 +55,9 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true,
                                                                                                 COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
                                                                                                 INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
+    private static final CourtGeneralInfo ADMIN_INPUT_SC_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true,
+                                                                                             COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
+                                                                                             INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, true);
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true,
                                                                                                                COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
                                                                                                                INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
@@ -147,7 +150,7 @@ public class AdminCourtGeneralInfoServiceTest {
         when(court.getServiceCentre()).thenReturn(null);
         when(courtRepository.save(court)).thenReturn(court);
 
-        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_COURT_GENERAL_INFO);
+        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_SC_GENERAL_INFO);
         ArgumentCaptor<ServiceCentre> serviceCentreArgumentCaptor = ArgumentCaptor.forClass(ServiceCentre.class);
         verify(court, atLeastOnce()).setServiceCentre(serviceCentreArgumentCaptor.capture());
         verify(court).setName(COURT_NAME);

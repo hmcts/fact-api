@@ -66,17 +66,19 @@ public class AdminCourtGeneralInfoService {
                 courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
             }
 
-            if (courtEntity.getServiceCentre() == null) {
-                // Update the general info section to include the new row for the service centres
-                // intro paragraph, or otherwise if one exists, alter the rows instead
-                ServiceCentre serviceCentre = new ServiceCentre();
-                serviceCentre.setCourtId(courtEntity);
-                serviceCentre.setIntroParagraph(generalInfo.getScIntroParagraph());
-                serviceCentre.setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
-                courtEntity.setServiceCentre(serviceCentre);
-            } else {
-                courtEntity.getServiceCentre().setIntroParagraph(generalInfo.getScIntroParagraph());
-                courtEntity.getServiceCentre().setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
+            if (generalInfo.isServiceCentre()) {
+                if (courtEntity.getServiceCentre() == null) {
+                    // Update the general info section to include the new row for the service centres
+                    // intro paragraph, or otherwise if one exists, alter the rows instead
+                    ServiceCentre serviceCentre = new ServiceCentre();
+                    serviceCentre.setCourtId(courtEntity);
+                    serviceCentre.setIntroParagraph(generalInfo.getScIntroParagraph());
+                    serviceCentre.setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
+                    courtEntity.setServiceCentre(serviceCentre);
+                } else {
+                    courtEntity.getServiceCentre().setIntroParagraph(generalInfo.getScIntroParagraph());
+                    courtEntity.getServiceCentre().setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
+                }
             }
         }
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));
