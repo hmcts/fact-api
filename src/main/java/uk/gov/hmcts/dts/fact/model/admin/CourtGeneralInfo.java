@@ -26,6 +26,7 @@ public class CourtGeneralInfo {
     private String scIntroParagraph;
     @JsonProperty("sc_intro_paragraph_cy")
     private String scIntroParagraphCy;
+    @JsonProperty("service_centre")
     private boolean serviceCentre;
 
     public CourtGeneralInfo(Court court) {
