@@ -169,6 +169,27 @@ public class AdminCourtGeneralInfoServiceTest {
     }
 
     @Test
+    void superAdminCanUpdateAllCourtGeneralInfoIfServiceCentreNotNull() {
+        setUpCourtGeneralInfo();
+        when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
+        when(court.getServiceCentre()).thenReturn(serviceCentre);
+        when(courtRepository.save(court)).thenReturn(court);
+
+        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_SC_GENERAL_INFO);
+        verify(court).setName(COURT_NAME);
+        verify(court).setInfo(COURT_INFO);
+        verify(court).setInfoCy(COURT_INFO_CY);
+        verify(court, never()).setServiceCentre(any(ServiceCentre.class));
+        verify(court).setDisplayed(true);
+        verify(court, atLeastOnce()).getServiceCentre();
+        verify(serviceCentre, atLeastOnce()).setIntroParagraph("Intro paragraph");
+        verify(serviceCentre, atLeastOnce()).setIntroParagraphCy("Intro paragraph cy");
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
+                                                           new CourtGeneralInfo(court),
+                                                           results, COURT_SLUG);
+    }
+
+    @Test
     void superAdminCanUpdateAllCourtGeneralInfoWhenInPersonNull() {
         setUpCourtGeneralInfo();
         when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
