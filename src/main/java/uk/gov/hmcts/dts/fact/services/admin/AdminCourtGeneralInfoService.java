@@ -66,7 +66,7 @@ public class AdminCourtGeneralInfoService {
                 courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
             }
         }
-        System.out.println("ping");
+
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));
         adminAuditService.saveAudit(
             AuditType.findByName("Update court general info"),
