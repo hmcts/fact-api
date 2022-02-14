@@ -246,6 +246,7 @@ public class AdminCourtGeneralInfoServiceTest {
     @Test
     void shouldReturnErrorIfCourtNameIsADuplicated() {
         when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
+        when(court.getSlug()).thenReturn(COURT_SLUG);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtRepository.findBySlug(COURT_DUPLICATED_NAME)).thenReturn(Optional.of(court));
         when(court.getName()).thenReturn(COURT_NAME);
@@ -293,6 +294,7 @@ public class AdminCourtGeneralInfoServiceTest {
 
     private void setUpCourtGeneralInfo() {
         when(court.getName()).thenReturn(COURT_NAME);
+        when(court.getSlug()).thenReturn(COURT_SLUG);
         when(court.getAlert()).thenReturn(COURT_ALERT);
         when(court.getAlertCy()).thenReturn(COURT_ALERT_CY);
         when(court.getInfo()).thenReturn(COURT_INFO);

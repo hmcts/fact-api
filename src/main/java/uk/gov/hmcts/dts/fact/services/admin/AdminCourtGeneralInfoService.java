@@ -47,9 +47,10 @@ public class AdminCourtGeneralInfoService {
         courtEntity.setAlertCy(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlertCy()));
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
-            checkIfUpdatedCourtIsValid(courtEntity.getName(), generalInfo.getName());
+            String newSlug = Utils.convertNameToSlug(generalInfo.getName());
+            checkIfUpdatedCourtIsValid(courtEntity.getSlug(), newSlug);
             courtEntity.setName(generalInfo.getName());
-            courtEntity.setSlug(Utils.convertNameToSlug(generalInfo.getName()));
+            courtEntity.setSlug(newSlug);
             courtEntity.setInfo(generalInfo.getInfo());
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());
@@ -81,6 +82,7 @@ public class AdminCourtGeneralInfoService {
                 }
             }
         }
+
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));
         adminAuditService.saveAudit(
             AuditType.findByName("Update court general info"),
@@ -90,14 +92,14 @@ public class AdminCourtGeneralInfoService {
     }
 
     /**
-     * Compare the base court name to that of the new name and if they don't match (i.e. the name has been updated) then
-     * check if the new name exists in the database. If the name exists an exception is thrown.
-     * @param originalCourtName base court name
-     * @param newCourtName to be compared to originalCourtName
+     * Compare the base court slug to that of the new slug and if they don't match (i.e. the slug has been updated) then
+     * check if the new slug exists in the database. If the slug exists an exception is thrown.
+     * @param originalSlug base court slug
+     * @param newSlug to be compared to originalSlug
      */
-    public void checkIfUpdatedCourtIsValid(final String originalCourtName, final String newCourtName) {
-        if (!originalCourtName.equals(newCourtName)) {
-            RepoUtils.checkIfCourtAlreadyExists(courtRepository, Utils.convertNameToSlug(newCourtName));
+    public void checkIfUpdatedCourtIsValid(final String originalSlug, final String newSlug) {
+        if (!originalSlug.equals(newSlug)) {
+            RepoUtils.checkIfCourtAlreadyExists(courtRepository, newSlug);
         }
     }
 }
