@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+@SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ContextConfiguration(classes = AdminCourtGeneralInfoService.class)
@@ -46,10 +48,22 @@ public class AdminCourtGeneralInfoServiceTest {
     private static final String COURT_INFO = "English info";
     private static final String COURT_INFO_CY = "Welsh info";
     private static final String NOT_FOUND = "Not found: ";
+    private static final String INTRO_PARAGRAPH = "Intro paragraph";
+    private static final String INTRO_PARAGRAPH_CY = "Intro paragraph cy";
+    private static final String AUDIT_TYPE = "Update court general info";
 
-    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY, false);
-    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY, false);
-    private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true, COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY, false);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true,
+                                                                                                COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
+                                                                                                INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
+    private static final CourtGeneralInfo ADMIN_INPUT_SC_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true,
+                                                                                             COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
+                                                                                             INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, true);
+    private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true,
+                                                                                                               COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
+                                                                                                               INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
+    private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true,
+                                                                                           COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
+                                                                                           INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
 
     @Autowired
     private AdminCourtGeneralInfoService adminService;
@@ -68,6 +82,9 @@ public class AdminCourtGeneralInfoServiceTest {
 
     @Mock
     private InPerson inPerson;
+
+    @Mock
+    private ServiceCentre serviceCentre;
 
     @Test
     void shouldReturnCourtGeneralInfo() {
@@ -99,7 +116,7 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court, never()).setInfoCy(anyString());
         verify(court, never()).setDisplayed(anyBoolean());
         verify(inPerson, never()).setAccessScheme(anyBoolean());
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
     }
@@ -119,7 +136,55 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court).setInfoCy(COURT_INFO_CY);
         verify(court).setDisplayed(true);
         verify(inPerson).setAccessScheme(true);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+        verify(court.getServiceCentre(), atLeastOnce()).getIntroParagraph();
+        verify(court.getServiceCentre(), atLeastOnce()).getIntroParagraphCy();
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
+                                                           new CourtGeneralInfo(court),
+                                                           results, COURT_SLUG);
+    }
+
+    @Test
+    void superAdminCanUpdateAllCourtGeneralInfoIfServiceCentreNull() {
+        setUpCourtGeneralInfo();
+        when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
+        when(court.getServiceCentre()).thenReturn(null);
+        when(courtRepository.save(court)).thenReturn(court);
+
+        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_SC_GENERAL_INFO);
+        ArgumentCaptor<ServiceCentre> serviceCentreArgumentCaptor = ArgumentCaptor.forClass(ServiceCentre.class);
+        verify(court, atLeastOnce()).setServiceCentre(serviceCentreArgumentCaptor.capture());
+        verify(court).setName(COURT_NAME);
+        verify(court).setInfo(COURT_INFO);
+        verify(court).setInfoCy(COURT_INFO_CY);
+        verify(court).setServiceCentre(any(ServiceCentre.class));
+        verify(court).setDisplayed(true);
+        verify(court, atLeastOnce()).getServiceCentre();
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
+                                                           new CourtGeneralInfo(court),
+                                                           results, COURT_SLUG);
+        List<ServiceCentre> capturedInPerson = serviceCentreArgumentCaptor.getAllValues();
+        assertEquals(1, capturedInPerson.size());
+        assertEquals("Intro paragraph", capturedInPerson.get(0).getIntroParagraph());
+        assertEquals("Intro paragraph cy", capturedInPerson.get(0).getIntroParagraphCy());
+    }
+
+    @Test
+    void superAdminCanUpdateAllCourtGeneralInfoIfServiceCentreNotNull() {
+        setUpCourtGeneralInfo();
+        when(rolesProvider.getRoles()).thenReturn(Collections.singletonList(FACT_SUPER_ADMIN));
+        when(court.getServiceCentre()).thenReturn(serviceCentre);
+        when(courtRepository.save(court)).thenReturn(court);
+
+        CourtGeneralInfo results = adminService.updateCourtGeneralInfo(COURT_SLUG, ADMIN_INPUT_SC_GENERAL_INFO);
+        verify(court).setName(COURT_NAME);
+        verify(court).setInfo(COURT_INFO);
+        verify(court).setInfoCy(COURT_INFO_CY);
+        verify(court, never()).setServiceCentre(any(ServiceCentre.class));
+        verify(court).setDisplayed(true);
+        verify(court, atLeastOnce()).getServiceCentre();
+        verify(serviceCentre, atLeastOnce()).setIntroParagraph("Intro paragraph");
+        verify(serviceCentre, atLeastOnce()).setIntroParagraphCy("Intro paragraph cy");
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
     }
@@ -139,7 +204,7 @@ public class AdminCourtGeneralInfoServiceTest {
         verify(court).setInfoCy(COURT_INFO_CY);
         verify(court).setInPerson(any(InPerson.class));
         verify(court).setDisplayed(true);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court general info",
+        verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
         List<InPerson> capturedInPerson = inPersonArgumentCaptor.getAllValues();
@@ -233,6 +298,10 @@ public class AdminCourtGeneralInfoServiceTest {
         when(court.getAlert()).thenReturn(COURT_ALERT);
         when(court.getAlertCy()).thenReturn(COURT_ALERT_CY);
         when(court.getInfo()).thenReturn(COURT_INFO);
+        when(court.getInfoCy()).thenReturn(COURT_INFO_CY);
+        when(court.getServiceCentre()).thenReturn(serviceCentre);
+        when(serviceCentre.getIntroParagraph()).thenReturn(INTRO_PARAGRAPH);
+        when(serviceCentre.getIntroParagraphCy()).thenReturn(INTRO_PARAGRAPH_CY);
         when(court.getInfoCy()).thenReturn(COURT_INFO_CY);
         when(court.getDisplayed()).thenReturn(true);
 

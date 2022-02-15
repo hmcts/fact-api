@@ -110,6 +110,9 @@ public class Court {
     @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "courtId")
     private InPerson inPerson;
 
+    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "courtId")
+    private ServiceCentre serviceCentre;
+
     @ManyToMany
     @JoinTable(
         name = "search_serviceareacourt",

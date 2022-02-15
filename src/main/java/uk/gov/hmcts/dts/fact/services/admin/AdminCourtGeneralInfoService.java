@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
@@ -64,6 +65,21 @@ public class AdminCourtGeneralInfoService {
                 courtEntity.setInPerson(inPerson);
             } else {
                 courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
+            }
+
+            if (generalInfo.isServiceCentre()) {
+                if (courtEntity.getServiceCentre() == null) {
+                    // Update the general info section to include the new row for the service centres
+                    // intro paragraph, or otherwise if one exists, alter the rows instead
+                    ServiceCentre serviceCentre = new ServiceCentre();
+                    serviceCentre.setCourtId(courtEntity);
+                    serviceCentre.setIntroParagraph(generalInfo.getScIntroParagraph());
+                    serviceCentre.setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
+                    courtEntity.setServiceCentre(serviceCentre);
+                } else {
+                    courtEntity.getServiceCentre().setIntroParagraph(generalInfo.getScIntroParagraph());
+                    courtEntity.getServiceCentre().setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
+                }
             }
         }
 
