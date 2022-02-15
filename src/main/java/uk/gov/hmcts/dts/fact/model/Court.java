@@ -72,6 +72,8 @@ public class Court {
     private Boolean accessScheme;
     @JsonProperty("additional_links")
     private List<AdditionalLink> additionalLinks;
+    @JsonProperty("service_centre")
+    private ServiceCentre serviceCentre;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
@@ -100,6 +102,15 @@ public class Court {
         this.inPerson = courtEntity.isInPerson();
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
         this.additionalLinks = getAdditionalLink(courtEntity);
+        this.serviceCentre = getServiceCentreDetails(courtEntity);
+    }
+
+    private ServiceCentre getServiceCentreDetails(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
+        return new ServiceCentre(courtEntity.getServiceAreas().size() > 0,
+                                 courtEntity.getServiceCentre() == null
+                                     ? "" : courtEntity.getServiceCentre().getIntroParagraph(),
+                                 courtEntity.getServiceCentre() == null
+                                     ? "" : courtEntity.getServiceCentre().getIntroParagraphCy());
     }
 
     private List<CourtAddress> getCourtAddresses(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {

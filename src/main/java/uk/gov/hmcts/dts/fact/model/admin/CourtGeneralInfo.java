@@ -22,6 +22,11 @@ public class CourtGeneralInfo {
     private String alert;
     @JsonProperty("alert_cy")
     private String alertCy;
+    @JsonProperty("sc_intro_paragraph")
+    private String scIntroParagraph;
+    @JsonProperty("sc_intro_paragraph_cy")
+    private String scIntroParagraphCy;
+    @JsonProperty("service_centre")
     private boolean serviceCentre;
 
     public CourtGeneralInfo(Court court) {
@@ -34,5 +39,9 @@ public class CourtGeneralInfo {
         this.alert = court.getAlert();
         this.alertCy = court.getAlertCy();
         this.serviceCentre = court.getServiceAreas().size() > 0;
+        this.scIntroParagraph = court.getServiceCentre() == null
+            ? "" : court.getServiceCentre().getIntroParagraph();
+        this.scIntroParagraphCy = court.getServiceCentre() == null
+            ? "" : court.getServiceCentre().getIntroParagraphCy();
     }
 }
