@@ -11,7 +11,7 @@ public final class OwaspHtmlSanitizer {
     public static String sanitizeHtml(String untrustedHtml) {
         PolicyFactory policy = new HtmlPolicyBuilder()
             .allowElements("a", "strong", "em")
-            .allowUrlProtocols("https")
+            .allowUrlProtocols("https", "mailto")
             .allowAttributes("href").onElements("a")
             .requireRelNofollowOnLinks()
             .toFactory();
