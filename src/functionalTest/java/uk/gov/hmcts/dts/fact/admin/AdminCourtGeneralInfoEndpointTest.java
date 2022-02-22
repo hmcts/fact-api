@@ -60,6 +60,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         adminCourtInfoJson = new ObjectMapper().writeValueAsString(EXPECTED_ADMIN_COURT_INFO);
     }
 
+
     @Test
     public void shouldRetrieveCourtGeneralInfo() {
         var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG);
