@@ -66,7 +66,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         var response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_MAGISTRATES_COURT_SLUG);
         final Court expectedCourtDetails = response.as(Court.class);
 
-        response = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        response = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final CourtGeneralInfo generalInfo = response.as(CourtGeneralInfo.class);
@@ -92,23 +92,19 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateSelectedCourtGeneralInfoAsAdmin() {
+    public void shouldUpdateSelectedCourtAlertAsAdmin() {
         final var response = doPutRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), adminCourtInfoJson);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final CourtGeneralInfo result = response.as(CourtGeneralInfo.class);
         assertThat(result.getAlert()).isEqualTo(EXPECTED_ADMIN_COURT_INFO.getAlert());
         assertThat(result.getAlertCy()).isEqualTo(EXPECTED_ADMIN_COURT_INFO.getAlertCy());
-        assertThat(result.getInfo()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getInfo());
-        assertThat(result.getInfoCy()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getInfoCy());
-        assertThat(result.getName()).isNotEqualTo(EXPECTED_ADMIN_COURT_INFO.getName());
-
     }
 
     @Test
     public void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
 
-        final var orgResponse = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final var orgResponse = doGetRequest(BIRMINGHAM_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         assertThat(orgResponse.statusCode()).isEqualTo(OK.value());
         final CourtGeneralInfo generalInfo = orgResponse.as(CourtGeneralInfo.class);
         final String originalJson = objectMapper().writeValueAsString(generalInfo);
