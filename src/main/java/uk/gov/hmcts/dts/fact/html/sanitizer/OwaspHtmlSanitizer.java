@@ -8,7 +8,6 @@ public final class OwaspHtmlSanitizer {
 
     }
 
-
     public static String sanitizeHtml(String untrustedHtml) {
         PolicyFactory policy = new HtmlPolicyBuilder()
             .allowElements("a", "strong", "em")
