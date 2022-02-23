@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Validated
 @Getter
@@ -24,6 +25,7 @@ public class NewCourt {
             + "numbers, apostrophes or hyphens")
     private String newCourtName;
     private Boolean serviceCentre;
+    private List<String> serviceAreas;
     private double lon;
     private double lat;
 }

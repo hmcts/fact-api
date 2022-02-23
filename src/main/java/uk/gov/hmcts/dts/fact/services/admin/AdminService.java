@@ -7,7 +7,9 @@ import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
@@ -138,7 +140,10 @@ public class AdminService {
 
     @Transactional
     public Court addNewCourt(String newCourtName, String newCourtSlug, Boolean serviceCentre,
-                             double lon, double lat) {
+                             double lon, double lat, List<String> serviceAreas) {
+
+        System.out.println(serviceAreas);
+
         RepoUtils.checkIfCourtAlreadyExists(courtRepository, newCourtSlug);
         uk.gov.hmcts.dts.fact.entity.Court newCourt =
             new uk.gov.hmcts.dts.fact.entity.Court();
@@ -149,6 +154,7 @@ public class AdminService {
         newCourt.setWelshEnabled(true);
         newCourt.setLon(lon);
         newCourt.setLat(lat);
+//        newCourt.setServiceAreas(new ServiceAreaRepository().);
 
         // By default the court will be in person unless the "service centre" flag is ticked
         // in which case we can skip this, as it will then default to false
