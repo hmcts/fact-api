@@ -16,6 +16,7 @@ import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,9 @@ class AdminServiceTest {
     private CourtRepository courtRepository;
 
     @MockBean
+    private ServiceAreaRepository serviceAreaRepository;
+
+    @MockBean
     private RolesProvider rolesProvider;
 
     @MockBean
@@ -67,6 +71,7 @@ class AdminServiceTest {
         courtEntity.setAlert("some-urgent-message");
         courtEntity.setAlertCy("some-urgent-message-cy");
         courtEntity.setDisplayed(true);
+        when(serviceAreaRepository.findAllByNameIn(any())).thenReturn(new ArrayList<>());
 
         court = new uk.gov.hmcts.dts.fact.model.admin.Court(
             "slug",
