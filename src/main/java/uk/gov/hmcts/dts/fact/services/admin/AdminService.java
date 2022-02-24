@@ -9,12 +9,12 @@ import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
 import uk.gov.hmcts.dts.fact.util.RepoUtils;
 
@@ -29,14 +29,17 @@ public class AdminService {
     private final CourtRepository courtRepository;
     private final RolesProvider rolesProvider;
     private final AdminAuditService adminAuditService;
+    private final ServiceAreaRepository serviceAreaRepository;
 
     @Autowired
     public AdminService(final CourtRepository courtRepository,
                         final RolesProvider rolesProvider,
-                        final AdminAuditService adminAuditService) {
+                        final AdminAuditService adminAuditService,
+                        final ServiceAreaRepository serviceAreaRepository) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
         this.adminAuditService = adminAuditService;
+        this.serviceAreaRepository = serviceAreaRepository;
     }
 
     public List<CourtReference> getAllCourtReferences() {
@@ -141,9 +144,6 @@ public class AdminService {
     @Transactional
     public Court addNewCourt(String newCourtName, String newCourtSlug, Boolean serviceCentre,
                              double lon, double lat, List<String> serviceAreas) {
-
-        System.out.println(serviceAreas);
-
         RepoUtils.checkIfCourtAlreadyExists(courtRepository, newCourtSlug);
         uk.gov.hmcts.dts.fact.entity.Court newCourt =
             new uk.gov.hmcts.dts.fact.entity.Court();
@@ -154,7 +154,7 @@ public class AdminService {
         newCourt.setWelshEnabled(true);
         newCourt.setLon(lon);
         newCourt.setLat(lat);
-//        newCourt.setServiceAreas(new ServiceAreaRepository().);
+        newCourt.setServiceAreas(serviceAreaRepository.findAllByNameIn(serviceAreas));
 
         // By default the court will be in person unless the "service centre" flag is ticked
         // in which case we can skip this, as it will then default to false
