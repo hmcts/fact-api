@@ -10,9 +10,12 @@ import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,5 +39,12 @@ class ServiceAreaServiceTest {
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
 
         assertThat(serviceAreaService.getServiceArea(serviceAreaSlug)).isInstanceOf(uk.gov.hmcts.dts.fact.model.ServiceArea.class);
+    }
+
+    @Test
+    void shouldReturnAllServiceAreasObject() {
+        final List<ServiceArea> serviceAreas = new ArrayList<>();
+        when(serviceAreaRepository.findAllByNameIn(any())).thenReturn(serviceAreas);
+        assertThat(serviceAreaService.getAllServiceAreas()).isInstanceOf(List.class);
     }
 }

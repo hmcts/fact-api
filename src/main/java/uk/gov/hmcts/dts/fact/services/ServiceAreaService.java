@@ -6,6 +6,10 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.ServiceArea;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class ServiceAreaService {
 
@@ -21,5 +25,12 @@ public class ServiceAreaService {
             .findBySlugIgnoreCase(slug)
             .map(ServiceArea::new)
             .orElseThrow(() -> new NotFoundException(slug));
+    }
+
+    public List<ServiceArea> getAllServiceAreas() {
+        return serviceAreaRepository
+            .findAll()
+            .stream()
+            .map(ServiceArea::new).collect(toList());
     }
 }

@@ -86,7 +86,8 @@ public class AdminCourtsController {
         return created(URI.create("/courts/" + newCourtSlug + "/general"))
             .body(adminService.addNewCourt(newCourt.getNewCourtName(),
                                            newCourtSlug, newCourt.getServiceCentre(),
-                                           newCourt.getLon(), newCourt.getLat()));
+                                           newCourt.getLon(), newCourt.getLat(),
+                                           newCourt.getServiceAreas()));
     }
 
     @DeleteMapping("/{slug}")

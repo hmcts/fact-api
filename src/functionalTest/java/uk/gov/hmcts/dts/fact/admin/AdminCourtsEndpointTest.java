@@ -39,7 +39,10 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
     private static final double LONGITUDE = 100.02;
     private static final double LATITUDE = -100.02;
-    private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new court1", true, LONGITUDE, LATITUDE);
+    private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new court1", true, asList(
+        "Divorce",
+        "Single Justice Procedure"
+    ), LONGITUDE, LATITUDE);
     private static final String EXPECTED_NEW_SLUG = "new-court1";
 
     @Test

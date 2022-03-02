@@ -87,7 +87,7 @@ class AdminCourtsControllerTest {
         newCourt.setNewCourtName(testCourtName);
         newCourt.setServiceCentre(false);
         when(adminService.addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre(),
-                                      newCourt.getLon(), newCourt.getLat())).thenReturn(expectedCourt);
+                                      newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas())).thenReturn(expectedCourt);
         mockMvc.perform(post(TEST_URL + "/")
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -95,7 +95,8 @@ class AdminCourtsControllerTest {
             .andExpect(status().isCreated())
             .andReturn();
         verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName,
-                                                       newCourt.getServiceCentre(), newCourt.getLon(), newCourt.getLat());
+                                                       newCourt.getServiceCentre(), newCourt.getLon(),
+                                                       newCourt.getLat(), newCourt.getServiceAreas());
     }
 
     @Test
@@ -107,7 +108,7 @@ class AdminCourtsControllerTest {
         newCourt.setNewCourtName(testCourtName);
         newCourt.setServiceCentre(true);
         when(adminService.addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre(),
-                                      newCourt.getLon(), newCourt.getLat()))
+                                      newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas()))
             .thenReturn(expectedCourt);
         mockMvc.perform(post(TEST_URL + "/")
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
@@ -116,7 +117,7 @@ class AdminCourtsControllerTest {
             .andExpect(status().isCreated())
             .andReturn();
         verify(adminService, atMostOnce()).addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre(),
-                                                       newCourt.getLon(), newCourt.getLat());
+                                                       newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas());
     }
 
     @Test
@@ -127,7 +128,7 @@ class AdminCourtsControllerTest {
         newCourt.setServiceCentre(false);
         when(adminService.addNewCourt("test court%$-",
                                       "test-court%$-", newCourt.getServiceCentre(),
-                                      newCourt.getLon(), newCourt.getLat())).thenReturn(expectedCourt);
+                                      newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas())).thenReturn(expectedCourt);
         try {
             mockMvc.perform(post(TEST_URL + "/")
                                 .content(OBJECT_MAPPER.writeValueAsString(newCourt))
