@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -24,6 +25,7 @@ public class NewCourt {
             + "numbers, apostrophes or hyphens")
     private String newCourtName;
     private Boolean serviceCentre;
+    private List<String> serviceAreas;
     private double lon;
     private double lat;
 }
