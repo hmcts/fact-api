@@ -28,4 +28,12 @@ public class ApplicationUpdate {
     private String externalLinkDescription;
     @Column(name = "external_link_desc_cy")
     private String externalLinkDescriptionCy;
+
+    public ApplicationUpdate(String type, String email, String externalLink, String externalLinkDescription) {
+        super();
+        this.type = type;
+        this.email = email;
+        this.externalLink = externalLink;
+        this.externalLinkDescription = externalLinkDescription;
+    }
 }

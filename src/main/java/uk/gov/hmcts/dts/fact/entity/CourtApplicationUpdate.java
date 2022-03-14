@@ -23,4 +23,10 @@ public class CourtApplicationUpdate {
     @JoinColumn(name = "application_update_id")
     private ApplicationUpdate applicationUpdate;
     private Integer sort;
+
+    public CourtApplicationUpdate(Court court, ApplicationUpdate applicationUpdate, int i) {
+        super();
+        this.court = court;
+        this.applicationUpdate = applicationUpdate;
+    }
 }

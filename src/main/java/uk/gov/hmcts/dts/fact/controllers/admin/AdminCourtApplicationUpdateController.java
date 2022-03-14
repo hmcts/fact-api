@@ -37,4 +37,12 @@ public class AdminCourtApplicationUpdateController {
         return ok(adminCourtApplicationUpdateService.getApplicationUpdatesBySlug(slug));
     }
 
+    @PutMapping(path = "/{slug}/application-progression")
+    @ApiOperation("Update application progression options for a provided service centre")
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    public ResponseEntity<List<ApplicationUpdate>> updateApplicationUpdates(@PathVariable String slug,
+                                                         @RequestBody List<ApplicationUpdate> adminApplicationUpdates) {
+        return ok(adminCourtApplicationUpdateService.updateApplicationUpdates(slug, adminApplicationUpdates));
+    }
+
 }
