@@ -35,5 +35,7 @@ public class ApplicationUpdate {
         this.email = email;
         this.externalLink = externalLink;
         this.externalLinkDescription = externalLinkDescription;
+        //this.updateType = updateType;
     }
+
 }
