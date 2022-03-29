@@ -42,6 +42,13 @@ public class AdminCourtApplicationUpdateService {
 
     public List<ApplicationUpdate> getApplicationUpdatesBySlug(final String slug) {
         System.out.println("GET works");
+        System.out.println(courtRepository.findBySlug(slug)
+                               .map(c -> c.getCourtApplicationUpdates()
+                                   .stream()
+                                   .map(CourtApplicationUpdate::getApplicationUpdate)
+                                   .map(ApplicationUpdate::new)
+                                   .collect(toList())));
+
         return courtRepository.findBySlug(slug)
             .map(c -> c.getCourtApplicationUpdates()
                 .stream()
@@ -83,21 +90,24 @@ public class AdminCourtApplicationUpdateService {
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> getNewApplicationUpdates(final List<ApplicationUpdate> applicationUpdateList) {
-        final Map<Integer, uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate> courtApplicationUpdateMap = getCourtApplicationUpdateTypeMap();
+       // final Map<Integer, uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate> courtApplicationUpdateMap = getCourtApplicationUpdateTypeMap();
         return applicationUpdateList.stream()
             .map(e -> new uk.gov.hmcts.dts.fact.entity.ApplicationUpdate(e.getType(), e.getEmail(), e.getExternalLink(),
-                                                                         e.getExternalLinkDescription()
+                                                                         e.getExternalLinkDescription()))
 
-                                                                         ))
+
+
 
             .collect(toList());
     }
-
+/*
     private Map<Integer, uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate> getCourtApplicationUpdateTypeMap() {
         return applicationUpdateRepository.findAll()
             .stream()
-            .collect(toMap(uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate::getId, type -> type));
+            .collect(toMap(uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate::getSort, type -> type));
     }
+
+ */
 
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtApplicationUpdate> getNewCourtApplicationUpdates(final Court court, final List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> applicationUpdates) {

@@ -38,4 +38,5 @@ public class ApplicationUpdate {
         //this.updateType = updateType;
     }
 
+
 }
