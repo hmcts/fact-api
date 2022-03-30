@@ -61,9 +61,17 @@ public class AdminCourtApplicationUpdateService {
     @Transactional()
     public List<ApplicationUpdate> updateApplicationUpdates(final String slug, final List<ApplicationUpdate> applicationUpdateList) {
         System.out.println("Inside PUT");
+        System.out.println("slug =" + slug);
+        System.out.println("applicationUpdateList = " + applicationUpdateList);
+
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
         List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> newApplicationUpdateList = getNewApplicationUpdates(applicationUpdateList);
+        //for (int i = 0; i < newApplicationUpdateList.size(); i++){
+            System.out.println(newApplicationUpdateList);
+
+        //}
+
         List<CourtApplicationUpdate> newCourtApplicationUpdateList = getNewCourtApplicationUpdates(courtEntity, newApplicationUpdateList);
 
         // Remove existing application progression methods and then replace with newly updated ones
@@ -91,13 +99,10 @@ public class AdminCourtApplicationUpdateService {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> getNewApplicationUpdates(final List<ApplicationUpdate> applicationUpdateList) {
        // final Map<Integer, uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate> courtApplicationUpdateMap = getCourtApplicationUpdateTypeMap();
+        System.out.println("Inside getNewApplicationUpdates");
         return applicationUpdateList.stream()
             .map(e -> new uk.gov.hmcts.dts.fact.entity.ApplicationUpdate(e.getType(), e.getEmail(), e.getExternalLink(),
                                                                          e.getExternalLinkDescription()))
-
-
-
-
             .collect(toList());
     }
 /*

@@ -24,7 +24,7 @@ public class ApplicationUpdate {
     private String externalLink;
     @JsonProperty("external_link_description")
     private String externalLinkDescription;
-    private int adminApplicationUpdateTypeId;
+   // private int adminApplicationUpdateTypeId;
 
     public ApplicationUpdate(uk.gov.hmcts.dts.fact.entity.ApplicationUpdate applicationUpdate) {
         this.type = chooseString(applicationUpdate.getTypeCy(), applicationUpdate.getType());
