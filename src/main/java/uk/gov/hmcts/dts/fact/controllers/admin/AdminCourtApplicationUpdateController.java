@@ -1,16 +1,12 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.ApplicationUpdate;
-import uk.gov.hmcts.dts.fact.model.admin.Email;
-import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtApplicationUpdateService;
 
 import java.util.List;
@@ -23,7 +19,6 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 @RequestMapping(
     path = "/admin/courts",
     produces = {MediaType.APPLICATION_JSON_VALUE}
-   // method = {RequestMethod.GET, RequestMethod.PUT}
 )
 public class AdminCourtApplicationUpdateController {
     private final AdminCourtApplicationUpdateService adminCourtApplicationUpdateService;
