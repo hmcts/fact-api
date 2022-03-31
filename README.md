@@ -32,7 +32,7 @@ Create docker image:
 ```
 
 Run the distribution (created in `build/install/fact-api` directory)
-by executing the following command:
+by executing the following command.
 
 ```bash
   docker-compose up
