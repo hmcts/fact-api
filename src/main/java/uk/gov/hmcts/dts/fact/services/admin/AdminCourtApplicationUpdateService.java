@@ -9,6 +9,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtApplicationUpdateRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,6 @@ public class AdminCourtApplicationUpdateService {
             .map(CourtApplicationUpdate::getApplicationUpdate)
             .map(ApplicationUpdate::new)
             .collect(toList());
-        /*
         adminAuditService.saveAudit(
             AuditType.findByName("Update court application updates list"),
             courtEntity.getCourtApplicationUpdates().stream()
@@ -69,8 +69,6 @@ public class AdminCourtApplicationUpdateService {
                 .map(ApplicationUpdate::new)
                 .collect(toList()),
             resultApplicationUpdateList, slug);
-
-         */
         return resultApplicationUpdateList;
     }
 
