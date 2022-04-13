@@ -22,6 +22,7 @@ public class CourtAddress {
     @JsonProperty("town")
     private String townName;
     private String postcode;
+    private String description;
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.addressType = chooseString(
@@ -31,5 +32,6 @@ public class CourtAddress {
         this.addressLines = constructAddressLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.postcode = courtAddress.getPostcode();
+        this.description = chooseString(courtAddress.getDescriptionCy(), courtAddress.getDescription());
     }
 }
