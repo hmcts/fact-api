@@ -40,6 +40,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private static final List<String> TEST_ADDRESS_LINES_CY = Arrays.asList("abc", "abc");
     private static final String POSTCODE_VALID = "PL6 5DQ";
     private static final String POSTCODES_INVALID = "PL2 56ERR";
+    private static final String DESCRIPTION = "description";
+    private static final String DESCRIPTION_CY = "description_cy";
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -207,7 +209,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private List<CourtAddress> addNewCourtAddress(final List<CourtAddress> courtAddresses) {
         final List<CourtAddress> updatedCourtAddress = new ArrayList<>(courtAddresses);
-        updatedCourtAddress.add(new CourtAddress(VISIT_US_TYPE_ID, TEST_ADDRESS_LINES, TEST_ADDRESS_LINES_CY, TEST_TOWN_NAME, TEST_TOWN_NAME_CY, TEST_POSTCODE));
+        updatedCourtAddress.add(new CourtAddress(VISIT_US_TYPE_ID, TEST_ADDRESS_LINES, TEST_ADDRESS_LINES_CY, TEST_TOWN_NAME, TEST_TOWN_NAME_CY, TEST_POSTCODE, DESCRIPTION, DESCRIPTION_CY));
         return updatedCourtAddress;
     }
 
@@ -219,8 +221,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private List<CourtAddress> createCourtAddresses() {
         return Arrays.asList(
-            new CourtAddress(VISIT_US_TYPE_ID, TEST_ADDRESS_LINES, TEST_ADDRESS_LINES_CY, TEST_TOWN_NAME, TEST_TOWN_NAME_CY, POSTCODE_VALID),
-            new CourtAddress(WRITE_TO_US_TYPE_ID, TEST_ADDRESS_LINES, TEST_ADDRESS_LINES_CY, TEST_TOWN_NAME, TEST_TOWN_NAME_CY, POSTCODES_INVALID)
+            new CourtAddress(VISIT_US_TYPE_ID, TEST_ADDRESS_LINES, TEST_ADDRESS_LINES_CY, TEST_TOWN_NAME, TEST_TOWN_NAME_CY, POSTCODE_VALID,DESCRIPTION, DESCRIPTION_CY),
+            new CourtAddress(WRITE_TO_US_TYPE_ID, TEST_ADDRESS_LINES, TEST_ADDRESS_LINES_CY, TEST_TOWN_NAME, TEST_TOWN_NAME_CY, POSTCODES_INVALID,DESCRIPTION, DESCRIPTION_CY)
         );
     }
 }
