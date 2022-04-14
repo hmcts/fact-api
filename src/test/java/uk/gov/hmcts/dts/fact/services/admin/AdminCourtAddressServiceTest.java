@@ -86,7 +86,7 @@ public class AdminCourtAddressServiceTest {
                                                       WRITE_TO_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
         ),
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null,
-                                                      VISIT_US_POSTCODE , DESCRIPTION, DESCRIPTION_CY
+                                                      VISIT_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
         ));
 
     private static final Double LATITUDE = 1.0;
@@ -138,7 +138,7 @@ public class AdminCourtAddressServiceTest {
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_OR_CONTACT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null,null,null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null,null ,null),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null,null,null),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null,null, null),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null,null,null)
         );
