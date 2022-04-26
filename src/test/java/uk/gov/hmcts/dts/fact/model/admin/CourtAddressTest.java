@@ -15,12 +15,15 @@ public class CourtAddressTest {
     private static final String TOWN_NAME_CY = "town cy";
     private static final String POSTCODE = "postcode";
     private static final Integer ADDRESS_TYPE_ID = 10;
+    private static final String DESCRIPTION = "Description";
+    private static final String DESCRIPTION_CY = "Description cy";
+
     private static final Court COURT_ENTITY = new Court();
 
     @Test
     void testCreationWhenAddressTypeIsSet() {
         final AddressType addressType = new AddressType(ADDRESS_TYPE_ID, "type", null);
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, POSTCODE);
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
         final CourtAddress result = new CourtAddress(entity);
 
         final SoftAssertions softly = new SoftAssertions();
@@ -35,7 +38,7 @@ public class CourtAddressTest {
 
     @Test
     void testCreationWhenAddressTypeIsNotSet() {
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, null, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, POSTCODE);
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, null, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
         final CourtAddress result = new CourtAddress(entity);
 
         final SoftAssertions softly = new SoftAssertions();

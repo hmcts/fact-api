@@ -141,7 +141,9 @@ public class AdminCourtAddressService {
                                                                     a.getAddressLinesCy(),
                                                                     a.getTownName(),
                                                                     a.getTownNameCy(),
-                                                                    a.getPostcode()))
+                                                                    a.getPostcode(),
+                                                                    a.getDescription(),
+                                                                    a.getDescriptionCy()))
             .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .collect(toList());
     }

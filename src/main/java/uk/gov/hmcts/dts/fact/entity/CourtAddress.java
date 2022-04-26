@@ -29,9 +29,11 @@ public class CourtAddress {
     private String townName;
     private String townNameCy;
     private String postcode;
+    private String description;
+    private String descriptionCy;
 
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,
-                        final String townName, final String townNameCy, final String postcode) {
+                        final String townName, final String townNameCy, final String postcode, final String description, final String descriptionCy) {
         this.court = court;
         this.addressType = addressType;
         this.address = CollectionUtils.isEmpty(addressLines) ? "" : convertAddressLines(addressLines);
@@ -39,6 +41,8 @@ public class CourtAddress {
         this.townName = townName;
         this.townNameCy = townNameCy;
         this.postcode = postcode;
+        this.description = description;
+        this.descriptionCy = descriptionCy;
     }
 
     private String convertAddressLines(final List<String> addressLines) {
