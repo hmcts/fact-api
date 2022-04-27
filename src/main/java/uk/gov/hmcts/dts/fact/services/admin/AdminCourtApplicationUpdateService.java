@@ -76,8 +76,8 @@ public class AdminCourtApplicationUpdateService {
     private List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> getNewApplicationUpdates(
         final List<ApplicationUpdate> applicationUpdateList) {
         return applicationUpdateList.stream()
-            .map(e -> new uk.gov.hmcts.dts.fact.entity.ApplicationUpdate(e.getType(), e.getEmail(), e.getExternalLink(),
-                                                                         e.getExternalLinkDescription()))
+            .map(e -> new uk.gov.hmcts.dts.fact.entity.ApplicationUpdate(e.getType(), e.getTypeCy(), e.getEmail(), e.getExternalLink(),
+                                                                         e.getExternalLinkDescription(), e.getExternalLinkDescriptionCy()))
             .collect(toList());
     }
 

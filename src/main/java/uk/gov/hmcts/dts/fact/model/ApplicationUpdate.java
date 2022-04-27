@@ -6,26 +6,28 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ApplicationUpdate {
     private String type;
+    private String typeCy;
     private String email;
     @JsonProperty("external_link")
     private String externalLink;
     @JsonProperty("external_link_description")
     private String externalLinkDescription;
+    @JsonProperty("external_link_description_cy")
+    private String externalLinkDescriptionCy;
 
     public ApplicationUpdate(uk.gov.hmcts.dts.fact.entity.ApplicationUpdate applicationUpdate) {
-        this.type = chooseString(applicationUpdate.getTypeCy(), applicationUpdate.getType());
+        super();
+        this.type = applicationUpdate.getType();
+        this.typeCy = applicationUpdate.getTypeCy();
         this.email = applicationUpdate.getEmail();
         this.externalLink = applicationUpdate.getExternalLink();
-        this.externalLinkDescription = chooseString(applicationUpdate.getExternalLinkDescriptionCy(),
-                                                    applicationUpdate.getExternalLinkDescription());
+        this.externalLinkDescription = applicationUpdate.getExternalLinkDescription();
+        this.externalLinkDescriptionCy = applicationUpdate.getExternalLinkDescriptionCy();
     }
-
 }
