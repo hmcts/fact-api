@@ -111,11 +111,11 @@ public class AdminCourtGeneralInfoServiceTest {
         assertThat(results).isEqualTo(
             OUTPUT_COURT_GENERAL_INFO);
 
+        verify(inPerson).setAccessScheme(true);
         verify(court, never()).setName(anyString());
         verify(court, never()).setInfo(anyString());
         verify(court, never()).setInfoCy(anyString());
         verify(court, never()).setDisplayed(anyBoolean());
-        verify(inPerson, never()).setAccessScheme(anyBoolean());
         verify(adminAuditService, atLeastOnce()).saveAudit(AUDIT_TYPE,
                                                            new CourtGeneralInfo(court),
                                                            results, COURT_SLUG);
