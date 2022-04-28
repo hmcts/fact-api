@@ -55,18 +55,6 @@ public class AdminCourtGeneralInfoService {
             courtEntity.setInfoCy(generalInfo.getInfoCy());
             courtEntity.setDisplayed(generalInfo.getOpen());
 
-            if (courtEntity.getInPerson() == null) {
-                // Cater for new Scenario post covid, where courts can be both in person
-                // and not in person, yet still be classed as not being a service centre
-                InPerson inPerson = new InPerson();
-                inPerson.setIsInPerson(true);
-                inPerson.setCourtId(courtEntity);
-                inPerson.setAccessScheme(generalInfo.getAccessScheme());
-                courtEntity.setInPerson(inPerson);
-            } else {
-                courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
-            }
-
             if (generalInfo.isServiceCentre()) {
                 if (courtEntity.getServiceCentre() == null) {
                     // Update the general info section to include the new row for the service centres
@@ -81,6 +69,18 @@ public class AdminCourtGeneralInfoService {
                     courtEntity.getServiceCentre().setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
                 }
             }
+        }
+
+        if (courtEntity.getInPerson() == null) {
+            // Cater for new Scenario post covid, where courts can be both in person
+            // and not in person, yet still be classed as not being a service centre
+            InPerson inPerson = new InPerson();
+            inPerson.setIsInPerson(true);
+            inPerson.setCourtId(courtEntity);
+            inPerson.setAccessScheme(generalInfo.getAccessScheme());
+            courtEntity.setInPerson(inPerson);
+        } else {
+            courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
         }
 
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));
