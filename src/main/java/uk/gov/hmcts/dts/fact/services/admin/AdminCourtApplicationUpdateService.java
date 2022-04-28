@@ -26,7 +26,7 @@ public class AdminCourtApplicationUpdateService {
     @Autowired
     public AdminCourtApplicationUpdateService(final CourtRepository courtRepository,
                                               final CourtApplicationUpdateRepository applicationUpdateRepository,
-                                              final AdminAuditService adminAuditService){
+                                              final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.applicationUpdateRepository = applicationUpdateRepository;
         this.adminAuditService = adminAuditService;

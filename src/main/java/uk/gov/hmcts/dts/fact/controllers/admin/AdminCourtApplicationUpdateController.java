@@ -24,14 +24,14 @@ public class AdminCourtApplicationUpdateController {
     private final AdminCourtApplicationUpdateService adminCourtApplicationUpdateService;
 
     @Autowired
-    public AdminCourtApplicationUpdateController(AdminCourtApplicationUpdateService adminService){
+    public AdminCourtApplicationUpdateController(AdminCourtApplicationUpdateService adminService) {
         this.adminCourtApplicationUpdateService = adminService;
     }
 
     @GetMapping(path = "/{slug}/application-progression")
     @ApiOperation("Find application progression options by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<ApplicationUpdate>> getApplicationUpdates(@PathVariable String slug){
+    public ResponseEntity<List<ApplicationUpdate>> getApplicationUpdates(@PathVariable String slug) {
         return ok(adminCourtApplicationUpdateService.getApplicationUpdatesBySlug(slug));
     }
 
