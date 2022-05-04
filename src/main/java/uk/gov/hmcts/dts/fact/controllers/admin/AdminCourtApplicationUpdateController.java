@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.model.ApplicationUpdate;
+import uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtApplicationUpdateService;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class AdminCourtApplicationUpdateController {
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<ApplicationUpdate>> getApplicationUpdates(@PathVariable String slug) {
+    public ResponseEntity<List<uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate>> getApplicationUpdates(@PathVariable String slug) {
         return ok(adminCourtApplicationUpdateService.getApplicationUpdatesBySlug(slug));
     }
 
@@ -63,8 +63,8 @@ public class AdminCourtApplicationUpdateController {
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<ApplicationUpdate>> updateApplicationUpdates(@PathVariable String slug,
-                                                         @RequestBody List<ApplicationUpdate> adminApplicationUpdates) {
+    public ResponseEntity<List<uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate>> updateApplicationUpdates(@PathVariable String slug,
+                                                                                                              @RequestBody List<uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate> adminApplicationUpdates) {
         return ok(adminCourtApplicationUpdateService.updateApplicationUpdates(slug, adminApplicationUpdates));
     }
 
