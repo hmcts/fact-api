@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ApplicationUpdate {
     private String type;
+    @JsonProperty("type_cy")
     private String typeCy;
     private String email;
     @JsonProperty("external_link")
