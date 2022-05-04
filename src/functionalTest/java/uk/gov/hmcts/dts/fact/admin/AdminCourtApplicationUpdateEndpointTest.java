@@ -25,10 +25,13 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     private static final String APPLICATION_PROGRESSION_PATH = "/application-progression";
     private static final String APPLICATION_PROGRESSION_OPTION_FULL_PATH = ADMIN_COURTS_ENDPOINT + DIVORCE_SERVIVE_CENTRE_SLUG
         + APPLICATION_PROGRESSION_PATH;
+    private static final String APPLICATION_PROGRESSION_NOT_FOUND_PATH = ADMIN_COURTS_ENDPOINT + "NotFound" + APPLICATION_PROGRESSION_PATH;
     private static final String TEST_TYPE = "test type";
+    private static final String TEST_TYPE_CY = "test type welsh";
     private static final String TEST_EMAIL = "test@test.com";
     private static final String TEST_EXTERNAL_LINK = "www.test.com";
     private static final String TEST_EXTERNAL_LINK_DESCRIPTION = "test description";
+    private static final String TEST_EXTERNAL_LINK_DESCRIPTION_CY = "test description welsh";
 
     @Test
     public void shouldGetApplicationUpdateTypes() {
@@ -96,6 +99,42 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
 
     }
 
+    @Test
+    public void shouldRequireATokenWhenUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
+
+        final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
+        final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
+        final var response = doPutRequest(APPLICATION_PROGRESSION_OPTION_FULL_PATH, originalJson);
+        assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
+    }
+
+    @Test
+    public void shouldBeForbiddenForUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
+
+        final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
+        final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
+        final var response = doPutRequest(
+            APPLICATION_PROGRESSION_OPTION_FULL_PATH,
+            Map.of(AUTHORIZATION, BEARER + forbiddenToken), originalJson
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    public void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
+
+        final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
+        final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
+        final Response response = doPutRequest(
+            APPLICATION_PROGRESSION_NOT_FOUND_PATH,
+            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            originalJson
+        );
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
+
+    /************************************************************* Shared utility methods. ***************************************************************/
+
     private List<ApplicationUpdate> getCurrentApplicationUpdateTypes() {
         final Response response = doGetRequest(
             APPLICATION_PROGRESSION_OPTION_FULL_PATH,
@@ -106,7 +145,7 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
 
     private List<ApplicationUpdate> addNewApplicationUpdateType(final List<ApplicationUpdate> applicationUpdates) {
         final List<ApplicationUpdate> updatedApplicationUpdateType = new ArrayList<>(applicationUpdates);
-        updatedApplicationUpdateType.add(new ApplicationUpdate(TEST_TYPE,TEST_EMAIL,TEST_EXTERNAL_LINK,TEST_EXTERNAL_LINK_DESCRIPTION));
+        updatedApplicationUpdateType.add(new ApplicationUpdate(TEST_TYPE,TEST_TYPE_CY,TEST_EMAIL,TEST_EXTERNAL_LINK,TEST_EXTERNAL_LINK_DESCRIPTION,TEST_EXTERNAL_LINK_DESCRIPTION_CY));
         return updatedApplicationUpdateType;
     }
 
