@@ -16,8 +16,7 @@ import javax.persistence.*;
 public class ServiceCentre {
 
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_servicecentre_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne
     @JoinColumn(name = "court_id")

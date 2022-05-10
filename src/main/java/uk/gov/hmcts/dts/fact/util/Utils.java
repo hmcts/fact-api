@@ -66,4 +66,21 @@ public final class Utils {
                 .filter(not(String::isEmpty))
                 .collect(toList());
     }
+
+    public static String formatServiceAreasForIntroPara(List<String> serviceAreas, String language) {
+        StringBuilder output = new StringBuilder(650);
+        System.out.println("in formatAreasOfLawForServiceAreaIntroPara");
+        int i = 0;
+        for (String serviceArea : serviceAreas) {
+            output.append(serviceArea);
+            if(serviceAreas.size()-1 - i > 1) {
+                output.append(", ");
+            } else if (serviceAreas.size()-1 - i == 1) {
+                String and = language == "en" ? " and " : " a ";
+                output.append(and);
+            }
+            i++;
+        }
+        return output.toString();
+    };
 }
