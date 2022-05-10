@@ -73,14 +73,14 @@ public final class Utils {
         int i = 0;
         for (String serviceArea : serviceAreas) {
             output.append(serviceArea);
-            if(serviceAreas.size()-1 - i > 1) {
+            if (serviceAreas.size() - 1 - i > 1) {
                 output.append(", ");
-            } else if (serviceAreas.size()-1 - i == 1) {
-                String and = language == "en" ? " and " : " a ";
+            } else if (serviceAreas.size() - 1 - i == 1) {
+                String and = language.equals("en") ? " and " : " a ";
                 output.append(and);
             }
             i++;
         }
         return output.toString();
-    };
+    }
 }

@@ -35,8 +35,8 @@ public class AdminService {
     private final AreasOfLawRepository areasOfLawRepository;
 
     private String introPara = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
-    private String introParaCy = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn " +
-        "darparu gwasanaeth wyneb yn wyneb.";
+    private String introParaCy = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn "
+        + "darparu gwasanaeth wyneb yn wyneb.";
 
     @Autowired
     public AdminService(final CourtRepository courtRepository,
