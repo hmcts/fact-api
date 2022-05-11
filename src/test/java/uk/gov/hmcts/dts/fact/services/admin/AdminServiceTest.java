@@ -15,6 +15,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
@@ -48,6 +49,9 @@ class AdminServiceTest {
 
     @MockBean
     private CourtRepository courtRepository;
+
+    @MockBean
+    private AreasOfLawRepository areasOfLawRepository;
 
     @MockBean
     private ServiceAreaRepository serviceAreaRepository;

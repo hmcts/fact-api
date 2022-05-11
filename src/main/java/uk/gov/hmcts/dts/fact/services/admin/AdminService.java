@@ -34,15 +34,15 @@ public class AdminService {
     private final ServiceAreaRepository serviceAreaRepository;
     private final AreasOfLawRepository areasOfLawRepository;
 
-    static final String INTRO_PARAGRAPH = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
-    static final String INTRO_PARAGRAPH_CY = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.";
+    private static final String INTRO_PARAGRAPH = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
+    private static final String INTRO_PARAGRAPH_CY = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.";
 
     @Autowired
     public AdminService(final CourtRepository courtRepository,
                         final RolesProvider rolesProvider,
                         final AdminAuditService adminAuditService,
                         final ServiceAreaRepository serviceAreaRepository,
-                        AreasOfLawRepository areasOfLawRepository) {
+                        final AreasOfLawRepository areasOfLawRepository) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
         this.adminAuditService = adminAuditService;
@@ -163,6 +163,7 @@ public class AdminService {
         newCourt.setLon(lon);
         newCourt.setLat(lat);
         newCourt.setServiceAreas(serviceAreaRepository.findAllByNameIn(serviceAreas));
+        courtRepository.save(newCourt);
 
         if (serviceCentre) {
             List<String> serviceAreaDisplayNames = new ArrayList<>();
@@ -182,8 +183,7 @@ public class AdminService {
             }
 
             ServiceCentre newServiceCentre = new ServiceCentre();
-            // Save the court to generate the ID
-            newServiceCentre.setCourtId(courtRepository.save(newCourt));
+            newServiceCentre.setCourtId(newCourt);
             newServiceCentre.setIntroParagraph(INTRO_PARAGRAPH.replace("{serviceArea}",
                                                                 Utils.formatServiceAreasForIntroPara(serviceAreaDisplayNames, "en")));
             newServiceCentre.setIntroParagraphCy(INTRO_PARAGRAPH_CY.replace("{serviceArea}",
