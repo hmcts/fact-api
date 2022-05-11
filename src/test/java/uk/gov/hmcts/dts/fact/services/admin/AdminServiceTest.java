@@ -49,6 +49,7 @@ class AdminServiceTest {
     private static final String SERVICE_AREA_NAME = "Adoption";
     private static final ServiceArea SERVICE_AREA = new ServiceArea();
     private static final AreaOfLaw AREA_OF_LAW = new AreaOfLaw();
+    private static final String AUDIT_TYPE = "Create new court";
 
     @Autowired
     private AdminService adminService;
@@ -267,7 +268,7 @@ class AdminServiceTest {
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
         assertThat(returnedCourt.getInPerson()).isTrue();
-        verify(adminAuditService).saveAudit("Create new court", null,
+        verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
                                             returnedCourt, SOME_SLUG);
         verify(courtRepository, times(2)).save(any(Court.class));
     }
@@ -283,7 +284,7 @@ class AdminServiceTest {
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
         assertThat(returnedCourt.getInPerson()).isFalse();
-        verify(adminAuditService).saveAudit("Create new court", null,
+        verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
                                             returnedCourt, SOME_SLUG);
         verify(courtRepository, times(2)).save(any(Court.class));
     }
@@ -315,7 +316,7 @@ class AdminServiceTest {
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
         assertThat(returnedCourt.getInPerson()).isFalse();
-        verify(adminAuditService).saveAudit("Create new court", null,
+        verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
                                             returnedCourt, SOME_SLUG);
         verify(courtRepository, times(2)).save(any(Court.class));
         verify(areasOfLawRepository, times(2)).getByName(SERVICE_AREA_NAME);
@@ -337,7 +338,7 @@ class AdminServiceTest {
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
         assertThat(returnedCourt.getInPerson()).isFalse();
-        verify(adminAuditService).saveAudit("Create new court", null,
+        verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
                                             returnedCourt, SOME_SLUG);
         verify(courtRepository, times(2)).save(any(Court.class));
         verify(areasOfLawRepository, times(4)).getByName(SERVICE_AREA_NAME);
