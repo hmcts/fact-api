@@ -34,9 +34,8 @@ public class AdminService {
     private final ServiceAreaRepository serviceAreaRepository;
     private final AreasOfLawRepository areasOfLawRepository;
 
-    private String introPara = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
-    private String introParaCy = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn "
-        + "darparu gwasanaeth wyneb yn wyneb.";
+    static final String INTRO_PARAGRAPH = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
+    static final String INTRO_PARAGRAPH_CY = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.";
 
     @Autowired
     public AdminService(final CourtRepository courtRepository,
@@ -169,25 +168,25 @@ public class AdminService {
             List<String> serviceAreaDisplayNames = new ArrayList<>();
             List<String> serviceAreaDisplayNamesCy = new ArrayList<>();
             for (String serviceArea : serviceAreas) {
-                if (areasOfLawRepository.getByName(serviceArea) != null && areasOfLawRepository.getByName(serviceArea).getDisplayName() != null) {
-                    serviceAreaDisplayNames.add(areasOfLawRepository.getByName(serviceArea).getDisplayName().toLowerCase(Locale.ROOT));
-                } else {
+                if (areasOfLawRepository.getByName(serviceArea) == null || areasOfLawRepository.getByName(serviceArea).getDisplayName() == null) {
                     serviceAreaDisplayNames.add(serviceArea.toLowerCase(Locale.ROOT));
+                } else {
+                    serviceAreaDisplayNames.add(areasOfLawRepository.getByName(serviceArea).getDisplayName().toLowerCase(Locale.ROOT));
                 }
 
-                if (areasOfLawRepository.getByName(serviceArea) != null && areasOfLawRepository.getByName(serviceArea).getDisplayNameCy() != null) {
-                    serviceAreaDisplayNamesCy.add(areasOfLawRepository.getByName(serviceArea).getDisplayNameCy().toLowerCase(Locale.ROOT));
-                } else {
+                if (areasOfLawRepository.getByName(serviceArea) == null || areasOfLawRepository.getByName(serviceArea).getDisplayNameCy() == null) {
                     serviceAreaDisplayNamesCy.add(serviceAreaRepository.findByName(serviceArea).getNameCy());
+                } else {
+                    serviceAreaDisplayNamesCy.add(areasOfLawRepository.getByName(serviceArea).getDisplayNameCy().toLowerCase(Locale.ROOT));
                 }
             }
 
             ServiceCentre newServiceCentre = new ServiceCentre();
             // Save the court to generate the ID
             newServiceCentre.setCourtId(courtRepository.save(newCourt));
-            newServiceCentre.setIntroParagraph(introPara.replace("{serviceArea}",
+            newServiceCentre.setIntroParagraph(INTRO_PARAGRAPH.replace("{serviceArea}",
                                                                 Utils.formatServiceAreasForIntroPara(serviceAreaDisplayNames, "en")));
-            newServiceCentre.setIntroParagraphCy(introParaCy.replace("{serviceArea}",
+            newServiceCentre.setIntroParagraphCy(INTRO_PARAGRAPH_CY.replace("{serviceArea}",
                                                                   Utils.formatServiceAreasForIntroPara(serviceAreaDisplayNamesCy, "cy")));
             newCourt.setServiceCentre(newServiceCentre);
         }

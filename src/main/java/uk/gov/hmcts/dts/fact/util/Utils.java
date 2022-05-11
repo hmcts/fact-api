@@ -69,17 +69,16 @@ public final class Utils {
 
     public static String formatServiceAreasForIntroPara(List<String> serviceAreas, String language) {
         StringBuilder output = new StringBuilder(650);
-        System.out.println("in formatAreasOfLawForServiceAreaIntroPara");
-        int i = 0;
+        int count = 0;
+        int minValue = 1;
         for (String serviceArea : serviceAreas) {
             output.append(serviceArea);
-            if (serviceAreas.size() - 1 - i > 1) {
+            if (serviceAreas.size() - 1 - count > minValue) {
                 output.append(", ");
-            } else if (serviceAreas.size() - 1 - i == 1) {
-                String and = language.equals("en") ? " and " : " a ";
-                output.append(and);
+            } else if (serviceAreas.size() - 1 - count == minValue) {
+                output.append("en".equals(language) ? " and " : " a ");
             }
-            i++;
+            count++;
         }
         return output.toString();
     }
