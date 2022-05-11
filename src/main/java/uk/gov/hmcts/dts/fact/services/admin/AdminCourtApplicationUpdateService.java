@@ -43,8 +43,8 @@ public class AdminCourtApplicationUpdateService {
     }
 
     @Transactional()
-    public List<uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate> updateApplicationUpdates(final String slug,
-                                                                                              final List<uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate> applicationUpdateList) {
+    public List<ApplicationUpdate> updateApplicationUpdates(final String slug,
+                                                            final List<ApplicationUpdate> applicationUpdateList) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
@@ -56,17 +56,17 @@ public class AdminCourtApplicationUpdateService {
         // Remove existing application progression methods and then replace with newly updated ones
         applicationUpdateRepository.deleteAll(courtEntity.getCourtApplicationUpdates());
 
-        List<uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate> resultApplicationUpdateList = applicationUpdateRepository
+        List<ApplicationUpdate> resultApplicationUpdateList = applicationUpdateRepository
             .saveAll(newCourtApplicationUpdateList)
             .stream()
             .map(CourtApplicationUpdate::getApplicationUpdate)
-            .map(uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate::new)
+            .map(ApplicationUpdate::new)
             .collect(toList());
         adminAuditService.saveAudit(
             AuditType.findByName("Update court application updates list"),
             courtEntity.getCourtApplicationUpdates().stream()
                 .map(CourtApplicationUpdate::getApplicationUpdate)
-                .map(uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate::new)
+                .map(ApplicationUpdate::new)
                 .collect(toList()),
             resultApplicationUpdateList, slug);
         return resultApplicationUpdateList;
@@ -74,7 +74,7 @@ public class AdminCourtApplicationUpdateService {
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> getNewApplicationUpdates(
-        final List<uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate> applicationUpdateList) {
+        final List<ApplicationUpdate> applicationUpdateList) {
         return applicationUpdateList.stream()
             .map(e -> new uk.gov.hmcts.dts.fact.entity.ApplicationUpdate(e.getType(), e.getTypeCy(), e.getEmail(), e.getExternalLink(),
                                                                          e.getExternalLinkDescription(), e.getExternalLinkDescriptionCy()))

@@ -5,7 +5,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.ApplicationUpdate;
+import uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
-    private static final String DIVORCE_SERVIVE_CENTRE_SLUG = "divorce-service-centre";
+    private static final String DIVORCE_SERVICE_CENTRE_SLUG = "divorce-service-centre";
     private static final String APPLICATION_PROGRESSION_PATH = "/application-progression";
-    private static final String APPLICATION_PROGRESSION_OPTION_FULL_PATH = ADMIN_COURTS_ENDPOINT + DIVORCE_SERVIVE_CENTRE_SLUG
+    private static final String APPLICATION_PROGRESSION_OPTION_FULL_PATH = ADMIN_COURTS_ENDPOINT + DIVORCE_SERVICE_CENTRE_SLUG
         + APPLICATION_PROGRESSION_PATH;
     private static final String APPLICATION_PROGRESSION_NOT_FOUND_PATH = ADMIN_COURTS_ENDPOINT + "NotFound" + APPLICATION_PROGRESSION_PATH;
     private static final String TEST_TYPE = "test type";
