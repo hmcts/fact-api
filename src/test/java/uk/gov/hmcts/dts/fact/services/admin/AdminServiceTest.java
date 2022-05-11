@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
@@ -47,6 +48,7 @@ class AdminServiceTest {
     private static final List<String> SERVICE_AREAS = new ArrayList<>();
     private static final String SERVICE_AREA_NAME = "Adoption";
     private static final ServiceArea SERVICE_AREA = new ServiceArea();
+    private static final AreaOfLaw AREA_OF_LAW = new AreaOfLaw();
 
     @Autowired
     private AdminService adminService;
@@ -299,7 +301,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void shouldGenerateIntroParagraphForServiceCentres() {
+    void shouldGenerateIntroParagraphForServiceCentresWhereThereAreNoDisplayNames() {
         SERVICE_AREAS.add(SERVICE_AREA_NAME);
         SERVICE_AREA.setName(SERVICE_AREA_NAME);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
@@ -317,6 +319,28 @@ class AdminServiceTest {
                                             returnedCourt, SOME_SLUG);
         verify(courtRepository, times(2)).save(any(Court.class));
         verify(areasOfLawRepository, times(2)).getByName(SERVICE_AREA_NAME);
+        verify(serviceAreaRepository).findByName(SERVICE_AREA_NAME);
+    }
+
+    @Test
+    void shouldGenerateIntroParagraphForServiceCentresWhereThereAreDisplayNames() {
+        SERVICE_AREAS.add(SERVICE_AREA_NAME);
+        SERVICE_AREA.setName(SERVICE_AREA_NAME);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
+        when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(areasOfLawRepository.getByName(SERVICE_AREA_NAME)).thenReturn(AREA_OF_LAW);
+        when(serviceAreaRepository.findByName(SERVICE_AREA_NAME)).thenReturn(SERVICE_AREA);
+        uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
+            adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
+                                     LONGITUDE, LATITUDE, SERVICE_AREAS);
+        assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
+        assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
+        assertThat(returnedCourt.getOpen()).isTrue();
+        assertThat(returnedCourt.getInPerson()).isFalse();
+        verify(adminAuditService).saveAudit("Create new court", null,
+                                            returnedCourt, SOME_SLUG);
+        verify(courtRepository, times(2)).save(any(Court.class));
+        verify(areasOfLawRepository, times(4)).getByName(SERVICE_AREA_NAME);
         verify(serviceAreaRepository).findByName(SERVICE_AREA_NAME);
     }
 }
