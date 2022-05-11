@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
@@ -43,6 +44,9 @@ class AdminServiceTest {
     private static final String IMAGE_FILE = "some-image.jpeg";
     private static uk.gov.hmcts.dts.fact.model.admin.Court court;
     private static final String NOT_FOUND = "Not found: ";
+    private static final ArrayList<String> SERVICE_AREAS = new ArrayList<>();
+    private static final String SERVICE_AREA_NAME = "Adoption";
+    private static final ServiceArea SERVICE_AREA = new ServiceArea();
 
     @Autowired
     private AdminService adminService;
@@ -292,5 +296,27 @@ class AdminServiceTest {
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(),
                                                      anyString(), anyString());
         verify(courtRepository, never()).save(any(Court.class));
+    }
+
+    @Test
+    void shouldGenerateIntroParagraphForServiceCentres() {
+        SERVICE_AREAS.add(SERVICE_AREA_NAME);
+        SERVICE_AREA.setName(SERVICE_AREA_NAME);
+        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
+        when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(areasOfLawRepository.getByName(SERVICE_AREA_NAME)).thenReturn(null);
+        when(serviceAreaRepository.findByName(SERVICE_AREA_NAME)).thenReturn(SERVICE_AREA);
+        uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
+            adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
+                                     LONGITUDE, LATITUDE, SERVICE_AREAS);
+        assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
+        assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
+        assertThat(returnedCourt.getOpen()).isTrue();
+        assertThat(returnedCourt.getInPerson()).isFalse();
+        verify(adminAuditService).saveAudit("Create new court", null,
+                                            returnedCourt, SOME_SLUG);
+        verify(courtRepository, times(2)).save(any(Court.class));
+        verify(areasOfLawRepository, times(2)).getByName(SERVICE_AREA_NAME);
+        verify(serviceAreaRepository).findByName(SERVICE_AREA_NAME);
     }
 }

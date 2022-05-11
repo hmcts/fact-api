@@ -6,6 +6,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -69,16 +70,15 @@ public final class Utils {
 
     public static String formatServiceAreasForIntroPara(List<String> serviceAreas, String language) {
         StringBuilder output = new StringBuilder(650);
-        int count = 0;
-        int minValue = 1;
-        for (String serviceArea : serviceAreas) {
-            output.append(serviceArea);
-            if (serviceAreas.size() - 1 - count > minValue) {
-                output.append(", ");
-            } else if (serviceAreas.size() - 1 - count == minValue) {
+        ListIterator<String> it = serviceAreas.listIterator();
+        while (it.hasNext()) {
+            int index = it.nextIndex();
+            if (index + 1 == serviceAreas.size()) {
                 output.append("en".equals(language) ? " and " : " a ");
+            } else {
+                output.append(", ");
             }
-            count++;
+            output.append(it.next());
         }
         return output.toString();
     }
