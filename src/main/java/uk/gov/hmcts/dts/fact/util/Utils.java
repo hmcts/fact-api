@@ -70,15 +70,17 @@ public final class Utils {
 
     public static String formatServiceAreasForIntroPara(List<String> serviceAreas, String language) {
         StringBuilder output = new StringBuilder(650);
-        ListIterator<String> it = serviceAreas.listIterator();
-        while (it.hasNext()) {
-            int index = it.nextIndex();
+        ListIterator<String> serviceArea = serviceAreas.listIterator();
+        while (serviceArea.hasNext()) {
+            output.append(serviceArea.next().toLowerCase(Locale.ROOT));
+            int index = serviceArea.nextIndex();
             if (index + 1 == serviceAreas.size()) {
                 output.append("en".equals(language) ? " and " : " a ");
-            } else {
+                output.append(serviceArea.next().toLowerCase(Locale.ROOT));
+                break;
+            } else if (index + 1 < serviceAreas.size()) {
                 output.append(", ");
             }
-            output.append(it.next());
         }
         return output.toString();
     }

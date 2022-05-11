@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
@@ -162,24 +164,21 @@ public class AdminService {
         newCourt.setWelshEnabled(true);
         newCourt.setLon(lon);
         newCourt.setLat(lat);
-        newCourt.setServiceAreas(serviceAreaRepository.findAllByNameIn(serviceAreas));
+        List<ServiceArea> serviceAreaList = serviceAreaRepository.findAllByNameIn(serviceAreas);
+        List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas);
+        List<String> serviceAreasCy = serviceAreaList.stream().map(ServiceArea::getNameCy).collect(toList());
+        newCourt.setServiceAreas(serviceAreaList);
         courtRepository.save(newCourt);
 
         if (serviceCentre) {
             List<String> serviceAreaDisplayNames = new ArrayList<>();
             List<String> serviceAreaDisplayNamesCy = new ArrayList<>();
             for (String serviceArea : serviceAreas) {
-                if (areasOfLawRepository.getByName(serviceArea) == null || areasOfLawRepository.getByName(serviceArea).getDisplayName() == null) {
-                    serviceAreaDisplayNames.add(serviceArea.toLowerCase(Locale.ROOT));
-                } else {
-                    serviceAreaDisplayNames.add(areasOfLawRepository.getByName(serviceArea).getDisplayName().toLowerCase(Locale.ROOT));
-                }
+                serviceAreaDisplayNames.add(getDisplayName(areasOfLawList, serviceArea));
+            }
 
-                if (areasOfLawRepository.getByName(serviceArea) == null || areasOfLawRepository.getByName(serviceArea).getDisplayNameCy() == null) {
-                    serviceAreaDisplayNamesCy.add(serviceAreaRepository.findByName(serviceArea).getNameCy());
-                } else {
-                    serviceAreaDisplayNamesCy.add(areasOfLawRepository.getByName(serviceArea).getDisplayNameCy().toLowerCase(Locale.ROOT));
-                }
+            for (String serviceAreaCy : serviceAreasCy) {
+                serviceAreaDisplayNamesCy.add(getDisplayNameCy(areasOfLawList, serviceAreaCy));
             }
 
             ServiceCentre newServiceCentre = new ServiceCentre();
@@ -218,5 +217,21 @@ public class AdminService {
         adminAuditService.saveAudit(AuditType.findByName("Delete existing court"), new Court(court),
                                     null, courtSlug);
         courtRepository.deleteById(court.getId());
+    }
+
+    private String getDisplayName(List<AreaOfLaw> areasOfLaw, String serviceArea) {
+        return areasOfLaw.stream()
+            .filter(areaOfLaw -> areaOfLaw.getName().equals(serviceArea))
+            .findAny()
+            .map(AreaOfLaw::getDisplayName)
+            .orElse(serviceArea);
+    }
+
+    private String getDisplayNameCy(List<AreaOfLaw> areasOfLaw, String serviceAreaCy) {
+        return areasOfLaw.stream()
+            .filter(areaOfLaw -> areaOfLaw.getName().equals(serviceAreaCy))
+            .findAny()
+            .map(AreaOfLaw::getDisplayNameCy)
+            .orElse(serviceAreaCy);
     }
 }

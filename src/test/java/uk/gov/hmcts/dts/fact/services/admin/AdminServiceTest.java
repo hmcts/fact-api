@@ -300,48 +300,4 @@ class AdminServiceTest {
                                                      anyString(), anyString());
         verify(courtRepository, never()).save(any(Court.class));
     }
-
-    @Test
-    void shouldGenerateIntroParagraphForServiceCentresWhereThereAreNoDisplayNames() {
-        SERVICE_AREAS.add(SERVICE_AREA_NAME);
-        SERVICE_AREA.setName(SERVICE_AREA_NAME);
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
-        when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
-        when(areasOfLawRepository.getByName(SERVICE_AREA_NAME)).thenReturn(null);
-        when(serviceAreaRepository.findByName(SERVICE_AREA_NAME)).thenReturn(SERVICE_AREA);
-        uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
-            adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
-                                     LONGITUDE, LATITUDE, SERVICE_AREAS);
-        assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
-        assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
-        assertThat(returnedCourt.getOpen()).isTrue();
-        assertThat(returnedCourt.getInPerson()).isFalse();
-        verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
-                                            returnedCourt, SOME_SLUG);
-        verify(courtRepository, times(2)).save(any(Court.class));
-        verify(areasOfLawRepository, times(2)).getByName(SERVICE_AREA_NAME);
-        verify(serviceAreaRepository).findByName(SERVICE_AREA_NAME);
-    }
-
-    @Test
-    void shouldGenerateIntroParagraphForServiceCentresWhereThereAreDisplayNames() {
-        SERVICE_AREAS.add(SERVICE_AREA_NAME);
-        SERVICE_AREA.setName(SERVICE_AREA_NAME);
-        when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.empty());
-        when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
-        when(areasOfLawRepository.getByName(SERVICE_AREA_NAME)).thenReturn(AREA_OF_LAW);
-        when(serviceAreaRepository.findByName(SERVICE_AREA_NAME)).thenReturn(SERVICE_AREA);
-        uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
-            adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
-                                     LONGITUDE, LATITUDE, SERVICE_AREAS);
-        assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
-        assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
-        assertThat(returnedCourt.getOpen()).isTrue();
-        assertThat(returnedCourt.getInPerson()).isFalse();
-        verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
-                                            returnedCourt, SOME_SLUG);
-        verify(courtRepository, times(2)).save(any(Court.class));
-        verify(areasOfLawRepository, times(4)).getByName(SERVICE_AREA_NAME);
-        verify(serviceAreaRepository).findByName(SERVICE_AREA_NAME);
-    }
 }
