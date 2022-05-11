@@ -44,7 +44,7 @@ class AdminServiceTest {
     private static final String IMAGE_FILE = "some-image.jpeg";
     private static uk.gov.hmcts.dts.fact.model.admin.Court court;
     private static final String NOT_FOUND = "Not found: ";
-    private static final ArrayList<String> SERVICE_AREAS = new ArrayList<>();
+    private static final List<String> SERVICE_AREAS = new ArrayList<>();
     private static final String SERVICE_AREA_NAME = "Adoption";
     private static final ServiceArea SERVICE_AREA = new ServiceArea();
 
