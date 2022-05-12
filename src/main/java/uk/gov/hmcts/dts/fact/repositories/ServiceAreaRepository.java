@@ -11,7 +11,7 @@ public interface ServiceAreaRepository extends JpaRepository<ServiceArea, Intege
 
     List<ServiceArea> findByAreaOfLawId(Integer areaOfLawId);
 
-    List<ServiceArea> findAllByNameIn(List<String> serviceAreas);
+    Optional<List<ServiceArea>> findAllByNameIn(List<String> serviceAreas);
 
     ServiceArea findByName(String name);
 }

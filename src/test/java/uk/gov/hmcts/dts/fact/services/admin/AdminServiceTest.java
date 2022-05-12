@@ -8,16 +8,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
-import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
-import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
-import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
@@ -45,10 +42,6 @@ class AdminServiceTest {
     private static final String IMAGE_FILE = "some-image.jpeg";
     private static uk.gov.hmcts.dts.fact.model.admin.Court court;
     private static final String NOT_FOUND = "Not found: ";
-    private static final List<String> SERVICE_AREAS = new ArrayList<>();
-    private static final String SERVICE_AREA_NAME = "Adoption";
-    private static final ServiceArea SERVICE_AREA = new ServiceArea();
-    private static final AreaOfLaw AREA_OF_LAW = new AreaOfLaw();
     private static final String AUDIT_TYPE = "Create new court";
 
     @Autowired
@@ -56,9 +49,6 @@ class AdminServiceTest {
 
     @MockBean
     private CourtRepository courtRepository;
-
-    @MockBean
-    private AreasOfLawRepository areasOfLawRepository;
 
     @MockBean
     private ServiceAreaRepository serviceAreaRepository;
@@ -82,7 +72,7 @@ class AdminServiceTest {
         courtEntity.setAlert("some-urgent-message");
         courtEntity.setAlertCy("some-urgent-message-cy");
         courtEntity.setDisplayed(true);
-        when(serviceAreaRepository.findAllByNameIn(any())).thenReturn(new ArrayList<>());
+        when(serviceAreaRepository.findAllByNameIn(any())).thenReturn(Optional.empty());
 
         court = new uk.gov.hmcts.dts.fact.model.admin.Court(
             "slug",

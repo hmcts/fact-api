@@ -164,8 +164,8 @@ public class AdminService {
         newCourt.setWelshEnabled(true);
         newCourt.setLon(lon);
         newCourt.setLat(lat);
-        List<ServiceArea> serviceAreaList = serviceAreaRepository.findAllByNameIn(serviceAreas);
-        List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas);
+        List<ServiceArea> serviceAreaList = serviceAreaRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
+        List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
         List<String> serviceAreasCy = serviceAreaList.stream().map(ServiceArea::getNameCy).collect(toList());
         newCourt.setServiceAreas(serviceAreaList);
         courtRepository.save(newCourt);
