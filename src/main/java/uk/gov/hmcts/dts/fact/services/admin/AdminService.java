@@ -165,19 +165,21 @@ public class AdminService {
         newCourt.setLon(lon);
         newCourt.setLat(lat);
         List<ServiceArea> serviceAreaList = serviceAreaRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
-        List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
-        List<String> serviceAreasCy = serviceAreaList.stream().map(ServiceArea::getNameCy).collect(toList());
         newCourt.setServiceAreas(serviceAreaList);
         courtRepository.save(newCourt);
 
         if (serviceCentre) {
+            List<String> serviceAreasCy = serviceAreaList.stream().map(ServiceArea::getNameCy).collect(toList());
+
             List<String> serviceAreaDisplayNames = new ArrayList<>();
             List<String> serviceAreaDisplayNamesCy = new ArrayList<>();
             for (String serviceArea : serviceAreas) {
+                List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
                 serviceAreaDisplayNames.add(getDisplayName(areasOfLawList, serviceArea));
             }
 
             for (String serviceAreaCy : serviceAreasCy) {
+                List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
                 serviceAreaDisplayNamesCy.add(getDisplayNameCy(areasOfLawList, serviceAreaCy));
             }
 
