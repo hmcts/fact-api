@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import javax.persistence.*;
 
+@SuppressWarnings("PMD.ExcessiveParameterList")
 @Entity
 @Table(name = "search_courtaddress")
 @Getter
