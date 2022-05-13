@@ -28,18 +28,22 @@ public class CourtAddress {
     private String addressCy;
     private String townName;
     private String townNameCy;
+    @OneToOne
+    @JoinColumn(name = "county_id")
+    private County county;
     private String postcode;
     private String description;
     private String descriptionCy;
 
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,
-                        final String townName, final String townNameCy, final String postcode, final String description, final String descriptionCy) {
+                        final String townName, final String townNameCy, final County county,final String postcode, final String description, final String descriptionCy) {
         this.court = court;
         this.addressType = addressType;
         this.address = CollectionUtils.isEmpty(addressLines) ? "" : convertAddressLines(addressLines);
         this.addressCy = CollectionUtils.isEmpty(addressLinesCy) ? "" : convertAddressLines(addressLinesCy);
         this.townName = townName;
         this.townNameCy = townNameCy;
+        this.county = county;
         this.postcode = postcode;
         this.description = description;
         this.descriptionCy = descriptionCy;
