@@ -16,8 +16,11 @@ class UtilsTest {
     protected static final String ENGLISH = "english";
     protected static final String WELSH = "welsh";
     private static final String LANG = "en";
+    private static final String LANG_CY = "cy";
     private static final List<String> SERVICE_AREAS = Arrays.asList("Adoption", "Benefits", "Tax");
     private static final String FORMATTED_SERVICE_AREAS = "adoption, benefits and tax";
+    private static final List<String> SERVICE_AREAS_CY = Arrays.asList("Treth", "Budd-daliadau");
+    private static final String FORMATTED_SERVICE_AREAS_CY = "treth a budd-daliadau";
 
     @Test
     void testHtmlFilter() {
@@ -93,5 +96,10 @@ class UtilsTest {
     @Test
     void shouldFormatServiceAreasForIntroParagraph() {
         assertEquals(FORMATTED_SERVICE_AREAS, formatServiceAreasForIntroPara(SERVICE_AREAS, LANG));
+    }
+
+    @Test
+    void shouldFormatServiceAreasForIntroParagraphCy() {
+        assertEquals(FORMATTED_SERVICE_AREAS_CY, formatServiceAreasForIntroPara(SERVICE_AREAS_CY, LANG_CY));
     }
 }
