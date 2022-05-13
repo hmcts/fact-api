@@ -2,13 +2,7 @@ package uk.gov.hmcts.dts.fact.model.deprecated;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import uk.gov.hmcts.dts.fact.entity.AddressType;
-import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.CourtAddress;
-import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
-import uk.gov.hmcts.dts.fact.entity.CourtType;
-import uk.gov.hmcts.dts.fact.entity.DxCode;
+import uk.gov.hmcts.dts.fact.entity.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -34,9 +28,15 @@ public class CourtWithDistanceTest {
         final AddressType addressType = new AddressType();
         addressType.setName("Visit us");
 
+        final County county = new County();
+        county.setId(1);
+        county.setName("Greater London");
+        county.setCountry("England");
+
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("1 High Street");
         courtAddress.setTownName("London");
+        courtAddress.setCounty(county);
         courtAddress.setPostcode("SW1A 1AA");
         courtAddress.setAddressType(addressType);
 
