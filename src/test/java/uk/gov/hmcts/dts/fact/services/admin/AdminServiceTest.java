@@ -1,15 +1,17 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import io.vavr.collection.Array;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
@@ -20,6 +22,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +39,8 @@ import static org.mockito.Mockito.*;
 class AdminServiceTest {
 
     private Court courtEntity;
+    private List<ServiceArea> serviceAreaList;
+    private List<AreaOfLaw> areaOfLawList;
     private static final String SOME_COURT = "some court";
     private static final String SOME_SLUG = "some-slug";
     private static final Double LATITUDE = 1.0;
@@ -93,6 +98,154 @@ class AdminServiceTest {
             emptyList(),
             emptyList()
         );
+
+        serviceAreaList = new ArrayList<>();
+        areaOfLawList = new ArrayList<>();
+
+        serviceAreaList.add(createServiceAreaWithDetails(
+            1,
+            "Money claims",
+            "Claims for when you are owed money or responding to money claims against you."
+            ,
+            "Hawliadau am arian",
+            "Hawliadau pan mae arian yn ddyledus ichi neu ymateb i hawliadau am arian yn eich erbyn.",
+            "money-claims"
+            ,
+            "civil",
+            "https://www.gov.uk/make-money-claim",
+            "Make a money claim online",
+            "Gwneud hawliad am arian ar-lein"
+            ,
+            new AreaOfLaw(),
+            "We manage your money claims applications at our central service centre. Find where to send your documents or ask about your application’s progress."
+            ,
+            "Rydym yn rheoli eich ceisiadau am hawliadau am arian yn ein canolfan wasanaeth ganolog",
+            "postcode"
+        ));
+
+        serviceAreaList.add(createServiceAreaWithDetails(
+            7,
+            "Tax",
+            "Appealing a tax decision.",
+            "Treth",
+            "Apelio yn erbyn penderfyniad treth."
+            ,
+            "tax",
+            "other",
+            null,
+            null,
+            null,
+            new AreaOfLaw(),
+            null,
+            null,
+            "proximity"
+        ));
+
+        serviceAreaList.add(createServiceAreaWithDetails(
+            5,
+            "Benefits"
+            ,
+            "Appealing entitlement to benefits such as Personal Independence Payment (PIP), Employment and Support Allowance (ESA) or Universal Credit."
+            ,
+            "Budd-daliadau",
+            "Apelio yn erbyn hawl i gael budd-daliadau fel Taliad Annibyniaeth Personol (PIP), Lwfans Cyflogaeth a Chymorth (ESA) neu Gredyd Cynhwysol"
+            ,
+            "benefits",
+            "other",
+            "https://www.gov.uk/appeal-benefit-decision/submit-appeal"
+            ,
+            "Appeal a benefits decision online",
+            "Apelio yn erbyn penderfyniad budd-daliadau ar-lein",
+            new AreaOfLaw(),
+            "We manage benefits appeals at our central service centre. Find where to send your documents or ask about your application’s progress."
+            ,
+            "Rydym yn rheoli apeliadau budd-daliadau yn ein canolfan wasanaeth ganolog",
+            "proximity"
+        ));
+
+        areaOfLawList.add(createServiceAreaWithDetails(34252,
+                                                       "Social security",
+                                                       "https://www.gov.uk/tribunal/sscs",
+                                                       "Information about the Social Security and Child Support Tribunal"
+            ,
+                                                       "Gwybodaeth ynglŷn â'r tribiwnlys nawdd cymdeithasol a chynnal plant",
+                                                       "Benefits",
+                                                       "Budd-daliadau"
+            ,
+                                                       "Benefits",
+                                                       "Budd-daliadau",
+                                                       "https://www.gov.uk/appeal-benefit-decision",
+                                                       "https://www.gov.uk/tribunal/sscs"));
+
+        areaOfLawList.add(createServiceAreaWithDetails(34263,
+                                                       "Tax",
+                                                       "https://www.gov.uk/tax-tribunal",
+                                                       "Information about tax tribunals"
+            ,
+                                                       "Gwybodaeth am tribiwnlysoedd treth",
+                                                       null,
+                                                       "Treth",
+                                                       null,
+                                                       "Treth",
+                                                       null,
+                                                       "https://www.gov.uk/tax-tribunal"));
+
+        areaOfLawList.add(createServiceAreaWithDetails(34254,
+                                                       "Money claims",
+                                                       "https://www.gov.uk/make-court-claim-for-money",
+                                                       "Information about making a court claim for money",
+                                                       "Gwybodaeth ynglŷn â gwneud hawliad llys am arian",
+                                                       null,
+                                                       "Hawliadau am arian",
+                                                       null,
+                                                       "Hawliadau am arian",
+                                                       null,
+                                                       "https://www.gov.uk/make-court-claim-for-money"
+        ));
+
+    }
+
+    private ServiceArea createServiceAreaWithDetails(int id, String name, String description,
+                                                     String nameCy, String descriptionCy, String slug,
+                                                     String type, String onlineUrl, String onlineText,
+                                                     String onlineTextCy, AreaOfLaw areaOfLaw, String text,
+                                                     String textCy, String catchmentMethod) {
+        ServiceArea serviceArea = new ServiceArea();
+        serviceArea.setId(id);
+        serviceArea.setName(name);
+        serviceArea.setDescription(description);
+        serviceArea.setNameCy(nameCy);
+        serviceArea.setDescriptionCy(descriptionCy);
+        serviceArea.setSlug(slug);
+        serviceArea.setType(type);
+        serviceArea.setOnlineUrl(onlineUrl);
+        serviceArea.setOnlineText(onlineText);
+        serviceArea.setOnlineTextCy(onlineTextCy);
+        serviceArea.setAreaOfLaw(areaOfLaw);
+        serviceArea.setText(text);
+        serviceArea.setTextCy(textCy);
+        serviceArea.setCatchmentMethod(catchmentMethod);
+        return serviceArea;
+    }
+
+    private AreaOfLaw createServiceAreaWithDetails(int id, String name, String externalLink,
+                                                   String externalLinkDesc, String externalLinkDescCy,
+                                                   String altName, String altNameCy, String displayName,
+                                                   String displayNameCy, String displayExternalLink,
+                                                   String externalLinkCy) {
+        AreaOfLaw areaOfLaw = new AreaOfLaw();
+        areaOfLaw.setId(id);
+        areaOfLaw.setName(name);
+        areaOfLaw.setExternalLink(externalLink);
+        areaOfLaw.setExternalLinkDescription(externalLinkDesc);
+        areaOfLaw.setExternalLinkDescriptionCy(externalLinkDescCy);
+        areaOfLaw.setAltName(altName);
+        areaOfLaw.setAltNameCy(altNameCy);
+        areaOfLaw.setDisplayName(displayName);
+        areaOfLaw.setDisplayNameCy(displayNameCy);
+        areaOfLaw.setDisplayExternalLink(displayExternalLink);
+        areaOfLaw.setExternalLinkCy(externalLinkCy);
+        return areaOfLaw;
     }
 
     @Test
@@ -139,7 +292,8 @@ class AdminServiceTest {
         assertThat(courtResults.getInfoCy()).isNotEqualTo(court.getInfoCy());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
                                                            court,
-                                                           courtResults, SOME_SLUG);
+                                                           courtResults, SOME_SLUG
+        );
     }
 
     @Test
@@ -156,7 +310,8 @@ class AdminServiceTest {
         assertThat(courtResults.getAccessScheme()).isEqualTo(null);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
                                                            court,
-                                                           courtResults, SOME_SLUG);
+                                                           courtResults, SOME_SLUG
+        );
     }
 
     @Test
@@ -172,7 +327,8 @@ class AdminServiceTest {
         assertThat(courtResults.getAccessScheme()).isEqualTo(court.getAccessScheme());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
                                                            court,
-                                                           courtResults, SOME_SLUG);
+                                                           courtResults, SOME_SLUG
+        );
     }
 
     @Test
@@ -240,7 +396,8 @@ class AdminServiceTest {
         verify(courtRepository).deleteById(courtEntity.getId());
         verify(adminAuditService).saveAudit(anyString(),
                                             any(uk.gov.hmcts.dts.fact.model.admin.Court.class),
-                                            any(), anyString());
+                                            any(), anyString()
+        );
     }
 
     @Test
@@ -258,13 +415,15 @@ class AdminServiceTest {
         when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
         uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
             adminService.addNewCourt(SOME_COURT, SOME_SLUG, false,
-                                     LONGITUDE, LATITUDE, new ArrayList<>());
+                                     LONGITUDE, LATITUDE, new ArrayList<>()
+            );
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
         assertThat(returnedCourt.getInPerson()).isTrue();
         verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
-                                            returnedCourt, SOME_SLUG);
+                                            returnedCourt, SOME_SLUG
+        );
         verify(courtRepository, times(2)).save(any(Court.class));
     }
 
@@ -274,13 +433,15 @@ class AdminServiceTest {
         when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
         uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
             adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
-                                     LONGITUDE, LATITUDE, new ArrayList<>());
+                                     LONGITUDE, LATITUDE, new ArrayList<>()
+            );
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
         assertThat(returnedCourt.getInPerson()).isFalse();
         verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
-                                            returnedCourt, SOME_SLUG);
+                                            returnedCourt, SOME_SLUG
+        );
         verify(courtRepository, times(2)).save(any(Court.class));
     }
 
@@ -288,11 +449,40 @@ class AdminServiceTest {
     void shouldNotAddNewCourtIfAlreadyExists() {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(new Court()));
         assertThatThrownBy(() -> adminService.addNewCourt(SOME_COURT, SOME_SLUG, false,
-                                                          LONGITUDE, LATITUDE, new ArrayList<>()))
+                                                          LONGITUDE, LATITUDE, new ArrayList<>()
+        ))
             .isInstanceOf(DuplicatedListItemException.class)
             .hasMessage("Court already exists with slug: " + SOME_SLUG);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(),
-                                                     anyString(), anyString());
+                                                     anyString(), anyString()
+        );
         verify(courtRepository, never()).save(any(Court.class));
+    }
+
+    @Test
+    void shouldSetServiceCentreIntroParagraphs() {
+        when(serviceAreaRepository.findAllByNameIn(any()))
+            .thenReturn(Optional.ofNullable(serviceAreaList));
+        when(areasOfLawRepository.findAllByNameIn(any()))
+            .thenReturn(Optional.ofNullable(areaOfLawList));
+        when(courtRepository.save(any()))
+            .thenReturn(courtEntity);
+
+        ArgumentCaptor<Court> courtArgumentCaptor = ArgumentCaptor.forClass(Court.class);
+
+        adminService.addNewCourt("some-name", "slug",
+                                 true, 1.0, 2.0, Arrays.asList("Benefits", "Tax", "Money claims"));
+
+        verify(courtRepository, times(2)).save(courtArgumentCaptor.capture());
+
+        Court entityToCheck = courtArgumentCaptor.getAllValues().get(1);
+        assertThat(entityToCheck.getServiceCentre().getIntroParagraph()).isEqualTo("This location services all of England"
+                                                                                       + " and Wales for benefits, tax and money claims."
+                                                                                       + " We do not provide an in-person service.");
+        assertThat(entityToCheck.getServiceCentre().getIntroParagraphCy()).isEqualTo("Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr "
+                                                                                         + "i gyd ar gyfer hawliadau am arian, treth a "
+                                                                                         + "budd-daliadau. Nid ydym yn darparu gwasanaeth "
+                                                                                         + "wyneb yn wyneb.");
+
     }
 }

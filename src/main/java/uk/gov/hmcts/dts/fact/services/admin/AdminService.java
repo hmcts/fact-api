@@ -164,7 +164,8 @@ public class AdminService {
         newCourt.setWelshEnabled(true);
         newCourt.setLon(lon);
         newCourt.setLat(lat);
-        List<ServiceArea> serviceAreaList = serviceAreaRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
+        List<ServiceArea> serviceAreaList = serviceAreaRepository.findAllByNameIn(serviceAreas)
+            .orElse(Collections.emptyList());
         newCourt.setServiceAreas(serviceAreaList);
         courtRepository.save(newCourt);
 
