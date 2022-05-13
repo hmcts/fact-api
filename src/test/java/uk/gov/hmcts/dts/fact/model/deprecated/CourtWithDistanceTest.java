@@ -4,12 +4,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.DxCode;
-import uk.gov.hmcts.dts.fact.entity.County;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
