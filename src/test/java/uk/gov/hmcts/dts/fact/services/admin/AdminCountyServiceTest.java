@@ -27,7 +27,6 @@ public class AdminCountyServiceTest {
     private static final String COUNTY_COUNTRY1 = "England";
     private static final String COUNTY_COUNTRY2 = "Scotland";
     private static final String COUNTY_COUNTRY3 = "Wales";
-
     private static final uk.gov.hmcts.dts.fact.entity.County COUNTY1 = new uk.gov.hmcts.dts.fact.entity.County(COUNTY_ID1, COUNTY_NAME1, COUNTY_COUNTRY1);
     private static final uk.gov.hmcts.dts.fact.entity.County COUNTY2 = new uk.gov.hmcts.dts.fact.entity.County(COUNTY_ID2, COUNTY_NAME2, COUNTY_COUNTRY2);
     private static final uk.gov.hmcts.dts.fact.entity.County COUNTY3 = new uk.gov.hmcts.dts.fact.entity.County(COUNTY_ID3, COUNTY_NAME3, COUNTY_COUNTRY3);
