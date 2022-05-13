@@ -1,11 +1,9 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import io.vavr.collection.Array;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,6 +47,7 @@ class AdminServiceTest {
     private static uk.gov.hmcts.dts.fact.model.admin.Court court;
     private static final String NOT_FOUND = "Not found: ";
     private static final String AUDIT_TYPE = "Create new court";
+    private static final List<String> SERVICE_AREAS = Arrays.asList("Benefits", "Tax", "Money claims");
 
     @Autowired
     private AdminService adminService;
@@ -102,150 +101,46 @@ class AdminServiceTest {
         serviceAreaList = new ArrayList<>();
         areaOfLawList = new ArrayList<>();
 
-        serviceAreaList.add(createServiceAreaWithDetails(
-            1,
-            "Money claims",
-            "Claims for when you are owed money or responding to money claims against you."
-            ,
-            "Hawliadau am arian",
-            "Hawliadau pan mae arian yn ddyledus ichi neu ymateb i hawliadau am arian yn eich erbyn.",
-            "money-claims"
-            ,
-            "civil",
-            "https://www.gov.uk/make-money-claim",
-            "Make a money claim online",
-            "Gwneud hawliad am arian ar-lein"
-            ,
-            new AreaOfLaw(),
-            "We manage your money claims applications at our central service centre. Find where to send your documents or ask about your application’s progress."
-            ,
-            "Rydym yn rheoli eich ceisiadau am hawliadau am arian yn ein canolfan wasanaeth ganolog",
-            "postcode"
+
+        serviceAreaList.add(new ServiceArea(1, "Money claims", "Hawliadau am arian",
+                                            "Claims for when you are owed money or responding to money claims against you.",
+                                            "Hawliadau pan mae arian yn ddyledus ichi neu ymateb i hawliadau am arian yn eich erbyn.",
+                                            "money-claims",  "https://www.gov.uk/make-money-claim",
+                                            "Make a money claim online", "Gwneud hawliad am arian ar-lein",
+                                            "civil", "We manage your money claims applications at our central service centre. Find where to send your documents or ask about your application’s progress.",
+                                            "Rydym yn rheoli eich ceisiadau am hawliadau am arian yn ein canolfan wasanaeth ganolog",
+                                            "postcode"
         ));
 
-        serviceAreaList.add(createServiceAreaWithDetails(
-            7,
-            "Tax",
-            "Appealing a tax decision.",
-            "Treth",
-            "Apelio yn erbyn penderfyniad treth."
-            ,
-            "tax",
-            "other",
-            null,
-            null,
-            null,
-            new AreaOfLaw(),
-            null,
-            null,
-            "proximity"
+        serviceAreaList.add(new ServiceArea(7, "Tax", "Treth", "Appealing a tax decision.",
+                                            "Apelio yn erbyn penderfyniad treth.", "tax",  null,
+                                            null,  null, "other", null, null,
+                                            "proximity"
         ));
 
-        serviceAreaList.add(createServiceAreaWithDetails(
-            5,
-            "Benefits"
-            ,
-            "Appealing entitlement to benefits such as Personal Independence Payment (PIP), Employment and Support Allowance (ESA) or Universal Credit."
-            ,
-            "Budd-daliadau",
-            "Apelio yn erbyn hawl i gael budd-daliadau fel Taliad Annibyniaeth Personol (PIP), Lwfans Cyflogaeth a Chymorth (ESA) neu Gredyd Cynhwysol"
-            ,
-            "benefits",
-            "other",
-            "https://www.gov.uk/appeal-benefit-decision/submit-appeal"
-            ,
-            "Appeal a benefits decision online",
-            "Apelio yn erbyn penderfyniad budd-daliadau ar-lein",
-            new AreaOfLaw(),
-            "We manage benefits appeals at our central service centre. Find where to send your documents or ask about your application’s progress."
-            ,
-            "Rydym yn rheoli apeliadau budd-daliadau yn ein canolfan wasanaeth ganolog",
-            "proximity"
+        serviceAreaList.add(new ServiceArea(5, "Benefits", "Budd-daliadau",
+                                            "Appealing entitlement to benefits such as Personal Independence Payment (PIP), Employment and Support Allowance (ESA) or Universal Credit.",
+                                            "Apelio yn erbyn hawl i gael budd-daliadau fel Taliad Annibyniaeth Personol (PIP), Lwfans Cyflogaeth a Chymorth (ESA) neu Gredyd Cynhwysol",
+                                            "benefits-slug",  "https://www.gov.uk/appeal-benefit-decision/submit-appeal",
+                                            "Appeal a benefits decision online", "Apelio yn erbyn penderfyniad budd-daliadau ar-lein",
+                                            "other", "We manage benefits appeals at our central service centre. Find where to send your documents or ask about your application’s progress.",
+                                            "Rydym yn rheoli apeliadau budd-daliadau yn ein canolfan wasanaeth ganolog",
+                                            "proximity"
         ));
 
-        areaOfLawList.add(createServiceAreaWithDetails(34252,
-                                                       "Social security",
-                                                       "https://www.gov.uk/tribunal/sscs",
-                                                       "Information about the Social Security and Child Support Tribunal"
-            ,
-                                                       "Gwybodaeth ynglŷn â'r tribiwnlys nawdd cymdeithasol a chynnal plant",
-                                                       "Benefits",
-                                                       "Budd-daliadau"
-            ,
-                                                       "Benefits",
-                                                       "Budd-daliadau",
-                                                       "https://www.gov.uk/appeal-benefit-decision",
-                                                       "https://www.gov.uk/tribunal/sscs"));
+        areaOfLawList.add(new AreaOfLaw(34_252, "Social security", "https://www.gov.uk/tribunal/sscs",
+                                        "https://www.gov.uk/tribunal/sscs",
+                                        "Information about the Social Security and Child Support Tribunal",
+                                        "Gwybodaeth ynglŷn â'r tribiwnlys nawdd cymdeithasol a chynnal plant",
+                                        "Benefits", "Budd-daliadau", "Social security and Benefits", "Budd-daliadau",
+                                        "https://www.gov.uk/appeal-benefit-decision"));
 
-        areaOfLawList.add(createServiceAreaWithDetails(34263,
-                                                       "Tax",
-                                                       "https://www.gov.uk/tax-tribunal",
-                                                       "Information about tax tribunals"
-            ,
-                                                       "Gwybodaeth am tribiwnlysoedd treth",
-                                                       null,
-                                                       "Treth",
-                                                       null,
-                                                       "Treth",
-                                                       null,
-                                                       "https://www.gov.uk/tax-tribunal"));
+        areaOfLawList.add(new AreaOfLaw(34_263, "Tax", "https://www.gov.uk/tax-tribunal", "https://www.gov.uk/tax-tribunal",
+                                        "Information about tax tribunals", "Gwybodaeth am tribiwnlysoedd treth", null,
+                                        "Treth", null, "Treth", null));
 
-        areaOfLawList.add(createServiceAreaWithDetails(34254,
-                                                       "Money claims",
-                                                       "https://www.gov.uk/make-court-claim-for-money",
-                                                       "Information about making a court claim for money",
-                                                       "Gwybodaeth ynglŷn â gwneud hawliad llys am arian",
-                                                       null,
-                                                       "Hawliadau am arian",
-                                                       null,
-                                                       "Hawliadau am arian",
-                                                       null,
-                                                       "https://www.gov.uk/make-court-claim-for-money"
+        areaOfLawList.add(new AreaOfLaw(34_254, "Money claims", "https://www.gov.uk/make-court-claim-for-money", "https://www.gov.uk/make-court-claim-for-money", "Information about making a court claim for money", "Gwybodaeth ynglŷn â gwneud hawliad llys am arian", null, "Hawliadau am arian", null, "Hawliadau am arian", null
         ));
-
-    }
-
-    private ServiceArea createServiceAreaWithDetails(int id, String name, String description,
-                                                     String nameCy, String descriptionCy, String slug,
-                                                     String type, String onlineUrl, String onlineText,
-                                                     String onlineTextCy, AreaOfLaw areaOfLaw, String text,
-                                                     String textCy, String catchmentMethod) {
-        ServiceArea serviceArea = new ServiceArea();
-        serviceArea.setId(id);
-        serviceArea.setName(name);
-        serviceArea.setDescription(description);
-        serviceArea.setNameCy(nameCy);
-        serviceArea.setDescriptionCy(descriptionCy);
-        serviceArea.setSlug(slug);
-        serviceArea.setType(type);
-        serviceArea.setOnlineUrl(onlineUrl);
-        serviceArea.setOnlineText(onlineText);
-        serviceArea.setOnlineTextCy(onlineTextCy);
-        serviceArea.setAreaOfLaw(areaOfLaw);
-        serviceArea.setText(text);
-        serviceArea.setTextCy(textCy);
-        serviceArea.setCatchmentMethod(catchmentMethod);
-        return serviceArea;
-    }
-
-    private AreaOfLaw createServiceAreaWithDetails(int id, String name, String externalLink,
-                                                   String externalLinkDesc, String externalLinkDescCy,
-                                                   String altName, String altNameCy, String displayName,
-                                                   String displayNameCy, String displayExternalLink,
-                                                   String externalLinkCy) {
-        AreaOfLaw areaOfLaw = new AreaOfLaw();
-        areaOfLaw.setId(id);
-        areaOfLaw.setName(name);
-        areaOfLaw.setExternalLink(externalLink);
-        areaOfLaw.setExternalLinkDescription(externalLinkDesc);
-        areaOfLaw.setExternalLinkDescriptionCy(externalLinkDescCy);
-        areaOfLaw.setAltName(altName);
-        areaOfLaw.setAltNameCy(altNameCy);
-        areaOfLaw.setDisplayName(displayName);
-        areaOfLaw.setDisplayNameCy(displayNameCy);
-        areaOfLaw.setDisplayExternalLink(displayExternalLink);
-        areaOfLaw.setExternalLinkCy(externalLinkCy);
-        return areaOfLaw;
     }
 
     @Test
@@ -470,8 +365,8 @@ class AdminServiceTest {
 
         ArgumentCaptor<Court> courtArgumentCaptor = ArgumentCaptor.forClass(Court.class);
 
-        adminService.addNewCourt("some-name", "slug",
-                                 true, 1.0, 2.0, Arrays.asList("Benefits", "Tax", "Money claims"));
+        adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
+                                 LONGITUDE, LATITUDE, SERVICE_AREAS);
 
         verify(courtRepository, times(2)).save(courtArgumentCaptor.capture());
 

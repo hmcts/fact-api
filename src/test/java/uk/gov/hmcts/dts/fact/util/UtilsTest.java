@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.util;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,6 +15,9 @@ class UtilsTest {
 
     protected static final String ENGLISH = "english";
     protected static final String WELSH = "welsh";
+    private static final String LANG = "en";
+    private static final List<String> SERVICE_AREAS = Arrays.asList("Adoption", "Benefits", "Tax");
+    private static final String FORMATTED_SERVICE_AREAS = "adoption, benefits and tax";
 
     @Test
     void testHtmlFilter() {
@@ -84,5 +88,10 @@ class UtilsTest {
         assertThat(constructAddressLines(null))
             .isNotNull()
             .isEmpty();
+    }
+
+    @Test
+    void shouldFormatServiceAreasForIntroParagraph() {
+        assertEquals(FORMATTED_SERVICE_AREAS, formatServiceAreasForIntroPara(SERVICE_AREAS, LANG));
     }
 }
