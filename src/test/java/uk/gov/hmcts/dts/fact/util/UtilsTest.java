@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.gov.hmcts.dts.fact.util.Utils.*;
 
+@SuppressWarnings("PMD.TooManyMethods")
 class UtilsTest {
 
     protected static final String ENGLISH = "english";
