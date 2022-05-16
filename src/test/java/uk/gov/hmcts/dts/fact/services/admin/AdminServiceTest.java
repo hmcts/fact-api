@@ -319,7 +319,7 @@ class AdminServiceTest {
         verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
                                             returnedCourt, SOME_SLUG
         );
-        verify(courtRepository, times(2)).save(any(Court.class));
+        verify(courtRepository, times(1)).save(any(Court.class));
     }
 
     @Test
@@ -337,7 +337,7 @@ class AdminServiceTest {
         verify(adminAuditService).saveAudit(AUDIT_TYPE, null,
                                             returnedCourt, SOME_SLUG
         );
-        verify(courtRepository, times(2)).save(any(Court.class));
+        verify(courtRepository, times(1)).save(any(Court.class));
     }
 
     @Test
@@ -368,9 +368,9 @@ class AdminServiceTest {
         adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
                                  LONGITUDE, LATITUDE, SERVICE_AREAS);
 
-        verify(courtRepository, times(2)).save(courtArgumentCaptor.capture());
+        verify(courtRepository).save(courtArgumentCaptor.capture());
 
-        Court entityToCheck = courtArgumentCaptor.getAllValues().get(1);
+        Court entityToCheck = courtArgumentCaptor.getAllValues().get(0);
         assertThat(entityToCheck.getServiceCentre().getIntroParagraph()).isEqualTo("This location services all of England"
                                                                                        + " and Wales for benefits, tax and money claims."
                                                                                        + " We do not provide an in-person service.");

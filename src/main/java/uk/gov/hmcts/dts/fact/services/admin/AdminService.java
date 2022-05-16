@@ -175,7 +175,9 @@ public class AdminService {
             List<String> serviceAreaDisplayNames = new ArrayList<>();
             List<String> serviceAreaDisplayNamesCy = new ArrayList<>();
 
-            if (!areasOfLawList.isEmpty()) {
+            if (areasOfLawList.isEmpty()) {
+                serviceAreaDisplayNames.addAll(serviceAreas);
+            } else {
                 for (String serviceArea : serviceAreas) {
                     serviceAreaDisplayNames.add(getDisplayName(areasOfLawList, serviceArea));
                 }
@@ -204,7 +206,7 @@ public class AdminService {
         inPerson.setCourtId(newCourt);
         newCourt.setInPerson(inPerson);
 
-        Court createdCourtModel = new Court(courtRepository.save(newCourt));
+        Court createdCourtModel = new Court(newCourt);
 
         adminAuditService.saveAudit(
             AuditType.findByName("Create new court"),
