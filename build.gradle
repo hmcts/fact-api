@@ -240,7 +240,7 @@ dependencies {
 
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.2'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.1'
-  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.2.20220324', ext: 'pom'
+  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.3', ext: 'pom'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.2'
 
   implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20211018.2'
