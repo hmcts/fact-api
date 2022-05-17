@@ -206,7 +206,7 @@ public class AdminService {
         inPerson.setCourtId(newCourt);
         newCourt.setInPerson(inPerson);
 
-        Court createdCourtModel = new Court(newCourt);
+        Court createdCourtModel = new Court(courtRepository.save(newCourt));
 
         adminAuditService.saveAudit(
             AuditType.findByName("Create new court"),
