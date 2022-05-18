@@ -19,12 +19,12 @@ ALTER TABLE ONLY public.search_county
 
 
 COPY public.search_county (name, country) FROM stdin;
-Bath and North East Somerset	England
 Bedfordshire	England
 Berkshire	England
 Bristol	England
 Buckinghamshire	England
 Cambridgeshire	England
+City of London	England
 Cheshire	England
 Cornwall	England
 County Durham	England
@@ -32,7 +32,8 @@ Cumbria	England
 Derbyshire	England
 Devon	England
 Dorset	England
-Sussex	England
+East Riding of Yorkshire	England
+East Sussex	England
 Essex	England
 Gloucestershire	England
 Greater London	England
@@ -41,15 +42,13 @@ Hampshire	England
 Herefordshire	England
 Hertfordshire	England
 Isle of Wight	England
-Isles of Scilly	England
 Kent	England
 Lancashire	England
 Leicestershire	England
 Lincolnshire	England
 Merseyside	England
 Norfolk	England
-North Somerset	England
-Yorkshire	England
+North Yorkshire	England
 Northamptonshire	England
 Northumberland	England
 Nottinghamshire	England
@@ -57,42 +56,49 @@ Oxfordshire	England
 Rutland	England
 Shropshire	England
 Somerset	England
-South Gloucestershire	England
 South Yorkshire	England
 Staffordshire	England
 Suffolk	England
 Surrey	England
 Tyne & Wear	England
 Warwickshire	England
+West Sussex	England
 West Midlands	England
+West Yorkshire	England
 Wiltshire	England
 Worcestershire	England
+Aberdeen city	Scotland
 Aberdeenshire	Scotland
 Angus	Scotland
 Argyll & Bute	Scotland
-Ayrshire	Scotland
-Banffshire	Scotland
-Berwickshire	Scotland
-Borders	Scotland
-Caithness	Scotland
+City of Edinburgh	Scotland
 Clackmannanshire	Scotland
 Dumfries & Galloway	Scotland
-Dunbartonshire	Scotland
-Lothian	Scotland
+Dundee City	Scotland
+East Ayrshire	Scotland
+East Dunbartonshire	Scotland
+East Lothian	Scotland
 East Renfrewshire	Scotland
+Falkirk	Scotland
 Fife	Scotland
+Glasgow City	Scotland
 Highland	Scotland
 Inverclyde	Scotland
-Kincardineshire	Scotland
-Midlothian	Scotland
+Modlothian	Scotland
 Moray	Scotland
-Lanarkshire	Scotland
+Nah-Eileanan Siar (Western Isles)	Scotland
+North Ayrshire	Scotland
+North Lanarkshire	Scotland
 Orkney	Scotland
-Perth & KInross	Scotland
+Perth & Kinross	Scotland
 Renfrewshire	Scotland
+Scottish Borders	Scotland
 Shetland	Scotland
-Stirlingshire	Scotland
-Western Isles	Scotland
+South Ayrshire	Scotland
+South Lanarkshire	Scotland
+Stirling	Scotland
+West Dunbartonshire	Scotland
+West Lothian	Scotland
 Blaenau Gwent	Wales
 Bridgend	Wales
 Caerphilly	Wales
@@ -113,7 +119,7 @@ Powys	Wales
 Rhondda Cynon Taff	Wales
 Swansea	Wales
 Torfaen	Wales
-Glamorgan	Wales
+Vale of Glamorgan	Wales
 Wrexham	Wales
 Antrim	Northern Ireland
 Armagh	Northern Ireland
