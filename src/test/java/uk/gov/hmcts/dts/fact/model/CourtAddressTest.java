@@ -60,6 +60,29 @@ class CourtAddressTest {
 
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
+    void testCreationNoCounty(boolean welsh) {
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
+        entity.setCounty(null);
+
+        CourtAddress courtAddress = new CourtAddress(entity);
+        assertEquals(welsh ? entity.getAddressCy().lines().collect(toList()) : entity.getAddress().lines().collect(
+            toList()), courtAddress.getAddressLines());
+        assertEquals(
+            welsh ? entity.getAddressType().getNameCy() : entity.getAddressType().getName(),
+            courtAddress.getAddressType()
+        );
+        assertEquals(entity.getPostcode(), courtAddress.getPostcode());
+        assertEquals(welsh ? entity.getTownNameCy() : entity.getTownName(), courtAddress.getTownName());
+        assertEquals("", courtAddress.getCounty());
+
+        LocaleContextHolder.resetLocaleContext();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
     void testNullAddressCreation(boolean welsh) {
         entity.setAddress(null);
         entity.setAddressCy(null);
