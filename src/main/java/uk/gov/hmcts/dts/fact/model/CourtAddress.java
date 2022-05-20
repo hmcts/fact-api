@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
@@ -32,7 +33,7 @@ public class CourtAddress {
         );
         this.addressLines = constructAddressLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
-        this.county = courtAddress.getCounty().getName();
+        this.county = courtAddress.getCounty() == null ? "": courtAddress.getCounty().getName();
         this.postcode = courtAddress.getPostcode();
         this.description = chooseString(courtAddress.getDescriptionCy(), courtAddress.getDescription());
     }
