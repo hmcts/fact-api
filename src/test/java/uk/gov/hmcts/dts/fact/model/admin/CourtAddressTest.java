@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.model.admin;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
+import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
 
 import java.util.Arrays;
@@ -15,12 +16,17 @@ public class CourtAddressTest {
     private static final String TOWN_NAME_CY = "town cy";
     private static final String POSTCODE = "postcode";
     private static final Integer ADDRESS_TYPE_ID = 10;
+    private static final Integer COUNTY_ID = 1;
+    private static final String DESCRIPTION = "Description";
+    private static final String DESCRIPTION_CY = "Description cy";
+
     private static final Court COURT_ENTITY = new Court();
 
     @Test
     void testCreationWhenAddressTypeIsSet() {
         final AddressType addressType = new AddressType(ADDRESS_TYPE_ID, "type", null);
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, POSTCODE);
+        final County county = new County(COUNTY_ID, "County", "Engalnd");
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, county, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
         final CourtAddress result = new CourtAddress(entity);
 
         final SoftAssertions softly = new SoftAssertions();
@@ -29,14 +35,17 @@ public class CourtAddressTest {
         softly.assertThat(result.getAddressLinesCy()).containsExactlyElementsOf(ADDRESS_CY);
         softly.assertThat(result.getTownName()).isEqualTo(TOWN_NAME);
         softly.assertThat(result.getTownNameCy()).isEqualTo(TOWN_NAME_CY);
+        softly.assertThat(result.getCountyId()).isEqualTo(COUNTY_ID);
         softly.assertThat(result.getPostcode()).isEqualTo(POSTCODE);
         softly.assertAll();
     }
 
     @Test
     void testCreationWhenAddressTypeIsNotSet() {
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, null, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, POSTCODE);
+        final County county = new County(COUNTY_ID, "County", "Engalnd");
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, null, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, county, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
         final CourtAddress result = new CourtAddress(entity);
+
 
         final SoftAssertions softly = new SoftAssertions();
         softly.assertThat(result.getAddressTypeId()).isNull();
@@ -44,6 +53,25 @@ public class CourtAddressTest {
         softly.assertThat(result.getAddressLinesCy()).containsExactlyElementsOf(ADDRESS_CY);
         softly.assertThat(result.getTownName()).isEqualTo(TOWN_NAME);
         softly.assertThat(result.getTownNameCy()).isEqualTo(TOWN_NAME_CY);
+        softly.assertThat(result.getCountyId()).isEqualTo(COUNTY_ID);
+        softly.assertThat(result.getPostcode()).isEqualTo(POSTCODE);
+        softly.assertAll();
+    }
+
+    @Test
+    void testCreationWhenCountyIsNotSet() {
+        final AddressType addressType = new AddressType(ADDRESS_TYPE_ID, "type", null);
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, null, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
+        final CourtAddress result = new CourtAddress(entity);
+
+
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result.getAddressTypeId()).isEqualTo(ADDRESS_TYPE_ID);
+        softly.assertThat(result.getAddressLines()).containsExactlyElementsOf(ADDRESS);
+        softly.assertThat(result.getAddressLinesCy()).containsExactlyElementsOf(ADDRESS_CY);
+        softly.assertThat(result.getTownName()).isEqualTo(TOWN_NAME);
+        softly.assertThat(result.getTownNameCy()).isEqualTo(TOWN_NAME_CY);
+        softly.assertThat(result.getCountyId()).isNull();
         softly.assertThat(result.getPostcode()).isEqualTo(POSTCODE);
         softly.assertAll();
     }

@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
+import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
@@ -38,6 +39,9 @@ public class AdminCourtAddressServiceTest {
     private static final int VISIT_US_ADDRESS_TYPE_ID = 5880;
     private static final int WRITE_TO_US_ADDRESS_TYPE_ID = 5881;
     private static final int VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID = 5882;
+    private static final int COUNTY_ID = 1;
+    private static final String COUNTY_NAME = "County";
+    private static final String COUNTY_COUNTRY = "England";
     private static final String VISIT_US_ADDRESS_TYPE_NAME = "Visit us";
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME = "Write to us";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME = "Visit or contact us";
@@ -48,6 +52,7 @@ public class AdminCourtAddressServiceTest {
     private static final AddressType VISIT_US_ADDRESS_TYPE = new AddressType(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE_NAME, VISIT_US_ADDRESS_TYPE_NAME_CY);
     private static final AddressType WRITE_TO_US_ADDRESS_TYPE = new AddressType(WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE_NAME, WRITE_TO_US_ADDRESS_TYPE_NAME_CY);
     private static final AddressType VISIT_OR_CONTACT_US_ADDRESS_TYPE = new AddressType(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME, VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY);
+    private static final County  COUNTY = new County(COUNTY_ID,COUNTY_NAME,COUNTY_COUNTRY);
     private static final Map<Integer, AddressType> ADDRESS_TYPE_MAP = Map.of(
         VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
         WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE,
@@ -68,23 +73,25 @@ public class AdminCourtAddressServiceTest {
     private static final String WRITE_TO_US_POSTCODE = "EC1A 1AA";
     private static final String VISIT_US_POSTCODE = "M1 2AA";
     private static final String PARTIAL_POSTCODE = "EC1A";
+    private static final String DESCRIPTION = "Description";
+    private static final String DESCRIPTION_CY = "Description cy";
 
     private static final int ADDRESS_COUNT = 2;
-    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null,
-                                                                             WRITE_TO_US_POSTCODE
+    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY_ID,
+                                                                             WRITE_TO_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
     );
-    private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(VISIT_US_ADDRESS_TYPE_ID, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null,
-                                                                          VISIT_US_POSTCODE
+    private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(VISIT_US_ADDRESS_TYPE_ID, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, COUNTY_ID,
+                                                                          VISIT_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
     );
     private static final List<CourtAddress> EXPECTED_ADDRESSES = asList(WRITE_TO_US_ADDRESS, VISIT_US_ADDRESS);
 
     private static final Court MOCK_COURT = mock(Court.class);
     private static final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> COURT_ADDRESSES_ENTITY = asList(
-        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null,
-                                                      WRITE_TO_US_POSTCODE
+        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY,
+                                                      WRITE_TO_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
         ),
-        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null,
-                                                      VISIT_US_POSTCODE
+        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, COUNTY,
+                                                      VISIT_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
         ));
 
     private static final Double LATITUDE = 1.0;
@@ -103,6 +110,9 @@ public class AdminCourtAddressServiceTest {
 
     @MockBean
     private AdminAddressTypeService adminAddressTypeService;
+
+    @MockBean
+    private AdminCountyService adminCountyService;
 
     @MockBean
     private AdminService adminService;
@@ -133,12 +143,12 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldSortAllVisitUsAddressesFirst() {
         final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> courtAddresses = asList(
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_OR_CONTACT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null)
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null, null),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null, null),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_OR_CONTACT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null,null,null),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null,null,null),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null, null),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null,null)
         );
         when(MOCK_COURT.getAddresses()).thenReturn(courtAddresses);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
@@ -165,6 +175,7 @@ public class AdminCourtAddressServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
                                                                             WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(adminCountyService.getCountyMap()).thenReturn(Map.of(COUNTY_ID, COUNTY));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
 
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
@@ -290,7 +301,7 @@ public class AdminCourtAddressServiceTest {
     @Test
     void validateCourtPostcodesShouldReturnInvalidPartialPostcode() {
         final List<CourtAddress> testAddresses = singletonList(
-            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, PARTIAL_POSTCODE)
+            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY_ID, PARTIAL_POSTCODE, DESCRIPTION, DESCRIPTION_CY)
         );
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         when(validationService.validateFullPostcodes(singletonList(PARTIAL_POSTCODE)))
@@ -307,7 +318,7 @@ public class AdminCourtAddressServiceTest {
 
     @Test
     void validateCourtPostcodesShouldNotUpdateCoordinatesForAddressWithMissingPostcode() {
-        final List<CourtAddress> testAddresses = singletonList(new CourtAddress(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, ""));
+        final List<CourtAddress> testAddresses = singletonList(new CourtAddress(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY_ID, "",DESCRIPTION,DESCRIPTION_CY));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).isEmpty();
         verifyNoInteractions(validationService);

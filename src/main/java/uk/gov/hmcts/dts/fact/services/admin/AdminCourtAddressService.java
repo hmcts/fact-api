@@ -28,6 +28,7 @@ public class AdminCourtAddressService {
     private final CourtRepository courtRepository;
     private final CourtAddressRepository courtAddressRepository;
     private final AdminAddressTypeService addressTypeService;
+    private final AdminCountyService countyService;
     private final AdminService adminService;
     private final MapitService mapitService;
     private final ValidationService validationService;
@@ -37,6 +38,7 @@ public class AdminCourtAddressService {
     public AdminCourtAddressService(final CourtRepository courtRepository,
                                     final CourtAddressRepository courtAddressRepository,
                                     final AdminAddressTypeService addressTypeService,
+                                    final AdminCountyService countyService,
                                     final AdminService adminService,
                                     final MapitService mapitService,
                                     final ValidationService validationService,
@@ -44,6 +46,7 @@ public class AdminCourtAddressService {
         this.courtRepository = courtRepository;
         this.courtAddressRepository = courtAddressRepository;
         this.addressTypeService = addressTypeService;
+        this.countyService = countyService;
         this.adminService = adminService;
         this.mapitService = mapitService;
         this.validationService = validationService;
@@ -134,6 +137,7 @@ public class AdminCourtAddressService {
 
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
+        final Map<Integer, uk.gov.hmcts.dts.fact.entity.County> countyMap = countyService.getCountyMap();
         return courtAddresses.stream()
             .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
                                                                     addressTypeMap.get(a.getAddressTypeId()),
@@ -141,7 +145,10 @@ public class AdminCourtAddressService {
                                                                     a.getAddressLinesCy(),
                                                                     a.getTownName(),
                                                                     a.getTownNameCy(),
-                                                                    a.getPostcode()))
+                                                                    countyMap.get(a.getCountyId()),
+                                                                    a.getPostcode(),
+                                                                    a.getDescription(),
+                                                                    a.getDescriptionCy()))
             .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .collect(toList());
     }

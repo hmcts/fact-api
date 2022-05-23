@@ -21,7 +21,9 @@ public class CourtAddress {
     private List<String> addressLines;
     @JsonProperty("town")
     private String townName;
+    private String county;
     private String postcode;
+    private String description;
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.addressType = chooseString(
@@ -30,6 +32,8 @@ public class CourtAddress {
         );
         this.addressLines = constructAddressLines(chooseString(courtAddress.getAddressCy(), courtAddress.getAddress()));
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
+        this.county = courtAddress.getCounty() == null ? "" : courtAddress.getCounty().getName();
         this.postcode = courtAddress.getPostcode();
+        this.description = chooseString(courtAddress.getDescriptionCy(), courtAddress.getDescription());
     }
 }

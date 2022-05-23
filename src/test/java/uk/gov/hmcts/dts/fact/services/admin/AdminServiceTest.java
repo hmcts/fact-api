@@ -16,7 +16,9 @@ import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +50,9 @@ class AdminServiceTest {
     private CourtRepository courtRepository;
 
     @MockBean
+    private ServiceAreaRepository serviceAreaRepository;
+
+    @MockBean
     private RolesProvider rolesProvider;
 
     @MockBean
@@ -66,6 +71,7 @@ class AdminServiceTest {
         courtEntity.setAlert("some-urgent-message");
         courtEntity.setAlertCy("some-urgent-message-cy");
         courtEntity.setDisplayed(true);
+        when(serviceAreaRepository.findAllByNameIn(any())).thenReturn(new ArrayList<>());
 
         court = new uk.gov.hmcts.dts.fact.model.admin.Court(
             "slug",
@@ -246,7 +252,7 @@ class AdminServiceTest {
         when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
         uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
             adminService.addNewCourt(SOME_COURT, SOME_SLUG, false,
-                                     LONGITUDE, LATITUDE);
+                                     LONGITUDE, LATITUDE, new ArrayList<>());
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
@@ -262,7 +268,7 @@ class AdminServiceTest {
         when(courtRepository.save(any(Court.class))).thenAnswer(i -> i.getArguments()[0]);
         uk.gov.hmcts.dts.fact.model.admin.Court returnedCourt =
             adminService.addNewCourt(SOME_COURT, SOME_SLUG, true,
-                                     LONGITUDE, LATITUDE);
+                                     LONGITUDE, LATITUDE, new ArrayList<>());
         assertThat(returnedCourt.getName()).isEqualTo(SOME_COURT);
         assertThat(returnedCourt.getSlug()).isEqualTo(SOME_SLUG);
         assertThat(returnedCourt.getOpen()).isTrue();
@@ -276,7 +282,7 @@ class AdminServiceTest {
     void shouldNotAddNewCourtIfAlreadyExists() {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(new Court()));
         assertThatThrownBy(() -> adminService.addNewCourt(SOME_COURT, SOME_SLUG, false,
-                                                          LONGITUDE, LATITUDE))
+                                                          LONGITUDE, LATITUDE, new ArrayList<>()))
             .isInstanceOf(DuplicatedListItemException.class)
             .hasMessage("Court already exists with slug: " + SOME_SLUG);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(),

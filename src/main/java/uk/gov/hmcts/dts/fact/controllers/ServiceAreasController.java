@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.dts.fact.services.ServiceAreaService;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     produces = {MediaType.APPLICATION_JSON_VALUE}

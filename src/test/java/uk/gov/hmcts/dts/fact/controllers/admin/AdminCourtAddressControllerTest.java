@@ -38,12 +38,16 @@ public class AdminCourtAddressControllerTest {
     private static final String TOWN_NAME2 = "second town";
     private static final String POSTCODE1 = "first postcode";
     private static final String POSTCODE2 = "second postcode";
+    private static final Integer COUNTY = 1;
+    private static final String DESCRIPTION = "Description";
+    private static final String DESCRIPTION_CY = "Description cy";
+
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
-        new CourtAddress(1, ADDRESS1, null, TOWN_NAME1, null, POSTCODE1),
-        new CourtAddress(2, ADDRESS2, null, TOWN_NAME2, null, POSTCODE2)
+        new CourtAddress(1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, DESCRIPTION, DESCRIPTION_CY),
+        new CourtAddress(2, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, DESCRIPTION, DESCRIPTION_CY)
     );
     private static String courtAddressesJson;
 

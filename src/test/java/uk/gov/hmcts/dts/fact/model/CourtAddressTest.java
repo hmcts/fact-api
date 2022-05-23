@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
+import uk.gov.hmcts.dts.fact.entity.County;
 
 import java.util.Locale;
 
@@ -24,6 +25,11 @@ class CourtAddressTest {
         final AddressType addressType = new AddressType();
         addressType.setName("Address Type");
         addressType.setNameCy("Address Type in Welsh");
+        final County county = new County();
+        county.setId(1);
+        county.setName("County");
+        county.setCountry("England");
+        entity.setCounty(county);
         entity.setAddressType(addressType);
         entity.setPostcode("A post code");
         entity.setTownName("A town name");
@@ -47,6 +53,30 @@ class CourtAddressTest {
         );
         assertEquals(entity.getPostcode(), courtAddress.getPostcode());
         assertEquals(welsh ? entity.getTownNameCy() : entity.getTownName(), courtAddress.getTownName());
+        assertEquals(entity.getCounty().getName(), courtAddress.getCounty());
+
+        LocaleContextHolder.resetLocaleContext();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void testCreationNoCounty(boolean welsh) {
+        if (welsh) {
+            Locale locale = new Locale("cy");
+            LocaleContextHolder.setLocale(locale);
+        }
+        entity.setCounty(null);
+
+        CourtAddress courtAddress = new CourtAddress(entity);
+        assertEquals(welsh ? entity.getAddressCy().lines().collect(toList()) : entity.getAddress().lines().collect(
+            toList()), courtAddress.getAddressLines());
+        assertEquals(
+            welsh ? entity.getAddressType().getNameCy() : entity.getAddressType().getName(),
+            courtAddress.getAddressType()
+        );
+        assertEquals(entity.getPostcode(), courtAddress.getPostcode());
+        assertEquals(welsh ? entity.getTownNameCy() : entity.getTownName(), courtAddress.getTownName());
+        assertEquals("", courtAddress.getCounty());
 
         LocaleContextHolder.resetLocaleContext();
     }

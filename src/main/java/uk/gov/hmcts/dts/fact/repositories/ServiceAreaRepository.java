@@ -10,4 +10,6 @@ public interface ServiceAreaRepository extends JpaRepository<ServiceArea, Intege
     Optional<ServiceArea> findBySlugIgnoreCase(String slug);
 
     List<ServiceArea> findByAreaOfLawId(Integer areaOfLawId);
+
+    List<ServiceArea> findAllByNameIn(List<String> serviceAreas);
 }

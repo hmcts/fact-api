@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import javax.validation.constraints.Pattern;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
+@RateLimiter(name = "default")
 @RestController
 @Validated
 @RequestMapping(

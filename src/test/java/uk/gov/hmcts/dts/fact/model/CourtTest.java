@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
 import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
@@ -40,11 +41,13 @@ class CourtTest {
     private static final String VISIT_US_ADDRESS_TYPE_NAME = "Visit us";
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME = "Write to us";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME = "Visit or contact us";
+    private static final int COUNTY_ID = 1;
+    private static final String COUNTY_NAME = "County";
+    private static final String COUNTY_COUNTRY = "England";
 
     @BeforeAll
     static void setUp() {
         courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
-
         final ServiceArea serviceAreaEntity = new ServiceArea();
         serviceAreaEntity.setName("Divorce");
         courtEntity.setServiceAreas(singletonList(serviceAreaEntity));
@@ -53,14 +56,15 @@ class CourtTest {
         inPersonEntity.setIsInPerson(true);
         inPersonEntity.setAccessScheme(false);
         courtEntity.setInPerson(inPersonEntity);
-
         final CourtAddress courtAddress = new CourtAddress();
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
         addressType.setName("Visit or contact us");
+        final County county = new County(COUNTY_ID, COUNTY_NAME, COUNTY_COUNTRY);
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
+        courtAddress.setCounty(county);
         courtEntity.setAddresses(singletonList(courtAddress));
 
         final Email emailEntity = new Email();
@@ -176,9 +180,11 @@ class CourtTest {
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
         addressType.setName("Write to us");
+        final County county = new County(COUNTY_ID, COUNTY_NAME, COUNTY_COUNTRY);
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
+        courtAddress.setCounty(county);
         courtEntity.setAddresses(singletonList(courtAddress));
 
         final Court court = new Court(courtEntity);
@@ -198,9 +204,11 @@ class CourtTest {
         courtAddress.setAddress("line 1\rline 2\nline3\r\nline4");
         final AddressType addressType = new AddressType();
         addressType.setName("Visit us");
+        final County county = new County(COUNTY_ID, COUNTY_NAME, COUNTY_COUNTRY);
         courtAddress.setAddressType(addressType);
         courtAddress.setPostcode("A post code");
         courtAddress.setTownName("A town name");
+        courtAddress.setCounty(county);
         courtEntity.setAddresses(singletonList(courtAddress));
 
         final Court court = new Court(courtEntity);
@@ -211,25 +219,32 @@ class CourtTest {
 
     @Test
     void testVisitUsOrVisitContactUsAddressesSortedFirst() {
+
+        final County countyEntity = new County(COUNTY_ID, COUNTY_NAME, COUNTY_COUNTRY);
+
         final CourtAddress courtAddressEntity1 = new CourtAddress();
         final AddressType addressType1 = new AddressType();
         addressType1.setName(VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME);
         courtAddressEntity1.setAddressType(addressType1);
+        courtAddressEntity1.setCounty(countyEntity);
 
         final CourtAddress courtAddressEntity2 = new CourtAddress();
         final AddressType addressType2 = new AddressType();
         addressType2.setName(WRITE_TO_US_ADDRESS_TYPE_NAME);
         courtAddressEntity2.setAddressType(addressType2);
+        courtAddressEntity2.setCounty(countyEntity);
 
         final CourtAddress courtAddressEntity3 = new CourtAddress();
         final AddressType addressType3 = new AddressType();
         addressType3.setName(WRITE_TO_US_ADDRESS_TYPE_NAME);
         courtAddressEntity3.setAddressType(addressType3);
+        courtAddressEntity3.setCounty(countyEntity);
 
         final CourtAddress courtAddressEntity4 = new CourtAddress();
         final AddressType addressType4 = new AddressType();
         addressType4.setName(VISIT_US_ADDRESS_TYPE_NAME);
         courtAddressEntity4.setAddressType(addressType4);
+        courtAddressEntity4.setCounty(countyEntity);
 
         final uk.gov.hmcts.dts.fact.entity.Court courtEntity = new uk.gov.hmcts.dts.fact.entity.Court();
         courtEntity.setAddresses(asList(courtAddressEntity1, courtAddressEntity2, courtAddressEntity3, courtAddressEntity4));
