@@ -4,7 +4,6 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.admin.AddressType;
 import uk.gov.hmcts.dts.fact.model.admin.County;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
