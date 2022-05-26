@@ -120,6 +120,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
             + "    OR regexp_replace(ca.town_name_cy, '[^A-Za-z0-9]+', '', 'g') ILIKE concat('%', :query, '%')"
             + "    OR regexp_replace(ca.postcode, '[^A-Za-z0-9]+', '', 'g') ILIKE concat('%', :query, '%'))"
             + "  ORDER BY"
+            + "    name, "
             + "    CASE WHEN COALESCE(regexp_replace(c.name, '[^A-Za-z0-9]+', '', 'g'), '') ILIKE concat('%', :query, '%')"
             + "           OR COALESCE(regexp_replace(c.name_cy, '[^A-Za-z0-9]+', '', 'g'), '') ILIKE concat('%', :query, '%')"
             + "         THEN 1 ELSE 0 END DESC,"
@@ -128,8 +129,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
             + "         THEN 1 ELSE 0 END DESC,"
             + "    CASE WHEN COALESCE(regexp_replace(ca.address, '[^A-Za-z0-9]+', '', 'g'), '') ILIKE concat('%', :query, '%')"
             + "           OR COALESCE(regexp_replace(ca.address_cy, '[^A-Za-z0-9]+', '', 'g'), '') ILIKE concat('%', :query, '%')"
-            + "         THEN 1 ELSE 0 END DESC,"
-            + "    name")
+            + "         THEN 1 ELSE 0 END DESC")
     List<Court> findCourtByNameAddressTownOrPartialPostcodeExactMatch(String query);
 
     /**
