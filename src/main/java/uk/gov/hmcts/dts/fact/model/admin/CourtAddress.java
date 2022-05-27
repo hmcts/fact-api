@@ -25,6 +25,7 @@ public class CourtAddress {
     private String townName;
     @JsonProperty("town_cy")
     private String townNameCy;
+    @JsonProperty("county_id")
     private Integer countyId;
     private String postcode;
     private String description;
