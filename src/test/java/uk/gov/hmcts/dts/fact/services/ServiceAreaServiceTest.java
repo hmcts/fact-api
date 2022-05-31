@@ -10,7 +10,6 @@ import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,8 +42,7 @@ class ServiceAreaServiceTest {
 
     @Test
     void shouldReturnAllServiceAreasObject() {
-        final List<ServiceArea> serviceAreas = new ArrayList<>();
-        when(serviceAreaRepository.findAllByNameIn(any())).thenReturn(serviceAreas);
+        when(serviceAreaRepository.findAllByNameIn(any())).thenReturn(Optional.empty());
         assertThat(serviceAreaService.getAllServiceAreas()).isInstanceOf(List.class);
     }
 }
