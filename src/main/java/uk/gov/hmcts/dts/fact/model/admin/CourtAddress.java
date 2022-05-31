@@ -25,6 +25,8 @@ public class CourtAddress {
     private String townName;
     @JsonProperty("town_cy")
     private String townNameCy;
+    @JsonProperty("county_id")
+    private Integer countyId;
     private String postcode;
     private String description;
     @JsonProperty("description_cy")
@@ -38,6 +40,9 @@ public class CourtAddress {
         this.addressLinesCy = constructAddressLines(courtAddress.getAddressCy());
         this.townName = courtAddress.getTownName();
         this.townNameCy = courtAddress.getTownNameCy();
+        if (courtAddress.getCounty() != null) {
+            this.countyId = courtAddress.getCounty().getId();
+        }
         this.postcode = courtAddress.getPostcode();
         this.description = courtAddress.getDescription();
         this.descriptionCy = courtAddress.getDescriptionCy();
