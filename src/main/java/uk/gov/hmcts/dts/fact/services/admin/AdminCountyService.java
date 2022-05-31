@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.model.admin.County;
 import uk.gov.hmcts.dts.fact.repositories.CountyRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class AdminCountyService {
         return countyRepository.findAll()
             .stream()
             .map(County::new)
+            .sorted(Comparator.comparing(County::getName))
             .collect(toList());
     }
 
