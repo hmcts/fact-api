@@ -4,18 +4,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.OpeningTime;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
+import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
 import uk.gov.hmcts.dts.fact.util.RepoUtils;
+import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.util.*;
 
@@ -29,16 +34,22 @@ public class AdminService {
     private final RolesProvider rolesProvider;
     private final AdminAuditService adminAuditService;
     private final ServiceAreaRepository serviceAreaRepository;
+    private final AreasOfLawRepository areasOfLawRepository;
+
+    private static final String INTRO_PARAGRAPH = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
+    private static final String INTRO_PARAGRAPH_CY = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.";
 
     @Autowired
     public AdminService(final CourtRepository courtRepository,
                         final RolesProvider rolesProvider,
                         final AdminAuditService adminAuditService,
-                        final ServiceAreaRepository serviceAreaRepository) {
+                        final ServiceAreaRepository serviceAreaRepository,
+                        final AreasOfLawRepository areasOfLawRepository) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
         this.adminAuditService = adminAuditService;
         this.serviceAreaRepository = serviceAreaRepository;
+        this.areasOfLawRepository = areasOfLawRepository;
     }
 
     public List<CourtReference> getAllCourtReferences() {
@@ -153,7 +164,37 @@ public class AdminService {
         newCourt.setWelshEnabled(true);
         newCourt.setLon(lon);
         newCourt.setLat(lat);
-        newCourt.setServiceAreas(serviceAreaRepository.findAllByNameIn(serviceAreas));
+        List<ServiceArea> serviceAreaList = serviceAreaRepository.findAllByNameIn(serviceAreas)
+            .orElse(Collections.emptyList());
+        newCourt.setServiceAreas(serviceAreaList);
+        courtRepository.save(newCourt);
+
+        if (serviceCentre) {
+            List<String> serviceAreasCy = serviceAreaList.stream().map(ServiceArea::getNameCy).collect(toList());
+            List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
+            List<String> serviceAreaDisplayNames = new ArrayList<>();
+            List<String> serviceAreaDisplayNamesCy = new ArrayList<>();
+
+            if (areasOfLawList.isEmpty()) {
+                serviceAreaDisplayNames.addAll(serviceAreas);
+            } else {
+                for (String serviceArea : serviceAreas) {
+                    serviceAreaDisplayNames.add(getDisplayName(areasOfLawList, serviceArea));
+                }
+            }
+
+            for (String serviceAreaCy : serviceAreasCy) {
+                serviceAreaDisplayNamesCy.add(getDisplayNameCy(areasOfLawList, serviceAreaCy));
+            }
+
+            ServiceCentre newServiceCentre = new ServiceCentre();
+            newServiceCentre.setCourtId(newCourt);
+            newServiceCentre.setIntroParagraph(INTRO_PARAGRAPH.replace("{serviceArea}",
+                                                                Utils.formatServiceAreasForIntroPara(serviceAreaDisplayNames, "en")));
+            newServiceCentre.setIntroParagraphCy(INTRO_PARAGRAPH_CY.replace("{serviceArea}",
+                                                                  Utils.formatServiceAreasForIntroPara(serviceAreaDisplayNamesCy, "cy")));
+            newCourt.setServiceCentre(newServiceCentre);
+        }
 
         // By default the court will be in person unless the "service centre" flag is ticked
         // in which case we can skip this, as it will then default to false
@@ -161,9 +202,8 @@ public class AdminService {
         inPerson.setIsInPerson(!serviceCentre);
         inPerson.setAccessScheme(false);
 
-        // Save the court to generate the ID and then link the search_court and search_inperson tables
-        // together through the court_id column relationship
-        inPerson.setCourtId(courtRepository.save(newCourt));
+        // Link the search_court and search_inperson tables together through the court_id column relationship
+        inPerson.setCourtId(newCourt);
         newCourt.setInPerson(inPerson);
 
         Court createdCourtModel = new Court(courtRepository.save(newCourt));
@@ -183,5 +223,21 @@ public class AdminService {
         adminAuditService.saveAudit(AuditType.findByName("Delete existing court"), new Court(court),
                                     null, courtSlug);
         courtRepository.deleteById(court.getId());
+    }
+
+    private String getDisplayName(List<AreaOfLaw> areasOfLaw, String serviceArea) {
+        return areasOfLaw.stream()
+            .filter(areaOfLaw -> areaOfLaw.getName().equals(serviceArea))
+            .findAny()
+            .map(AreaOfLaw::getDisplayName)
+            .orElse(serviceArea);
+    }
+
+    private String getDisplayNameCy(List<AreaOfLaw> areasOfLaw, String serviceAreaCy) {
+        return areasOfLaw.stream()
+            .filter(areaOfLaw -> areaOfLaw.getName().equals(serviceAreaCy))
+            .findAny()
+            .map(AreaOfLaw::getDisplayNameCy)
+            .orElse(serviceAreaCy);
     }
 }
