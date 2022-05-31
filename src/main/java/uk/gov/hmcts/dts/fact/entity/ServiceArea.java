@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+@SuppressWarnings({"PMD.ExcessiveParameterList"})
 @Entity
 @Table(name = "search_servicearea")
 @Getter
@@ -41,6 +42,27 @@ public class ServiceArea {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "area_of_law_id")
     private AreaOfLaw areaOfLaw;
+
+    public ServiceArea() {
+        // This constructor is intentionally empty. Nothing special is needed here.
+    }
+
+    public ServiceArea(int id, String name, String nameCy, String description, String descriptionCy, String slug, String onlineUrl,
+                       String onlineText, String onlineTextCy, String type, String text, String textCy, String catchmentMethod) {
+        this.id = id;
+        this.name = name;
+        this.nameCy = nameCy;
+        this.description = description;
+        this.descriptionCy = descriptionCy;
+        this.slug = slug;
+        this.onlineUrl = onlineUrl;
+        this.onlineText = onlineText;
+        this.onlineTextCy = onlineTextCy;
+        this.type = type;
+        this.text = text;
+        this.textCy = textCy;
+        this.catchmentMethod = catchmentMethod;
+    }
 
     public boolean isRegional() {
         return this.serviceAreaCourts.stream()
