@@ -31,18 +31,11 @@ public class AdminCourtApplicationUpdateControllerTest {
     private static final String ADDRESSES_PATH = "/" + "application-progression";
 
     private static final List<ApplicationUpdate> COURT_APPLICATION_UPDATES = Arrays.asList(
-        new ApplicationUpdate(        "English Type",
-                                      "Welsh Type",
-                                      "Email",
-                                      "External Link",
-                                      "External Link Description English",
-                                      "External Link Description Welsh"),
-        new ApplicationUpdate(        "English Type 2",
-                                      "Welsh Type 2",
-                                      "Email 2",
-                                      "External Link 2",
-                                      "External Link Description English 2",
-                                      "External Link Description Welsh 2")
+        new ApplicationUpdate("English Type", "Welsh Type", "Email", "External Link",
+                              "Link Description English", "Link Description Welsh"),
+        new ApplicationUpdate("English Type 2", "Welsh Type 2", "Email 2",
+                              "External Link 2", "External Link Description English 2",
+                              "External Link Description Welsh 2")
     );
 
     private static String courtApplicationUpdateJson;
