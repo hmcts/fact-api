@@ -124,7 +124,7 @@ public class AdminCourtApplicationUpdateServiceTest {
     void shouldReturnNotFoundWhenUpdatingApplicationUpdatesForNonExistentCourt() {
         when(courtRepository.findBySlug(TEST_SLUG)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> adminService.updateApplicationUpdates(TEST_SLUG, any()))
+        assertThatThrownBy(() -> adminService.updateApplicationUpdates(TEST_SLUG, EXPECTED_APPLICATION_UPDATES))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + TEST_SLUG);
         verify(adminAuditService, never()).saveAudit(anyString(), any(), any(), anyString());
