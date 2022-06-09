@@ -15,5 +15,7 @@
     <cve>CVE-2022-22968</cve>
     <cve>CVE-2022-22965</cve>
     <cve>CVE-2020-5408</cve> <!-- Wait until a version exists that fixes this -->
+    <cve>CVE-2022-22970</cve>
+    <cve>CVE-2022-22976</cve>
   </suppress>
 </suppressions>
