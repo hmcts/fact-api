@@ -40,6 +40,8 @@ public class Court {
     @JsonProperty("types")
     private List<CourtType> courtTypes;
 
+    private Boolean commonPlatform;
+
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.slug = courtEntity.getSlug();
         this.name = courtEntity.getName();
@@ -60,5 +62,6 @@ public class Court {
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtType::new).collect(toList());
+        this.commonPlatform = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getCommonPlatform();
     }
 }

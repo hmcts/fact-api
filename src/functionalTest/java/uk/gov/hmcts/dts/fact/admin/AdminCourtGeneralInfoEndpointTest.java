@@ -37,6 +37,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Welsh Admin Alert",
         "Intro paragraph",
         "Intro paragraph cy",
+        false,
         false
     );
     private static final CourtGeneralInfo EXPECTED_SUPER_ADMIN_COURT_INFO = new CourtGeneralInfo(
@@ -50,6 +51,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         "Super Welsh Admin Alert",
         "Intro paragraph",
         "Intro paragraph cy",
+        false,
         false
     );
 
@@ -76,6 +78,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
         assertThat(generalInfo.getAccessScheme()).isEqualTo(expectedCourtDetails.getAccessScheme());
         assertThat(generalInfo.getInfo()).isEqualTo(expectedCourtDetails.getInfo());
         assertThat(generalInfo.getAlert()).isEqualTo(expectedCourtDetails.getAlert());
+        assertThat(generalInfo.isCommonPlatform()).isEqualTo(expectedCourtDetails.getCommonFlag());
     }
 
 
