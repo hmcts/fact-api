@@ -13,7 +13,7 @@ cardiff-civil-and-family-justice-centre
 newport-south-wales-county-court-and-family-court
 swansea-civil-justice-centre
 caernarfon-justice-centre
-wrexham-county-and-family--court
+wrexham-county-and-family-court
 bristol-civil-and-family-justice-centre
 gloucester-and-cheltenham-county-and-family-court
 swindon-combined-court
