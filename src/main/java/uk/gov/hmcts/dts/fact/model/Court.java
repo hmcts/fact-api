@@ -70,7 +70,6 @@ public class Court {
     private List<String> serviceAreas;
     private Boolean inPerson;
     private Boolean accessScheme;
-
     private Boolean commonFlag;
     @JsonProperty("additional_links")
     private List<AdditionalLink> additionalLinks;
@@ -105,7 +104,7 @@ public class Court {
         this.accessScheme = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
         this.additionalLinks = getAdditionalLink(courtEntity);
         this.serviceCentre = getServiceCentreDetails(courtEntity);
-        this.commonFlag = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getAccessScheme();
+        this.commonFlag = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getCommonPlatform();
     }
 
     private ServiceCentre getServiceCentreDetails(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
