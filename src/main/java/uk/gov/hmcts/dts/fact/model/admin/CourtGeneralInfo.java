@@ -28,6 +28,9 @@ public class CourtGeneralInfo {
     private String scIntroParagraphCy;
     @JsonProperty("service_centre")
     private boolean serviceCentre;
+    @JsonProperty("common_platform")
+    private boolean commonPlatform;
+
 
     public CourtGeneralInfo(Court court) {
         this.name = court.getName();
@@ -43,5 +46,6 @@ public class CourtGeneralInfo {
             ? "" : court.getServiceCentre().getIntroParagraph();
         this.scIntroParagraphCy = court.getServiceCentre() == null
             ? "" : court.getServiceCentre().getIntroParagraphCy();
+        this.commonPlatform = court.getInPerson() != null && court.getInPerson().getCommonPlatform();
     }
 }
