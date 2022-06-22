@@ -78,9 +78,11 @@ public class AdminCourtGeneralInfoService {
             inPerson.setIsInPerson(true);
             inPerson.setCourtId(courtEntity);
             inPerson.setAccessScheme(generalInfo.getAccessScheme());
+            inPerson.setCommonPlatform(generalInfo.isCommonPlatform());
             courtEntity.setInPerson(inPerson);
         } else {
             courtEntity.getInPerson().setAccessScheme(generalInfo.getAccessScheme());
+            courtEntity.getInPerson().setCommonPlatform(generalInfo.isCommonPlatform());
         }
 
         CourtGeneralInfo updatedGeneralInfo = new CourtGeneralInfo(courtRepository.save(courtEntity));

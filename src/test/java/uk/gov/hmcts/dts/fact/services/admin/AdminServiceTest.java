@@ -95,7 +95,8 @@ class AdminServiceTest {
             "Birmingham Civil and Family Justice Centre Alert",
             "Birmingham Civil and Family Justice Centre Alert",
             emptyList(),
-            emptyList()
+            emptyList(),
+            false
         );
 
         serviceAreaList = new ArrayList<>();

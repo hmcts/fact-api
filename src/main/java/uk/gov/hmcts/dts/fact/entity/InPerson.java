@@ -21,4 +21,5 @@ public class InPerson {
     @JoinColumn(name = "court_id")
     private Court courtId;
     private Boolean accessScheme;
+    private Boolean commonPlatform;
 }

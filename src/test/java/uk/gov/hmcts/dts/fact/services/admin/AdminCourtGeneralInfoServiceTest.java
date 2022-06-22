@@ -54,16 +54,16 @@ public class AdminCourtGeneralInfoServiceTest {
 
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true,
                                                                                                 COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
-                                                                                                INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
+                                                                                                INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false, false);
     private static final CourtGeneralInfo ADMIN_INPUT_SC_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME,true, false, true,
                                                                                              COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
-                                                                                             INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, true);
+                                                                                             INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, true, false);
     private static final CourtGeneralInfo ADMIN_INPUT_COURT_GENERAL_INFO_DUPLICATE_NAME = new CourtGeneralInfo(COURT_DUPLICATED_NAME,true, false, true,
                                                                                                                COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
-                                                                                                               INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
+                                                                                                               INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false, false);
     private static final CourtGeneralInfo OUTPUT_COURT_GENERAL_INFO = new CourtGeneralInfo(COURT_NAME, true, true, true,
                                                                                            COURT_INFO, COURT_INFO_CY, COURT_ALERT, COURT_ALERT_CY,
-                                                                                           INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false);
+                                                                                           INTRO_PARAGRAPH, INTRO_PARAGRAPH_CY, false, false);
 
     @Autowired
     private AdminCourtGeneralInfoService adminService;
@@ -211,6 +211,7 @@ public class AdminCourtGeneralInfoServiceTest {
         assertEquals(1, capturedInPerson.size());
         assertTrue(capturedInPerson.get(0).getIsInPerson());
         assertTrue(capturedInPerson.get(0).getAccessScheme());
+        assertFalse(capturedInPerson.get(0).getCommonPlatform());
     }
 
     @Test
@@ -224,22 +225,23 @@ public class AdminCourtGeneralInfoServiceTest {
     }
 
     @Test
-    void shouldReturnExpectedInPersonAndAccessSchemeWithoutInPersonInfo() {
+    void shouldReturnExpectedInPersonAndAccessSchemeAndCommonPlatformWithoutInPersonInfo() {
         when(court.getInPerson()).thenReturn(null);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
 
         final CourtGeneralInfo result = adminService.getCourtGeneralInfoBySlug(COURT_SLUG);
         assertThat(result.getInPerson()).isEqualTo(false);
         assertThat(result.getAccessScheme()).isEqualTo(false);
+        assertThat(result.isCommonPlatform()).isEqualTo(false);
     }
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForInPersonTest() {
         return Stream.of(
-            Arguments.of(false, false, false),
-            Arguments.of(false, true, true),
-            Arguments.of(true, false, false),
-            Arguments.of(true, true, true)
+            Arguments.of(false, false, false, false),
+            Arguments.of(false, true, true, false),
+            Arguments.of(true, false, false, false),
+            Arguments.of(true, true, true, false)
         );
     }
 
@@ -280,7 +282,7 @@ public class AdminCourtGeneralInfoServiceTest {
 
     @ParameterizedTest
     @MethodSource("parametersForInPersonTest")
-    void shouldReturnExpectedInPersonAndAccessSchemeWithInPersonInfo(final Boolean isInPersonCourt, final Boolean isAccessScheme, final Boolean expectedAccessScheme) {
+    void shouldReturnExpectedInPersonAndAccessSchemeAndCommonPlatformWithInPersonInfo(final Boolean isInPersonCourt, final Boolean isAccessScheme, final Boolean expectedAccessScheme, final Boolean expectedCommonPlatform) {
         final InPerson inPerson = mock(InPerson.class);
         when(court.getInPerson()).thenReturn(inPerson);
         when(inPerson.getIsInPerson()).thenReturn(isInPersonCourt);
@@ -290,6 +292,7 @@ public class AdminCourtGeneralInfoServiceTest {
         final CourtGeneralInfo result = adminService.getCourtGeneralInfoBySlug(COURT_SLUG);
         assertThat(result.getInPerson()).isEqualTo(isInPersonCourt);
         assertThat(result.getAccessScheme()).isEqualTo(expectedAccessScheme);
+        assertThat(result.isCommonPlatform()).isEqualTo(expectedCommonPlatform);
     }
 
     private void setUpCourtGeneralInfo() {

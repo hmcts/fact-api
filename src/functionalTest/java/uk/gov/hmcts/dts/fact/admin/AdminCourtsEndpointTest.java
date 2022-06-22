@@ -154,7 +154,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             "Admin Alert",
             "Welsh Admin Alert",
             openingTimes(),
-            emptyList()
+            emptyList(),
+            false
         );
 
         final String json = objectMapper().writeValueAsString(courtUpdate);
@@ -190,7 +191,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             "Admin Alert",
             "Welsh Admin Alert",
             emptyList(),
-            emptyList()
+            emptyList(),
+            false
         );
 
         final String json = objectMapper().writeValueAsString(court);
@@ -221,7 +223,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             "Super Admin Alert",
             "Super Welsh Admin Alert",
             openingTimes(),
-            emptyList()
+            emptyList(),
+            false
         );
 
         final String json = objectMapper().writeValueAsString(courtUpdate);
@@ -257,7 +260,8 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             "Admin Alert",
             "Welsh Admin Alert",
             emptyList(),
-            emptyList()
+            emptyList(),
+            false
         );
         final String json = objectMapper().writeValueAsString(courtUpdate);
 
