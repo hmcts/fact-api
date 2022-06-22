@@ -31,5 +31,24 @@ public class ServiceAreaSearchFactory {
             default:
                 return defaultSearch;
         }
+
+    }
+
+    public Search getSearchForNearest(final ServiceArea serviceArea, final MapitData mapitData, final String action) {
+
+        if (action.equals("nearest")){
+            return defaultSearch;
+        }
+        else {
+            switch (serviceAreaTypeFrom(serviceArea.getType())) {
+                case FAMILY:
+                    return familySearchFactory.getSearchFor(serviceArea, mapitData);
+                case CIVIL:
+                    return civilSearch;
+                default:
+                    return defaultSearch;
+            }
+        }
+
     }
 }

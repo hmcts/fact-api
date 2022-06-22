@@ -83,10 +83,14 @@ public class SearchController {
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public ResponseEntity<ServiceAreaWithCourtReferencesWithDistance> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
-        @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug
+        @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
+        @RequestParam Optional<String> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
-            if (serviceAreaSlug.get().equals("childcare-arrangements")) {
+            if (action.isPresent() && action.get().equals("nearest")) {
+                return ok(courtService.getNearestCourtsByPostcodeAreaOfLawSearch(postcode.get(), serviceAreaSlug.get(), action.get()));
+            }
+            else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW));
             } else {
                 return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get()));
