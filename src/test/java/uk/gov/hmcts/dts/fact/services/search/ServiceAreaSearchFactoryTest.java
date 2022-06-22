@@ -90,7 +90,7 @@ class ServiceAreaSearchFactoryTest {
     }
 
     @Test
-    void shouldReturnCivilSearchForActionBlank() {
+    void shouldReturnCivilSearchForActionNotNearest() {
 
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
@@ -101,5 +101,36 @@ class ServiceAreaSearchFactoryTest {
         final Search result = serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, action);
 
         assertThat(result).isEqualTo(civilSearch);
+    }
+
+    @Test
+    void shouldReturnFamilySearchForActionNotNearest() {
+
+        final ServiceArea serviceArea = mock(ServiceArea.class);
+        final MapitData mapitData = mock(MapitData.class);
+        final Search search = mock(Search.class);
+        final String action = "";
+
+        when(serviceArea.getType()).thenReturn(FAMILY.toString());
+        when(familySearchFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
+
+        final Search result = serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, action);
+
+        assertThat(result).isEqualTo(search);
+        verify(familySearchFactory).getSearchFor(serviceArea, mapitData);
+    }
+
+    @Test
+    void shouldReturnDefaultSearchForActionNotNearest() {
+
+        final ServiceArea serviceArea = mock(ServiceArea.class);
+        final MapitData mapitData = mock(MapitData.class);
+        final String action = "";
+
+        when(serviceArea.getType()).thenReturn(OTHER.toString());
+
+        final Search result = serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, action);
+
+        assertThat(result).isEqualTo(defaultSearch);
     }
 }
