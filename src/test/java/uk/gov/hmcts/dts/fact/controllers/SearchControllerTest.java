@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SearchControllerTest {
 
     private static final String BASE_URL = "/search";
+    private static final String POSTCODE = "OX1 1RZ";
 
     @MockBean
     private CourtService courtService;
@@ -45,7 +46,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcode("OX1 1RZ");
+        verify(courtService).getNearestCourtsByPostcode(POSTCODE);
     }
 
     @Test
@@ -53,7 +54,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw("OX1 1RZ", "Crime");
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, "Crime");
     }
 
     @Test
@@ -77,7 +78,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeSearch("OX1 1RZ", "Crime");
+        verify(courtService).getNearestCourtsByPostcodeSearch(POSTCODE, "Crime");
     }
 
     @Test
@@ -93,7 +94,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime&action=nearest"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeActionAndAreaOfLawSearch("OX1 1RZ", "Crime", "nearest");
+        verify(courtService).getNearestCourtsByPostcodeActionAndAreaOfLawSearch(POSTCODE, "Crime", "nearest");
     }
 
     @Test
