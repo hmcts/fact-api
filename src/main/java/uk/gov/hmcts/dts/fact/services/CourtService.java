@@ -171,7 +171,7 @@ public class CourtService {
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final String action) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeActionAndAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final String action) {
 
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
