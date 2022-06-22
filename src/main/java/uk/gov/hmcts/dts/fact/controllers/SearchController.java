@@ -89,8 +89,7 @@ public class SearchController {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
             if (action.isPresent() && action.get().equals("nearest")) {
                 return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(postcode.get(), serviceAreaSlug.get(), action.get()));
-            }
-            else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
+            } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW));
             } else {
                 return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get()));

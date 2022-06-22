@@ -36,10 +36,9 @@ public class ServiceAreaSearchFactory {
 
     public Search getSearchForNearest(final ServiceArea serviceArea, final MapitData mapitData, final String action) {
 
-        if (action.equals("nearest")){
+        if (action.equals("nearest")) {
             return defaultSearch;
-        }
-        else {
+        } else {
             switch (serviceAreaTypeFrom(serviceArea.getType())) {
                 case FAMILY:
                     return familySearchFactory.getSearchFor(serviceArea, mapitData);
