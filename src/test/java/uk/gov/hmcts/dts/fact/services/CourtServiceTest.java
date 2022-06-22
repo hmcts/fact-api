@@ -515,6 +515,23 @@ class CourtServiceTest {
     }
 
     @Test
+    void shouldReturnServiceAreaSlugIfNoMapitDataOrServiceArea() {
+
+        final String serviceAreaSlug = "this-slug";
+
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
+        when(mapitService.getMapitData(any())).thenReturn(empty());
+
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
+            "this-postcode",
+            "this-slug",
+            ""
+        );
+
+        assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
+    }
+
+    @Test
     void shouldReturnEmptyListIfNoMapitdataForPostcodeOnlySearch() {
         when(mapitService.getMapitData(any())).thenReturn(empty());
         List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
