@@ -486,6 +486,35 @@ class CourtServiceTest {
     }
 
     @Test
+    void shouldReturnListForNearestCourtsByPostcodeActionAndAreaOfLawSearch() {
+
+        final String serviceAreaSlug = "childcare-arrangements";
+        final ServiceArea serviceArea = mock(ServiceArea.class);
+        final MapitData mapitData = mock(MapitData.class);
+        final Search search = mock(Search.class);
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+
+        when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
+        when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
+        when(serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, "nearest")).thenReturn(search);
+        when(search.searchWith(serviceArea, mapitData, "RM19 1SR")).thenReturn(courts);
+
+        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
+            "RM19 1SR",
+            "childcare-arrangements",
+            "nearest"
+        );
+
+        assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
+        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
+    }
+
+    @Test
     void shouldReturnEmptyListIfNoMapitdataForPostcodeOnlySearch() {
         when(mapitService.getMapitData(any())).thenReturn(empty());
         List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
