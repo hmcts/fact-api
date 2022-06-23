@@ -8,3 +8,4 @@ SET info = '<p><a href=“https://www.gov.uk/government/news/scammers-using-hmct
               'dynwared rhifau ffôn ac e-byst GLlTEM go iawn</a>. Efallai y byddan nhw’n mynnu cael taliad ac yn honni ' ||
               'eu bod yn cynrychioli CTEM neu’r gwasanaeth gorfodaeth. Os nad ydych yn siŵr, peidiwch â thalu a riportiwch ' ||
               'y peth i <a href=“https://www.actionfraud.police.uk/”>Action Fraud</a>.</p>'
+WHERE displayed = true;
