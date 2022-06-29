@@ -177,7 +177,7 @@ public class CourtService {
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
 
         if (serviceAreaOptional.isEmpty() || optionalMapitData.isEmpty()) {
-            return new ServiceAreaWithCourtReferencesWithDistance(serviceAreaSlug);
+            new NotFoundException(serviceAreaSlug);
         }
 
         final ServiceArea serviceArea = serviceAreaOptional.get();

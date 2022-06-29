@@ -515,20 +515,21 @@ class CourtServiceTest {
     }
 
     @Test
-    void shouldReturnServiceAreaSlugIfNoMapitDataOrServiceArea() {
+    void shouldThrowNotFoundExceptionIfNoServiceAreaData() {
 
         final String serviceAreaSlug = "this-slug";
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
-        when(mapitService.getMapitData(any())).thenReturn(empty());
+        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
+    }
 
-        final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
-            "this-postcode",
-            "this-slug",
-            ""
-        );
+    @Test
+    void shouldThrowNotFoundExceptionIfNoMapitData() {
 
-        assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
+        final String postcode = "p0st c0d3";
+
+        when(mapitService.getMapitData(postcode)).thenReturn(empty());
+        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
     }
 
     @Test
