@@ -22,6 +22,8 @@ import uk.gov.hmcts.dts.fact.util.AuditType;
 import uk.gov.hmcts.dts.fact.util.RepoUtils;
 import uk.gov.hmcts.dts.fact.util.Utils;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
@@ -148,6 +150,7 @@ public class AdminService {
         if (court.isEmpty()) {
             throw new NotFoundException(slug);
         }
+        court.get().setUpdatedAt(Timestamp.from(Instant.now()));
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
     }
 
