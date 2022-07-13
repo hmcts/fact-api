@@ -28,22 +28,9 @@ public enum Action {
 
     public static Action findByName(final String name) {
         final String key = name.toLowerCase(Locale.getDefault());
-        //System.out.println(LOOKUP);
-
         if (!LOOKUP.containsKey(key)) {
-            //System.out.println("key NOT in lookup");
-
-            //System.out.println(name + key);
             throw new IllegalArgumentException("Unknown action: " + name);
         }
-        //System.out.println("key IS in lookup");
-
-        //System.out.println("name " + name);
-        //System.out.println("key " + key);
-
-
-        //System.out.println("LOOKUP get key " + LOOKUP.get(key));
-
         return LOOKUP.get(key);
     }
 
