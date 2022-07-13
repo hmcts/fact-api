@@ -19,6 +19,7 @@ import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
+import uk.gov.hmcts.dts.fact.util.Action;
 
 import java.util.Arrays;
 import java.util.List;
@@ -152,7 +153,7 @@ public class CourtService {
         return courtReferences;
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug, final Action action) {
 
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
@@ -165,13 +166,13 @@ public class CourtService {
         final MapitData mapitData = optionalMapitData.get();
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = serviceAreaSearchFactory
-            .getSearchFor(serviceArea, mapitData)
+            .getSearchFor(serviceArea, mapitData, action)
             .searchWith(serviceArea, mapitData, postcode);
 
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeActionAndAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final String action) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeActionAndAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final Action action) {
 
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
@@ -184,14 +185,14 @@ public class CourtService {
         final MapitData mapitData = optionalMapitData.get();
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = serviceAreaSearchFactory
-            .getSearchForNearest(serviceArea, mapitData, action)
+            .getSearchFor(serviceArea, mapitData, action)
             .searchWith(serviceArea, mapitData, postcode);
 
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final String areaOfLaw) {
-        ServiceAreaWithCourtReferencesWithDistance results = this.getNearestCourtsByPostcodeSearch(postcode, serviceArea);
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final String areaOfLaw, final Action action) {
+        ServiceAreaWithCourtReferencesWithDistance results = this.getNearestCourtsByPostcodeSearch(postcode, serviceArea, action);
         results.setCourts(results.getCourts()
                               .stream()
                               .filter(c -> c.getAreasOfLawSpoe().contains(areaOfLaw))
