@@ -8,6 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
+import uk.gov.hmcts.dts.fact.util.Action;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -39,11 +40,12 @@ class ServiceAreaSearchFactoryTest {
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
         final Search search = mock(Search.class);
+        final Action action = mock(Action.class);
 
         when(serviceArea.getType()).thenReturn(FAMILY.toString());
         when(familySearchFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
 
-        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, action);
 
         assertThat(result).isEqualTo(search);
         verify(familySearchFactory).getSearchFor(serviceArea, mapitData);
@@ -54,10 +56,11 @@ class ServiceAreaSearchFactoryTest {
 
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
+        final Action action = mock(Action.class);
 
         when(serviceArea.getType()).thenReturn(CIVIL.toString());
 
-        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, action);
 
         assertThat(result).isEqualTo(civilSearch);
     }
@@ -67,10 +70,11 @@ class ServiceAreaSearchFactoryTest {
 
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
+        final Action action = mock(Action.class);
 
         when(serviceArea.getType()).thenReturn(OTHER.toString());
 
-        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, action);
 
         assertThat(result).isEqualTo(defaultSearch);
     }
@@ -80,11 +84,10 @@ class ServiceAreaSearchFactoryTest {
 
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
-        final String action = "nearest";
 
         when(serviceArea.getType()).thenReturn(OTHER.toString());
 
-        final Search result = serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, action);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NEAREST);
 
         assertThat(result).isEqualTo(defaultSearch);
     }
@@ -94,11 +97,10 @@ class ServiceAreaSearchFactoryTest {
 
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
-        final String action = "";
 
         when(serviceArea.getType()).thenReturn(CIVIL.toString());
 
-        final Search result = serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, action);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NOT_LISTED);
 
         assertThat(result).isEqualTo(civilSearch);
     }
@@ -109,12 +111,11 @@ class ServiceAreaSearchFactoryTest {
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
         final Search search = mock(Search.class);
-        final String action = "";
 
         when(serviceArea.getType()).thenReturn(FAMILY.toString());
         when(familySearchFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
 
-        final Search result = serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, action);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.DOCUMENTS);
 
         assertThat(result).isEqualTo(search);
         verify(familySearchFactory).getSearchFor(serviceArea, mapitData);
@@ -125,11 +126,10 @@ class ServiceAreaSearchFactoryTest {
 
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
-        final String action = "";
 
         when(serviceArea.getType()).thenReturn(OTHER.toString());
 
-        final Search result = serviceAreaSearchFactory.getSearchForNearest(serviceArea, mapitData, action);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NOT_LISTED);
 
         assertThat(result).isEqualTo(defaultSearch);
     }
