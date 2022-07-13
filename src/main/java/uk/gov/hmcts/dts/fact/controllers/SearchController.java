@@ -88,7 +88,7 @@ public class SearchController {
         @RequestParam Optional<String> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
-            if (action.isPresent() && (Action.findByName(action.get()) == Action.NEAREST)) {
+            if (action.isPresent() && Action.findByName(action.get()) == Action.NEAREST) {
                 return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(postcode.get(), serviceAreaSlug.get(), Action.NEAREST));
             } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW, Action.NOT_LISTED));

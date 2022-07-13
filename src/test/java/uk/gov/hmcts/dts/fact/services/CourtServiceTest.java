@@ -86,13 +86,13 @@ class CourtServiceTest {
     @MockBean
     private FallbackProximitySearch fallbackProximitySearch;
 
-    @MockBean
-    private Action action;
+    //@MockBean
+    //private Action action;
 
     @Test
     void shouldThrowSlugNotFoundException() {
         when(courtRepository.findBySlug(any())).thenReturn(empty());
-        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
+        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug(SOME_SLUG));
     }
 
     @Test
@@ -468,7 +468,6 @@ class CourtServiceTest {
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
         final Search search = mock(Search.class);
-        final Action action = mock(Action.class);
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
@@ -477,13 +476,13 @@ class CourtServiceTest {
         when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, action)).thenReturn(search);
+        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NOT_LISTED)).thenReturn(search);
         when(search.searchWith(serviceArea, mapitData, JE2_4BA)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             serviceAreaSlug,
-            action
+            Action.NOT_LISTED
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
@@ -499,7 +498,6 @@ class CourtServiceTest {
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
         final Search search = mock(Search.class);
-        final Action action = mock(Action.class);
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
@@ -508,13 +506,13 @@ class CourtServiceTest {
         when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, action)).thenReturn(search);
+        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NEAREST)).thenReturn(search);
         when(search.searchWith(serviceArea, mapitData, postcode)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
             postcode,
             serviceAreaSlug,
-            action
+            Action.NEAREST
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
@@ -528,7 +526,7 @@ class CourtServiceTest {
         final String serviceAreaSlug = "this-slug";
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
-        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
+        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug(SOME_SLUG));
     }
 
     @Test
@@ -537,7 +535,7 @@ class CourtServiceTest {
         final String postcode = "p0st c0d3";
 
         when(mapitService.getMapitData(postcode)).thenReturn(empty());
-        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug("some-slug"));
+        assertThrows(NotFoundException.class, () -> courtService.getCourtBySlug(SOME_SLUG));
     }
 
     @Test
@@ -571,7 +569,6 @@ class CourtServiceTest {
     void shouldReturnEmptyListIfNoMapitdata() {
 
         final String serviceAreaSlug = TAX;
-        final Action action = mock(Action.class);
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(mock(ServiceArea.class)));
         when(mapitService.getMapitData(any())).thenReturn(empty());
@@ -579,7 +576,7 @@ class CourtServiceTest {
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             TAX,
-            action
+            Action.NOT_LISTED
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
@@ -591,8 +588,6 @@ class CourtServiceTest {
     void shouldReturnEmptyListIfNoServiceArea() {
 
         final String serviceAreaSlug = TAX;
-        final Action action = mock(Action.class);
-
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mock(MapitData.class)));
@@ -600,7 +595,7 @@ class CourtServiceTest {
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             serviceAreaSlug,
-            action
+            Action.NEAREST
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
@@ -625,7 +620,6 @@ class CourtServiceTest {
         final ServiceArea serviceArea = mock(ServiceArea.class);
         final MapitData mapitData = mock(MapitData.class);
         final Search search = mock(Search.class);
-        final Action action = mock(Action.class);
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
@@ -639,14 +633,14 @@ class CourtServiceTest {
         when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, action)).thenReturn(search);
+        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.DOCUMENTS)).thenReturn(search);
         when(search.searchWith(serviceArea, mapitData, JE2_4BA)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
             JE2_4BA,
             serviceAreaSlug,
             CHILDREN,
-            action
+            Action.DOCUMENTS
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
