@@ -12,7 +12,7 @@ public class CourtLocalAuthorityAreaOfLawTest {
     void testCourtLocalAuthorityAreaOfLawTimeUpdated() {
         final CourtLocalAuthorityAreaOfLaw courtLocalAuthorityAreaOfLaw =
             new CourtLocalAuthorityAreaOfLaw(new AreaOfLaw(), new Court(), new LocalAuthority());
-        Timestamp timestampNow = Timestamp.valueOf(LocalDateTime.now());
+        Timestamp timestampNow = Timestamp.valueOf(LocalDateTime.of(2010, 8, 10, 2, 20));
         courtLocalAuthorityAreaOfLaw.updateTimestamp();
         assertThat(courtLocalAuthorityAreaOfLaw.getCourt().getUpdatedAt().getTime())
             .isGreaterThan(timestampNow.getTime());
