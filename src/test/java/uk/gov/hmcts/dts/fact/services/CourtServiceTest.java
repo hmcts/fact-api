@@ -86,8 +86,17 @@ class CourtServiceTest {
     @MockBean
     private FallbackProximitySearch fallbackProximitySearch;
 
-    //@MockBean
-    //private Action action;
+    @MockBean
+    private ServiceArea serviceArea;
+
+    @MockBean
+    private MapitData mapitData;
+
+    @MockBean
+    private Search search;
+
+    @MockBean
+    private Court court;
 
     @Test
     void shouldThrowSlugNotFoundException() {
@@ -97,14 +106,12 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnOldCourtObject() {
-        final Court court = mock(Court.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
         assertThat(courtService.getCourtBySlugDeprecated(SOME_SLUG)).isInstanceOf(OldCourt.class);
     }
 
     @Test
     void shouldReturnCourtObject() {
-        final Court court = mock(Court.class);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
         assertThat(courtService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
     }
@@ -134,7 +141,6 @@ class CourtServiceTest {
         when(courtOpeningTime.getOpeningTime()).thenReturn(openingTime);
         List<CourtOpeningTime> courtOpeningTimes = singletonList(courtOpeningTime);
 
-        final Court court = mock(Court.class);
         when(court.getCourtOpeningTimes()).thenReturn(courtOpeningTimes);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
 
@@ -158,7 +164,6 @@ class CourtServiceTest {
         when(courtContact.getContact()).thenReturn(contact);
         List<CourtContact> courtContacts = singletonList(courtContact);
 
-        final Court court = mock(Court.class);
         when(court.getCourtContacts()).thenReturn(courtContacts);
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
 
@@ -171,14 +176,12 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnPostcode() {
-        final MapitData mapitData = mock(MapitData.class);
         proximitySearch.searchWith(mapitData);
     }
 
     @Test
     void shouldReturnListOfCourts() {
         final String query = LONDON;
-        final Court court = mock(Court.class);
 
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
         final List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
@@ -246,7 +249,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListOfTenCourts() {
-        final MapitData mapitData = mock(MapitData.class);
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
@@ -262,7 +264,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListOfCourtsWithRelevantLocalAuthority() {
-        final MapitData mapitData = mock(MapitData.class);
         when(mapitData.getLat()).thenReturn(LAT);
         when(mapitData.getLon()).thenReturn(LON);
         when(mapitData.getLocalAuthority()).thenReturn(Optional.of(LOCAL_AUTHORITY_NAME));
@@ -292,7 +293,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnFallbackSearchResultsIfLocalAuthorityNameMismatch() {
-        final MapitData mapitData = mock(MapitData.class);
         when(mapitData.getLat()).thenReturn(LAT);
         when(mapitData.getLon()).thenReturn(LON);
         when(mapitData.getLocalAuthority()).thenReturn(Optional.of(LOCAL_AUTHORITY_NAME));
@@ -320,7 +320,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnExceptionIfNoCoordinates() {
-
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
         assertThrows(InvalidPostcodeException.class, () -> {
@@ -331,8 +330,6 @@ class CourtServiceTest {
 
     @Test
     void shouldFilterSearchByAreaOfLaw() {
-
-        final MapitData mapitData = mock(MapitData.class);
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
@@ -359,7 +356,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnEmptyListForFilterSearchByAreaOfLawIfNoCoordinates() {
-
         when(mapitService.getMapitData(any())).thenReturn(empty());
         assertThrows(InvalidPostcodeException.class, () -> {
             courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
@@ -373,7 +369,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnGlasgowTribunalOnlyForNorthernIrishPostcodeSearchWithImmigration() {
-        final MapitData mapitData = mock(MapitData.class);
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
@@ -463,12 +458,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListForNearestCourtsByPostcodeSearch() {
-
         final String serviceAreaSlug = TAX;
-        final ServiceArea serviceArea = mock(ServiceArea.class);
-        final MapitData mapitData = mock(MapitData.class);
-        final Search search = mock(Search.class);
-
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
@@ -492,12 +482,8 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListForNearestCourtsByPostcodeActionAndAreaOfLawSearch() {
-
         final String serviceAreaSlug = "childcare-arrangements";
         final String postcode = "RM19 1SR";
-        final ServiceArea serviceArea = mock(ServiceArea.class);
-        final MapitData mapitData = mock(MapitData.class);
-        final Search search = mock(Search.class);
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
@@ -522,7 +508,6 @@ class CourtServiceTest {
 
     @Test
     void shouldThrowNotFoundExceptionIfNoServiceAreaData() {
-
         final String serviceAreaSlug = "this-slug";
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
@@ -531,7 +516,6 @@ class CourtServiceTest {
 
     @Test
     void shouldThrowNotFoundExceptionIfNoMapitData() {
-
         final String postcode = "p0st c0d3";
 
         when(mapitService.getMapitData(postcode)).thenReturn(empty());
@@ -550,7 +534,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnListIfMapitdataForPostcodeOnlySearchFound() {
-        final MapitData mapitData = mock(MapitData.class);
         when(mapitService.getMapitData(JE2_4BA)).thenReturn(Optional.of(mapitData));
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
@@ -567,7 +550,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnEmptyListIfNoMapitdata() {
-
         final String serviceAreaSlug = TAX;
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(mock(ServiceArea.class)));
@@ -586,7 +568,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnEmptyListIfNoServiceArea() {
-
         final String serviceAreaSlug = TAX;
 
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
@@ -605,7 +586,6 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnCourtReferenceListWhenSearchingByPrefixAndActive() {
-        final Court court = mock(Court.class);
         when(courtRepository.findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(anyString(), anyBoolean()))
             .thenReturn(singletonList(court));
         final List<CourtReference> results = courtService.getCourtsByPrefixAndActiveSearch("mosh kupo");
@@ -615,12 +595,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnNearestCourtsByAreaOfLawSinglePointOfEntry() {
-
         final String serviceAreaSlug = CHILDREN;
-        final ServiceArea serviceArea = mock(ServiceArea.class);
-        final MapitData mapitData = mock(MapitData.class);
-        final Search search = mock(Search.class);
-
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             final uk.gov.hmcts.dts.fact.entity.CourtWithDistance mock = mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class);
@@ -647,7 +622,5 @@ class CourtServiceTest {
         assertThat(results.getCourts().size()).isEqualTo(1);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
-
-
 
 }
