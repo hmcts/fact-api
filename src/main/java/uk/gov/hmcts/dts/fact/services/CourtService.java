@@ -173,17 +173,8 @@ public class CourtService {
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeActionAndAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final Action action) {
-
-        final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
-        final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
-
-        if (serviceAreaOptional.isEmpty() || optionalMapitData.isEmpty()) {
-            throw new NotFoundException(serviceAreaSlug);
-        }
-
-        final ServiceArea serviceArea = serviceAreaOptional.get();
-        final MapitData mapitData = optionalMapitData.get();
-
+        final ServiceArea serviceArea = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug).orElseThrow(() -> new NotFoundException(serviceAreaSlug));
+        final MapitData mapitData = mapitService.getMapitData(postcode).orElseThrow(() -> new NotFoundException(serviceAreaSlug));
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = serviceAreaSearchFactory
             .getSearchFor(serviceArea, mapitData, action)
             .searchWith(serviceArea, mapitData, postcode);
