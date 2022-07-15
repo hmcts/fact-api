@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.dts.fact.services.CourtService;
+import uk.gov.hmcts.dts.fact.util.Action;
 
 import javax.validation.ConstraintViolationException;
 
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SearchControllerTest {
 
     private static final String BASE_URL = "/search";
+    private static final String POSTCODE = "OX1 1RZ";
 
     @MockBean
     private CourtService courtService;
@@ -45,7 +47,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcode("OX1 1RZ");
+        verify(courtService).getNearestCourtsByPostcode(POSTCODE);
     }
 
     @Test
@@ -53,7 +55,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw("OX1 1RZ", "Crime");
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, "Crime");
     }
 
     @Test
@@ -77,7 +79,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeSearch("OX1 1RZ", "Crime");
+        verify(courtService).getNearestCourtsByPostcodeSearch(POSTCODE, "Crime", Action.NOT_LISTED);
     }
 
     @Test
@@ -85,7 +87,15 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=childcare-arrangements"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", "Children");
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", "Children", Action.NOT_LISTED);
+    }
+
+    @Test
+    void shouldSearchCourtsByPostcodeNearestActionAndServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime&action=nearest"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcodeActionAndAreaOfLawSearch(POSTCODE, "Crime", Action.NEAREST);
     }
 
     @Test

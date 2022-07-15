@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.services.search;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
+import uk.gov.hmcts.dts.fact.util.Action;
 
 import static uk.gov.hmcts.dts.fact.model.ServiceAreaType.serviceAreaTypeFrom;
 
@@ -21,15 +22,20 @@ public class ServiceAreaSearchFactory {
         this.civilSearch = civilSearch;
     }
 
-    public Search getSearchFor(final ServiceArea serviceArea, final MapitData mapitData) {
+    public Search getSearchFor(final ServiceArea serviceArea, final MapitData mapitData, final Action action) {
 
-        switch (serviceAreaTypeFrom(serviceArea.getType())) {
-            case FAMILY:
-                return familySearchFactory.getSearchFor(serviceArea, mapitData);
-            case CIVIL:
-                return civilSearch;
-            default:
-                return defaultSearch;
+        if (action == Action.NEAREST) {
+            return defaultSearch;
+        } else {
+            switch (serviceAreaTypeFrom(serviceArea.getType())) {
+                case FAMILY:
+                    return familySearchFactory.getSearchFor(serviceArea, mapitData);
+                case CIVIL:
+                    return civilSearch;
+                default:
+                    return defaultSearch;
+            }
         }
+
     }
 }
