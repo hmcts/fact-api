@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import javax.persistence.*;
 
@@ -59,5 +61,12 @@ public class CourtAddress {
         }
         builder.append(addressLines.get(lastLine));
         return builder.toString();
+    }
+
+    @PrePersist
+    @PreUpdate
+    @PreRemove
+    public void updateTimestamp() {
+        court.setUpdatedAt(Timestamp.from(Instant.now()));
     }
 }

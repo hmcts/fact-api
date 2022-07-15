@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import javax.persistence.*;
 
 @Entity
@@ -30,5 +32,12 @@ public class CourtAreaOfLaw {
     public CourtAreaOfLaw(final AreaOfLaw areaOfLaw, final Court court) {
         this.areaOfLaw = areaOfLaw;
         this.court = court;
+    }
+
+    @PrePersist
+    @PreUpdate
+    @PreRemove
+    public void updateTimestamp() {
+        court.setUpdatedAt(Timestamp.from(Instant.now()));
     }
 }
