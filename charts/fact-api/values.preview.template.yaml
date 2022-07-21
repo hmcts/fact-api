@@ -12,8 +12,8 @@ java:
         COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
         CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
         CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
-    user: postgres
-    password: "postgres"
+      user: postgres
+      password: "postgres"
   keyVaults:
     fact:
       secrets:
