@@ -6,7 +6,7 @@ java:
     primary:
       initdb:
         scripts:
-          my_init_script.sh: |
+          my_init_script.sql: |
             CREATE EXTENSION IF NOT EXISTS cube WITH SCHEMA public;
             COMMENT ON EXTENSION cube IS 'data type for multidimensional cubes';
             CREATE EXTENSION IF NOT EXISTS earthdistance WITH SCHEMA public;
