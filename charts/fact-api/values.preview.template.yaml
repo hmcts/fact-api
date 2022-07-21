@@ -1,6 +1,8 @@
 java:
   postgresql:
     enabled: true
+    persistence:
+      enabled: false
     initdbScripts:
       init.sql: |-
         CREATE EXTENSION IF NOT EXISTS cube WITH SCHEMA public;
@@ -9,7 +11,7 @@ java:
         COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
         CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
         CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
-    initdbUser: postgres
+    initdbUser: javapostgres
   keyVaults:
     fact:
       secrets:
