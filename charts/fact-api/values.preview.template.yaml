@@ -5,13 +5,14 @@ java:
       postgresPassword: "postgres"
     primary:
       initdb:
-        scripts: |-
-          CREATE EXTENSION IF NOT EXISTS cube WITH SCHEMA public;
-          COMMENT ON EXTENSION cube IS 'data type for multidimensional cubes';
-          CREATE EXTENSION IF NOT EXISTS earthdistance WITH SCHEMA public;
-          COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
-          CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
-          CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
+        scripts:
+          my_init_script.sh: |
+            CREATE EXTENSION IF NOT EXISTS cube WITH SCHEMA public;
+            COMMENT ON EXTENSION cube IS 'data type for multidimensional cubes';
+            CREATE EXTENSION IF NOT EXISTS earthdistance WITH SCHEMA public;
+            COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
+            CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
+            CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
         user: postgres
         password: postgres
   keyVaults:
