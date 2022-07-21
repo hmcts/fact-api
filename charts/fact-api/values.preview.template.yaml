@@ -1,15 +1,20 @@
 java:
   postgresql:
     enabled: true
-    initdbScripts:
-      init.sql: |-
-        CREATE EXTENSION IF NOT EXISTS cube WITH SCHEMA public;
-        COMMENT ON EXTENSION cube IS 'data type for multidimensional cubes';
-        CREATE EXTENSION IF NOT EXISTS earthdistance WITH SCHEMA public;
-        COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
-        CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
-        CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
-    initdbUser: postgres
+    auth:
+      postgresPassword: "postgres"
+    primary:
+      initdb:
+        scripts:
+          my_init_script.sql: |
+            CREATE EXTENSION IF NOT EXISTS cube WITH SCHEMA public;
+            COMMENT ON EXTENSION cube IS 'data type for multidimensional cubes';
+            CREATE EXTENSION IF NOT EXISTS earthdistance WITH SCHEMA public;
+            COMMENT ON EXTENSION earthdistance IS 'calculate great-circle distances on the surface of the Earth';
+            CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;;
+            CREATE EXTENSION IF NOT EXISTS fuzzystrmatch WITH SCHEMA public;;
+        user: postgres
+        password: postgres
   keyVaults:
     fact:
       secrets:
@@ -20,9 +25,9 @@ java:
   environment:
     RUN_DB_MIGRATION_ON_STARTUP: true
     POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
-    POSTGRES_DATABASE: "{{ .Values.postgresql.postgresqlDatabase}}"
-    POSTGRES_USER: "{{ .Values.postgresql.postgresqlUsername}}"
-    POSTGRES_PASSWORD: "{{ .Values.postgresql.postgresqlPassword}}"
+    POSTGRES_DATABASE: "{{ .Values.postgresql.auth.database}}"
+    POSTGRES_USER: "{{ .Values.postgresql.auth.username}}"
+    POSTGRES_PASSWORD: "{{ .Values.postgresql.auth.password}}"
     OAUTH_PROVIDER_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
   # Don't modify below here
   image: ${IMAGE_NAME}
