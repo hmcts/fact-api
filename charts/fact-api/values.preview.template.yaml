@@ -1,8 +1,8 @@
 java:
   postgresql:
     enabled: true
-  auth:
-    postgresPassword: "postgres"
+    auth:
+      postgresPassword: "postgres"
   primary:
     initdb:
       scripts: |-
