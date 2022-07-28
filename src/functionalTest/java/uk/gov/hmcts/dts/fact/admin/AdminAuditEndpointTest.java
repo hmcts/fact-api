@@ -21,7 +21,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @SuppressWarnings("PMD.SystemPrintln")
 @ExtendWith(SpringExtension.class)
-@Disabled
 public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_AUDIT_ENDPOINT = "/admin/audit/";

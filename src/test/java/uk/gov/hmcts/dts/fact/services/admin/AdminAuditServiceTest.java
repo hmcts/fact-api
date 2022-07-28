@@ -59,7 +59,7 @@ public class AdminAuditServiceTest {
 
     @Test
     void shouldGetAllAuditDataNoDateRange() {
-        when(auditRepository.findAllByLocationContainingAndUserEmailContaining(
+        when(auditRepository.findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
             TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(AUDIT_DATA));
 
         final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
@@ -67,7 +67,7 @@ public class AdminAuditServiceTest {
                                               Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
                                               Optional.empty(), Optional.empty());
 
-        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContaining(
+        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
             TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10));
         assertThat(results).hasSize(2);
         assertThat(results.get(0)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(0)));
@@ -78,7 +78,7 @@ public class AdminAuditServiceTest {
     void shouldGetAllAuditDataWithDateRange() {
         final LocalDateTime dateFrom = LocalDateTime.of(1000, 10, 10, 10, 10);
         final LocalDateTime dateTo = LocalDateTime.of(1000, 12, 10, 10, 10);
-        when(auditRepository.findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
+        when(auditRepository.findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetweenOrderByCreationTimeDesc(
             TEST_LOCATION, TEST_EMAIL, dateFrom, dateTo,
             PageRequest.of(0, 10))).thenReturn(new PageImpl<>(AUDIT_DATA));
 
@@ -87,7 +87,7 @@ public class AdminAuditServiceTest {
                                               Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
                                               Optional.of(dateFrom), Optional.of(dateTo));
 
-        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(
+        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetweenOrderByCreationTimeDesc(
             TEST_LOCATION, TEST_EMAIL, dateFrom, dateTo, PageRequest.of(0, 10));
         assertThat(results).hasSize(2);
         assertThat(results.get(0)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(0)));
