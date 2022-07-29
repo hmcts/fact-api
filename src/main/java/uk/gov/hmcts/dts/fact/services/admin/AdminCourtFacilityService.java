@@ -1,5 +1,7 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+import org.owasp.html.HtmlPolicyBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import uk.gov.hmcts.dts.fact.util.AuditType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.owasp.html.PolicyFactory;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
