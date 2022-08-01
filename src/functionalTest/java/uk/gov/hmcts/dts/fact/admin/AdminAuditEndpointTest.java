@@ -5,11 +5,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.Audit;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
-import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.time.LocalDateTime;
@@ -33,12 +31,8 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
     private static final String TEST_AUDIT_NAME = "Update court opening times";
 
-    @Autowired
-    AuditRepository auditRepository;
-
     @BeforeEach
     public void setUpTestData() throws JsonProcessingException {
-        auditRepository.deleteAllByLocation(ADMINISTRATIVE_COURT_SLUG); // Remove pre-existing entries for court
         setUpOpeningTimes();
     }
 
