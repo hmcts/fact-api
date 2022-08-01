@@ -132,6 +132,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private void checkAuditData(String location, String email, String dateFrom, String dateTo) {
         final List<Audit> currentAudits = getCurrentAudits(0, 200_000, location, email, dateFrom, dateTo);
+
         assertThat(currentAudits).isNotEmpty();
 
         int auditListSize = currentAudits.size();
