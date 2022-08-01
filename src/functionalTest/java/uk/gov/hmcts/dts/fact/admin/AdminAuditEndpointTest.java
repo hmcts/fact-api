@@ -5,11 +5,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.Audit;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
-import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.time.LocalDateTime;
@@ -33,12 +31,8 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
     private static final String TEST_AUDIT_NAME = "Update court opening times";
 
-    @Autowired
-    AuditRepository auditRepository;
-
     @BeforeEach
     public void setUpTestData() throws JsonProcessingException {
-        auditRepository.deleteAllByLocation(ADMINISTRATIVE_COURT_SLUG); // Remove pre-existing entries for court
         setUpOpeningTimes();
     }
 
@@ -135,21 +129,21 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         assertThat(currentAudits).isNotEmpty();
 
-        int auditListSize = currentAudits.size();
-        int indexActionDataBefore = auditListSize - 2;
-        int indexActionDataAfter = auditListSize - 1;
+        final int indexActionDataBefore = 1;
+        final int indexActionDataAfter = 0;
 
         String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
         LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
 
         System.out.println("current size: " + currentAudits.size());
         System.out.println("before name: " + actionDataBeforeName);
-        System.out.println("Time now -60s: " + LocalDateTime.now().minusSeconds(5));
+        System.out.println("Time now -120s: " + LocalDateTime.now().minusSeconds(120));
         System.out.println("last audit time: " + lastAuditTime);
         System.out.println("Audit before action: " + currentAudits.get(indexActionDataBefore).getActionDataBefore());
         System.out.println("Audit after action: " + currentAudits.get(indexActionDataAfter).getActionDataAfter());
         System.out.println("Action data before name same as after?: " + currentAudits.get(indexActionDataAfter).getAction().getName());
         System.out.println("Action before name is expected to be " + TEST_AUDIT_NAME + " and is: " + actionDataBeforeName);
+        System.out.println("location: " + location);
 
         assertThat(LocalDateTime.now().minusSeconds(120).isBefore(lastAuditTime)).isEqualTo(true);
         assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore())
