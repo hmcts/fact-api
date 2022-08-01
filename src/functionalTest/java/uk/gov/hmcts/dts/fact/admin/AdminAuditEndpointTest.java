@@ -144,8 +144,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         for (int i = 0; i < 10; i++) {
             System.out.println("id: " + currentAudits.get(i).getId());
-            System.out.println("Audit before action: " + currentAudits.get(i).getActionDataBefore());
-            System.out.println("Audit after action: " + currentAudits.get(i).getActionDataAfter());
+            System.out.println("audit creation time: " + currentAudits.get(i).getCreationTime());
             System.out.println("Audit action name: " + currentAudits.get(i).getAction().getName());
         }
 
