@@ -135,9 +135,8 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
         assertThat(currentAudits).isNotEmpty();
 
-        int auditListSize = currentAudits.size();
-        int indexActionDataBefore = auditListSize - 2;
-        int indexActionDataAfter = auditListSize - 1;
+        final int indexActionDataBefore = 1;
+        final int indexActionDataAfter = 0;
 
         for (int i = 0; i < 10; i++) {
             System.out.println("id: " + currentAudits.get(i).getId());
