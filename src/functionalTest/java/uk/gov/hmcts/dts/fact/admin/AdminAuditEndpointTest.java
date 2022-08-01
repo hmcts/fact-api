@@ -132,7 +132,6 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private void checkAuditData(String location, String email, String dateFrom, String dateTo) {
         final List<Audit> currentAudits = getCurrentAudits(0, 200_000, location, email, dateFrom, dateTo);
-
         assertThat(currentAudits).isNotEmpty();
 
         int auditListSize = currentAudits.size();
@@ -142,9 +141,16 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
         LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
 
+        for (int i = 0; i < 10; i++) {
+            System.out.println("id: " + currentAudits.get(i).getId());
+            System.out.println("Audit before action: " + currentAudits.get(i).getActionDataBefore());
+            System.out.println("Audit after action: " + currentAudits.get(i).getActionDataAfter());
+            System.out.println("Audit action name: " + currentAudits.get(i).getAction().getName());
+        }
+
         System.out.println("current size: " + currentAudits.size());
         System.out.println("before name: " + actionDataBeforeName);
-        System.out.println("Time now -60s: " + LocalDateTime.now().minusSeconds(5));
+        System.out.println("Time now -120s: " + LocalDateTime.now().minusSeconds(120));
         System.out.println("last audit time: " + lastAuditTime);
         System.out.println("Audit before action: " + currentAudits.get(indexActionDataBefore).getActionDataBefore());
         System.out.println("Audit after action: " + currentAudits.get(indexActionDataAfter).getActionDataAfter());
