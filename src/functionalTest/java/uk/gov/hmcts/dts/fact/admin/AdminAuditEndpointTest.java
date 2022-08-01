@@ -139,14 +139,14 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         int indexActionDataBefore = auditListSize - 2;
         int indexActionDataAfter = auditListSize - 1;
 
-        String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
-        LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
-
         for (int i = 0; i < 10; i++) {
             System.out.println("id: " + currentAudits.get(i).getId());
             System.out.println("audit creation time: " + currentAudits.get(i).getCreationTime());
             System.out.println("Audit action name: " + currentAudits.get(i).getAction().getName());
         }
+
+        String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
+        LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
 
         System.out.println("current size: " + currentAudits.size());
         System.out.println("before name: " + actionDataBeforeName);
@@ -156,6 +156,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         System.out.println("Audit after action: " + currentAudits.get(indexActionDataAfter).getActionDataAfter());
         System.out.println("Action data before name same as after?: " + currentAudits.get(indexActionDataAfter).getAction().getName());
         System.out.println("Action before name is expected to be " + TEST_AUDIT_NAME + " and is: " + actionDataBeforeName);
+        System.out.println("location: " + location);
 
         assertThat(LocalDateTime.now().minusSeconds(120).isBefore(lastAuditTime)).isEqualTo(true);
         assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore())
