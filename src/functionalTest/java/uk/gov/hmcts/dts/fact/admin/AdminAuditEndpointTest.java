@@ -132,12 +132,6 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         final int indexActionDataBefore = 1;
         final int indexActionDataAfter = 0;
 
-        for (int i = 0; i < 10; i++) {
-            System.out.println("id: " + currentAudits.get(i).getId());
-            System.out.println("audit creation time: " + currentAudits.get(i).getCreationTime());
-            System.out.println("Audit action name: " + currentAudits.get(i).getAction().getName());
-        }
-
         String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
         LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
 
