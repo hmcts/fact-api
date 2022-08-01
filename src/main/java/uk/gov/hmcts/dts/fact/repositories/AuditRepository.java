@@ -16,6 +16,4 @@ public interface AuditRepository extends JpaRepository<Audit, Long> {
     Page<Audit> findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetweenOrderByCreationTimeDesc(String location, String email,
                                                                                                                LocalDateTime dateFrom, LocalDateTime dateTo,
                                                                                                                Pageable pageable);
-
-    void deleteAllByLocation(String location);
 }
