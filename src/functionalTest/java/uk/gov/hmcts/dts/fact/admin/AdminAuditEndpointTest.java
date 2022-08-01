@@ -5,9 +5,11 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.Audit;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
+import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.time.LocalDateTime;
@@ -31,8 +33,12 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
     private static final String TEST_AUDIT_NAME = "Update court opening times";
 
+    @Autowired
+    AuditRepository auditRepository;
+
     @BeforeEach
     public void setUpTestData() throws JsonProcessingException {
+        auditRepository.deleteAllByLocation(ADMINISTRATIVE_COURT_SLUG); // Remove pre-existing entries for court
         setUpOpeningTimes();
     }
 
@@ -126,6 +132,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private void checkAuditData(String location, String email, String dateFrom, String dateTo) {
         final List<Audit> currentAudits = getCurrentAudits(0, 200_000, location, email, dateFrom, dateTo);
+
         assertThat(currentAudits).isNotEmpty();
 
         int auditListSize = currentAudits.size();
@@ -135,6 +142,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         String actionDataBeforeName = currentAudits.get(indexActionDataBefore).getAction().getName();
         LocalDateTime lastAuditTime = currentAudits.get(indexActionDataAfter).getCreationTime();
 
+        System.out.println("current size: " + currentAudits.size());
         System.out.println("before name: " + actionDataBeforeName);
         System.out.println("Time now -60s: " + LocalDateTime.now().minusSeconds(5));
         System.out.println("last audit time: " + lastAuditTime);
@@ -143,7 +151,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         System.out.println("Action data before name same as after?: " + currentAudits.get(indexActionDataAfter).getAction().getName());
         System.out.println("Action before name is expected to be " + TEST_AUDIT_NAME + " and is: " + actionDataBeforeName);
 
-        assertThat(LocalDateTime.now().minusSeconds(60).isBefore(lastAuditTime)).isEqualTo(true);
+        assertThat(LocalDateTime.now().minusSeconds(120).isBefore(lastAuditTime)).isEqualTo(true);
         assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore())
             .isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
         assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
