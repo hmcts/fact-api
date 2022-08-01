@@ -84,9 +84,6 @@ public class AdminCourtFacilityServiceTest {
     @Mock
     private Court court;
 
-    @Mock
-    private FacilityType facilityType;
-
     @BeforeEach
     void init() {
 
