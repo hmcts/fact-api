@@ -9,10 +9,9 @@ import java.time.LocalDateTime;
 
 public interface AuditRepository extends JpaRepository<Audit, Long> {
 
-    Page<Audit> findAllByLocationContainingAndUserEmailContaining(String location, String email, Pageable pageable);
+    Page<Audit> findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(String location, String email, Pageable pageable);
 
-
-    Page<Audit> findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetween(String location, String email,
-                                                                                        LocalDateTime dateFrom, LocalDateTime dateTo,
-                                                                                        Pageable pageable);
+    Page<Audit> findAllByLocationContainingAndUserEmailContainingAndCreationTimeBetweenOrderByCreationTimeDesc(String location, String email,
+                                                                                                               LocalDateTime dateFrom, LocalDateTime dateTo,
+                                                                                                               Pageable pageable);
 }
