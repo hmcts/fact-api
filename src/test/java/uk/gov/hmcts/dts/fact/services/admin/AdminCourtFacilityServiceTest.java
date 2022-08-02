@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -39,15 +42,16 @@ public class AdminCourtFacilityServiceTest {
     private static final int FACILITY_ID_1 = 1;
     private static final int FACILITY_ID_2 = 2;
     private static final int FACILITY_ID_3 = 3;
+    private static final String BAD_DESCRIPTION_1 = "<script>alert(\"hi\")</script>Description1";
     private static final String DESCRIPTION_1 = "Description1";
-    private static final String DESCRIPTION_CY_1 = "DescriptionCy1";
+    private static final String DESCRIPTION_CY_1 = "<a href=\"www.google.co.uk\" rel=\"nofollow\">google</a>";
     private static final String DESCRIPTION_2 = "Description2";
     private static final String DESCRIPTION_CY_2 = "DescriptionCy2";
     private static final String DESCRIPTION_3 = "Description3";
     private static final String DESCRIPTION_CY_3 = "DescriptionCy3";
 
     private static final List<uk.gov.hmcts.dts.fact.model.admin.Facility> INPUT_COURT_FACILITIES = Arrays.asList(
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1,DESCRIPTION_1,DESCRIPTION_CY_1),
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1,BAD_DESCRIPTION_1,DESCRIPTION_CY_1),
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_2,DESCRIPTION_2,DESCRIPTION_CY_2),
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3,DESCRIPTION_3,DESCRIPTION_CY_3)
     );
@@ -61,6 +65,9 @@ public class AdminCourtFacilityServiceTest {
 
     @Autowired
     private AdminCourtFacilityService adminCourtFacilityService;
+
+    @Captor
+    private ArgumentCaptor<List<CourtFacility>> courtFacilityRepositoryArgumentCaptor;
 
     @MockBean
     private CourtRepository courtRepository;
@@ -76,9 +83,6 @@ public class AdminCourtFacilityServiceTest {
 
     @Mock
     private Court court;
-
-    @Mock
-    private FacilityType facilityType;
 
     @BeforeEach
     void init() {
@@ -96,7 +100,7 @@ public class AdminCourtFacilityServiceTest {
         facilityType3.setName("FacilityType3");
         facilityType3.setOrder(2);
 
-        final Facility facility1 = new Facility("Description1", "DescriptionCy1", facilityType1);
+        final Facility facility1 = new Facility("Description1", "<a href=\"www.google.co.uk\" rel=\"nofollow\">google</a>", facilityType1);
         final Facility facility2 = new Facility("Description2", "DescriptionCy2", facilityType2);
         final Facility facility3 = new Facility("Description3", "DescriptionCy3", facilityType3);
 
@@ -140,21 +144,30 @@ public class AdminCourtFacilityServiceTest {
 
     @Test
     void shouldUpdateCourtFacility() {
-        when(courtFacilityRepository.saveAll(any())).thenReturn(COURT_FACILITIES);
+        doAnswer(i -> i.getArguments()[0])
+            .when(courtFacilityRepository)
+            .saveAll(anyList());
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtFacilityRepository.findByCourtId(anyInt())).thenReturn(COURT_FACILITIES);
         when(courtRepository.save(court)).thenReturn(court);
-        when(facilityTypeRepository.findById(any())).thenReturn(Optional.of(facilityType));
+        when(facilityTypeRepository.findById(any()))
+            .thenReturn(Optional.of(COURT_FACILITIES.get(0).getFacility().getFacilityType()))
+            .thenReturn(Optional.of(COURT_FACILITIES.get(1).getFacility().getFacilityType()))
+            .thenReturn(Optional.of(COURT_FACILITIES.get(2).getFacility().getFacilityType()));
 
         List<uk.gov.hmcts.dts.fact.model.admin.Facility> results =
             adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES);
-        assertThat(results)
-            .hasSize(FACILITY_COUNT)
-            .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
+        verify(courtFacilityRepository, atLeastOnce()).saveAll(courtFacilityRepositoryArgumentCaptor.capture());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court facilities",
                                                            INPUT_COURT_FACILITIES,
                                                            results,
                                                            COURT_SLUG);
+        List<List<CourtFacility>> capturedInPerson = courtFacilityRepositoryArgumentCaptor.getAllValues();
+        assertEquals("Description1", capturedInPerson.get(0).get(0).getFacility().getDescription());
+        assertEquals("<a href=\"www.google.co.uk\" rel=\"nofollow\">google</a>", capturedInPerson.get(0).get(0).getFacility().getDescriptionCy());
+        assertThat(results)
+            .hasSize(FACILITY_COUNT)
+            .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
     }
 
     @Test
