@@ -34,4 +34,8 @@ public enum Action {
         return LOOKUP.get(key);
     }
 
+    public static boolean isNearest(final Action action) {
+        return action == Action.NEAREST;
+    }
+
 }
