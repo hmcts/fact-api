@@ -466,13 +466,13 @@ class CourtServiceTest {
         when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
-        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NOT_LISTED)).thenReturn(search);
+        when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.UNDEFINED)).thenReturn(search);
         when(search.searchWith(serviceArea, mapitData, JE2_4BA)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             serviceAreaSlug,
-            Action.NOT_LISTED
+            Action.UNDEFINED
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
@@ -558,7 +558,7 @@ class CourtServiceTest {
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             TAX,
-            Action.NOT_LISTED
+            Action.UNDEFINED
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);

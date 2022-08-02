@@ -12,7 +12,7 @@ public class ActionTest {
         softly.assertThat(findByName("nearest")).isEqualTo(NEAREST);
         softly.assertThat(findByName("documents")).isEqualTo(DOCUMENTS);
         softly.assertThat(findByName("update")).isEqualTo(UPDATE);
-        softly.assertThat(findByName("")).isEqualTo(NOT_LISTED);
+        softly.assertThat(findByName("undefined")).isEqualTo(UNDEFINED);
         softly.assertThatThrownBy(() -> findByName("unknown action"))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Unknown action: unknown action");

@@ -79,7 +79,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeSearch(POSTCODE, "Crime", Action.NOT_LISTED);
+        verify(courtService).getNearestCourtsByPostcodeSearch(POSTCODE, "Crime", Action.UNDEFINED);
     }
 
     @Test
@@ -87,7 +87,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=childcare-arrangements"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", "Children", Action.NOT_LISTED);
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", "Children", Action.UNDEFINED);
     }
 
     @Test
