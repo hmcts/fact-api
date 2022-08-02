@@ -85,15 +85,16 @@ public class SearchController {
     public ResponseEntity<ServiceAreaWithCourtReferencesWithDistance> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
         @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
-        @RequestParam Optional<String> action
+        @RequestParam("action") Optional<Action> action
+        //@RequestParam Optional<String> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
-            if (action.isPresent() && Action.findByName(action.get()) == Action.NEAREST) {
+            if (action.equals(Action.NEAREST)) {//(action.isPresent() && Action.findByName(action.get()) == Action.NEAREST) {
                 return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(postcode.get(), serviceAreaSlug.get(), Action.NEAREST));
             } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
-                return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW, Action.NOT_LISTED));
+                return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW, Action.UNDEFINED));
             } else {
-                return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get(), Action.NOT_LISTED));
+                return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get(), Action.UNDEFINED));
             }
         } else {
             return badRequest().build();

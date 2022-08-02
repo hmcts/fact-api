@@ -15,7 +15,7 @@ public enum Action {
     NEAREST("nearest"),
     DOCUMENTS("documents"),
     UPDATE("update"),
-    NOT_LISTED("");
+    UNDEFINED("undefined");
 
     public String name;
 
