@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtFacility;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.repositories.CourtFacilityRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
@@ -53,6 +54,11 @@ public class AdminCourtFacilityService {
 
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
+
+        courtFacilities.forEach((facility) -> {
+            facility.setDescription(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescription()));
+            facility.setDescriptionCy(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescriptionCy()));
+        });
 
         List<CourtFacility> existingList = getExistingCourtFacilities(courtEntity);
         List<Facility> newFacilities = saveCourtFacilities(courtEntity, courtFacilities, existingList);
