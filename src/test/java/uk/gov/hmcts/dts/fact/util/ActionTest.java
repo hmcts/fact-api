@@ -9,11 +9,11 @@ public class ActionTest {
     @Test
     void testFindByName() {
         final SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(findByName("nearest")).isEqualTo(NEAREST);
-        softly.assertThat(findByName("documents")).isEqualTo(DOCUMENTS);
-        softly.assertThat(findByName("update")).isEqualTo(UPDATE);
-        softly.assertThat(findByName("undefined")).isEqualTo(UNDEFINED);
-        softly.assertThatThrownBy(() -> findByName("unknown action"))
+        softly.assertThat(findAction("nearest")).isEqualTo(NEAREST);
+        softly.assertThat(findAction("documents")).isEqualTo(DOCUMENTS);
+        softly.assertThat(findAction("update")).isEqualTo(UPDATE);
+        softly.assertThat(findAction("undefined")).isEqualTo(UNDEFINED);
+        softly.assertThatThrownBy(() -> findAction("unknown action"))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Unknown action: unknown action");
         softly.assertAll();

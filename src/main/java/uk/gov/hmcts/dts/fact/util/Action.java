@@ -26,7 +26,7 @@ public enum Action {
             .forEach(a -> LOOKUP.put(a.name.toLowerCase(Locale.getDefault()), a));
     }
 
-    public static Action findByName(final String name) {
+    public static Action findAction(final String name) {
         final String key = name.toLowerCase(Locale.getDefault());
         if (!LOOKUP.containsKey(key)) {
             throw new IllegalArgumentException("Unknown action: " + name);
@@ -35,7 +35,7 @@ public enum Action {
     }
 
     public static boolean isNearest(final Action action) {
-        return action == Action.NEAREST;
+        return action == findAction("nearest");
     }
 
 }
