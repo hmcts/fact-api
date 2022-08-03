@@ -14,6 +14,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtEmail;
 import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.util.AddressType;
 
 import java.util.Collection;
@@ -27,7 +28,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
-import static uk.gov.hmcts.dts.fact.util.Utils.stripHtmlFromString;
 
 @Getter
 @Setter
@@ -185,7 +185,7 @@ public class Court {
             .orElseGet(Stream::empty)
             .map(facility -> {
                 final Facility facilityObj = new Facility(facility);
-                facilityObj.setDescription(stripHtmlFromString(facilityObj.getDescription()));
+                facilityObj.setDescription(OwaspHtmlSanitizer.sanitizeHtml(facilityObj.getDescription()));
                 return facilityObj;
             })
             .sorted(comparingInt(Facility::getOrder))
