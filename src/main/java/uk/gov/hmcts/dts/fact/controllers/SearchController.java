@@ -85,10 +85,10 @@ public class SearchController {
     public ResponseEntity<ServiceAreaWithCourtReferencesWithDistance> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
         @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
-        @RequestParam("action") Action action
+        @RequestParam("action") Optional<Action> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
-            if (Action.isNearest(action)) {
+            if (action.isPresent() && Action.isNearest(action.get())) {
                 return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(postcode.get(), serviceAreaSlug.get(), Action.NEAREST));
             } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW, Action.UNDEFINED));
