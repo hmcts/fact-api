@@ -24,12 +24,6 @@ class UtilsTest {
     private static final String FORMATTED_SERVICE_AREAS_CY = "treth a budd-daliadau";
 
     @Test
-    void testHtmlFilter() {
-        String text = "<p>Text that needs html stripping</p>";
-        assertEquals("Text that needs html stripping", stripHtmlFromString(text));
-    }
-
-    @Test
     void createSlugCombinationsMatch() {
         assertThat(convertNameToSlug("test court 123")).isEqualTo("test-court-123");
         assertThat(convertNameToSlug("test court 123''")).isEqualTo("test-court-123");
