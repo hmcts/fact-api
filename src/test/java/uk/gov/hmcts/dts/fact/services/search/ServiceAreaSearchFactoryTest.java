@@ -71,7 +71,7 @@ class ServiceAreaSearchFactoryTest {
 
         when(serviceArea.getType()).thenReturn(OTHER.toString());
 
-        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NOT_LISTED);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.UNDEFINED);
 
         assertThat(result).isEqualTo(defaultSearch);
     }
@@ -95,7 +95,7 @@ class ServiceAreaSearchFactoryTest {
 
         when(serviceArea.getType()).thenReturn(CIVIL.toString());
 
-        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NOT_LISTED);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.UNDEFINED);
 
         assertThat(result).isEqualTo(civilSearch);
     }
@@ -110,7 +110,7 @@ class ServiceAreaSearchFactoryTest {
         when(serviceArea.getType()).thenReturn(FAMILY.toString());
         when(familySearchFactory.getSearchFor(serviceArea, mapitData)).thenReturn(search);
 
-        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NOT_LISTED);
+        final Search result = serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.UNDEFINED);
 
         assertThat(result).isEqualTo(search);
         verify(familySearchFactory).getSearchFor(serviceArea, mapitData);
