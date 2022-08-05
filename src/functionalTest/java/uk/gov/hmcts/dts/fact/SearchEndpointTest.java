@@ -166,4 +166,17 @@ public class SearchEndpointTest extends FunctionalTestBase {
             "Birmingham Civil and Family Justice Centre");
     }
 
+    @Test
+    public void shouldRetrieve10CourtReferenceByPostcodeAndActionAndServiceAreaSortedByDistance() {
+        final String action = "nearest";
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=RM19 1SR&serviceArea=money-claims&action=" + action);
+
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(10);
+        assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts()).isSortedAccordingTo(Comparator.comparing(
+            CourtReferenceWithDistance::getDistance));
+    }
 }

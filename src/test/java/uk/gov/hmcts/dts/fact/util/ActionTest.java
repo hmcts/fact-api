@@ -18,4 +18,13 @@ public class ActionTest {
             .hasMessage("Unknown action: unknown action");
         softly.assertAll();
     }
+
+    @Test
+    void testIsNearest() {
+        final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(isNearest(NEAREST)).isEqualTo(true);
+        softly.assertThat(isNearest(DOCUMENTS)).isEqualTo(false);
+        softly.assertThat(isNearest(UPDATE)).isEqualTo(false);
+        softly.assertThat(isNearest(UNDEFINED)).isEqualTo(false);
+    }
 }
