@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.dts.fact.entity.CourtSecondaryAddressType;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -14,6 +15,7 @@ import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtSecondaryAddressTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
@@ -47,10 +49,12 @@ public class CourtService {
     private final ServiceAreaRepository serviceAreaRepository;
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
     private final FallbackProximitySearch fallbackProximitySearch;
+    private final CourtSecondaryAddressTypeRepository courtSecondaryAddressTypeRepository;
 
     @Autowired
     public CourtService(final MapitService mapitService,
                         final CourtRepository courtRepository,
+                        final CourtSecondaryAddressTypeRepository courtSecondaryAddressTypeRepository,
                         final ProximitySearch proximitySearch,
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
@@ -63,6 +67,7 @@ public class CourtService {
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
         this.fallbackProximitySearch = fallbackProximitySearch;
+        this.courtSecondaryAddressTypeRepository = courtSecondaryAddressTypeRepository;
 
     }
 
@@ -74,6 +79,10 @@ public class CourtService {
     }
 
     public Court getCourtBySlug(final String slug) {
+
+        List<CourtSecondaryAddressType> courtSecondaryAddressTypeList =
+            courtSecondaryAddressTypeRepository.findAllByAddressId(1960374);
+
         return courtRepository
             .findBySlug(slug)
             .map(Court::new)

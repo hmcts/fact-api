@@ -2,9 +2,9 @@
 CREATE TABLE public.search_courtsecondaryaddresstype
 (
     id             integer PRIMARY KEY NOT NULL,
-    court_id       integer             NOT NULL,
-    area_of_law_id integer NULLABLE,
-    court_type_id  integer NULLABLE
+    address_id     integer             NOT NULL,
+    area_of_law_id integer,
+    court_type_id  integer
 );
 
 CREATE SEQUENCE public.search_courtsecondaryaddresstype_id_seq
@@ -18,10 +18,10 @@ ALTER SEQUENCE public.search_courtsecondaryaddresstype_id_seq OWNED BY public.se
 ALTER TABLE ONLY public.search_courtsecondaryaddresstype ALTER COLUMN id SET DEFAULT nextval('public.search_courtsecondaryaddresstype_id_seq'::regclass);
 
 --
-INSERT INTO public.search_courtsecondaryaddresstype(court_id, area_of_law_id, court_type_id)
-VALUES (1479948,
+INSERT INTO public.search_courtsecondaryaddresstype(address_id, area_of_law_id, court_type_id)
+VALUES (1960374,
         (SELECT id FROM public.search_areaoflaw WHERE name = 'Money claims'),
         null),
-       (1479948,
+       (1960374,
         null,
         (SELECT id FROM public.search_courttype WHERE name = 'Magistrates'' Court'));
