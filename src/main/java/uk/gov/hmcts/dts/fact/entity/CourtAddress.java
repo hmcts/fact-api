@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
@@ -38,6 +39,7 @@ public class CourtAddress {
 
     @OneToMany
     @JoinColumn(name = "address_id")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;
 
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,

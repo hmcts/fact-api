@@ -39,19 +39,20 @@ public class CourtAddress {
         this.county = courtAddress.getCounty() == null ? "" : courtAddress.getCounty().getName();
         this.postcode = courtAddress.getPostcode();
 
-        this.courtSecondaryAddressType = new CourtSecondaryAddressType(
-            courtAddress
-                .getCourtSecondaryAddressType()
-                .stream()
-                .filter(a -> Objects.nonNull(a.getAreaOfLaw()))
-                .map(s -> s.getAreaOfLaw().getName())
-                .collect(Collectors.toList()),
-            courtAddress
-                .getCourtSecondaryAddressType()
-                .stream()
-                .filter(a -> Objects.nonNull(a.getCourtType()))
-                .map(s -> s.getCourtType().getName())
-                .collect(Collectors.toList())
-        );
+        if (courtAddress.getCourtSecondaryAddressType().size() > 0)
+            this.courtSecondaryAddressType = new CourtSecondaryAddressType(
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getAreaOfLaw()))
+                    .map(s -> s.getAreaOfLaw().getName())
+                    .collect(Collectors.toList()),
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getCourtType()))
+                    .map(s -> s.getCourtType().getName())
+                    .collect(Collectors.toList())
+            );
     }
 }

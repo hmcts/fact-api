@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -43,35 +42,26 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private static final int COUNTY_ID = 1;
     private static final List<String> TEST_ADDRESS_LINES = Arrays.asList("The Law Courts", "10 Armada Way");
     private static final List<String> TEST_ADDRESS_LINES_CY = Arrays.asList("abc", "abc");
-    private static final List<CourtSecondaryAddressType> COURT_SECONDARY_ADDRESS_TYPE_LIST = new ArrayList<>();
+    private static final CourtSecondaryAddressType COURT_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
+        Arrays.asList(
+            new AreaOfLaw(
+                new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+                    34257, "Civil partnership"), false),
+            new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+                34248, "Adoption"), false)
+        ),
+        Arrays.asList(
+            new CourtType(
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11417, "Family Court")
+            ),
+            new CourtType(
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11418, "Tribunal")
+            )
+        )
+    );
 
-    // For assertions
     private static final String POSTCODE_VALID = "PL6 5DQ";
     private static final String POSTCODES_INVALID = "PL2 56ERR";
-    private static final String DESCRIPTION = "description";
-    private static final String DESCRIPTION_CY = "description_cy";
-
-
-    @BeforeAll
-    static void beforeAll() {
-        COURT_SECONDARY_ADDRESS_TYPE_LIST.add(new CourtSecondaryAddressType(
-            Arrays.asList(
-                new AreaOfLaw(
-                    new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                        34257, "Civil partnership"), false),
-                new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                    34248, "Adoption"), false)
-            ),
-            Arrays.asList(
-                new CourtType(
-                    new uk.gov.hmcts.dts.fact.entity.CourtType(11417, "Family Court")
-                ),
-                new CourtType(
-                    new uk.gov.hmcts.dts.fact.entity.CourtType(11418, "Tribunal")
-                )
-            )
-        ));
-    }
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -110,6 +100,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
         final String originalJson = objectMapper().writeValueAsString(currentCourtAddress);
+
+        System.out.println(updatedJson);
 
         final Response response = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
@@ -243,6 +235,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private List<CourtAddress> addNewCourtAddress(final List<CourtAddress> courtAddresses) {
         final List<CourtAddress> updatedCourtAddress = new ArrayList<>(courtAddresses);
         updatedCourtAddress.add(new CourtAddress(
+            312_012,
             VISIT_US_TYPE_ID,
             TEST_ADDRESS_LINES,
             TEST_ADDRESS_LINES_CY,
@@ -264,6 +257,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private List<CourtAddress> createCourtAddresses() {
         return Arrays.asList(
             new CourtAddress(
+                312_013,
                 VISIT_US_TYPE_ID,
                 TEST_ADDRESS_LINES,
                 TEST_ADDRESS_LINES_CY,
@@ -274,6 +268,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 COURT_SECONDARY_ADDRESS_TYPE_LIST
             ),
             new CourtAddress(
+                312_014,
                 WRITE_TO_US_TYPE_ID,
                 TEST_ADDRESS_LINES,
                 TEST_ADDRESS_LINES_CY,

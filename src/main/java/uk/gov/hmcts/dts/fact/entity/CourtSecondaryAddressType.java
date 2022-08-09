@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.List;
 
 @Entity
 @Table(name = "search_courtsecondaryaddresstype")
@@ -35,13 +32,13 @@ public class CourtSecondaryAddressType {
     @JoinColumn(name = "court_type_id")
     private CourtType courtType;
 
-//    private CourtSecondaryAddressType(CourtAddress courtAddress, AreaOfLaw areaOfLaw) {
-//        this.address = courtAddress;
-//        this.areaOfLaw = areaOfLaw;
-//    }
-//
-//    private CourtSecondaryAddressType(CourtAddress courtAddress, CourtType courtType) {
-//        this.address = courtAddress;
-//        this.courtType = courtType;
-//    }
+    public CourtSecondaryAddressType(CourtAddress courtAddress, AreaOfLaw areaOfLaw) {
+        this.address = courtAddress;
+        this.areaOfLaw = areaOfLaw;
+    }
+
+    public CourtSecondaryAddressType(CourtAddress courtAddress, CourtType courtType) {
+        this.address = courtAddress;
+        this.courtType = courtType;
+    }
 }
