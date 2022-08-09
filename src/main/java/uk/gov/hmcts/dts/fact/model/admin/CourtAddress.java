@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.dts.fact.model.CourtSecondaryAddressType;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 
@@ -16,7 +17,6 @@ import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 @NoArgsConstructor
 @Getter
 public class CourtAddress {
-    private Integer id;
     @JsonProperty("type_id")
     private Integer addressTypeId;
     @JsonProperty("address_lines")
@@ -30,11 +30,10 @@ public class CourtAddress {
     @JsonProperty("county_id")
     private Integer countyId;
     private String postcode;
-    @JsonProperty("types")
+    @JsonProperty("fields_of_law")
     private CourtSecondaryAddressType courtSecondaryAddressType;
 
     public CourtAddress(final uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
-        this.id = courtAddress.getId();
         if (courtAddress.getAddressType() != null) {
             this.addressTypeId = courtAddress.getAddressType().getId();
         }
@@ -46,5 +45,19 @@ public class CourtAddress {
             this.countyId = courtAddress.getCounty().getId();
         }
         this.postcode = courtAddress.getPostcode();
+        this.courtSecondaryAddressType = new CourtSecondaryAddressType(
+            courtAddress
+                .getCourtSecondaryAddressType()
+                .stream()
+                .filter(a -> Objects.nonNull(a.getAreaOfLaw()))
+                .map(a -> new AreaOfLaw(a.getAreaOfLaw()))
+                .collect(Collectors.toList()),
+            courtAddress
+                .getCourtSecondaryAddressType()
+                .stream()
+                .filter(a -> Objects.nonNull(a.getCourtType()))
+                .map(s -> new CourtType(s.getCourtType()))
+                .collect(Collectors.toList())
+        );
     }
 }

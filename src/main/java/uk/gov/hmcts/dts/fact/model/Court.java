@@ -117,21 +117,11 @@ public class Court {
 
     private List<CourtAddress> getCourtAddresses(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         // Return sorted court addresses with 'visit us' or 'visit or contact us' addresses appear first
-
-        List<uk.gov.hmcts.dts.fact.entity.CourtAddress> courtAddressList = courtEntity.getAddresses();
-
-        for (uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress: courtAddressList) {
-            System.out.println("derp");
-        }
-
-
-        List<CourtAddress> courtAddresses = courtEntity.getAddresses()
+        return courtEntity.getAddresses()
             .stream()
             .sorted(comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .map(CourtAddress::new)
             .collect(toList());
-
-        return courtAddresses;
     }
 
     private List<AreaOfLaw> getAreasOfLaw(final uk.gov.hmcts.dts.fact.entity.Court courtEntity, final boolean isInPerson) {

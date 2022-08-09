@@ -79,10 +79,6 @@ public class CourtService {
     }
 
     public Court getCourtBySlug(final String slug) {
-
-        List<CourtSecondaryAddressType> courtSecondaryAddressTypeList =
-            courtSecondaryAddressTypeRepository.findAllByAddressId(1960374);
-
         return courtRepository
             .findBySlug(slug)
             .map(Court::new)
