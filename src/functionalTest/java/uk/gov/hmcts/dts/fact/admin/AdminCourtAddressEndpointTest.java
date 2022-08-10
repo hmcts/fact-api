@@ -46,16 +46,16 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         Arrays.asList(
             new AreaOfLaw(
                 new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                    34257, "Civil partnership"), false),
+                    34_257, "Civil partnership"), false),
             new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                34248, "Adoption"), false)
+                34_248, "Adoption"), false)
         ),
         Arrays.asList(
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11417, "Family Court")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court")
             ),
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11418, "Tribunal")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal")
             )
         )
     );
@@ -100,8 +100,6 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
         final String originalJson = objectMapper().writeValueAsString(currentCourtAddress);
-
-        System.out.println(updatedJson);
 
         final Response response = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,16 +49,16 @@ public class AdminCourtAddressControllerTest {
         Arrays.asList(
             new AreaOfLaw(
                 new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                    34257, "Civil partnership"), false),
+                    34_257, "Civil partnership"), false),
             new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                34248, "Adoption"), false)
+                34_248, "Adoption"), false)
         ),
         Arrays.asList(
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11417, "Family Court")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court")
             ),
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11418, "Tribunal")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal")
             )
         )
     );

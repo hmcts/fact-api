@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,19 +48,21 @@ public class CourtAddress {
             this.countyId = courtAddress.getCounty().getId();
         }
         this.postcode = courtAddress.getPostcode();
-        this.courtSecondaryAddressType = !Objects.isNull(courtAddress.getCourtSecondaryAddressType()) ? new CourtSecondaryAddressType(
-            courtAddress
-                .getCourtSecondaryAddressType()
-                .stream()
-                .filter(a -> Objects.nonNull(a.getAreaOfLaw()))
-                .map(a -> new AreaOfLaw(a.getAreaOfLaw()))
-                .collect(Collectors.toList()),
-            courtAddress
-                .getCourtSecondaryAddressType()
-                .stream()
-                .filter(a -> Objects.nonNull(a.getCourtType()))
-                .map(s -> new CourtType(s.getCourtType()))
-                .collect(Collectors.toList())
-        ) : null;
+        this.courtSecondaryAddressType = Objects.isNull(courtAddress.getCourtSecondaryAddressType()) ? new CourtSecondaryAddressType(
+            Collections.emptyList(), Collections.emptyList()) :
+            new CourtSecondaryAddressType(
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getAreaOfLaw()))
+                    .map(a -> new AreaOfLaw(a.getAreaOfLaw()))
+                    .collect(Collectors.toList()),
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getCourtType()))
+                    .map(s -> new CourtType(s.getCourtType()))
+                    .collect(Collectors.toList())
+            );
     }
 }

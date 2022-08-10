@@ -3,7 +3,6 @@ package uk.gov.hmcts.dts.fact.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.dts.fact.entity.CourtSecondaryAddressType;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -15,7 +14,6 @@ import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
-import uk.gov.hmcts.dts.fact.repositories.CourtSecondaryAddressTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.services.search.FallbackProximitySearch;
@@ -49,12 +47,10 @@ public class CourtService {
     private final ServiceAreaRepository serviceAreaRepository;
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
     private final FallbackProximitySearch fallbackProximitySearch;
-    private final CourtSecondaryAddressTypeRepository courtSecondaryAddressTypeRepository;
 
     @Autowired
     public CourtService(final MapitService mapitService,
                         final CourtRepository courtRepository,
-                        final CourtSecondaryAddressTypeRepository courtSecondaryAddressTypeRepository,
                         final ProximitySearch proximitySearch,
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
@@ -67,8 +63,6 @@ public class CourtService {
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
         this.fallbackProximitySearch = fallbackProximitySearch;
-        this.courtSecondaryAddressTypeRepository = courtSecondaryAddressTypeRepository;
-
     }
 
     public OldCourt getCourtBySlugDeprecated(final String slug) {
@@ -135,7 +129,12 @@ public class CourtService {
 
         List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courtsWithDistance = mapitData.getLocalAuthority()
             .map(localAuthority -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority))
+                .findNearestTenByAreaOfLawAndLocalAuthority(
+                    mapitData.getLat(),
+                    mapitData.getLon(),
+                    areaOfLaw,
+                    localAuthority
+                ))
             .orElse(emptyList());
 
         return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData)
@@ -154,7 +153,8 @@ public class CourtService {
 
         List<CourtReferenceWithDistance> courtReferences = convert(proximitySearch.searchWith(optionalMapitData.get()));
         log.debug("Found {} nearest courts for postcode {}: {}",
-                  courtReferences.size(), postcode, Arrays.stream(courtReferences.toArray()).toArray());
+                  courtReferences.size(), postcode, Arrays.stream(courtReferences.toArray()).toArray()
+        );
         return courtReferences;
     }
 
@@ -178,8 +178,10 @@ public class CourtService {
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeActionAndAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final Action action) {
-        final ServiceArea serviceArea = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug).orElseThrow(() -> new NotFoundException(serviceAreaSlug));
-        final MapitData mapitData = mapitService.getMapitData(postcode).orElseThrow(() -> new NotFoundException(serviceAreaSlug));
+        final ServiceArea serviceArea = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug).orElseThrow(() -> new NotFoundException(
+            serviceAreaSlug));
+        final MapitData mapitData = mapitService.getMapitData(postcode).orElseThrow(() -> new NotFoundException(
+            serviceAreaSlug));
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = serviceAreaSearchFactory
             .getSearchFor(serviceArea, mapitData, action)
             .searchWith(serviceArea, mapitData, postcode);
@@ -188,7 +190,11 @@ public class CourtService {
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final String areaOfLaw, final Action action) {
-        ServiceAreaWithCourtReferencesWithDistance results = this.getNearestCourtsByPostcodeSearch(postcode, serviceArea, action);
+        ServiceAreaWithCourtReferencesWithDistance results = this.getNearestCourtsByPostcodeSearch(
+            postcode,
+            serviceArea,
+            action
+        );
         results.setCourts(results.getCourts()
                               .stream()
                               .filter(c -> c.getAreasOfLawSpoe().contains(areaOfLaw))
@@ -228,7 +234,8 @@ public class CourtService {
 
         // For court name, address or town name search, we first search using exact match only (ignore punctuations and casing). If this
         // doesn't return any result, fuzzy match searching will then be attempted.
-        List<uk.gov.hmcts.dts.fact.entity.Court> courts = courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(query.replaceAll("[^A-Za-z0-9]+", ""));
+        List<uk.gov.hmcts.dts.fact.entity.Court> courts = courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(
+            query.replaceAll("[^A-Za-z0-9]+", ""));
         if (courts.isEmpty()) {
             courts = courtRepository.findCourtByNameAddressOrTownFuzzyMatch(query);
         }

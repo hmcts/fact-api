@@ -18,12 +18,10 @@ import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 import uk.gov.hmcts.dts.fact.util.AddressType;
 import uk.gov.hmcts.dts.fact.util.AuditType;
 
-import javax.persistence.Column;
 import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 @Service
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -88,8 +86,9 @@ public class AdminCourtAddressService {
             courtAddresses
         );
 
-        for (CourtAddress courtAddress: courtAddresses)
+        for (CourtAddress courtAddress: courtAddresses) {
             courtSecondaryAddressTypeRepository.deleteAllByAddressId(courtAddress.getId());
+        }
 
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
 
@@ -167,7 +166,7 @@ public class AdminCourtAddressService {
 
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
-        final Map<Integer, uk.gov.hmcts.dts.fact.entity.County> countyMap = countyService.getCountyMap();
+        final Map<Integer, County> countyMap = countyService.getCountyMap();
 
         return courtAddresses.stream()
             .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(
@@ -186,12 +185,13 @@ public class AdminCourtAddressService {
 
     /**
      * Use the newly created addresses's id's to create and construct a
-     * list of fields of law
+     * list of fields of law.
      *
      * @param updatedCourtAddresses contains the id's of the newly created addresses
      * @param originalNewAddresses  contains the areas of law/court types required
      * @return a list of entities to be saved to the CourtSecondaryAddressTypeRepository
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtSecondaryAddressType> constructCourtSecondaryAddressTypes(final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> updatedCourtAddresses,
                                                                                 final List<CourtAddress> originalNewAddresses) {
         List<CourtSecondaryAddressType> courtSecondaryAddressTypeList = new ArrayList<>();
@@ -246,11 +246,12 @@ public class AdminCourtAddressService {
 
     /**
      * Update the response model that is returned through the request with the information
-     * provided
+     * provided.
      * @param updatedAddresses contains addresses without entities
      * @param courtSecondaryAddressType contains entities that need to be added to addresses
      * @return An updated list of court addresses
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtAddress> updateResponseModel(List<CourtAddress> updatedAddresses,
                                                    List<CourtSecondaryAddressType> courtSecondaryAddressType) {
         List<CourtAddress> responseList = new ArrayList<>(updatedAddresses);

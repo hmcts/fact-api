@@ -39,7 +39,7 @@ public class CourtAddress {
         this.county = courtAddress.getCounty() == null ? "" : courtAddress.getCounty().getName();
         this.postcode = courtAddress.getPostcode();
 
-        if (courtAddress.getCourtSecondaryAddressType().size() > 0)
+        if (courtAddress.getCourtSecondaryAddressType().size() > 0) {
             this.courtSecondaryAddressType = new CourtSecondaryAddressType(
                 courtAddress
                     .getCourtSecondaryAddressType()
@@ -54,5 +54,6 @@ public class CourtAddress {
                     .map(s -> s.getCourtType().getName())
                     .collect(Collectors.toList())
             );
+        }
     }
 }

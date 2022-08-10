@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * The admin portal will send across more information about the
  * areas of law and court types, so that we can save the information
- * for the court more effectively
+ * for the court more effectively.
  */
 @Data
 @JsonPropertyOrder({"areas_of_law", "courts"})

@@ -74,19 +74,19 @@ public class AdminCourtAddressServiceTest {
         VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE
     );
     private static final CourtSecondaryAddressType COURT_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
-        Arrays.asList(
+        asList(
             new AreaOfLaw(
                 new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                    34257, "Civil partnership"), false),
+                    34_257, "Civil partnership"), false),
             new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
-                34248, "Adoption"), false)
+                34_248, "Adoption"), false)
         ),
-        Arrays.asList(
+        asList(
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11417, "Family Court")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court")
             ),
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11418, "Tribunal")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal")
             )
         )
     );
@@ -105,51 +105,53 @@ public class AdminCourtAddressServiceTest {
     private static final String WRITE_TO_US_POSTCODE = "EC1A 1AA";
     private static final String VISIT_US_POSTCODE = "M1 2AA";
     private static final String PARTIAL_POSTCODE = "EC1A";
-    private static final String DESCRIPTION = "Description";
-    private static final String DESCRIPTION_CY = "Description cy";
 
     private static final int ADDRESS_COUNT = 2;
-    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(1,
-                                                                             WRITE_TO_US_ADDRESS_TYPE_ID,
-                                                                             TEST_ADDRESS1,
-                                                                             TEST_ADDRESS_CY1,
-                                                                             TEST_TOWN1,
-                                                                             null,
-                                                                             COUNTY_ID,
-                                                                             WRITE_TO_US_POSTCODE,
-                                                                             COURT_SECONDARY_ADDRESS_TYPE_LIST
+    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
+        1,
+        WRITE_TO_US_ADDRESS_TYPE_ID,
+        TEST_ADDRESS1,
+        TEST_ADDRESS_CY1,
+        TEST_TOWN1,
+        null,
+        COUNTY_ID,
+        WRITE_TO_US_POSTCODE,
+        COURT_SECONDARY_ADDRESS_TYPE_LIST
     );
-    private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(2,
-                                                                          VISIT_US_ADDRESS_TYPE_ID,
-                                                                          TEST_ADDRESS2,
-                                                                          TEST_ADDRESS_CY2,
-                                                                          TEST_TOWN2,
-                                                                          null,
-                                                                          COUNTY_ID,
-                                                                          VISIT_US_POSTCODE,
-                                                                          COURT_SECONDARY_ADDRESS_TYPE_LIST
+    private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(
+        2,
+        VISIT_US_ADDRESS_TYPE_ID,
+        TEST_ADDRESS2,
+        TEST_ADDRESS_CY2,
+        TEST_TOWN2,
+        null,
+        COUNTY_ID,
+        VISIT_US_POSTCODE,
+        COURT_SECONDARY_ADDRESS_TYPE_LIST
     );
     private static final List<CourtAddress> EXPECTED_ADDRESSES = asList(WRITE_TO_US_ADDRESS, VISIT_US_ADDRESS);
 
     private static final Court MOCK_COURT = mock(Court.class);
     private static final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> COURT_ADDRESSES_ENTITY = asList(
-        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT,
-                                                      WRITE_TO_US_ADDRESS_TYPE,
-                                                      TEST_ADDRESS1,
-                                                      TEST_ADDRESS_CY1,
-                                                      TEST_TOWN1,
-                                                      null,
-                                                      COUNTY,
-                                                      WRITE_TO_US_POSTCODE
+        new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+            MOCK_COURT,
+            WRITE_TO_US_ADDRESS_TYPE,
+            TEST_ADDRESS1,
+            TEST_ADDRESS_CY1,
+            TEST_TOWN1,
+            null,
+            COUNTY,
+            WRITE_TO_US_POSTCODE
         ),
-        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT,
-                                                      VISIT_US_ADDRESS_TYPE,
-                                                      TEST_ADDRESS2,
-                                                      TEST_ADDRESS_CY2,
-                                                      TEST_TOWN2,
-                                                      null,
-                                                      COUNTY,
-                                                      VISIT_US_POSTCODE
+        new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+            MOCK_COURT,
+            VISIT_US_ADDRESS_TYPE,
+            TEST_ADDRESS2,
+            TEST_ADDRESS_CY2,
+            TEST_TOWN2,
+            null,
+            COUNTY,
+            VISIT_US_POSTCODE
         )
     );
 
@@ -286,10 +288,11 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldUpdateCourtAddressesForInPersonCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
-                                                                            VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
-                                                                            WRITE_TO_US_ADDRESS_TYPE
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(
+            VISIT_US_ADDRESS_TYPE_ID,
+            VISIT_US_ADDRESS_TYPE,
+            WRITE_TO_US_ADDRESS_TYPE_ID,
+            WRITE_TO_US_ADDRESS_TYPE
         ));
         when(adminCountyService.getCountyMap()).thenReturn(Map.of(COUNTY_ID, COUNTY));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
@@ -319,10 +322,11 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
-                                                                            VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
-                                                                            WRITE_TO_US_ADDRESS_TYPE
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(
+            VISIT_US_ADDRESS_TYPE_ID,
+            VISIT_US_ADDRESS_TYPE,
+            WRITE_TO_US_ADDRESS_TYPE_ID,
+            WRITE_TO_US_ADDRESS_TYPE
         ));
 
         assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(
@@ -337,10 +341,11 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldNotUpdateCoordinatesForNotInPersonCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
-                                                                            VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
-                                                                            WRITE_TO_US_ADDRESS_TYPE
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(
+            VISIT_US_ADDRESS_TYPE_ID,
+            VISIT_US_ADDRESS_TYPE,
+            WRITE_TO_US_ADDRESS_TYPE_ID,
+            WRITE_TO_US_ADDRESS_TYPE
         ));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
@@ -369,10 +374,11 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldNotUpdateCoordinatesForEmptyMapitData() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
-                                                                            VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
-                                                                            WRITE_TO_US_ADDRESS_TYPE
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(
+            VISIT_US_ADDRESS_TYPE_ID,
+            VISIT_US_ADDRESS_TYPE,
+            WRITE_TO_US_ADDRESS_TYPE_ID,
+            WRITE_TO_US_ADDRESS_TYPE
         ));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
