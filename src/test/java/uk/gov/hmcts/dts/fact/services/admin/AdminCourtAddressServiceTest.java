@@ -13,7 +13,10 @@ import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
+import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
+import uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType;
+import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.repositories.CourtAddressRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.services.MapitService;
@@ -49,14 +52,43 @@ public class AdminCourtAddressServiceTest {
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME_CY = WRITE_TO_US_ADDRESS_TYPE_NAME + " cy";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY = VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME + " cy";
 
-    private static final AddressType VISIT_US_ADDRESS_TYPE = new AddressType(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE_NAME, VISIT_US_ADDRESS_TYPE_NAME_CY);
-    private static final AddressType WRITE_TO_US_ADDRESS_TYPE = new AddressType(WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE_NAME, WRITE_TO_US_ADDRESS_TYPE_NAME_CY);
-    private static final AddressType VISIT_OR_CONTACT_US_ADDRESS_TYPE = new AddressType(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME, VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY);
-    private static final County  COUNTY = new County(COUNTY_ID,COUNTY_NAME,COUNTY_COUNTRY);
+    private static final AddressType VISIT_US_ADDRESS_TYPE = new AddressType(
+        VISIT_US_ADDRESS_TYPE_ID,
+        VISIT_US_ADDRESS_TYPE_NAME,
+        VISIT_US_ADDRESS_TYPE_NAME_CY
+    );
+    private static final AddressType WRITE_TO_US_ADDRESS_TYPE = new AddressType(
+        WRITE_TO_US_ADDRESS_TYPE_ID,
+        WRITE_TO_US_ADDRESS_TYPE_NAME,
+        WRITE_TO_US_ADDRESS_TYPE_NAME_CY
+    );
+    private static final AddressType VISIT_OR_CONTACT_US_ADDRESS_TYPE = new AddressType(
+        VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID,
+        VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME,
+        VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY
+    );
+    private static final County COUNTY = new County(COUNTY_ID, COUNTY_NAME, COUNTY_COUNTRY);
     private static final Map<Integer, AddressType> ADDRESS_TYPE_MAP = Map.of(
         VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
         WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE,
         VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE
+    );
+    private static final CourtSecondaryAddressType COURT_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
+        Arrays.asList(
+            new AreaOfLaw(
+                new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+                    34257, "Civil partnership"), false),
+            new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+                34248, "Adoption"), false)
+        ),
+        Arrays.asList(
+            new CourtType(
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11417, "Family Court")
+            ),
+            new CourtType(
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11418, "Tribunal")
+            )
+        )
     );
 
     private static final List<String> TEST_ADDRESS1 = singletonList("1 High Street");
@@ -77,22 +109,49 @@ public class AdminCourtAddressServiceTest {
     private static final String DESCRIPTION_CY = "Description cy";
 
     private static final int ADDRESS_COUNT = 2;
-    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY_ID,
-                                                                             WRITE_TO_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
+    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(1,
+                                                                             WRITE_TO_US_ADDRESS_TYPE_ID,
+                                                                             TEST_ADDRESS1,
+                                                                             TEST_ADDRESS_CY1,
+                                                                             TEST_TOWN1,
+                                                                             null,
+                                                                             COUNTY_ID,
+                                                                             WRITE_TO_US_POSTCODE,
+                                                                             COURT_SECONDARY_ADDRESS_TYPE_LIST
     );
-    private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(VISIT_US_ADDRESS_TYPE_ID, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, COUNTY_ID,
-                                                                          VISIT_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
+    private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(2,
+                                                                          VISIT_US_ADDRESS_TYPE_ID,
+                                                                          TEST_ADDRESS2,
+                                                                          TEST_ADDRESS_CY2,
+                                                                          TEST_TOWN2,
+                                                                          null,
+                                                                          COUNTY_ID,
+                                                                          VISIT_US_POSTCODE,
+                                                                          COURT_SECONDARY_ADDRESS_TYPE_LIST
     );
     private static final List<CourtAddress> EXPECTED_ADDRESSES = asList(WRITE_TO_US_ADDRESS, VISIT_US_ADDRESS);
 
     private static final Court MOCK_COURT = mock(Court.class);
     private static final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> COURT_ADDRESSES_ENTITY = asList(
-        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY,
-                                                      WRITE_TO_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
+        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT,
+                                                      WRITE_TO_US_ADDRESS_TYPE,
+                                                      TEST_ADDRESS1,
+                                                      TEST_ADDRESS_CY1,
+                                                      TEST_TOWN1,
+                                                      null,
+                                                      COUNTY,
+                                                      WRITE_TO_US_POSTCODE
         ),
-        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, TEST_ADDRESS2, TEST_ADDRESS_CY2, TEST_TOWN2, null, COUNTY,
-                                                      VISIT_US_POSTCODE, DESCRIPTION, DESCRIPTION_CY
-        ));
+        new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT,
+                                                      VISIT_US_ADDRESS_TYPE,
+                                                      TEST_ADDRESS2,
+                                                      TEST_ADDRESS_CY2,
+                                                      TEST_TOWN2,
+                                                      null,
+                                                      COUNTY,
+                                                      VISIT_US_POSTCODE
+        )
+    );
 
     private static final Double LATITUDE = 1.0;
     private static final Double LONGITUDE = 2.0;
@@ -143,12 +202,66 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldSortAllVisitUsAddressesFirst() {
         final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> courtAddresses = asList(
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_OR_CONTACT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null,null,null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null,null,null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, WRITE_TO_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null, null),
-            new uk.gov.hmcts.dts.fact.entity.CourtAddress(MOCK_COURT, VISIT_US_ADDRESS_TYPE, emptyList(), emptyList(), null, null, null, null, null,null)
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+                MOCK_COURT,
+                WRITE_TO_US_ADDRESS_TYPE,
+                emptyList(),
+                emptyList(),
+                null,
+                null,
+                null,
+                null
+            ),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+                MOCK_COURT,
+                VISIT_US_ADDRESS_TYPE,
+                emptyList(),
+                emptyList(),
+                null,
+                null,
+                null,
+                null
+            ),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+                MOCK_COURT,
+                VISIT_OR_CONTACT_US_ADDRESS_TYPE,
+                emptyList(),
+                emptyList(),
+                null,
+                null,
+                null,
+                null
+            ),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+                MOCK_COURT,
+                WRITE_TO_US_ADDRESS_TYPE,
+                emptyList(),
+                emptyList(),
+                null,
+                null,
+                null,
+                null
+            ),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+                MOCK_COURT,
+                WRITE_TO_US_ADDRESS_TYPE,
+                emptyList(),
+                emptyList(),
+                null,
+                null,
+                null,
+                null
+            ),
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+                MOCK_COURT,
+                VISIT_US_ADDRESS_TYPE,
+                emptyList(),
+                emptyList(),
+                null,
+                null,
+                null,
+                null
+            )
         );
         when(MOCK_COURT.getAddresses()).thenReturn(courtAddresses);
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
@@ -173,8 +286,11 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldUpdateCourtAddressesForInPersonCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
+                                                                            VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
+                                                                            WRITE_TO_US_ADDRESS_TYPE
+        ));
         when(adminCountyService.getCountyMap()).thenReturn(Map.of(COUNTY_ID, COUNTY));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
 
@@ -184,7 +300,10 @@ public class AdminCourtAddressServiceTest {
 
         when(MOCK_COURT.isInPerson()).thenReturn(true);
 
-        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(
+            COURT_SLUG,
+            EXPECTED_ADDRESSES
+        );
         assertThat(results).hasSize(ADDRESS_COUNT);
         assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
         assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
@@ -193,16 +312,23 @@ public class AdminCourtAddressServiceTest {
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
                                                            EXPECTED_ADDRESSES,
-                                                           results, COURT_SLUG);
+                                                           results, COURT_SLUG
+        );
     }
 
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForNonExistentCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.empty());
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
+                                                                            VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
+                                                                            WRITE_TO_US_ADDRESS_TYPE
+        ));
 
-        assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES))
+        assertThatThrownBy(() -> adminCourtAddressService.updateCourtAddressesAndCoordinates(
+            COURT_SLUG,
+            EXPECTED_ADDRESSES
+        ))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + COURT_SLUG);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
@@ -211,14 +337,20 @@ public class AdminCourtAddressServiceTest {
     @Test
     void shouldNotUpdateCoordinatesForNotInPersonCourt() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
+                                                                            VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
+                                                                            WRITE_TO_US_ADDRESS_TYPE
+        ));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
 
         when(MOCK_COURT.isInPerson()).thenReturn(false);
 
-        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(
+            COURT_SLUG,
+            EXPECTED_ADDRESSES
+        );
         assertThat(results).hasSize(ADDRESS_COUNT);
         assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
         assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
@@ -226,28 +358,37 @@ public class AdminCourtAddressServiceTest {
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates", emptyList(),
-            COURT_ADDRESSES_ENTITY.stream()
-                .sorted(Comparator.comparingInt(a -> uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
-                .map(CourtAddress::new)
-                .collect(toList()), "court-slug");
+                                                           COURT_ADDRESSES_ENTITY.stream()
+                                                               .sorted(Comparator.comparingInt(a -> uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress(
+                                                                   a.getAddressType().getName()) ? 0 : 1))
+                                                               .map(CourtAddress::new)
+                                                               .collect(toList()), "court-slug"
+        );
     }
 
     @Test
     void shouldNotUpdateCoordinatesForEmptyMapitData() {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
-                                                                            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(VISIT_US_ADDRESS_TYPE_ID,
+                                                                            VISIT_US_ADDRESS_TYPE,
+                                                                            WRITE_TO_US_ADDRESS_TYPE_ID,
+                                                                            WRITE_TO_US_ADDRESS_TYPE
+        ));
         when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
 
-        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(COURT_SLUG, EXPECTED_ADDRESSES);
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(
+            COURT_SLUG,
+            EXPECTED_ADDRESSES
+        );
         assertThat(results).hasSize(ADDRESS_COUNT);
         assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
         assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
 
         verify(courtAddressRepository).deleteAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates", MOCK_COURT.getAddresses()
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+                                                           MOCK_COURT.getAddresses()
                                                                .stream()
                                                                .map(CourtAddress::new)
                                                                .collect(toList()),
@@ -256,16 +397,18 @@ public class AdminCourtAddressServiceTest {
                                                                    a -> uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress(
                                                                        a.getAddressType().getName()) ? 0 : 1))
                                                                .map(CourtAddress::new)
-                                                               .collect(toList()), COURT_SLUG);
+                                                               .collect(toList()), COURT_SLUG
+        );
     }
 
     @Test
     void validateCourtPostcodesReturnsNothingForValidPostcodes() {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(emptyList());
+        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(
+            emptyList());
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
 
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).isEmpty();
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(EXPECTED_ADDRESSES)).isEmpty();
     }
 
     @Test
@@ -274,7 +417,7 @@ public class AdminCourtAddressServiceTest {
         when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE)))
             .thenReturn(asList(WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE));
 
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(EXPECTED_ADDRESSES)).containsExactly(
             WRITE_TO_US_POSTCODE, VISIT_US_POSTCODE);
     }
 
@@ -284,7 +427,7 @@ public class AdminCourtAddressServiceTest {
         when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE)))
             .thenReturn(singletonList(VISIT_US_POSTCODE));
 
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(EXPECTED_ADDRESSES)).containsExactly(
             VISIT_US_POSTCODE);
     }
 
@@ -294,33 +437,39 @@ public class AdminCourtAddressServiceTest {
         when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE)))
             .thenReturn(singletonList(WRITE_TO_US_POSTCODE));
 
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, EXPECTED_ADDRESSES)).containsExactly(
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(EXPECTED_ADDRESSES)).containsExactly(
             WRITE_TO_US_POSTCODE);
     }
 
     @Test
     void validateCourtPostcodesShouldReturnInvalidPartialPostcode() {
         final List<CourtAddress> testAddresses = singletonList(
-            new CourtAddress(WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY_ID, PARTIAL_POSTCODE, DESCRIPTION, DESCRIPTION_CY)
+            new CourtAddress(1, WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1,
+                             null, COUNTY_ID, PARTIAL_POSTCODE, COURT_SECONDARY_ADDRESS_TYPE_LIST
+            )
         );
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         when(validationService.validateFullPostcodes(singletonList(PARTIAL_POSTCODE)))
             .thenReturn(singletonList(PARTIAL_POSTCODE));
 
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).containsExactly(PARTIAL_POSTCODE);
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(testAddresses)).containsExactly(
+            PARTIAL_POSTCODE);
     }
 
     @Test
     void validateCourtPostcodesShouldReturnNothingForEmptyAddress() {
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, emptyList())).isEmpty();
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(emptyList())).isEmpty();
         verifyNoInteractions(validationService);
     }
 
     @Test
     void validateCourtPostcodesShouldNotUpdateCoordinatesForAddressWithMissingPostcode() {
-        final List<CourtAddress> testAddresses = singletonList(new CourtAddress(VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1, null, COUNTY_ID, "",DESCRIPTION,DESCRIPTION_CY));
+        final List<CourtAddress> testAddresses =
+            singletonList(new CourtAddress(1, VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1,
+                                           TEST_TOWN1, null, COUNTY_ID, "", COURT_SECONDARY_ADDRESS_TYPE_LIST
+            ));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(COURT_SLUG, testAddresses)).isEmpty();
+        assertThat(adminCourtAddressService.validateCourtAddressPostcodes(testAddresses)).isEmpty();
         verifyNoInteractions(validationService);
     }
 }

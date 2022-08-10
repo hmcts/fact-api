@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,7 +12,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
+import uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType;
+import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
 
 import java.util.Arrays;
@@ -39,16 +43,32 @@ public class AdminCourtAddressControllerTest {
     private static final String POSTCODE1 = "first postcode";
     private static final String POSTCODE2 = "second postcode";
     private static final Integer COUNTY = 1;
-    private static final String DESCRIPTION = "Description";
-    private static final String DESCRIPTION_CY = "Description cy";
-
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
-        new CourtAddress(1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, DESCRIPTION, DESCRIPTION_CY),
-        new CourtAddress(2, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, DESCRIPTION, DESCRIPTION_CY)
+    private static final CourtSecondaryAddressType COURT_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
+        Arrays.asList(
+            new AreaOfLaw(
+                new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+                    34257, "Civil partnership"), false),
+            new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+                34248, "Adoption"), false)
+        ),
+        Arrays.asList(
+            new CourtType(
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11417, "Family Court")
+            ),
+            new CourtType(
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11418, "Tribunal")
+            )
+        )
     );
+
+    private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
+        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST),
+        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST)
+    );
+
     private static String courtAddressesJson;
 
     @Autowired
@@ -82,7 +102,7 @@ public class AdminCourtAddressControllerTest {
 
     @Test
     void shouldUpdateCourtAddresses() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(emptyList());
+        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
         when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
@@ -95,7 +115,7 @@ public class AdminCourtAddressControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForUnknownCourtSlug() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(emptyList());
+        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
         when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenThrow(new NotFoundException(TEST_SLUG));
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
@@ -110,7 +130,7 @@ public class AdminCourtAddressControllerTest {
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidPostcode() throws Exception {
         final List<String> expectedResult = singletonList(POSTCODE2);
         final String expectedResultJson = OBJECT_MAPPER.writeValueAsString(expectedResult);
-        when(adminService.validateCourtAddressPostcodes(TEST_SLUG, COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
+        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .content(courtAddressesJson)

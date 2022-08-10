@@ -26,7 +26,8 @@ public class CourtAddressTest {
     void testCreationWhenAddressTypeIsSet() {
         final AddressType addressType = new AddressType(ADDRESS_TYPE_ID, "type", null);
         final County county = new County(COUNTY_ID, "County", "Engalnd");
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, county, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity =
+            new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, county, POSTCODE);
         final CourtAddress result = new CourtAddress(entity);
 
         final SoftAssertions softly = new SoftAssertions();
@@ -43,7 +44,7 @@ public class CourtAddressTest {
     @Test
     void testCreationWhenAddressTypeIsNotSet() {
         final County county = new County(COUNTY_ID, "County", "Engalnd");
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, null, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, county, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, null, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, county, POSTCODE);
         final CourtAddress result = new CourtAddress(entity);
 
 
@@ -61,7 +62,7 @@ public class CourtAddressTest {
     @Test
     void testCreationWhenCountyIsNotSet() {
         final AddressType addressType = new AddressType(ADDRESS_TYPE_ID, "type", null);
-        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, null, POSTCODE, DESCRIPTION, DESCRIPTION_CY);
+        final uk.gov.hmcts.dts.fact.entity.CourtAddress entity = new uk.gov.hmcts.dts.fact.entity.CourtAddress(COURT_ENTITY, addressType, ADDRESS, ADDRESS_CY, TOWN_NAME, TOWN_NAME_CY, null, POSTCODE);
         final CourtAddress result = new CourtAddress(entity);
 
 

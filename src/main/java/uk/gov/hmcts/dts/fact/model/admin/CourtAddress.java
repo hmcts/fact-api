@@ -62,6 +62,6 @@ public class CourtAddress {
                 .filter(a -> Objects.nonNull(a.getCourtType()))
                 .map(s -> new CourtType(s.getCourtType()))
                 .collect(Collectors.toList())
-        ): null;
+        ) : null;
     }
 }

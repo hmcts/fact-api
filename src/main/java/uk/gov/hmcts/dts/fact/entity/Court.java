@@ -102,7 +102,7 @@ public class Court {
     )
     private List<Facility> facilities;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = COURT_STRING)
+    @OneToMany(mappedBy = COURT_STRING)
     private List<CourtAddress> addresses;
 
     private String gbs;

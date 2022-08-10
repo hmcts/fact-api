@@ -16,12 +16,3 @@ CREATE SEQUENCE public.search_courtsecondaryaddresstype_id_seq
 
 ALTER SEQUENCE public.search_courtsecondaryaddresstype_id_seq OWNED BY public.search_courtsecondaryaddresstype.id;
 ALTER TABLE ONLY public.search_courtsecondaryaddresstype ALTER COLUMN id SET DEFAULT nextval('public.search_courtsecondaryaddresstype_id_seq'::regclass);
-
---
-INSERT INTO public.search_courtsecondaryaddresstype(address_id, area_of_law_id, court_type_id)
-VALUES (1960374,
-        (SELECT id FROM public.search_areaoflaw WHERE name = 'Money claims'),
-        null),
-       (1960374,
-        null,
-        (SELECT id FROM public.search_courttype WHERE name = 'Magistrates'' Court'));

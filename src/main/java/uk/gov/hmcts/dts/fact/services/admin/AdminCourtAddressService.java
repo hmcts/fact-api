@@ -87,6 +87,10 @@ public class AdminCourtAddressService {
             courtEntity,
             courtAddresses
         );
+
+        for (CourtAddress courtAddress: courtAddresses)
+            courtSecondaryAddressTypeRepository.deleteAllByAddressId(courtAddress.getId());
+
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
 
         List<uk.gov.hmcts.dts.fact.entity.CourtAddress> updatedAddressesEntity =
@@ -118,7 +122,7 @@ public class AdminCourtAddressService {
         return updatedAddresses;
     }
 
-    public List<String> validateCourtAddressPostcodes(final String slug, final List<CourtAddress> courtAddresses) {
+    public List<String> validateCourtAddressPostcodes(final List<CourtAddress> courtAddresses) {
         if (!CollectionUtils.isEmpty(courtAddresses)) {
             final List<String> allPostcodes = getAllPostcodesSortedByAddressType(courtAddresses);
 
