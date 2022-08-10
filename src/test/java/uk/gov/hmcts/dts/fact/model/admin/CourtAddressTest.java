@@ -15,6 +15,7 @@ public class CourtAddressTest {
     private static final String TOWN_NAME = "town";
     private static final String TOWN_NAME_CY = "town cy";
     private static final String POSTCODE = "postcode";
+    private static final Integer ADDRESS_ID = 1;
     private static final Integer ADDRESS_TYPE_ID = 10;
     private static final Integer COUNTY_ID = 1;
 
@@ -35,9 +36,11 @@ public class CourtAddressTest {
                 county,
                 POSTCODE
             );
+        entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
 
         final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result.getId()).isEqualTo(ADDRESS_ID);
         softly.assertThat(result.getAddressTypeId()).isEqualTo(ADDRESS_TYPE_ID);
         softly.assertThat(result.getAddressLines()).containsExactlyElementsOf(ADDRESS);
         softly.assertThat(result.getAddressLinesCy()).containsExactlyElementsOf(ADDRESS_CY);
@@ -61,10 +64,12 @@ public class CourtAddressTest {
             county,
             POSTCODE
         );
+        entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
 
 
         final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result.getId()).isEqualTo(ADDRESS_ID);
         softly.assertThat(result.getAddressTypeId()).isNull();
         softly.assertThat(result.getAddressLines()).containsExactlyElementsOf(ADDRESS);
         softly.assertThat(result.getAddressLinesCy()).containsExactlyElementsOf(ADDRESS_CY);
@@ -88,10 +93,11 @@ public class CourtAddressTest {
             null,
             POSTCODE
         );
+        entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
 
-
         final SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result.getId()).isEqualTo(ADDRESS_ID);
         softly.assertThat(result.getAddressTypeId()).isEqualTo(ADDRESS_TYPE_ID);
         softly.assertThat(result.getAddressLines()).containsExactlyElementsOf(ADDRESS);
         softly.assertThat(result.getAddressLinesCy()).containsExactlyElementsOf(ADDRESS_CY);

@@ -87,7 +87,9 @@ public class AdminCourtAddressService {
         );
 
         for (CourtAddress courtAddress: courtAddresses) {
-            courtSecondaryAddressTypeRepository.deleteAllByAddressId(courtAddress.getId());
+            if (!Objects.isNull(courtAddress.getId())) {
+                courtSecondaryAddressTypeRepository.deleteAllByAddressId(courtAddress.getId());
+            }
         }
 
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
@@ -112,10 +114,7 @@ public class AdminCourtAddressService {
 
         adminAuditService.saveAudit(
             AuditType.findByName("Update court addresses and coordinates"),
-            courtEntity.getAddresses()
-                .stream()
-                .map(CourtAddress::new)
-                .collect(toList()),
+            courtAddresses,
             updatedAddresses, slug
         );
         return updatedAddresses;
@@ -260,18 +259,21 @@ public class AdminCourtAddressService {
             List<uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw> areaOfLawList = courtSecondaryAddressType
                 .stream()
                 .filter(ca -> !Objects.isNull(ca.getAreaOfLaw()))
-                .filter(ca -> ca.getAddress().getId() == responseList.get(finalI).getId())
+                .filter(ca -> ca.getAddress().getId().equals(responseList.get(finalI).getId()))
                 .map(a -> new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(a.getAreaOfLaw()))
                 .collect(toList());
             List<uk.gov.hmcts.dts.fact.model.admin.CourtType> courtTypeList = courtSecondaryAddressType
                 .stream()
                 .filter(ca -> !Objects.isNull(ca.getCourtType()))
-                .filter(ca -> ca.getAddress().getId() == responseList.get(finalI).getId())
+                .filter(ca -> ca.getAddress().getId().equals(responseList.get(finalI).getId()))
                 .map(a -> new uk.gov.hmcts.dts.fact.model.admin.CourtType(a.getCourtType()))
                 .collect(toList());
             responseList.get(i).setCourtSecondaryAddressType(
                 new uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType(areaOfLawList, courtTypeList));
         }
+
+        // Sort by ID to make sure the returning list is in the right order
+        responseList.sort(Comparator.comparingInt(CourtAddress::getAddressTypeId));
         return responseList;
     }
 }

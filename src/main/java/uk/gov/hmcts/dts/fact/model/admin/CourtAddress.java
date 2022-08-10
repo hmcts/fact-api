@@ -17,8 +17,9 @@ import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@SuppressWarnings("PMD.NullAssignment")
 public class CourtAddress {
-    private int id;
+    private Integer id;
     @JsonProperty("type_id")
     private Integer addressTypeId;
     @JsonProperty("address_lines")
@@ -36,7 +37,7 @@ public class CourtAddress {
     private CourtSecondaryAddressType courtSecondaryAddressType;
 
     public CourtAddress(final uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
-        this.id = courtAddress.getId();
+        this.id = Objects.isNull(courtAddress.getId()) ? null : courtAddress.getId();
         if (courtAddress.getAddressType() != null) {
             this.addressTypeId = courtAddress.getAddressType().getId();
         }

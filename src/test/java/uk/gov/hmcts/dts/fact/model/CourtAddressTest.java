@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CourtAddressTest {
 
-    static uk.gov.hmcts.dts.fact.entity.CourtAddress entity;
+    private static uk.gov.hmcts.dts.fact.entity.CourtAddress entity;
 
     @BeforeAll
     static void setUp() {

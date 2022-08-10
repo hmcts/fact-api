@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
@@ -117,10 +118,12 @@ public class AdminCourtAddressControllerTest {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
         when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenThrow(new NotFoundException(TEST_SLUG));
 
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
+        ResultActions resultActions = mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .content(courtAddressesJson)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
+                            .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
             .andExpect(status().isNotFound())
             .andExpect(content().string("Not found: " + TEST_SLUG));
     }

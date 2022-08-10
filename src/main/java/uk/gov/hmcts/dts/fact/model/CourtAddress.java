@@ -39,7 +39,8 @@ public class CourtAddress {
         this.county = courtAddress.getCounty() == null ? "" : courtAddress.getCounty().getName();
         this.postcode = courtAddress.getPostcode();
 
-        if (courtAddress.getCourtSecondaryAddressType().size() > 0) {
+        if (!Objects.isNull(courtAddress.getCourtSecondaryAddressType())
+            && courtAddress.getCourtSecondaryAddressType().size() > 0) {
             this.courtSecondaryAddressType = new CourtSecondaryAddressType(
                 courtAddress
                     .getCourtSecondaryAddressType()

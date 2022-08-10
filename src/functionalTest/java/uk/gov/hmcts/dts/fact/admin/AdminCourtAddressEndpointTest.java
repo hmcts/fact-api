@@ -12,10 +12,7 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
