@@ -39,7 +39,6 @@ public class CourtAddress {
 
     @OneToMany
     @JoinColumn(name = "address_id")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;
 
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,

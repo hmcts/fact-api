@@ -95,26 +95,29 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     public void shouldUpdateAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
+        expectedCourtAddress.get(0).setId(1960528);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
-        final String originalJson = objectMapper().writeValueAsString(currentCourtAddress);
 
         final Response response = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        final List<CourtAddress> updatedCourtAddress = response.body().jsonPath().getList(".", CourtAddress.class);
+        final List<CourtAddress> updatedCourtAddress =
+            response.body().jsonPath().getList(".", CourtAddress.class);
         assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress);
 
         //clean up by removing added record
+        final String originalJson = objectMapper().writeValueAsString(currentCourtAddress);
+
         final Response cleanUpResponse = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             originalJson
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
-
+        expectedCourtAddress.get(0).setId(1960530); // +2 compared to above
         final List<CourtAddress> cleanCourtAddress = cleanUpResponse.body().jsonPath().getList(".", CourtAddress.class);
         assertThat(cleanCourtAddress).containsExactlyElementsOf(currentCourtAddress);
     }
@@ -230,7 +233,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private List<CourtAddress> addNewCourtAddress(final List<CourtAddress> courtAddresses) {
         final List<CourtAddress> updatedCourtAddress = new ArrayList<>(courtAddresses);
         updatedCourtAddress.add(new CourtAddress(
-            312_012,
+            1_960_529,
             VISIT_US_TYPE_ID,
             TEST_ADDRESS_LINES,
             TEST_ADDRESS_LINES_CY,
@@ -252,7 +255,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private List<CourtAddress> createCourtAddresses() {
         return Arrays.asList(
             new CourtAddress(
-                312_013,
+                null,
                 VISIT_US_TYPE_ID,
                 TEST_ADDRESS_LINES,
                 TEST_ADDRESS_LINES_CY,
@@ -263,7 +266,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 COURT_SECONDARY_ADDRESS_TYPE_LIST
             ),
             new CourtAddress(
-                312_014,
+                null,
                 WRITE_TO_US_TYPE_ID,
                 TEST_ADDRESS_LINES,
                 TEST_ADDRESS_LINES_CY,

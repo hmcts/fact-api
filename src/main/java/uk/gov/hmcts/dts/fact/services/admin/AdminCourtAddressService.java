@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,12 +87,7 @@ public class AdminCourtAddressService {
             courtAddresses
         );
 
-        for (CourtAddress courtAddress: courtAddresses) {
-            if (!Objects.isNull(courtAddress.getId())) {
-                courtSecondaryAddressTypeRepository.deleteAllByAddressId(courtAddress.getId());
-            }
-        }
-
+        deleteExistingSecondaryAddressTypes(slug);
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
 
         List<uk.gov.hmcts.dts.fact.entity.CourtAddress> updatedAddressesEntity =
@@ -106,11 +102,14 @@ public class AdminCourtAddressService {
             ));
 
         // Update the responding model to include the new secondary address types
+        // Note: the id's will not be created until the transaction is commited, so calling
+        // the get addresses by slug method will not work for this purpose
         List<CourtAddress> updatedAddresses = updateResponseModel(updatedAddressesEntity
-            .stream()
-            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
-            .map(CourtAddress::new)
-            .collect(toList()), courtSecondaryAddressType);
+                                                                      .stream()
+                                                                      .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(
+                                                                          a.getAddressType().getName()) ? 0 : 1))
+                                                                      .map(CourtAddress::new)
+                                                                      .collect(toList()), courtSecondaryAddressType);
 
         adminAuditService.saveAudit(
             AuditType.findByName("Update court addresses and coordinates"),
@@ -246,7 +245,8 @@ public class AdminCourtAddressService {
     /**
      * Update the response model that is returned through the request with the information
      * provided.
-     * @param updatedAddresses contains addresses without entities
+     *
+     * @param updatedAddresses          contains addresses without entities
      * @param courtSecondaryAddressType contains entities that need to be added to addresses
      * @return An updated list of court addresses
      */
@@ -271,9 +271,22 @@ public class AdminCourtAddressService {
             responseList.get(i).setCourtSecondaryAddressType(
                 new uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType(areaOfLawList, courtTypeList));
         }
-
-        // Sort by ID to make sure the returning list is in the right order
-        responseList.sort(Comparator.comparingInt(CourtAddress::getAddressTypeId));
         return responseList;
+    }
+
+    private void deleteExistingSecondaryAddressTypes(String slug) {
+        List<Integer> secondaryTypesToRemove = getCourtAddressesBySlug(slug)
+            .stream()
+            .map(CourtAddress::getId)
+            .collect(toList());
+        courtSecondaryAddressTypeRepository.deleteAll(courtSecondaryAddressTypeRepository
+                                                          .findAllByAddressIdIn(secondaryTypesToRemove)
+                                                          .stream()
+                                                          .distinct()
+                                                          .collect(toList()));
+        courtSecondaryAddressTypeRepository.deleteAllByAddressIdIn(getCourtAddressesBySlug(slug)
+                                                                       .stream()
+                                                                       .map(CourtAddress::getId)
+                                                                       .collect(toList()));
     }
 }
