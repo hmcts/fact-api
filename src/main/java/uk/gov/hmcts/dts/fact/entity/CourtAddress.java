@@ -3,7 +3,6 @@ package uk.gov.hmcts.dts.fact.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;

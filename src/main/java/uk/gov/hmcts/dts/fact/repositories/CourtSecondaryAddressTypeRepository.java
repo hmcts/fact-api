@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CourtSecondaryAddressTypeRepository extends JpaRepository<CourtSecondaryAddressType, Integer> {
     List<CourtSecondaryAddressType> findAllByAddressIdIn(List<Integer> addressId);
+
     void deleteAllByAddressIdIn(List<Integer> addressIds);
 }

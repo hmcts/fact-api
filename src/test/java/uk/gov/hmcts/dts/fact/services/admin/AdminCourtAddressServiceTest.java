@@ -414,10 +414,13 @@ public class AdminCourtAddressServiceTest {
         );
         assertThat(results).hasSize(ADDRESS_COUNT);
         assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
-        assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
-        assertThat(results.get(2)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(2)).isEqualTo(WRITE_TO_US_ADDRESS);
 
         verify(courtAddressRepository).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAllByAddressIdIn(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
                                                            EXPECTED_ADDRESSES,
@@ -470,10 +473,13 @@ public class AdminCourtAddressServiceTest {
         );
         assertThat(results).hasSize(ADDRESS_COUNT);
         assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
-        assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
-        assertThat(results.get(2)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(2)).isEqualTo(WRITE_TO_US_ADDRESS);
 
         verify(courtAddressRepository).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAllByAddressIdIn(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
         verify(adminAuditService, atLeastOnce()).saveAudit(
             "Update court addresses and coordinates",
@@ -505,10 +511,13 @@ public class AdminCourtAddressServiceTest {
         );
         assertThat(results).hasSize(ADDRESS_COUNT);
         assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
-        assertThat(results.get(1)).isEqualTo(WRITE_TO_US_ADDRESS);
-        assertThat(results.get(2)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(2)).isEqualTo(WRITE_TO_US_ADDRESS);
 
         verify(courtAddressRepository).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAllByAddressIdIn(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
                                                            EXPECTED_ADDRESSES,
