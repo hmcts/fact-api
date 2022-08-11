@@ -16,3 +16,7 @@ CREATE SEQUENCE public.search_courtsecondaryaddresstype_id_seq
 
 ALTER SEQUENCE public.search_courtsecondaryaddresstype_id_seq OWNED BY public.search_courtsecondaryaddresstype.id;
 ALTER TABLE ONLY public.search_courtsecondaryaddresstype ALTER COLUMN id SET DEFAULT nextval('public.search_courtsecondaryaddresstype_id_seq'::regclass);
+
+-- Remove description and description cy columns from address table
+ALTER TABLE ONLY public.search_courtaddress DROP COLUMN description;
+ALTER TABLE ONLY public.search_courtaddress DROP COLUMN description_cy;
