@@ -26,7 +26,7 @@ public class CourtAddress {
     private String county;
     private String postcode;
     private String description;
-    @JsonProperty("types")
+    @JsonProperty("fields_of_law")
     private CourtSecondaryAddressType courtSecondaryAddressType;
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
