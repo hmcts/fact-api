@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.CourtSecondaryAddressType;
+import uk.gov.hmcts.dts.fact.entity.CourtType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
