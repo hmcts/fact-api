@@ -197,7 +197,8 @@ public class AdminCourtAddressService {
         // Get the id from the newly created address
         for (int i = 0; i < updatedCourtAddresses.size(); i++) {
 
-            if (!Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType().getAreaOfLawList())) {
+            if (!Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType()) &&
+                !Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType().getAreaOfLawList())) {
                 for (uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw :
                     originalNewAddresses.get(i).getCourtSecondaryAddressType().getAreaOfLawList()) {
                     courtSecondaryAddressTypeList.add(new CourtSecondaryAddressType(
@@ -207,7 +208,8 @@ public class AdminCourtAddressService {
                 }
             }
 
-            if (!Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType().getCourtTypesList())) {
+            if (!Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType()) &&
+                !Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType().getCourtTypesList())) {
                 for (uk.gov.hmcts.dts.fact.model.admin.CourtType courtType :
                     originalNewAddresses.get(i).getCourtSecondaryAddressType().getCourtTypesList()) {
                     courtSecondaryAddressTypeList.add(new CourtSecondaryAddressType(
