@@ -95,7 +95,6 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     public void shouldUpdateAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
-        expectedCourtAddress.get(0).setId(1_960_528);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
 
         final Response response = doPutRequest(
@@ -105,6 +104,9 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         );
         final List<CourtAddress> updatedCourtAddress =
             response.body().jsonPath().getList(".", CourtAddress.class);
+        expectedCourtAddress.get(0).setId(updatedCourtAddress.get(0).getId());
+        Integer updatedId = updatedCourtAddress.get(1).getId();
+        expectedCourtAddress.get(1).setId(updatedId);
         assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress);
 
@@ -117,7 +119,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             originalJson
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
-        expectedCourtAddress.get(0).setId(1_960_530); // +2 compared to above
+        expectedCourtAddress.get(0).setId(updatedId + 1); // +1 compared to above
         final List<CourtAddress> cleanCourtAddress = cleanUpResponse.body().jsonPath().getList(".", CourtAddress.class);
         assertThat(cleanCourtAddress).containsExactlyElementsOf(currentCourtAddress);
     }
