@@ -6,7 +6,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 
@@ -14,7 +17,9 @@ import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@SuppressWarnings("PMD.NullAssignment")
 public class CourtAddress {
+    private Integer id;
     @JsonProperty("type_id")
     private Integer addressTypeId;
     @JsonProperty("address_lines")
@@ -28,11 +33,11 @@ public class CourtAddress {
     @JsonProperty("county_id")
     private Integer countyId;
     private String postcode;
-    private String description;
-    @JsonProperty("description_cy")
-    private String descriptionCy;
+    @JsonProperty("fields_of_law")
+    private CourtSecondaryAddressType courtSecondaryAddressType;
 
     public CourtAddress(final uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
+        this.id = Objects.isNull(courtAddress.getId()) ? null : courtAddress.getId();
         if (courtAddress.getAddressType() != null) {
             this.addressTypeId = courtAddress.getAddressType().getId();
         }
@@ -44,7 +49,21 @@ public class CourtAddress {
             this.countyId = courtAddress.getCounty().getId();
         }
         this.postcode = courtAddress.getPostcode();
-        this.description = courtAddress.getDescription();
-        this.descriptionCy = courtAddress.getDescriptionCy();
+        this.courtSecondaryAddressType = Objects.isNull(courtAddress.getCourtSecondaryAddressType()) ? new CourtSecondaryAddressType(
+            Collections.emptyList(), Collections.emptyList()) :
+            new CourtSecondaryAddressType(
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getAreaOfLaw()))
+                    .map(a -> new AreaOfLaw(a.getAreaOfLaw()))
+                    .collect(Collectors.toList()),
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getCourtType()))
+                    .map(s -> new CourtType(s.getCourtType()))
+                    .collect(Collectors.toList())
+            );
     }
 }

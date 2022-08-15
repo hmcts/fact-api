@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.repositories.CourtAddressRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtSecondaryAddressTypeRepository;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
@@ -27,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 public class AdminCourtAddressService {
     private final CourtRepository courtRepository;
     private final CourtAddressRepository courtAddressRepository;
+    private final CourtSecondaryAddressTypeRepository courtSecondaryAddressTypeRepository;
     private final AdminAddressTypeService addressTypeService;
     private final AdminCountyService countyService;
     private final AdminService adminService;
@@ -37,6 +39,7 @@ public class AdminCourtAddressService {
     @Autowired
     public AdminCourtAddressService(final CourtRepository courtRepository,
                                     final CourtAddressRepository courtAddressRepository,
+                                    final CourtSecondaryAddressTypeRepository courtSecondaryAddressTypeRepository,
                                     final AdminAddressTypeService addressTypeService,
                                     final AdminCountyService countyService,
                                     final AdminService adminService,
@@ -45,6 +48,7 @@ public class AdminCourtAddressService {
                                     final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtAddressRepository = courtAddressRepository;
+        this.courtSecondaryAddressTypeRepository = courtSecondaryAddressTypeRepository;
         this.addressTypeService = addressTypeService;
         this.countyService = countyService;
         this.adminService = adminService;
@@ -77,25 +81,44 @@ public class AdminCourtAddressService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> newCourtAddressesEntity = constructCourtAddressesEntity(courtEntity, courtAddresses);
+        final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> newCourtAddressesEntity = constructCourtAddressesEntity(
+            courtEntity,
+            courtAddresses
+        );
+
+        deleteExistingSecondaryAddressTypes(slug);
         courtAddressRepository.deleteAll(courtEntity.getAddresses());
 
-        List<CourtAddress> updatedAddresses = courtAddressRepository.saveAll(newCourtAddressesEntity)
-            .stream()
-            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
-            .map(CourtAddress::new)
-            .collect(toList());
+        List<uk.gov.hmcts.dts.fact.entity.CourtAddress> updatedAddressesEntity =
+            courtAddressRepository.saveAll(newCourtAddressesEntity);
+
+        // After the court addresses have been saved, use the new address Id to update the
+        // secondary addresses to include the areas of law and court types they govern
+        final List<CourtSecondaryAddressType> courtSecondaryAddressType = courtSecondaryAddressTypeRepository.saveAll(
+            constructCourtSecondaryAddressTypes(
+                updatedAddressesEntity,
+                courtAddresses
+            ));
+
+        // Update the responding model to include the new secondary address types
+        // Note: the id's will not be created until the transaction is commited, so calling
+        // the get addresses by slug method will not work for this purpose
+        List<CourtAddress> updatedAddresses = updateResponseModel(updatedAddressesEntity
+                                                                      .stream()
+                                                                      .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(
+                                                                          a.getAddressType().getName()) ? 0 : 1))
+                                                                      .map(CourtAddress::new)
+                                                                      .collect(toList()), courtSecondaryAddressType);
+
         adminAuditService.saveAudit(
             AuditType.findByName("Update court addresses and coordinates"),
-            courtEntity.getAddresses()
-                .stream()
-                .map(CourtAddress::new)
-                .collect(toList()),
-            updatedAddresses, slug);
+            courtAddresses,
+            updatedAddresses, slug
+        );
         return updatedAddresses;
     }
 
-    public List<String> validateCourtAddressPostcodes(final String slug, final List<CourtAddress> courtAddresses) {
+    public List<String> validateCourtAddressPostcodes(final List<CourtAddress> courtAddresses) {
         if (!CollectionUtils.isEmpty(courtAddresses)) {
             final List<String> allPostcodes = getAllPostcodesSortedByAddressType(courtAddresses);
 
@@ -109,7 +132,10 @@ public class AdminCourtAddressService {
     private List<String> getAllPostcodesSortedByAddressType(final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         return courtAddresses.stream()
-            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(getAddressTypeFromId(addressTypeMap, a.getAddressTypeId())) ? 0 : 1))
+            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(getAddressTypeFromId(
+                addressTypeMap,
+                a.getAddressTypeId()
+            )) ? 0 : 1))
             .map(CourtAddress::getPostcode)
             .filter(StringUtils::isNotBlank)
             .collect(toList());
@@ -137,19 +163,131 @@ public class AdminCourtAddressService {
 
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
-        final Map<Integer, uk.gov.hmcts.dts.fact.entity.County> countyMap = countyService.getCountyMap();
+        final Map<Integer, County> countyMap = countyService.getCountyMap();
+
         return courtAddresses.stream()
-            .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
-                                                                    addressTypeMap.get(a.getAddressTypeId()),
-                                                                    a.getAddressLines(),
-                                                                    a.getAddressLinesCy(),
-                                                                    a.getTownName(),
-                                                                    a.getTownNameCy(),
-                                                                    countyMap.get(a.getCountyId()),
-                                                                    a.getPostcode(),
-                                                                    a.getDescription(),
-                                                                    a.getDescriptionCy()))
+            .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(
+                court,
+                addressTypeMap.get(a.getAddressTypeId()),
+                a.getAddressLines(),
+                a.getAddressLinesCy(),
+                a.getTownName(),
+                a.getTownNameCy(),
+                countyMap.get(a.getCountyId()),
+                a.getPostcode()
+            ))
             .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .collect(toList());
+    }
+
+    /**
+     * Use the newly created addresses's id's to create and construct a
+     * list of fields of law.
+     *
+     * @param updatedCourtAddresses contains the id's of the newly created addresses
+     * @param originalNewAddresses  contains the areas of law/court types required
+     * @return a list of entities to be saved to the CourtSecondaryAddressTypeRepository
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private List<CourtSecondaryAddressType> constructCourtSecondaryAddressTypes(final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> updatedCourtAddresses,
+                                                                                final List<CourtAddress> originalNewAddresses) {
+        List<CourtSecondaryAddressType> courtSecondaryAddressTypeList = new ArrayList<>();
+
+        // Where the addresses are the same
+        // Get the id from the newly created address
+        for (int i = 0; i < updatedCourtAddresses.size(); i++) {
+
+            if (!Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType())
+                && !Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType().getAreaOfLawList())) {
+                for (uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw :
+                    originalNewAddresses.get(i).getCourtSecondaryAddressType().getAreaOfLawList()) {
+                    courtSecondaryAddressTypeList.add(new CourtSecondaryAddressType(
+                        updatedCourtAddresses.get(i),
+                        constructAreaOfLaw(areaOfLaw)
+                    ));
+                }
+            }
+
+            if (!Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType())
+                && !Objects.isNull(originalNewAddresses.get(i).getCourtSecondaryAddressType().getCourtTypesList())) {
+                for (uk.gov.hmcts.dts.fact.model.admin.CourtType courtType :
+                    originalNewAddresses.get(i).getCourtSecondaryAddressType().getCourtTypesList()) {
+                    courtSecondaryAddressTypeList.add(new CourtSecondaryAddressType(
+                        updatedCourtAddresses.get(i),
+                        constructCourtType(courtType)
+                    ));
+                }
+            }
+        }
+        return courtSecondaryAddressTypeList;
+    }
+
+    private AreaOfLaw constructAreaOfLaw(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw) {
+        return new AreaOfLaw(areaOfLaw.getId(),
+                             areaOfLaw.getName(),
+                             areaOfLaw.getExternalLink(),
+                             "", // Cy external link is not present in model
+                             areaOfLaw.getExternalLinkDescription(),
+                             areaOfLaw.getExternalLinkDescriptionCy(),
+                             areaOfLaw.getAlternativeName(),
+                             areaOfLaw.getAlternativeNameCy(),
+                             areaOfLaw.getDisplayName(), areaOfLaw.getDisplayNameCy(),
+                             areaOfLaw.getDisplayExternalLink()
+        );
+    }
+
+    private CourtType constructCourtType(uk.gov.hmcts.dts.fact.model.admin.CourtType courtType) {
+        return new CourtType(
+            courtType.getId(),
+            courtType.getName()
+        );
+    }
+
+    /**
+     * Update the response model that is returned through the request with the information
+     * provided.
+     *
+     * @param updatedAddresses          contains addresses without entities
+     * @param courtSecondaryAddressType contains entities that need to be added to addresses
+     * @return An updated list of court addresses
+     */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private List<CourtAddress> updateResponseModel(List<CourtAddress> updatedAddresses,
+                                                   List<CourtSecondaryAddressType> courtSecondaryAddressType) {
+        List<CourtAddress> responseList = new ArrayList<>(updatedAddresses);
+        for (int i = 0; i < responseList.size(); i++) {
+            int finalI = i;
+            List<uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw> areaOfLawList = courtSecondaryAddressType
+                .stream()
+                .filter(ca -> !Objects.isNull(ca.getAreaOfLaw()))
+                .filter(ca -> ca.getAddress().getId().equals(responseList.get(finalI).getId()))
+                .map(a -> new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(a.getAreaOfLaw()))
+                .collect(toList());
+            List<uk.gov.hmcts.dts.fact.model.admin.CourtType> courtTypeList = courtSecondaryAddressType
+                .stream()
+                .filter(ca -> !Objects.isNull(ca.getCourtType()))
+                .filter(ca -> ca.getAddress().getId().equals(responseList.get(finalI).getId()))
+                .map(a -> new uk.gov.hmcts.dts.fact.model.admin.CourtType(a.getCourtType()))
+                .collect(toList());
+            responseList.get(i).setCourtSecondaryAddressType(
+                new uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType(areaOfLawList, courtTypeList));
+        }
+        return responseList;
+    }
+
+    private void deleteExistingSecondaryAddressTypes(String slug) {
+        List<Integer> secondaryTypesToRemove = getCourtAddressesBySlug(slug)
+            .stream()
+            .map(CourtAddress::getId)
+            .collect(toList());
+        courtSecondaryAddressTypeRepository.deleteAll(courtSecondaryAddressTypeRepository
+                                                          .findAllByAddressIdIn(secondaryTypesToRemove)
+                                                          .stream()
+                                                          .distinct()
+                                                          .collect(toList()));
+        courtSecondaryAddressTypeRepository.deleteAllByAddressIdIn(getCourtAddressesBySlug(slug)
+                                                                       .stream()
+                                                                       .map(CourtAddress::getId)
+                                                                       .collect(toList()));
     }
 }

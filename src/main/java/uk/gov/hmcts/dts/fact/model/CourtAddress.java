@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
@@ -24,6 +26,8 @@ public class CourtAddress {
     private String county;
     private String postcode;
     private String description;
+    @JsonProperty("fields_of_law")
+    private CourtSecondaryAddressType courtSecondaryAddressType;
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.addressType = chooseString(
@@ -34,6 +38,23 @@ public class CourtAddress {
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.county = courtAddress.getCounty() == null ? "" : courtAddress.getCounty().getName();
         this.postcode = courtAddress.getPostcode();
-        this.description = chooseString(courtAddress.getDescriptionCy(), courtAddress.getDescription());
+
+        if (!Objects.isNull(courtAddress.getCourtSecondaryAddressType())
+            && !courtAddress.getCourtSecondaryAddressType().isEmpty()) {
+            this.courtSecondaryAddressType = new CourtSecondaryAddressType(
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getAreaOfLaw()))
+                    .map(s -> s.getAreaOfLaw().getName())
+                    .collect(Collectors.toList()),
+                courtAddress
+                    .getCourtSecondaryAddressType()
+                    .stream()
+                    .filter(a -> Objects.nonNull(a.getCourtType()))
+                    .map(s -> s.getCourtType().getName())
+                    .collect(Collectors.toList())
+            );
+        }
     }
 }
