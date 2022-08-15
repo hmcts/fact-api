@@ -20,3 +20,33 @@ ALTER TABLE ONLY public.search_courtsecondaryaddresstype ALTER COLUMN id SET DEF
 -- Remove description and description cy columns from address table
 ALTER TABLE ONLY public.search_courtaddress DROP COLUMN description;
 ALTER TABLE ONLY public.search_courtaddress DROP COLUMN description_cy;
+
+DO $$
+
+BEGIN
+  INSERT INTO public.search_courtsecondaryaddresstype (address_id, area_of_law_id, court_type_id)
+  VALUES ((
+    SELECT id FROM public.search_courtaddress
+    WHERE court_id = (
+      SELECT id
+      FROM public.search_court
+      WHERE slug = 'newcastle-civil-family-courts-and-tribunals-centre'
+    )
+    AND address_type_id = (
+      SELECT id
+      FROM public.search_addresstype
+      WHERE name = 'Write to us'
+    )
+  ),
+  (
+    SELECT id
+    FROM public.search_areaoflaw
+    WHERE name = 'Money claims'
+  ),
+  null) ON CONFLICT DO NOTHING;
+
+EXCEPTION WHEN OTHERS THEN
+  raise notice 'The row has not been added, as the address is not present';
+  raise notice '% %', SQLERRM, SQLSTATE;
+END;
+$$;
