@@ -68,7 +68,7 @@ public class AdminCourtAddressController {
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtAddress>> updateCourtAddresses(@PathVariable String slug, @RequestBody List<CourtAddress> courtAddresses) {
-        final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(slug, courtAddresses);
+        final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(courtAddresses);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             return ok(adminService.updateCourtAddressesAndCoordinates(slug, courtAddresses));
         }
