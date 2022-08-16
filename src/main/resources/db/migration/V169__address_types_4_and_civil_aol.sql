@@ -52,7 +52,7 @@ $$;
 DO $$
 
 BEGIN
-  UPDATE public.search_courtsecondaryaddresstype (address_id, area_of_law_id, court_type_id)
+  UPDATE public.search_courtsecondaryaddresstype
   SET area_of_law_id = (
     SELECT id
     FROM public.search_areaoflaw
