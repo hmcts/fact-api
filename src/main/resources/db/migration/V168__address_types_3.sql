@@ -467,9 +467,9 @@ END;
 $$;
 
 -- telford-county-court-and-family-court
---DO $$
---
---BEGIN
+DO $$
+
+BEGIN
   INSERT INTO public.search_courtsecondaryaddresstype (address_id, area_of_law_id, court_type_id)
   VALUES (
   (
