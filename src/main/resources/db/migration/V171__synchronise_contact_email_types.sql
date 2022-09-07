@@ -16,3 +16,16 @@ WHERE ct.name NOT IN (
     SELECT et.description
     FROM public.admin_emailtype et
 );
+
+
+CREATE SEQUENCE public.search_email_type_id_seq
+	START WITH 100
+	INCREMENT BY 1
+	NO MINVALUE
+	NO MAXVALUE
+	CACHE 1;
+
+ALTER SEQUENCE public.search_email_type_id_seq OWNED BY public.admin_emailtype.id;
+
+ALTER TABLE ONLY public.admin_emailtype
+	ALTER COLUMN id SET DEFAULT nextval('public.search_email_type_id_seq'::regclass);
