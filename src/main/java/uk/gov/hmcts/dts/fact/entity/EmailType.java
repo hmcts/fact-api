@@ -23,6 +23,7 @@ public class EmailType extends ElementType {
     private String descriptionCy;
 
     public EmailType(String description, String descriptionCy) {
+        super();
         this.description = description;
         this.descriptionCy = descriptionCy;
     }

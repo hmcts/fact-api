@@ -11,12 +11,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Contact;
-import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
 import uk.gov.hmcts.dts.fact.entity.EmailType;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.admin.AdditionalLink;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.repositories.ContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,16 +35,18 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(classes = AdminContactTypeService.class)
 public class AdminContactTypeServiceTest {
 
+    private static final String TYPE_2 = "Type2";
+
     private static final List<uk.gov.hmcts.dts.fact.entity.ContactType> CONTACT_TYPES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.entity.ContactType(100, "Type1", "type1Cy"),
-        new uk.gov.hmcts.dts.fact.entity.ContactType(200, "Type2", "type2Cy"),
+        new uk.gov.hmcts.dts.fact.entity.ContactType(200, TYPE_2, "type2Cy"),
         new uk.gov.hmcts.dts.fact.entity.ContactType(300, "Type3", "type3Cy")
     );
 
-    private static final List<uk.gov.hmcts.dts.fact.entity.EmailType> EMAIL_TYPES = Arrays.asList(
-        new uk.gov.hmcts.dts.fact.entity.EmailType(1, "Type1", "type1Cy"),
-        new uk.gov.hmcts.dts.fact.entity.EmailType(2, "Type2", "type2Cy"),
-        new uk.gov.hmcts.dts.fact.entity.EmailType(3, "Type3", "type3Cy")
+    private static final List<EmailType> EMAIL_TYPES = Arrays.asList(
+        new EmailType(1, "Type1", "type1Cy"),
+        new EmailType(2, TYPE_2, "type2Cy"),
+        new EmailType(3, "Type3", "type3Cy")
     );
 
     @Autowired
@@ -99,7 +98,7 @@ public class AdminContactTypeServiceTest {
         final uk.gov.hmcts.dts.fact.entity.ContactType mockContactType = CONTACT_TYPES.get(1);
         final ContactType contactType =
             new ContactType(mockContactType);
-        final uk.gov.hmcts.dts.fact.entity.EmailType mockEmailType = EMAIL_TYPES.get(1);
+        final EmailType mockEmailType = EMAIL_TYPES.get(1);
         final EmailType emailType = new EmailType();
         emailType.setId(mockEmailType.getId());
         emailType.setDescription(mockEmailType.getDescription());
@@ -112,7 +111,7 @@ public class AdminContactTypeServiceTest {
         when(contactTypeRepository.save(mockContactType)).thenReturn(mockContactType);
         assertThat(adminContactTypeService.updateContactType(contactType)).isEqualTo(contactType);
 
-        verify(emailTypeRepository, times(1)).findByDescription("Type2");
+        verify(emailTypeRepository, times(1)).findByDescription(TYPE_2);
         verify(emailTypeRepository, times(1)).save(mockEmailType);
         verify(contactTypeRepository, times(1)).findById(200);
         verify(contactTypeRepository, times(1)).save(mockContactType);
@@ -159,7 +158,7 @@ public class AdminContactTypeServiceTest {
     @Test
     void shouldDeleteContactType() {
         final uk.gov.hmcts.dts.fact.entity.ContactType mockContactType = CONTACT_TYPES.get(1);
-        final uk.gov.hmcts.dts.fact.entity.EmailType mockEmailType = EMAIL_TYPES.get(1);
+        final EmailType mockEmailType = EMAIL_TYPES.get(1);
         final EmailType emailType = new EmailType();
         emailType.setId(mockEmailType.getId());
         emailType.setDescription(mockEmailType.getDescription());
@@ -173,13 +172,20 @@ public class AdminContactTypeServiceTest {
 
         adminContactTypeService.deleteContactType(123);
 
-        verify(emailTypeRepository, times(1)).findByDescription("Type2");
+        verify(emailTypeRepository, times(1)).findByDescription(TYPE_2);
         verify(emailTypeRepository, times(1)).deleteById(2);
         verify(contactTypeRepository, times(1)).deleteById(123);
     }
 
     @Test
     void deleteShouldThrowListItemInUseExceptionIfContactTypeInUse() {
+        final uk.gov.hmcts.dts.fact.entity.ContactType mockContactType = CONTACT_TYPES.get(1);
+        final EmailType mockEmailType = EMAIL_TYPES.get(1);
+        when(contactRepository.getContactsByAdminTypeId(100))
+            .thenReturn(List.of());
+        when(emailTypeRepository.findByDescription(mockContactType.getDescription())).thenReturn(Optional.of(
+            mockEmailType));
+        when(contactTypeRepository.findById(100)).thenReturn(Optional.of(mockContactType));
         final DataAccessException mockDataAccessException = mock(DataAccessException.class);
         doThrow(mockDataAccessException).when(contactTypeRepository).deleteById(100);
         assertThatThrownBy(() -> adminContactTypeService
@@ -189,6 +195,11 @@ public class AdminContactTypeServiceTest {
 
     @Test
     void deleteShouldThrowListItemInUseExceptionIfContactTypeIsUsedByCourt() {
+        final uk.gov.hmcts.dts.fact.entity.ContactType mockContactType = CONTACT_TYPES.get(1);
+        final EmailType mockEmailType = EMAIL_TYPES.get(1);
+        when(emailTypeRepository.findByDescription(mockContactType.getDescription())).thenReturn(Optional.of(
+            mockEmailType));
+        when(contactTypeRepository.findById(100)).thenReturn(Optional.of(mockContactType));
         when(contactRepository.getContactsByAdminTypeId(any()))
             .thenReturn(Arrays.asList(mock(Contact.class)));
         assertThatThrownBy(() -> adminContactTypeService
