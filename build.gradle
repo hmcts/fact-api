@@ -230,6 +230,8 @@ dependencies {
   implementation group: 'org.flywaydb', name: 'flyway-core'
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.4.1'
 
+  testCompile 'com.github.hmcts:fortify-client:1.2.0:all'
+
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '5.9.2'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.18.0'
@@ -317,4 +319,10 @@ task migratePostgresDatabase(type: FlywayMigrateTask) {
   if (project.hasProperty("dburl")) {
     url = "jdbc:postgresql://${dburl}"
   }
+}
+
+task fortifyScan(type: JavaExec)  {
+  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
