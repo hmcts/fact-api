@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
+import uk.gov.hmcts.dts.fact.model.admin.EmailType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     private static final String CONTACT_TYPE = "Test";
     private static final String CONTACT_TYPE_CY = "TestCy";
     private static final String CONTACT_TYPE_NEW_NAME = "NewTest";
+    private static final String ADMIN_EMAIL_TYPES_ENDPOINT = "/admin/courts/emailTypes";
+
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -36,6 +39,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
 
         final List<ContactType> contactTypeList = response.body().jsonPath().getList(".", ContactType.class);
         assertThat(contactTypeList).hasSizeGreaterThan(1);
+
     }
 
     @Test
@@ -52,7 +56,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
-    
+
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
@@ -177,6 +181,11 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
 
         assertThat(createdContactType.getType()).isEqualTo(expectedContactType.getType());
 
+        // asserting that email types list contains the newly added contact type
+        final List<EmailType> emailTypeList = getCurrentEmailTypes();
+        assertThat(emailTypeList).hasSizeGreaterThan(1);
+        assertThat(emailTypeList).extracting(EmailType::getDescription).contains("NewTest");
+
         //clean up by removing added record
         final var cleanUpResponse = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + createdContactType.getId(),
@@ -194,6 +203,11 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
             ContactType.class
         );
         assertThat(cleanedContactType).containsExactlyElementsOf(currentContactType);
+
+        // asserting that email types list does not contains the newly added contact type after clean up
+        final List<EmailType> cleanedEmailTypeList = getCurrentEmailTypes();
+        assertThat(cleanedEmailTypeList).hasSizeGreaterThan(1);
+        assertThat(cleanedEmailTypeList).extracting(EmailType::getDescription).doesNotContain("NewTest");
     }
 
     @Test
@@ -293,6 +307,15 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
         );
         return response.body().jsonPath().getList(".", ContactType.class);
+    }
+
+    private List<EmailType> getCurrentEmailTypes() {
+        final var response = doGetRequest(
+            ADMIN_EMAIL_TYPES_ENDPOINT,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken)
+        );
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+        return response.body().jsonPath().getList(".", EmailType.class);
     }
 
     private ContactType createContactType() {
