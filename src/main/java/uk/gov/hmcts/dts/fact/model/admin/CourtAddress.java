@@ -35,6 +35,8 @@ public class CourtAddress {
     private String postcode;
     @JsonProperty("fields_of_law")
     private CourtSecondaryAddressType courtSecondaryAddressType;
+    @JsonProperty("region_id")
+    private Integer regionId;
 
     public CourtAddress(final uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.id = Objects.isNull(courtAddress.getId()) ? null : courtAddress.getId();
@@ -65,5 +67,8 @@ public class CourtAddress {
                     .map(s -> new CourtType(s.getCourtType()))
                     .collect(Collectors.toList())
             );
+        if (courtAddress.getRegion() != null) {
+            this.regionId = courtAddress.getRegion().getId();
+        }
     }
 }
