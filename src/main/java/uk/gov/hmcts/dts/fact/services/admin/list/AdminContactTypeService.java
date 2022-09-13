@@ -12,6 +12,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.repositories.ContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
+import uk.gov.hmcts.dts.fact.repositories.EmailRepository;
 import uk.gov.hmcts.dts.fact.repositories.EmailTypeRepository;
 
 import java.util.Comparator;
@@ -25,14 +26,17 @@ public class AdminContactTypeService {
 
     private final ContactTypeRepository contactTypeRepository;
     private final ContactRepository contactRepository;
+    private final EmailRepository emailRepository;
     private final EmailTypeRepository emailTypeRepository;
 
     @Autowired
     public AdminContactTypeService(final ContactTypeRepository contactTypeRepository,
                                    final ContactRepository contactRepository,
+                                   final EmailRepository emailRepository,
                                    final EmailTypeRepository emailTypeRepository) {
         this.contactTypeRepository = contactTypeRepository;
         this.contactRepository = contactRepository;
+        this.emailRepository = emailRepository;
         this.emailTypeRepository = emailTypeRepository;
     }
 
@@ -87,10 +91,10 @@ public class AdminContactTypeService {
             contactTypeRepository.findById(contactTypeId)
                 .orElseThrow(() -> new NotFoundException(contactTypeId.toString()));
         checkContactTypeIsNotInUse(contactTypeId);
-
         uk.gov.hmcts.dts.fact.entity.EmailType emailTypeEntity =
             emailTypeRepository.findByDescription(contactTypeEntity.getDescription())
                 .orElseThrow(() -> new NotFoundException(contactTypeEntity.getDescription()));
+        checkEmailTypeIsNotInUse(emailTypeEntity.getId());
 
         try {
             emailTypeRepository.deleteById(emailTypeEntity.getId());
@@ -130,6 +134,12 @@ public class AdminContactTypeService {
     private void checkContactTypeIsNotInUse(Integer contactTypeId) {
         if (!contactRepository.getContactsByAdminTypeId(contactTypeId).isEmpty()) {
             throw new ListItemInUseException(contactTypeId.toString());
+        }
+    }
+
+    private void checkEmailTypeIsNotInUse(Integer emailTypeId) {
+        if (!emailRepository.getEmailsByAdminTypeId(emailTypeId).isEmpty()) {
+            throw new ListItemInUseException(emailTypeId.toString());
         }
     }
 }
