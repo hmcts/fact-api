@@ -43,6 +43,8 @@ public class AdminCourtAddressControllerTest {
     private static final String POSTCODE1 = "first postcode";
     private static final String POSTCODE2 = "second postcode";
     private static final Integer COUNTY = 1;
+    private static final Integer REGION = 1;
+
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -65,8 +67,8 @@ public class AdminCourtAddressControllerTest {
     );
 
     private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
-        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST),
-        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST)
+        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, REGION),
+        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, REGION)
     );
 
     private static String courtAddressesJson;
