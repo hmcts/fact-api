@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.Email;
 import uk.gov.hmcts.dts.fact.entity.EmailType;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
@@ -18,6 +19,7 @@ import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.repositories.ContactRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
+import uk.gov.hmcts.dts.fact.repositories.EmailRepository;
 import uk.gov.hmcts.dts.fact.repositories.EmailTypeRepository;
 
 import java.util.Arrays;
@@ -51,6 +53,9 @@ public class AdminContactTypeServiceTest {
 
     @Autowired
     private AdminContactTypeService adminContactTypeService;
+
+    @MockBean
+    private EmailRepository emailRepository;
 
     @MockBean
     private EmailTypeRepository emailTypeRepository;
@@ -164,6 +169,7 @@ public class AdminContactTypeServiceTest {
         emailType.setDescription(mockEmailType.getDescription());
         emailType.setDescriptionCy(mockEmailType.getDescriptionCy());
 
+        when(emailRepository.getEmailsByAdminTypeId(any())).thenReturn(Collections.emptyList());
         when(contactRepository.getContactsByAdminTypeId(any()))
             .thenReturn(Collections.emptyList());
         when(emailTypeRepository.findByDescription(mockContactType.getDescription())).thenReturn(Optional.of(
@@ -202,6 +208,22 @@ public class AdminContactTypeServiceTest {
         when(contactTypeRepository.findById(100)).thenReturn(Optional.of(mockContactType));
         when(contactRepository.getContactsByAdminTypeId(any()))
             .thenReturn(Arrays.asList(mock(Contact.class)));
+        assertThatThrownBy(() -> adminContactTypeService
+            .deleteContactType(100))
+            .isInstanceOf(ListItemInUseException.class);
+    }
+
+    @Test
+    void deleteShouldThrowListItemInUseExceptionIfEmailTypeIsUsedByCourt() {
+        final uk.gov.hmcts.dts.fact.entity.ContactType mockContactType = CONTACT_TYPES.get(1);
+        final EmailType mockEmailType = EMAIL_TYPES.get(1);
+        when(emailTypeRepository.findByDescription(mockContactType.getDescription())).thenReturn(Optional.of(
+            mockEmailType));
+        when(contactTypeRepository.findById(100)).thenReturn(Optional.of(mockContactType));
+        when(contactRepository.getContactsByAdminTypeId(any()))
+            .thenReturn(Collections.emptyList());
+        when(emailRepository.getEmailsByAdminTypeId(any()))
+            .thenReturn(Arrays.asList(mock(Email.class)));
         assertThatThrownBy(() -> adminContactTypeService
             .deleteContactType(100))
             .isInstanceOf(ListItemInUseException.class);
