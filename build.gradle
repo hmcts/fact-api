@@ -217,7 +217,7 @@ ext.libraries = [
 
 dependencies {
   implementation group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.4'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.3'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
