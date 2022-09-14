@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.model.admin.FacilityType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -145,6 +146,10 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<Facility> updateFacilities(final List<Facility> facilities) {
+        for (Facility facility: facilities) {
+            facility.setDescription(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescription()));
+            facility.setDescriptionCy(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescriptionCy()));
+        }
         final List<Facility> updatedFacilities = new ArrayList<>(facilities);
         Facility facility = new Facility();
         facility.setId(TEST_FACILITY_ID_1);
