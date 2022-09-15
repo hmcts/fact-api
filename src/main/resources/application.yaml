@@ -43,6 +43,9 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: ${OAUTH_PROVIDER_URL:https://idam-api.aat.platform.hmcts.net}/jwks
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 hibernate:
   show_sql=true:
