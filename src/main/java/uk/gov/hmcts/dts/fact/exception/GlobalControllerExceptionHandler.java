@@ -53,9 +53,13 @@ public class GlobalControllerExceptionHandler {
         return new ResponseEntity<>(ex.getInvalidPostcodes(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DuplicatedListItemException.class)
-    ResponseEntity<String> duplicateListItemExceptionHandler(final DuplicatedListItemException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    @ExceptionHandler(value = {DuplicatedListItemException.class})
+    ResponseEntity<String> duplicateListItemExceptionHandler(final DuplicatedListItemException ex) throws JsonProcessingException {
+        HashMap<String, String> error = new HashMap<>();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json");
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(IllegalListItemException.class)
