@@ -62,9 +62,13 @@ public class GlobalControllerExceptionHandler {
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(IllegalListItemException.class)
-    ResponseEntity<String> illegalListItemExceptionHandler(final IllegalListItemException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(value = {IllegalListItemException.class})
+    ResponseEntity<String> illegalListItemExceptionHandler(final IllegalListItemException ex) throws JsonProcessingException {
+        HashMap<String, String> error = new HashMap<>();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json");
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ListItemInUseException.class)
