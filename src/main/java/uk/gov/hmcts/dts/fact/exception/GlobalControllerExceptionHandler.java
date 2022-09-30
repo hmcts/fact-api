@@ -17,8 +17,7 @@ import static org.springframework.http.ResponseEntity.badRequest;
 public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(value = {NotFoundException.class})
-    ResponseEntity<String> notFoundExceptionHandler(final NotFoundException ex) throws JsonProcessingException
-    {
+    ResponseEntity<String> notFoundExceptionHandler(final NotFoundException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json");
