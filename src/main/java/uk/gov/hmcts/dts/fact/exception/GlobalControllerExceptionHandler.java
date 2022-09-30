@@ -34,9 +34,13 @@ public class GlobalControllerExceptionHandler {
         return badRequest().body(ex.getInvalidPostcodes());
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<String> illegalArgumentExceptionHandler(final IllegalArgumentException ex) {
-        return badRequest().body(ex.getMessage());
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    ResponseEntity<String> illegalArgumentExceptionHandler(final IllegalArgumentException ex) throws JsonProcessingException {
+        HashMap<String, String> error = new HashMap<>();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json");
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PostcodeExistedException.class)
