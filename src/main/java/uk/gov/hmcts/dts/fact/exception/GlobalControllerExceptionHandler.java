@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.springframework.http.ResponseEntity.badRequest;
-
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
