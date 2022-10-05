@@ -33,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminCourtAddressControllerTest {
     private static final String TEST_SLUG = "court-slug";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "message";
     private static final String BASE_PATH = "/admin/courts/";
     private static final String ADDRESSES_PATH = "/" + "addresses";
 
@@ -97,7 +99,7 @@ public class AdminCourtAddressControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + ADDRESSES_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
     }
 
     @Test
@@ -125,7 +127,7 @@ public class AdminCourtAddressControllerTest {
 
         resultActions
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
     }
 
     @Test
@@ -133,13 +135,12 @@ public class AdminCourtAddressControllerTest {
         final List<String> expectedResult = singletonList(POSTCODE2);
         final String expectedResultJson = OBJECT_MAPPER.writeValueAsString(expectedResult);
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
-
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .content(courtAddressesJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json(expectedResultJson));
+            .andExpect(content().json("{\""+MESSAGE+"\":\"["+POSTCODE2+"]\"}"));
 
         verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
     }

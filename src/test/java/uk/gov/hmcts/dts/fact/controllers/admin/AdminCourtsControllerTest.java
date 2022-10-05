@@ -44,6 +44,9 @@ class AdminCourtsControllerTest {
     private static final String TEST_GENERAL_FILE = "birmingham-civil-and-family-justice-centre-general.json";
     private static final String TEST_COURT_ENTITY_FILE = "full-birmingham-civil-and-family-justice-centre-entity.json";
     private static final String TEST_SEARCH_SLUG = "some-slug";
+    private static final String SEARCH_CRITERIA = "search criteria";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "message";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -247,7 +250,7 @@ class AdminCourtsControllerTest {
 
         mockMvc.perform(get(String.format(TEST_URL + "/%s/general", searchSlug)))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: search criteria"))
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+SEARCH_CRITERIA+"\"}"))
             .andReturn();
     }
 
@@ -266,7 +269,7 @@ class AdminCourtsControllerTest {
         when(adminService.getCourtImage(TEST_SEARCH_SLUG)).thenThrow(new NotFoundException("search criteria"));
         mockMvc.perform(get(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG)))
                             .andExpect(status().isNotFound())
-                            .andExpect(content().string("Not found: search criteria"))
+                            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+SEARCH_CRITERIA+"\"}"))
                             .andReturn();
     }
 
@@ -303,7 +306,7 @@ class AdminCourtsControllerTest {
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: search criteria"))
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+SEARCH_CRITERIA+"\"}"))
             .andReturn();
     }
 }

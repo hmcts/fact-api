@@ -35,7 +35,8 @@ public class AdminCourtPostcodeControllerTest {
     private static final String TEST_SLUG = "test-slug";
     private static final String SOURCE_SLUG = "source-slug";
     private static final String DESTINATION_SLUG = "destination-slug";
-    private static final String NOT_FOUND_PREFIX = "Not found: ";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "message";
     private static final String TEST_POSTCODE1 = "M11AA";
     private static final String TEST_POSTCODE2 = "M11BB";
     private static final String TEST_POSTCODE3 = "M11CC";
@@ -82,7 +83,7 @@ public class AdminCourtPostcodeControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + POSTCODE_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
     }
 
     @Test
@@ -108,7 +109,7 @@ public class AdminCourtPostcodeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
 
         verify(adminService, never()).addCourtPostcodes(any(), any());
     }
@@ -122,7 +123,7 @@ public class AdminCourtPostcodeControllerTest {
                            .contentType(MediaType.APPLICATION_JSON)
                            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json(expectedInvalidPostcodesJson));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+INVALID_POSTCODE+"\"}"));
 
         verify(adminService, never()).addCourtPostcodes(any(), any());
     }
@@ -164,7 +165,7 @@ public class AdminCourtPostcodeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string(NOT_FOUND_PREFIX + TEST_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
 
         verify(adminService, never()).deleteCourtPostcodes(any(), any());
     }
@@ -178,7 +179,7 @@ public class AdminCourtPostcodeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json(expectedInvalidPostcodesJson));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+INVALID_POSTCODE+"\"}"));
 
         verify(adminService, never()).deleteCourtPostcodes(any(), any());
     }
@@ -221,7 +222,7 @@ public class AdminCourtPostcodeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string(NOT_FOUND_PREFIX + SOURCE_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+SOURCE_SLUG+"\"}"));
     }
 
     @Test
@@ -234,7 +235,7 @@ public class AdminCourtPostcodeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string(NOT_FOUND_PREFIX + DESTINATION_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+DESTINATION_SLUG+"\"}"));
     }
 
     @Test
@@ -246,7 +247,7 @@ public class AdminCourtPostcodeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json(expectedInvalidPostcodesJson));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+INVALID_POSTCODE+"\"}"));
 
         verify(adminService, never()).moveCourtPostcodes(SOURCE_SLUG, DESTINATION_SLUG, TEST_POSTCODES);
     }

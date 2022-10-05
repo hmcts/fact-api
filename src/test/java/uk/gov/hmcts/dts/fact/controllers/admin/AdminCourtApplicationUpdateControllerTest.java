@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminCourtApplicationUpdateControllerTest {
     private static final String TEST_SLUG = "court-slug";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "message";
     private static final String BASE_PATH = "/admin/courts/";
     private static final String ADDRESSES_PATH = "/" + "application-progression";
 
@@ -66,7 +68,7 @@ public class AdminCourtApplicationUpdateControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + ADDRESSES_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 
     @Test
@@ -90,6 +92,6 @@ public class AdminCourtApplicationUpdateControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 }

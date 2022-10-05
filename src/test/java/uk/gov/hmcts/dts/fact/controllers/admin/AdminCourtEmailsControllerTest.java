@@ -30,6 +30,8 @@ public class AdminCourtEmailsControllerTest {
     private static final String ALL_EMAILS_PATH = "/emails";
     private static final String ALL_EMAIL_TYPES_PATH = "emailTypes";
     private static final String TEST_SLUG = "unknownSlug";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "message";
     private static final String TEST_EMAILS_FILE = "emails.json";
     private static final String TEST_EMAIL_TYPES_FILE = "email-types.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -58,7 +60,7 @@ public class AdminCourtEmailsControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + ALL_EMAILS_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class AdminCourtEmailsControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 
     @Test

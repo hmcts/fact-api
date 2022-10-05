@@ -26,6 +26,8 @@ public class AdminCourtGeneralInfoControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/generalInfo";
     private static final String TEST_SLUG = "unknownSlug";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "message";
     private static final CourtGeneralInfo COURT_GENERAL_INFO = new CourtGeneralInfo(
         "Test court name",
         true,
@@ -69,7 +71,7 @@ public class AdminCourtGeneralInfoControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + CHILD_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
     }
 
     @Test
@@ -93,6 +95,6 @@ public class AdminCourtGeneralInfoControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
     }
 }
