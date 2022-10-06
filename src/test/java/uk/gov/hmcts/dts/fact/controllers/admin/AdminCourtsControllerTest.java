@@ -250,7 +250,7 @@ class AdminCourtsControllerTest {
 
         mockMvc.perform(get(String.format(TEST_URL + "/%s/general", searchSlug)))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+SEARCH_CRITERIA+"\"}"))
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + SEARCH_CRITERIA + "\"}"))
             .andReturn();
     }
 
@@ -269,7 +269,7 @@ class AdminCourtsControllerTest {
         when(adminService.getCourtImage(TEST_SEARCH_SLUG)).thenThrow(new NotFoundException("search criteria"));
         mockMvc.perform(get(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG)))
                             .andExpect(status().isNotFound())
-                            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+SEARCH_CRITERIA+"\"}"))
+                            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + SEARCH_CRITERIA + "\"}"))
                             .andReturn();
     }
 
@@ -306,7 +306,7 @@ class AdminCourtsControllerTest {
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+SEARCH_CRITERIA+"\"}"))
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + SEARCH_CRITERIA + "\"}"))
             .andReturn();
     }
 }

@@ -72,7 +72,7 @@ public class AdminCourtSpoeAreasOfLawControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + CHILD_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 
     @Test
@@ -102,6 +102,6 @@ public class AdminCourtSpoeAreasOfLawControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 }

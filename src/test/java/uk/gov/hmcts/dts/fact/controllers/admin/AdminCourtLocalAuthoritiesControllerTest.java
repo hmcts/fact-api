@@ -62,7 +62,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + SLASH + TEST_AREA_OF_LAW + CHILD_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + SLASH + TEST_AREA_OF_LAW + CHILD_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_AREA_OF_LAW+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_AREA_OF_LAW + "\"}"));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_AREA_OF_LAW+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_AREA_OF_LAW + "\"}"));
     }
 
     @Test
@@ -131,6 +131,6 @@ public class AdminCourtLocalAuthoritiesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+TEST_UNKNOWN_COURT_TYPE_MESSAGE+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + TEST_UNKNOWN_COURT_TYPE_MESSAGE + "\"}"));
     }
 }

@@ -58,7 +58,7 @@ public class AdminCourtFacilityControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + FACILITIES_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+NOT_FOUND+TEST_SLUG+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class AdminCourtFacilityControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json("{\""+MESSAGE+"\":\""+TEST_UNKNOWN_COURT_MESSAGE+"\"}"));
+            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + TEST_UNKNOWN_COURT_MESSAGE + "\"}"));
     }
 
 
