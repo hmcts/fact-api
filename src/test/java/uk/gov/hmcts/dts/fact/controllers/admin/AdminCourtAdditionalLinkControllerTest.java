@@ -50,7 +50,8 @@ public class AdminCourtAdditionalLinkControllerTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static String additionalLinksJson;
     private static final String NOT_FOUND = "Not found: ";
-    private static final String MESSAGE = "message";
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -78,7 +79,7 @@ public class AdminCourtAdditionalLinkControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + ADDITIONAL_LINKS_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -102,6 +103,6 @@ public class AdminCourtAdditionalLinkControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 }

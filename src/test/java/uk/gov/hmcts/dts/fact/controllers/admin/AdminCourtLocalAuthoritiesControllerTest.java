@@ -35,7 +35,11 @@ public class AdminCourtLocalAuthoritiesControllerTest {
     private static final String TEST_LOCAL_AUTHORITIES_PATH = "local-authorities.json";
     private static final String TEST_UNKNOWN_COURT_TYPE_MESSAGE = "Court local authority not found";
     private static final String NOT_FOUND = "Not found: ";
-    private static final String MESSAGE = "message";
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
+    private static final String JSON_NOT_FOUND_TEST_AREA_OF_LAW = String.format(MESSAGE, NOT_FOUND + TEST_AREA_OF_LAW);
+    private static final String JSON_TEST_UNKNOWN_COURT_TYPE_MESSAGE = String.format(MESSAGE, TEST_UNKNOWN_COURT_TYPE_MESSAGE);
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -62,7 +66,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + SLASH + TEST_AREA_OF_LAW + CHILD_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -71,7 +75,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + SLASH + TEST_AREA_OF_LAW + CHILD_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_AREA_OF_LAW + "\"}"));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_AREA_OF_LAW));
     }
 
     @Test
@@ -101,7 +105,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_SLUG + "\"}"));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -116,7 +120,7 @@ public class AdminCourtLocalAuthoritiesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + TEST_AREA_OF_LAW + "\"}"));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_AREA_OF_LAW));
     }
 
     @Test
@@ -131,6 +135,6 @@ public class AdminCourtLocalAuthoritiesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + TEST_UNKNOWN_COURT_TYPE_MESSAGE + "\"}"));
+            .andExpect(content().json(JSON_TEST_UNKNOWN_COURT_TYPE_MESSAGE));
     }
 }

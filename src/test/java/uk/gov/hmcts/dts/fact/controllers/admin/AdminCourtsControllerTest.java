@@ -46,7 +46,8 @@ class AdminCourtsControllerTest {
     private static final String TEST_SEARCH_SLUG = "some-slug";
     private static final String SEARCH_CRITERIA = "search criteria";
     private static final String NOT_FOUND = "Not found: ";
-    private static final String MESSAGE = "message";
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_SEARCH_CRITERIA = String.format(MESSAGE, NOT_FOUND + SEARCH_CRITERIA);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -246,11 +247,11 @@ class AdminCourtsControllerTest {
     void shouldReturnNotFoundForUnknownSlug() throws Exception {
         final String searchSlug = TEST_SEARCH_SLUG;
 
-        when(adminService.getCourtBySlug(searchSlug)).thenThrow(new NotFoundException("search criteria"));
+        when(adminService.getCourtBySlug(searchSlug)).thenThrow(new NotFoundException(SEARCH_CRITERIA));
 
         mockMvc.perform(get(String.format(TEST_URL + "/%s/general", searchSlug)))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + SEARCH_CRITERIA + "\"}"))
+            .andExpect(content().json(JSON_NOT_FOUND_SEARCH_CRITERIA))
             .andReturn();
     }
 
@@ -266,10 +267,10 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldNotReturnCourtImageFileForUnknownSlug() throws Exception {
-        when(adminService.getCourtImage(TEST_SEARCH_SLUG)).thenThrow(new NotFoundException("search criteria"));
+        when(adminService.getCourtImage(TEST_SEARCH_SLUG)).thenThrow(new NotFoundException(SEARCH_CRITERIA));
         mockMvc.perform(get(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG)))
                             .andExpect(status().isNotFound())
-                            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + SEARCH_CRITERIA + "\"}"))
+                            .andExpect(content().json(JSON_NOT_FOUND_SEARCH_CRITERIA))
                             .andReturn();
     }
 
@@ -300,13 +301,13 @@ class AdminCourtsControllerTest {
 
         String json = mapper.writeValueAsString(imageFile);
 
-        when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenThrow(new NotFoundException("search criteria"));
+        when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenThrow(new NotFoundException(SEARCH_CRITERIA));
         mockMvc.perform(put(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG))
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
-            .andExpect(content().json("{\"" + MESSAGE + "\":\"" + NOT_FOUND + SEARCH_CRITERIA + "\"}"))
+            .andExpect(content().json(JSON_NOT_FOUND_SEARCH_CRITERIA))
             .andReturn();
     }
 }
