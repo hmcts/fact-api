@@ -39,7 +39,7 @@ public class AdminCourtTypesAndCodesControllerTest {
     private static final String TEST_UNKNOWN_COURT_TYPE_MESSAGE = "Court type not found";
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
-    private static final String JSON_NOT_FOUND_TEST_UNKNOWN_COURT_TYPE_MESSAGE = String.format(MESSAGE, NOT_FOUND + TEST_UNKNOWN_COURT_TYPE_MESSAGE);
+    private static final String JSON_NOT_FOUND_TEST_UNKNOWN_COURT_TYPE_MESSAGE = String.format(MESSAGE, TEST_UNKNOWN_COURT_TYPE_MESSAGE);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
