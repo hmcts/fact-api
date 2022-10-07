@@ -208,7 +208,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-        final List<String> invalidPostcodes = response.body().jsonPath().getList(".message", String.class);
+        final List<String> invalidPostcodes = singletonList(response.body().jsonPath().getString(".message"));
         assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
     }
 
@@ -265,7 +265,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-        final List<String> invalidPostcodes = response.body().jsonPath().getList(".message", String.class);
+        final List<String> invalidPostcodes = singletonList(response.body().jsonPath().getString(".message"));
         assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
     }
 
@@ -428,7 +428,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             invalidPostcodesToMoveJson
         );
 
-        final List<String> invalidPostcodes = response.body().jsonPath().getList(".message", String.class);
+        final List<String> invalidPostcodes = singletonList(response.body().jsonPath().getString(".message"));
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
     }
