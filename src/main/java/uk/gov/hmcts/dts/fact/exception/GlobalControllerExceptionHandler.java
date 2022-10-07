@@ -14,20 +14,23 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
-    @ExceptionHandler(value = {NotFoundException.class})
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String APPLICATION_JSON = "application/json";
+
+    @ExceptionHandler(NotFoundException.class)
     ResponseEntity<String> notFoundExceptionHandler(final NotFoundException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json");
+        responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {InvalidPostcodeException.class})
+    @ExceptionHandler(InvalidPostcodeException.class)
     ResponseEntity invalidPostcodeExceptionHandler(final InvalidPostcodeException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json");
+        responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
         if (ex.getInvalidPostcodes().isEmpty()) {
             error.put("message", ex.getMessage());
         } else {
@@ -36,11 +39,11 @@ public class GlobalControllerExceptionHandler {
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class})
+    @ExceptionHandler(IllegalArgumentException.class)
     ResponseEntity<String> illegalArgumentExceptionHandler(final IllegalArgumentException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json");
+        responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
@@ -55,25 +58,25 @@ public class GlobalControllerExceptionHandler {
         return new ResponseEntity<>(ex.getInvalidPostcodes(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {DuplicatedListItemException.class})
+    @ExceptionHandler(DuplicatedListItemException.class)
     ResponseEntity<String> duplicateListItemExceptionHandler(final DuplicatedListItemException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json");
+        responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = {IllegalListItemException.class})
+    @ExceptionHandler(IllegalListItemException.class)
     ResponseEntity<String> illegalListItemExceptionHandler(final IllegalListItemException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json");
+        responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
         error.put("message", ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {ListItemInUseException.class})
+    @ExceptionHandler(ListItemInUseException.class)
     ResponseEntity<String> listItemInUseExceptionHandler(final ListItemInUseException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
