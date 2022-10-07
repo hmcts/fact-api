@@ -14,6 +14,7 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
 
+    private static final String MESSAGE = "message";
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
 
@@ -22,7 +23,7 @@ public class GlobalControllerExceptionHandler {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
-        error.put("message", ex.getMessage());
+        error.put(MESSAGE, ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.NOT_FOUND);
     }
 
@@ -32,9 +33,9 @@ public class GlobalControllerExceptionHandler {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
         if (ex.getInvalidPostcodes().isEmpty()) {
-            error.put("message", ex.getMessage());
+            error.put(MESSAGE, ex.getMessage());
         } else {
-            error.put("message", ex.getInvalidPostcodes().toString());
+            error.put(MESSAGE, ex.getInvalidPostcodes().toString());
         }
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
@@ -44,7 +45,7 @@ public class GlobalControllerExceptionHandler {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
-        error.put("message", ex.getMessage());
+        error.put(MESSAGE, ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 
@@ -63,7 +64,7 @@ public class GlobalControllerExceptionHandler {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
-        error.put("message", ex.getMessage());
+        error.put(MESSAGE, ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.CONFLICT);
     }
 
@@ -72,7 +73,7 @@ public class GlobalControllerExceptionHandler {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
-        error.put("message", ex.getMessage());
+        error.put(MESSAGE, ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 
@@ -80,8 +81,8 @@ public class GlobalControllerExceptionHandler {
     ResponseEntity<String> listItemInUseExceptionHandler(final ListItemInUseException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json");
-        error.put("message", ex.getMessage());
+        responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
+        error.put(MESSAGE, ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.CONFLICT);
     }
 }
