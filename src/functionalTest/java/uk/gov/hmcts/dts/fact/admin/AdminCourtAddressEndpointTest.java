@@ -160,7 +160,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        final List<String> invalidPostcodes = response.body().jsonPath().getList(".message", String.class);
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
         assertThat(invalidPostcodes).containsExactly(POSTCODES_INVALID);
 
