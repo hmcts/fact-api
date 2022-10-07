@@ -24,7 +24,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveParameterList"})
 public class AdminCourtAddressService {
     private final CourtRepository courtRepository;
     private final CourtAddressRepository courtAddressRepository;
