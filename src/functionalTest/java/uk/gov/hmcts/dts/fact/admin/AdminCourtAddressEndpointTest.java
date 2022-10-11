@@ -59,6 +59,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private static final String POSTCODE_VALID = "PL6 5DQ";
     private static final String POSTCODES_INVALID = "PL2 56ERR";
+    private static final String INVALID_POSTCODES_MESSAGE = "[%s]";
+    private static final String POSTCODES_INVALID_RESPONSE_ERROR = String.format(INVALID_POSTCODES_MESSAGE, POSTCODES_INVALID);
 
     /************************************************************* Get Request Tests. ***************************************************************/
 
@@ -160,9 +162,9 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        final List<String> invalidPostcodes = new ArrayList<>(Arrays.asList(response.body().jsonPath().getString("message").split(",")));
+        final String invalidPostcodes = response.body().jsonPath().getString("message");
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-        assertThat(invalidPostcodes).containsExactly(POSTCODES_INVALID);
+        assertThat(invalidPostcodes).isEqualTo(POSTCODES_INVALID_RESPONSE_ERROR);
 
         // Test that the addresses are not updated, i.e. the original addresses remain
         final List<CourtAddress> updatedCourtAddresses = getCurrentCourtAddress();
