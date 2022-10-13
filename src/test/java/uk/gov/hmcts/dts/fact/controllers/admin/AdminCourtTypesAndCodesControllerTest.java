@@ -33,9 +33,13 @@ public class AdminCourtTypesAndCodesControllerTest {
     private static final String COURT_TYPES_AND_CODES_PATH = "/courtTypesAndCodes";
     private static final String COURT_TYPES_PATH = "courtTypes";
     private static final String TEST_SLUG = "unknownSlug";
+    private static final String NOT_FOUND = "Not found: ";
     private static final String TEST_COURT_TYPES_PATH = "court-types.json";
     private static final String TEST_COURT_TYPES_AND_CODES_PATH = "court-types-and-codes.json";
     private static final String TEST_UNKNOWN_COURT_TYPE_MESSAGE = "Court type not found";
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
+    private static final String JSON_NOT_FOUND_TEST_UNKNOWN_COURT_TYPE_MESSAGE = String.format(MESSAGE, TEST_UNKNOWN_COURT_TYPE_MESSAGE);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -74,7 +78,7 @@ public class AdminCourtTypesAndCodesControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + COURT_TYPES_AND_CODES_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
 
@@ -105,7 +109,7 @@ public class AdminCourtTypesAndCodesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -120,6 +124,6 @@ public class AdminCourtTypesAndCodesControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().string(TEST_UNKNOWN_COURT_TYPE_MESSAGE));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_UNKNOWN_COURT_TYPE_MESSAGE));
     }
 }

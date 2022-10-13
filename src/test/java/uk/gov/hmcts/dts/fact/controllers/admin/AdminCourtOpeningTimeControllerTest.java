@@ -28,6 +28,9 @@ public class AdminCourtOpeningTimeControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
     private static final String TEST_SLUG = "unknownSlug";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
     private static final String TEST_OPENING_TIMES_FILE = "opening-times.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -55,7 +58,7 @@ public class AdminCourtOpeningTimeControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + OPENING_TIMES_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -85,7 +88,7 @@ public class AdminCourtOpeningTimeControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
 
