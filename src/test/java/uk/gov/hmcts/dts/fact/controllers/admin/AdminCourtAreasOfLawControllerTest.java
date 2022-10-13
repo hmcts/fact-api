@@ -28,6 +28,9 @@ public class AdminCourtAreasOfLawControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/courtAreasOfLaw";
     private static final String TEST_SLUG = "unknownSlug";
+    private static final String NOT_FOUND = "Not found: ";
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
     private static final String TEST_COURT_AREAS_OF_LAW_PATH = "court-areas-of-law.json";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -55,7 +58,7 @@ public class AdminCourtAreasOfLawControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + CHILD_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -85,6 +88,6 @@ public class AdminCourtAreasOfLawControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 }

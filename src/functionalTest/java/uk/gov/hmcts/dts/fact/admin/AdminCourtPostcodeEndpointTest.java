@@ -208,8 +208,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
-        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
+        final String invalidPostcodes = response.body().jsonPath().getString("message");
+        assertThat(invalidPostcodes).isEqualTo(POSTCODES_INVALID_RESPONSE.toString());
     }
 
     @Test
@@ -265,8 +265,8 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
-        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
+        final String invalidPostcodes = response.body().jsonPath().getString("message");
+        assertThat(invalidPostcodes).isEqualTo(POSTCODES_INVALID_RESPONSE.toString());
     }
 
     @Test
@@ -427,10 +427,9 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             invalidPostcodesToMoveJson
         );
-
-        final List<String> invalidPostcodes = response.body().jsonPath().getList(".", String.class);
+        final String invalidPostcodes = response.body().jsonPath().getString("message");
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-        assertThat(invalidPostcodes).containsExactlyInAnyOrderElementsOf(POSTCODES_INVALID_RESPONSE);
+        assertThat(invalidPostcodes).isEqualTo(POSTCODES_INVALID_RESPONSE.toString());
     }
 
     /************************************************************* Shared utility methods. ***************************************************************/
