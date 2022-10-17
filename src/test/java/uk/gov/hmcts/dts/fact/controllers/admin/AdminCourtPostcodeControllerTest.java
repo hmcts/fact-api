@@ -47,7 +47,7 @@ public class AdminCourtPostcodeControllerTest {
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
     private static final String JSON_NOT_FOUND_SOURCE_SLUG = String.format(MESSAGE, NOT_FOUND + SOURCE_SLUG);
     private static final String JSON_NOT_FOUND_DESTINATION_SLUG = String.format(MESSAGE, NOT_FOUND + DESTINATION_SLUG);
-    private static final String JSON_INVALID_POSTCODE = String.format(MESSAGE, INVALID_POSTCODE);
+    private static final String JSON_INVALID_POSTCODE = String.format(MESSAGE, TEST_POSTCODE3);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
