@@ -45,7 +45,7 @@ public class AdminCourtAddressControllerTest {
     private static final Integer COUNTY = 1;
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
-    private static final String JSON_POSTCODE2 = String.format(MESSAGE, singletonList(POSTCODE2));
+    private static final String JSON_POSTCODE2 = String.format(MESSAGE, POSTCODE2);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

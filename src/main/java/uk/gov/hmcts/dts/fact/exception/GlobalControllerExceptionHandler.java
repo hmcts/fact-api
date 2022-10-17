@@ -35,7 +35,7 @@ public class GlobalControllerExceptionHandler {
         if (ex.getInvalidPostcodes().isEmpty()) {
             error.put(MESSAGE, ex.getMessage());
         } else {
-            error.put(MESSAGE, ex.getInvalidPostcodes().toString());
+            error.put(MESSAGE, String.join(",",ex.getInvalidPostcodes()));
         }
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
