@@ -209,7 +209,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
         final String invalidPostcodes = response.body().jsonPath().getString("message");
-        assertThat(invalidPostcodes).isEqualTo(POSTCODES_INVALID_RESPONSE.toString());
+        assertThat(invalidPostcodes).isEqualTo(String.join(",",POSTCODES_INVALID_RESPONSE));
     }
 
     @Test
@@ -266,7 +266,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
         final String invalidPostcodes = response.body().jsonPath().getString("message");
-        assertThat(invalidPostcodes).isEqualTo(POSTCODES_INVALID_RESPONSE.toString());
+        assertThat(invalidPostcodes).isEqualTo(String.join(",",POSTCODES_INVALID_RESPONSE));
     }
 
     @Test
@@ -429,7 +429,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         );
         final String invalidPostcodes = response.body().jsonPath().getString("message");
         assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
-        assertThat(invalidPostcodes).isEqualTo(POSTCODES_INVALID_RESPONSE.toString());
+        assertThat(invalidPostcodes).isEqualTo(String.join(",",POSTCODES_INVALID_RESPONSE));
     }
 
     /************************************************************* Shared utility methods. ***************************************************************/
