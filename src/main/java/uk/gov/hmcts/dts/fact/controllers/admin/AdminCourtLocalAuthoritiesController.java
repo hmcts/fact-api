@@ -12,8 +12,7 @@ import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLocalAuthoritiesService;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 
 @RestController
 @RequestMapping(
@@ -31,7 +30,7 @@ public class AdminCourtLocalAuthoritiesController {
     //returns local authorities for a court by passing in a court slug ,area of law and returning local authorities list
     @GetMapping(path = "/{slug}/{areaOfLaw}/localAuthorities")
     @ApiOperation("Find a courts local authorities by slug")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<LocalAuthority>> getCourtLocalAuthorities(@PathVariable String slug, @PathVariable String areaOfLaw) {
         return ok(adminCourtLocalAuthoritiesService.getCourtLocalAuthoritiesBySlugAndAreaOfLaw(slug, areaOfLaw));
     }
