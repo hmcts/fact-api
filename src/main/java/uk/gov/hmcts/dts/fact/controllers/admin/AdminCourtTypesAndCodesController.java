@@ -15,8 +15,7 @@ import uk.gov.hmcts.dts.fact.services.admin.AdminCourtTypesAndCodesService;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 
 @RestController
 @RequestMapping(
@@ -38,7 +37,7 @@ public class AdminCourtTypesAndCodesController {
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden"),
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtType>> getAllCourtTypes() {
         return ok(courtTypesAndCodesService.getAllCourtTypes());
     }
@@ -51,7 +50,7 @@ public class AdminCourtTypesAndCodesController {
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found")
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtTypesAndCodes> getCourtTypesAndCodes(@PathVariable String slug) {
         return ok(courtTypesAndCodesService.getCourtTypesAndCodes(slug));
     }

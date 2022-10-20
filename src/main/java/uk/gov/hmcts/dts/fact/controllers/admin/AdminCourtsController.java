@@ -22,8 +22,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import static org.springframework.http.ResponseEntity.*;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 
 @Validated
 @RestController
@@ -44,13 +43,13 @@ public class AdminCourtsController {
 
     @GetMapping(path = "/all")
     @ApiOperation("Return all courts")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtReference>> getAllCourts() {
         return ok(adminService.getAllCourtReferences());
     }
 
     @GetMapping(path = "/")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     @ApiOperation("Return court data for download")
     public ResponseEntity<List<uk.gov.hmcts.dts.fact.model.CourtForDownload>> getAllCourtsForDownload() {
         return ok(adminService.getAllCourtsForDownload());
@@ -67,7 +66,7 @@ public class AdminCourtsController {
 
     @GetMapping(path = "/{slug}/general")
     @ApiOperation("Find court details by slug")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(adminService.getCourtBySlug(slug));
     }
@@ -105,7 +104,7 @@ public class AdminCourtsController {
 
     @PutMapping(path = "/{slug}/general")
     @ApiOperation("Update court")
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug, @RequestBody Court updatedCourt) {
         return ok(adminService.save(slug, updatedCourt));
     }
