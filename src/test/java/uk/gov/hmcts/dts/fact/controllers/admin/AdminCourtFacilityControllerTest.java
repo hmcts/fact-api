@@ -31,6 +31,10 @@ public class AdminCourtFacilityControllerTest {
     private static final String TEST_FACILITIES_PATH = "facilities.json";
     private static final String NOT_FOUND = "Not found: ";
     private static final String TEST_UNKNOWN_COURT_MESSAGE = "Court not found";
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
+    private static final String JSON_NOT_FOUND_TEST_UNKNOWN_COURT_MESSAGE = String.format(MESSAGE, TEST_UNKNOWN_COURT_MESSAGE);
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
@@ -57,7 +61,7 @@ public class AdminCourtFacilityControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + FACILITIES_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string(NOT_FOUND + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -89,7 +93,7 @@ public class AdminCourtFacilityControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().string(TEST_UNKNOWN_COURT_MESSAGE));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_UNKNOWN_COURT_MESSAGE));
     }
 
 

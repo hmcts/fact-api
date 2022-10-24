@@ -19,8 +19,7 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.ok;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 
 @RestController
 @RequestMapping(
@@ -51,7 +50,7 @@ public class AdminCourtPostcodeController {
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not Found")
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<String>> getCourtPostcodes(@PathVariable String slug) {
         return ok(adminService.getCourtPostcodesBySlug(slug));
     }

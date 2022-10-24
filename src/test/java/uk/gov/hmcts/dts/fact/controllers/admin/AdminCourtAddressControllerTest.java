@@ -33,9 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminCourtAddressControllerTest {
     private static final String TEST_SLUG = "court-slug";
+    private static final String NOT_FOUND = "Not found: ";
     private static final String BASE_PATH = "/admin/courts/";
     private static final String ADDRESSES_PATH = "/" + "addresses";
-
     private static final List<String> ADDRESS1 = Arrays.asList("first address line 1", "first address line 2");
     private static final List<String> ADDRESS2 = Arrays.asList("second address line 1", "second address line 2");
     private static final String TOWN_NAME1 = "first town";
@@ -44,7 +44,9 @@ public class AdminCourtAddressControllerTest {
     private static final String POSTCODE2 = "second postcode";
     private static final Integer COUNTY = 1;
     private static final Integer REGION = 1;
-
+    private static final String MESSAGE = "{\"message\":\"%s\"}";
+    private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
+    private static final String JSON_POSTCODE2 = String.format(MESSAGE, POSTCODE2);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -99,7 +101,7 @@ public class AdminCourtAddressControllerTest {
 
         mockMvc.perform(get(BASE_PATH + TEST_SLUG + ADDRESSES_PATH))
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
@@ -127,21 +129,18 @@ public class AdminCourtAddressControllerTest {
 
         resultActions
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Not found: " + TEST_SLUG));
+            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
     }
 
     @Test
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidPostcode() throws Exception {
-        final List<String> expectedResult = singletonList(POSTCODE2);
-        final String expectedResultJson = OBJECT_MAPPER.writeValueAsString(expectedResult);
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
-
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .content(courtAddressesJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
-            .andExpect(content().json(expectedResultJson));
+            .andExpect(content().json(JSON_POSTCODE2));
 
         verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
     }
