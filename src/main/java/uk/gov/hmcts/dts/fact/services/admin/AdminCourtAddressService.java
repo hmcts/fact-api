@@ -161,6 +161,11 @@ public class AdminCourtAddressService {
         final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
         if (mapitData.isPresent()) {
             adminService.updateCourtLatLon(slug, mapitData.get().getLat(), mapitData.get().getLon());
+
+            // 1. Rename function above
+            // 2. make sure below works
+            //  adminService.updateRegion(slug, mapitData.getRegionFromMapitData());
+
         }
     }
 

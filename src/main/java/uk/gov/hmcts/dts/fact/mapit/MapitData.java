@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,44 +60,23 @@ public class MapitData {
             .map(JsonNode::asText);
     }
 
-    public String getMatchingRegionNumber(Map<String, MapitArea> regions) {
-//        System.out.println("OUTPUT FROM MATCHING METHOD: " +
-//            ofNullable(areas)
-//            .filter(area -> area.equals(REGION_IDS))
-//            .map(string -> areas.get(String.valueOf(REGION_IDS)))
-//        );
-
-        //System.out.println("REGIONS: " + regions);
-        //System.out.println("AREAS: " + areas);
-        System.out.println("Regions KEYS: " + regions.keySet());
-        //System.out.println("What does this do?.. " + ofNullable(areas).filter(a -> a.);
-        System.out.println("Areas ELEMENTS:\n");
-
-        areas.forEach(a -> System.out.println(a.get("id")));
-
-
-/*        Optional<String> success = null;
-        int index = -1;
-        for (String id: REGION_IDS) {
-            //System.out.println(ofNullable(areas).map(string -> areas.get(id)));
-            Optional<JsonNode> match = ofNullable(areas).map(string -> areas.get(id));
-            if (!match.isEmpty()) {
-                //System.out.println(match.map(m -> m.get("id")).map(JsonNode::asText));
-                success = match.map(m -> m.get("id")).map(JsonNode::asText);
-            }
-            index++;
+    public String getRegionFromMapitData() {
+        // We will only ever have one ER, or one WAE
+        // For english regions
+        for (JsonNode mapitArea : this.areas) {
+            System.out.println(mapitArea.get("type").asText());
+            if (mapitArea.get("type").asText().equals("ER"))
+                return mapitArea.get("name").asText();
         }
-        System.out.println(REGION_IDS.get(index));*/
-        //return REGION_IDS.get(index);
-        //System.out.println("OUTPUT OF CONTAINS: " + REGION_IDS.contains(ofNullable(areas)));
 
-        return "164858";
-    }
+        // For welsh regions
+        for (JsonNode mapitArea : this.areas) {
+            System.out.println(mapitArea.get("type").asText());
+            if (mapitArea.get("type").asText().equals("WAE"))
+                return mapitArea.get("name").asText();
+        }
 
-    public Optional<String> getMatchingRegionNameFromAreas(String area) {
-        return ofNullable(areas)
-            .map(string -> areas.get(area))
-            .map(a -> a.get("name"))
-            .map(JsonNode::asText);
+        // If we have no region at all
+        throw new NotFoundException("Could not find region for query");
     }
 }

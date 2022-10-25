@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import org.apache.commons.lang.StringUtils;
@@ -34,29 +35,12 @@ public class MapitService {
         if (!postcode.isBlank()) {
             try {
                 final MapitData mapitData = mapitClient.getMapitData(postcode);
-                System.out.println(mapitData);
-
-                @SuppressWarnings("unchecked")
-                List<MapitArea> areaList = new ObjectMapper().treeToValue(mapitData.getAreas(), List.class) ;
-
-                System.out.println("AREALIST " + areaList);
-
-
-                final Map<String, MapitArea> mapitRegions = mapitClient.getMapitDataForRegions("ER,WAE");
-                System.out.println(mapitRegions);
-
-                final String match = mapitData.getMatchingRegionNumber(mapitRegions);
-
-                mapitData.getMatchingRegionNameFromAreas(match);
-                System.out.println(mapitData.getMatchingRegionNameFromAreas(match));
 
                 if (mapitData.hasLatAndLonValues()) {
                     return Optional.of(mapitData);
                 }
             } catch (final FeignException ex) {
                 logger.warn("HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
-            } catch (final JsonProcessingException ex) {
-                logger.warn("Error when transforming areas JsonNode to List Message: {}", ex.getMessage());
             }
         }
 
@@ -89,7 +73,12 @@ public class MapitService {
                     .stream()
                     .anyMatch(la -> la.getName().equalsIgnoreCase(localAuthorityName));
             } catch (final FeignException ex) {
-                logger.warn("Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
+                logger.warn(
+                    "Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}",
+                    ex.status(),
+                    ex.getMessage(),
+                    ex
+                );
                 return false;
             }
         }

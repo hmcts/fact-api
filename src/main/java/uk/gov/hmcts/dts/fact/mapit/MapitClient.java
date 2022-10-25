@@ -20,6 +20,6 @@ public interface MapitClient {
     @GetMapping("${mapit.endpoint.area-search}/{area}")
     Map<String, MapitArea> getMapitDataForLocalAuthorities(@PathVariable("area") String area, @RequestParam("type") String types);
 
-    @GetMapping("{mapit.endpoint}/areas/{types}")
-    Map<String, MapitArea> getMapitDataForRegions(@RequestParam("types") String types);
+//    @GetMapping("{mapit.endpoint}/areas/{types}")
+//    Map<String, MapitArea> getMapitDataForRegions(@RequestParam("types") String types);
 }
