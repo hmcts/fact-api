@@ -1,11 +1,11 @@
-CREATE TEMPORARY TABLE temp_table
+CREATE TEMPORARY TABLE temporary_table
 (
     courtSlug     character varying(250),
     postcode      character varying(250),
     region        character varying(250)
 );
 
-INSERT INTO temp_table (courtSlug, postcode, region)
+INSERT INTO temporary_table(courtSlug, postcode, region)
 VALUES
   ('abergavenny-magistrates-court', 'NP7 5DL', 'South Wales East'),
   ('abergavenny-magistrates-court', 'NP20 4PR', 'South Wales East'),
@@ -748,7 +748,9 @@ ALTER TABLE public.search_courtaddress
 
 UPDATE search_courtaddress AS ca
 SET region_id = sr.id
-  FROM temp_table tt
+  FROM temporary_table tt
          JOIN search_region sr on sr.name = tt.region
   JOIN search_courtaddress sc on tt.postcode = sc.postcode
 WHERE ca.postcode = tt.postcode;
+
+DROP table temporary_table;

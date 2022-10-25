@@ -19,18 +19,18 @@ ALTER COLUMN id SET DEFAULT nextval('public.search_region_id_seq'::regclass);
 
 INSERT INTO public.search_region (name, country)
 VALUES
-('Eastern', 'England'),
-('North West', 'England'),
-('North East', 'England'),
-('South East', 'England'),
-('South West', 'England'),
-('East Midlands', 'England'),
-('London', 'England'),
-('West Midlands', 'England'),
-('Yorkshire and the Humber', 'England'),
-('South Wales West', 'Wales'),
-('South Wales Central', 'Wales'),
-('South Wales East', 'Wales'),
-('Mid and West Wales', 'Wales'),
-('North Wales', 'Wales');
+  ('Eastern', 'England'),
+  ('North West', 'England'),
+  ('North East', 'England'),
+  ('South East', 'England'),
+  ('South West', 'England'),
+  ('East Midlands', 'England'),
+  ('London', 'England'),
+  ('West Midlands', 'England'),
+  ('Yorkshire and the Humber', 'England'),
+  ('South Wales West', 'Wales'),
+  ('South Wales Central', 'Wales'),
+  ('South Wales East', 'Wales'),
+  ('Mid and West Wales', 'Wales'),
+  ('North Wales', 'Wales');
 

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+//import java.util.List;
 import java.util.Map;
 
 @FeignClient(name = "mappitApi", url = "${mapit.url}")
@@ -18,4 +19,7 @@ public interface MapitClient {
 
     @GetMapping("${mapit.endpoint.area-search}/{area}")
     Map<String, MapitArea> getMapitDataForLocalAuthorities(@PathVariable("area") String area, @RequestParam("type") String types);
+
+    @GetMapping("{mapit.endpoint}/areas/{types}")
+    Map<String, MapitArea> getMapitDataForRegions(@RequestParam("types") String types);
 }

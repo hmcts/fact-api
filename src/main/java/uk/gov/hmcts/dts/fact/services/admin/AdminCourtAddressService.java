@@ -295,4 +295,5 @@ public class AdminCourtAddressService {
                                                                        .map(CourtAddress::getId)
                                                                        .collect(toList()));
     }
+
 }
