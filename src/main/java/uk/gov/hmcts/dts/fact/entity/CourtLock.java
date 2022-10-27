@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "admin_courtlock")
@@ -23,4 +24,10 @@ public class CourtLock {
     private LocalDateTime lockAcquired;
     private String userEmail;
     private String courtSlug;
+
+    public CourtLock(uk.gov.hmcts.dts.fact.model.admin.CourtLock courtLock) {
+        this.lockAcquired = LocalDateTime.now(ZoneOffset.UTC);
+        this.userEmail = courtLock.getUserEmail();
+        this.courtSlug = courtLock.getCourtSlug();
+    }
 }

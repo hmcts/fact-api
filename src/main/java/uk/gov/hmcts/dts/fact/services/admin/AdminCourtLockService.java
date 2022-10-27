@@ -1,9 +1,14 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.dts.fact.exception.LockExistsException;
+import uk.gov.hmcts.dts.fact.model.admin.CourtLock;
 import uk.gov.hmcts.dts.fact.repositories.CourtLockRepository;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -13,12 +18,25 @@ public class AdminCourtLockService {
     private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtLockService(final CourtLockRepository courtRepository,
+    public AdminCourtLockService(final CourtLockRepository courtLockRepository,
                                  final AdminAuditService adminAuditService) {
-        this.courtLockRepository = courtRepository;
+        this.courtLockRepository = courtLockRepository;
         this.adminAuditService = adminAuditService;
     }
 
+    public void addNewCourtLock(CourtLock courtLock) {
+        // Check if the lock exists for the username/email
+        List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockEntityList = courtLockRepository.findByUserEmail(courtLock.getUserEmail());
+
+        if (courtLockEntityList.size() > 0) {
+            // If it doesn't, but we have a lock for the court, return with an error code
+            throw new LockExistsException(String.format("Lock already exists for user: '%s' and court '%s'",
+                                                        courtLock.getUserEmail(), courtLock.getCourtSlug()));
+        } else {
+            // If it exists, delete and update the resource
+            courtLockRepository.save(new uk.gov.hmcts.dts.fact.entity.CourtLock(courtLock));
+        }
+    }
 
 
 //    public void checkPostcodesExist(final String slug, final List<String> postcodes) {
