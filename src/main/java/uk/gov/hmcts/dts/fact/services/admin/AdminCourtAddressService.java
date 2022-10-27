@@ -78,6 +78,7 @@ public class AdminCourtAddressService {
             final String primaryPostcode = postcodes.get(0);
             if (StringUtils.isNotBlank(primaryPostcode)) {
                 updateCourtLatLonUsingPrimaryPostcode(slug, primaryPostcode);
+                //updateCourtRegionUsingPrimaryPostcode(slug, primaryPostcode);
             }
         }
 
@@ -161,10 +162,10 @@ public class AdminCourtAddressService {
         final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
         if (mapitData.isPresent()) {
             adminService.updateCourtLatLon(slug, mapitData.get().getLat(), mapitData.get().getLon());
+            adminService.updateCourtRegion(postcode, mapitData.get().getRegionFromMapitData());
 
             // 1. Rename function above
             // 2. make sure below works
-            //  adminService.updateRegion(slug, mapitData.getRegionFromMapitData());
 
         }
     }
