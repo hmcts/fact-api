@@ -77,8 +77,14 @@ public class AdminCourtAddressService {
         if (isInPersonCourt(slug) && !CollectionUtils.isEmpty(postcodes)) {
             final String primaryPostcode = postcodes.get(0);
             if (StringUtils.isNotBlank(primaryPostcode)) {
-                updateCourtLatLonUsingPrimaryPostcode(slug, primaryPostcode);
-                //updateCourtRegionUsingPrimaryPostcode(slug, primaryPostcode);
+                updateCourtLatLonRegionUsingPrimaryPostcode(
+                    slug,
+                    primaryPostcode,
+                    courtAddresses.stream().filter(ca -> (ca.getAddressTypeId() == 5880 || ca.getAddressTypeId() == 5882)).findFirst().orElseThrow(
+                        () -> new NotFoundException(
+                            "Cant find primary address with given postcodes: " + Arrays.toString(
+                                postcodes.toArray()))).getId()
+                );
             }
         }
 
@@ -158,11 +164,11 @@ public class AdminCourtAddressService {
         return courtEntity.isInPerson();
     }
 
-    private void updateCourtLatLonUsingPrimaryPostcode(final String slug, final String postcode) {
+    private void updateCourtLatLonRegionUsingPrimaryPostcode(final String slug, final String postcode, Integer addressId) {
         final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
         if (mapitData.isPresent()) {
             adminService.updateCourtLatLon(slug, mapitData.get().getLat(), mapitData.get().getLon());
-            adminService.updateCourtRegion(postcode, mapitData.get().getRegionFromMapitData());
+            adminService.updateCourtRegion(slug, mapitData.get().getRegionFromMapitData(), addressId);
 
             // 1. Rename function above
             // 2. make sure below works

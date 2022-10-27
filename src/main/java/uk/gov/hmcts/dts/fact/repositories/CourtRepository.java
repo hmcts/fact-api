@@ -40,14 +40,12 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
 //  Builds but crashes when query run
     @Modifying(clearAutomatically = true)
     @Query(nativeQuery = true,
-        value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca"
-            + "    ON ca.court_id = c.id AND ca.address_type_id != 5881 "
-            + "UPDATE search_courtaddress SET region_id = (SELECT id FROM search_region WHERE name = :region) "
-            + "WHERE search_court.slug = :slug")
-    void updateRegionBySlug(String slug, String region);
-
-
-
+        value = " UPDATE search_courtaddress SET region_id = (SELECT id FROM search_region WHERE name = :region) " +
+            " JOIN search_court on search_courtaddress.court_id = search_court.id " +
+            " WHERE search_court.slug = :slug " +
+            " AND search_courtaddress.id = :addressId; ")
+    void updateRegionBySlug(String slug, String region, int addressId);
+    
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Court SET lat = :lat, lon = :lon WHERE slug = :slug")
     void updateLatLonBySlug(String slug, Double lat, Double lon);
