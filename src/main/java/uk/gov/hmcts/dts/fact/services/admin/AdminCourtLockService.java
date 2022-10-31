@@ -87,9 +87,17 @@ public class AdminCourtLockService {
             throw new LockExistsException(String.format("More than one lock exists for multiple users: %s",
                                                         Arrays.toString(courtLockList.toArray())));
         }
-        courtLockList.get(0).setLockAcquired(LocalDateTime.now(ZoneOffset.UTC));
+        LocalDateTime newTime = LocalDateTime.now(ZoneOffset.UTC);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Update court lock"),
+            String.format("User %s has a lock acquired time before of: from %s",
+                          courtLockList.get(0).getUserEmail(),
+                          courtLockList.get(0).getLockAcquired()),
+            String.format("User %s has a lock acquired time after of: from %s",
+                          courtLockList.get(0).getUserEmail(),
+                          newTime),
+            courtSlug);
+        courtLockList.get(0).setLockAcquired(newTime);
         courtLockRepository.save(courtLockList.get(0));
     }
-
-
 }
