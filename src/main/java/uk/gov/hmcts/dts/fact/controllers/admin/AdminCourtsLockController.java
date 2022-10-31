@@ -61,28 +61,21 @@ public class AdminCourtsLockController {
     })
 //    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtLock> addNewCourtLock(@PathVariable String slug,
-                                                 @Valid @RequestBody CourtLock courtLock) {
+                                                     @Valid @RequestBody CourtLock courtLock) {
         return created(URI.create("/admin/courts/" + slug + "/lock"))
             .body(adminCourtLockService.addNewCourtLock(courtLock));
     }
-//
-//    @DeleteMapping("/{slug}")
-//    @ApiOperation("Delete a court")
-//    @ApiResponses(value = {
-//        @ApiResponse(code = 200, message = "Deleted"),
-//        @ApiResponse(code = 401, message = UNAUTHORISED),
-//        @ApiResponse(code = 403, message = FORBIDDEN)
-//    })
+
+    @DeleteMapping("/{slug}/lock/{userEmail}")
+    @ApiOperation("Delete a court")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Deleted"),
+        @ApiResponse(code = 401, message = UNAUTHORISED),
+        @ApiResponse(code = 403, message = FORBIDDEN)
+    })
 //    @Role({FACT_SUPER_ADMIN})
-//    public ResponseEntity deleteCourt(@PathVariable String slug) {
-//        adminService.deleteCourt(slug);
-//        return ok().body("Court with slug: " + slug + " has been deleted");
-//    }
-//
-//    @PutMapping(path = "/{slug}/general")
-//    @ApiOperation("Update court")
-//    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
-//    public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug, @RequestBody Court updatedCourt) {
-//        return ok(adminService.save(slug, updatedCourt));
-//    }
+    public ResponseEntity<List<CourtLock>> deleteCourt(@PathVariable String slug,
+                                                       @PathVariable String userEmail) {
+        return ok().body(adminCourtLockService.deleteCourtLock(slug, userEmail));
+    }
 }

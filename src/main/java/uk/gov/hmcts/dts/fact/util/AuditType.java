@@ -35,7 +35,9 @@ public enum AuditType {
     CREATE_NEW_COURT("Create new court"),
     DELETE_EXISTING_COURT("Delete existing court"),
     UPDATE_COURT_SPOE_AREAS_OF_LAW("Update court spoe areas of law"),
-    UPDATE_COURT_APPLICATION_UPDATES_LIST("Update court application updates list");
+    UPDATE_COURT_APPLICATION_UPDATES_LIST("Update court application updates list"),
+    UPDATE_COURT_LOCK("Update court lock"),
+    DELETE_COURT_LOCK("Delete court lock");
 
     private final String name;
 
