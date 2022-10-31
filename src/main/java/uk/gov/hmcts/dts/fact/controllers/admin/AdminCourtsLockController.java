@@ -30,6 +30,8 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 )
 public class AdminCourtsLockController {
 
+    // TODO: add back in the roles below
+
     private final AdminCourtLockService adminCourtLockService;
     private static final String FORBIDDEN = "Forbidden";
     private static final String UNAUTHORISED = "Unauthorised";
@@ -44,9 +46,9 @@ public class AdminCourtsLockController {
     @ApiResponses(value = {
         @ApiResponse(code = 401, message = UNAUTHORISED),
         @ApiResponse(code = 403, message = FORBIDDEN)})
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
-        return ok(adminService.getCourtBySlug(slug));
+//    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    public ResponseEntity<CourtLock> findCourtByName(@PathVariable String slug) {
+        return ok(adminCourtLockService.getCourtLock(slug));
     }
 
     @PostMapping("/{slug}/lock")
@@ -57,14 +59,11 @@ public class AdminCourtsLockController {
         @ApiResponse(code = 403, message = FORBIDDEN),
         @ApiResponse(code = 409, message = "Court lock already exists")
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<Court> addNewCourtLock(@PathVariable String slug,
+//    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    public ResponseEntity<CourtLock> addNewCourtLock(@PathVariable String slug,
                                                  @Valid @RequestBody CourtLock courtLock) {
-        return created(URI.create("/admin/courts/" + slug + "/general"))
-            .body(adminCourtLockService.addNewCourtLock(newCourt.getNewCourtName(),
-                                           newCourtSlug, newCourt.getServiceCentre(),
-                                           newCourt.getLon(), newCourt.getLat(),
-                                           newCourt.getServiceAreas()));
+        return created(URI.create("/admin/courts/" + slug + "/lock"))
+            .body(adminCourtLockService.addNewCourtLock(courtLock));
     }
 //
 //    @DeleteMapping("/{slug}")

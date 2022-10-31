@@ -7,5 +7,5 @@ import uk.gov.hmcts.dts.fact.entity.CourtLock;
 import java.util.List;
 
 public interface CourtLockRepository extends JpaRepository<CourtLock, Integer> {
-    List<CourtLock> findByUserEmail(String userEmail);
+    List<CourtLock> findCourtLockByCourtSlug(String courtSlug);
 }

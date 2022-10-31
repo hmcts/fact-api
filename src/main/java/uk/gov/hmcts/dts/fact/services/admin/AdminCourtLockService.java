@@ -8,6 +8,7 @@ import uk.gov.hmcts.dts.fact.exception.LockExistsException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtLock;
 import uk.gov.hmcts.dts.fact.repositories.CourtLockRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,17 +25,32 @@ public class AdminCourtLockService {
         this.adminAuditService = adminAuditService;
     }
 
-    public void addNewCourtLock(CourtLock courtLock) {
-        // Check if the lock exists for the username/email
-        List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockEntityList = courtLockRepository.findByUserEmail(courtLock.getUserEmail());
+    public CourtLock getCourtLock(String courtSlug) {
+        List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
+            courtLockRepository.findCourtLockByCourtSlug(courtSlug);
+        if(courtLockList.size() > 1) {
+            throw new LockExistsException(String.format("More than one lock exists for multiple users: %s",
+                                                        Arrays.toString(courtLockList.toArray())));
+        }
+        return new CourtLock(courtLockList.get(0));
+    }
 
-        if (courtLockEntityList.size() > 0) {
+    public CourtLock addNewCourtLock(CourtLock courtLock) {
+        // Check if the lock exists for the username/email
+        List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockEntityList = courtLockRepository.findCourtLockByCourtSlug(courtLock.getCourtSlug());
+
+        if(courtLockEntityList.size() > 1) {
+            throw new LockExistsException(String.format("More than one lock exists for multiple users: %s",
+                                                        Arrays.toString(courtLockEntityList.toArray())));
+        }
+
+        if (courtLockEntityList.size() > 0 && !courtLockEntityList.get(0).getUserEmail().equals(courtLock.getUserEmail())) {
             // If it doesn't, but we have a lock for the court, return with an error code
             throw new LockExistsException(String.format("Lock already exists for user: '%s' and court '%s'",
                                                         courtLock.getUserEmail(), courtLock.getCourtSlug()));
         } else {
             // If it exists, delete and update the resource
-            courtLockRepository.save(new uk.gov.hmcts.dts.fact.entity.CourtLock(courtLock));
+            return new CourtLock(courtLockRepository.save(new uk.gov.hmcts.dts.fact.entity.CourtLock(courtLock)));
         }
     }
 
