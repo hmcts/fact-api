@@ -30,4 +30,13 @@ public class CourtLock {
         this.userEmail = courtLock.getUserEmail();
         this.courtSlug = courtLock.getCourtSlug();
     }
+
+    @Override
+    public String toString() {
+        return "CourtLock{" +
+            "lockAcquired=" + lockAcquired +
+            ", userEmail='" + userEmail + '\'' +
+            ", courtSlug='" + courtSlug + '\'' +
+            '}';
+    }
 }
