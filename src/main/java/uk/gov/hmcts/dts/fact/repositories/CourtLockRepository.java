@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CourtLockRepository extends JpaRepository<CourtLock, Integer> {
     List<CourtLock> findCourtLockByCourtSlug(String courtSlug);
+
     List<CourtLock> findCourtLockByCourtSlugAndUserEmail(String courtSlug,
                                                          String userEmail);
 }

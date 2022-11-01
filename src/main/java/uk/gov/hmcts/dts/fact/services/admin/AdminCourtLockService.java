@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.util.AuditType;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class AdminCourtLockService {
         } else if (courtLockEntityList.size() == 1 && courtLockEntityList.get(0).getUserEmail().equals(courtUserEmail)) {
             // If we have one row, and the name is the same as the incoming name, update it
             log.debug("Updating court lock for slug {} and user {}", courtSlug, courtUserEmail);
-            return new CourtLock(updateCourtLock(courtSlug, courtUserEmail));
+            return updateCourtLock(courtSlug, courtUserEmail);
         } else if (courtLockEntityList.size() > 1) {
             throw new LockExistsException(String.format(
                 "More than one lock exists for %s: %s",
@@ -95,10 +96,20 @@ public class AdminCourtLockService {
         return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
     }
 
-    public uk.gov.hmcts.dts.fact.entity.CourtLock updateCourtLock(String courtSlug, String userEmail) {
+    public CourtLock updateCourtLock(String courtSlug, String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
             courtLockRepository.findCourtLockByCourtSlugAndUserEmail(courtSlug, userEmail);
-        if (courtLockList.size() > 1) {
+        if (courtLockList.size() == 0) {
+            // If a user attempts to update a lock, and no row exists for the slug at all,
+            // apply the lock to them
+            log.debug("When updating user: {}, no row was found. Creating lock now for court: {}",
+                      userEmail, courtSlug);
+            return addNewCourtLock(new CourtLock(
+                LocalDateTime.now(ZoneOffset.UTC),
+                courtSlug,
+                userEmail
+            ));
+        } else if (courtLockList.size() > 1) {
             throw new LockExistsException(String.format(
                 "More than one lock exists for multiple users: %s",
                 Arrays.toString(courtLockList.toArray())
@@ -120,6 +131,6 @@ public class AdminCourtLockService {
             courtSlug
         );
         courtLockList.get(0).setLockAcquired(newTime);
-        return courtLockRepository.save(courtLockList.get(0));
+        return new CourtLock(courtLockRepository.save(courtLockList.get(0)));
     }
 }

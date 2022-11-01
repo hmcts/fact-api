@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtGeneralInfoService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
@@ -22,10 +24,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtGeneralInfoController {
     private final AdminCourtGeneralInfoService adminService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtGeneralInfoController(AdminCourtGeneralInfoService adminService) {
+    public AdminCourtGeneralInfoController(AdminCourtGeneralInfoService adminService,
+                                           AdminCourtLockService adminCourtLockService) {
         this.adminService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping()
@@ -45,7 +50,11 @@ public class AdminCourtGeneralInfoController {
         @ApiResponse(code = 409, message = "Court already exists")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<CourtGeneralInfo> updateCourtGeneralInfo(@PathVariable String slug, @RequestBody CourtGeneralInfo generalInfo) {
-        return ok(adminService.updateCourtGeneralInfo(slug, generalInfo));
+    public ResponseEntity<CourtGeneralInfo> updateCourtGeneralInfo(@PathVariable String slug,
+                                                                   @RequestBody CourtGeneralInfo generalInfo,
+                                                                   Authentication authentication) {
+        CourtGeneralInfo courtGeneralInfo = adminService.updateCourtGeneralInfo(slug, generalInfo);
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
+        return ok(courtGeneralInfo);
     }
 }

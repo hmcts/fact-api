@@ -9,15 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.model.admin.*;
+import uk.gov.hmcts.dts.fact.model.admin.CourtLock;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-import static org.springframework.http.ResponseEntity.*;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @Validated
 @RestController

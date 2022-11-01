@@ -27,4 +27,10 @@ public class CourtLock {
         this.userEmail = courtLock.getUserEmail();
         this.courtSlug = courtLock.getCourtSlug();
     }
+
+    public CourtLock(LocalDateTime lockAcquired, String courtSlug, String userEmail) {
+        this.lockAcquired = lockAcquired;
+        this.userEmail = userEmail;
+        this.courtSlug = courtSlug;
+    }
 }
