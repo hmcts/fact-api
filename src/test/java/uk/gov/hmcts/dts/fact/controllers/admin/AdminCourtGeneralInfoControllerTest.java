@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,15 +11,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtGeneralInfoService;
+import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtGeneralInfoController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -46,11 +51,18 @@ public class AdminCourtGeneralInfoControllerTest {
 
     private static String courtGeneralInfoJson;
 
+    private MockMvc mockMvc;
+
     @Autowired
-    private transient MockMvc mockMvc;
+    private WebApplicationContext context;
 
     @MockBean
     private AdminCourtGeneralInfoService adminService;
+
+    @BeforeEach
+    public void setUpMvc() {
+        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context);
+    }
 
     @BeforeAll
     static void setUp() throws JsonProcessingException {
@@ -80,6 +92,7 @@ public class AdminCourtGeneralInfoControllerTest {
         when(adminService.updateCourtGeneralInfo(TEST_SLUG, COURT_GENERAL_INFO)).thenReturn(COURT_GENERAL_INFO);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
+                            .with(csrf())
                             .content(courtGeneralInfoJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -89,9 +102,11 @@ public class AdminCourtGeneralInfoControllerTest {
 
     @Test
     void updateGeneralInfoShouldReturnNotFoundForUnknownCourtSlug() throws Exception {
-        when(adminService.updateCourtGeneralInfo(TEST_SLUG, COURT_GENERAL_INFO)).thenThrow(new NotFoundException(TEST_SLUG));
+        when(adminService.updateCourtGeneralInfo(TEST_SLUG, COURT_GENERAL_INFO)).thenThrow(new NotFoundException(
+            TEST_SLUG));
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + CHILD_PATH)
+                            .with(csrf())
                             .content(courtGeneralInfoJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
