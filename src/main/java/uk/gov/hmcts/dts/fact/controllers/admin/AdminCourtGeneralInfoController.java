@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+@Slf4j
 @RestController
 @RequestMapping(
     path = "/admin/courts/{slug}/generalInfo",
