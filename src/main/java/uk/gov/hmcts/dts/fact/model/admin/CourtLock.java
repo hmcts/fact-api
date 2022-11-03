@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.dts.fact.entity.AuditType;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data

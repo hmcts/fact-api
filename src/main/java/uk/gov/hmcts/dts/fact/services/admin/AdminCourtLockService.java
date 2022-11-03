@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import uk.gov.hmcts.dts.fact.util.AuditType;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +21,7 @@ import java.util.stream.Collectors;
 public class AdminCourtLockService {
     private final CourtLockRepository courtLockRepository;
     private final AdminAuditService adminAuditService;
+    private static final int LOCK_AMOUNT_PER_COURT = 1;
 
     @Autowired
     public AdminCourtLockService(final CourtLockRepository courtLockRepository,
@@ -44,17 +43,18 @@ public class AdminCourtLockService {
         String courtUserEmail = courtLock.getUserEmail();
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockEntityList =
             courtLockRepository.findCourtLockByCourtSlug(courtSlug);
+        int courtListSize = courtLockEntityList.size();
 
-        if (courtLockEntityList.size() == 1 && !courtLockEntityList.get(0).getUserEmail().equals(courtUserEmail)) {
+        if (courtListSize == LOCK_AMOUNT_PER_COURT && !courtLockEntityList.get(0).getUserEmail().equals(courtUserEmail)) {
             // If it doesn't, but we have a lock for the court, return with an error code
             throw new LockExistsException(String.format("Lock for court '%s' is currently held by user '%s'",
                                                         courtSlug, courtLockEntityList.get(0).getUserEmail()
             ));
-        } else if (courtLockEntityList.size() == 1 && courtLockEntityList.get(0).getUserEmail().equals(courtUserEmail)) {
+        } else if (courtListSize == LOCK_AMOUNT_PER_COURT && courtLockEntityList.get(0).getUserEmail().equals(courtUserEmail)) {
             // If we have one row, and the name is the same as the incoming name, update it
             log.debug("Updating court lock for slug {} and user {}", courtSlug, courtUserEmail);
             return updateCourtLock(courtSlug, courtUserEmail);
-        } else if (courtLockEntityList.size() > 1) {
+        } else if (courtListSize > LOCK_AMOUNT_PER_COURT) {
             throw new LockExistsException(String.format(
                 "More than one lock exists for %s: %s",
                 courtSlug,
@@ -79,7 +79,7 @@ public class AdminCourtLockService {
     public List<CourtLock> deleteCourtLock(String courtSlug, String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
             courtLockRepository.findCourtLockByCourtSlugAndUserEmail(courtSlug, userEmail);
-        if (courtLockList.size() == 0) {
+        if (courtLockList.isEmpty()) {
             throw new NotFoundException(String.format("No lock found for court: %s and user: %s",
                                                       courtSlug, userEmail
             ));
@@ -99,17 +99,19 @@ public class AdminCourtLockService {
     public CourtLock updateCourtLock(String courtSlug, String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
             courtLockRepository.findCourtLockByCourtSlugAndUserEmail(courtSlug, userEmail);
-        if (courtLockList.size() == 0) {
+
+        if (courtLockList.isEmpty()) {
             // If a user attempts to update a lock, and no row exists for the slug at all,
             // apply the lock to them
             log.debug("When updating user: {}, no row was found. Creating lock now for court: {}",
-                      userEmail, courtSlug);
+                      userEmail, courtSlug
+            );
             return addNewCourtLock(new CourtLock(
                 LocalDateTime.now(ZoneOffset.UTC),
                 courtSlug,
                 userEmail
             ));
-        } else if (courtLockList.size() > 1) {
+        } else if (courtLockList.size() > LOCK_AMOUNT_PER_COURT) {
             throw new LockExistsException(String.format(
                 "More than one lock exists for multiple users: %s",
                 Arrays.toString(courtLockList.toArray())

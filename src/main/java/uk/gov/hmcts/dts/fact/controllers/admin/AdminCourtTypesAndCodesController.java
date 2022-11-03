@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtTypesAndCodesService;
 
 import java.util.List;
@@ -24,10 +26,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 )
 public class AdminCourtTypesAndCodesController {
     private final AdminCourtTypesAndCodesService courtTypesAndCodesService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtTypesAndCodesController(AdminCourtTypesAndCodesService adminService) {
+    public AdminCourtTypesAndCodesController(AdminCourtTypesAndCodesService adminService,
+                                             AdminCourtLockService adminCourtLockService) {
         this.courtTypesAndCodesService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping(path = "/courtTypes")
@@ -64,7 +69,11 @@ public class AdminCourtTypesAndCodesController {
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<CourtTypesAndCodes> updateCourtTypesAndCodes(@PathVariable String slug, @RequestBody CourtTypesAndCodes courtTypesAndCodes) {
-        return ok(courtTypesAndCodesService.updateCourtTypesAndCodes(slug, courtTypesAndCodes));
+    public ResponseEntity<CourtTypesAndCodes> updateCourtTypesAndCodes(@PathVariable String slug,
+                                                                       @RequestBody CourtTypesAndCodes courtTypesAndCodes,
+                                                                       Authentication authentication) {
+        CourtTypesAndCodes response = courtTypesAndCodesService.updateCourtTypesAndCodes(slug, courtTypesAndCodes);
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
+        return ok(response);
     }
 }

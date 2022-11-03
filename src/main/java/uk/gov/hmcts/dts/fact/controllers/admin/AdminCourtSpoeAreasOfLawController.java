@@ -6,9 +6,11 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.SpoeAreaOfLaw;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtSpoeAreasOfLawService;
 
 import java.util.List;
@@ -23,10 +25,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtSpoeAreasOfLawController {
     private final AdminCourtSpoeAreasOfLawService adminCourtAreasOfLawSpoeService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtSpoeAreasOfLawController(AdminCourtSpoeAreasOfLawService adminService) {
+    public AdminCourtSpoeAreasOfLawController(AdminCourtSpoeAreasOfLawService adminService,
+                                              AdminCourtLockService adminCourtLockService) {
         this.adminCourtAreasOfLawSpoeService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping(path = "/SpoeAreasOfLaw")
@@ -65,7 +70,10 @@ public class AdminCourtSpoeAreasOfLawController {
     })
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<List<SpoeAreaOfLaw>> updateCourtAreasOfLaw(@PathVariable String slug,
-                                                                     @RequestBody List<SpoeAreaOfLaw> areasOfLaw) {
-        return ok(adminCourtAreasOfLawSpoeService.updateSpoeAreasOfLawForCourt(slug, areasOfLaw));
+                                                                     @RequestBody List<SpoeAreaOfLaw> areasOfLaw,
+                                                                     Authentication authentication) {
+        List<SpoeAreaOfLaw> responseList = adminCourtAreasOfLawSpoeService.updateSpoeAreasOfLawForCourt(slug, areasOfLaw);
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
+        return ok(responseList);
     }
 }

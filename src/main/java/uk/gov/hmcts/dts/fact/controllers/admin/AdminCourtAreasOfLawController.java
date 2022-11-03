@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAreasOfLawService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.util.List;
 
@@ -23,10 +25,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 )
 public class AdminCourtAreasOfLawController {
     private final AdminCourtAreasOfLawService adminCourtAreasOfLawService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtAreasOfLawController(AdminCourtAreasOfLawService adminService) {
+    public AdminCourtAreasOfLawController(AdminCourtAreasOfLawService adminService,
+                                          AdminCourtLockService adminCourtLockService) {
         this.adminCourtAreasOfLawService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping(path = "/{slug}/courtAreasOfLaw")
@@ -52,7 +57,10 @@ public class AdminCourtAreasOfLawController {
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<AreaOfLaw>> updateCourtAreasOfLaw(@PathVariable String slug,
-                                                                 @RequestBody List<AreaOfLaw> areasOfLaw) {
-        return ok(adminCourtAreasOfLawService.updateAreasOfLawForCourt(slug, areasOfLaw));
+                                                                 @RequestBody List<AreaOfLaw> areasOfLaw,
+                                                                 Authentication authentication) {
+        List<AreaOfLaw> response = adminCourtAreasOfLawService.updateAreasOfLawForCourt(slug, areasOfLaw);
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
+        return ok(response);
     }
 }

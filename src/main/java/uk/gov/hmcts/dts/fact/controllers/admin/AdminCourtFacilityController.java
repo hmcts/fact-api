@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtFacilityService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.util.List;
 
@@ -24,10 +26,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtFacilityController {
     private final AdminCourtFacilityService adminCourtFacilityService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtFacilityController(AdminCourtFacilityService adminService) {
+    public AdminCourtFacilityController(AdminCourtFacilityService adminService,
+                                        AdminCourtLockService adminCourtLockService) {
         this.adminCourtFacilityService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping(path = "/{slug}/facilities")
@@ -52,8 +57,12 @@ public class AdminCourtFacilityController {
         @ApiResponse(code = 403, message = "Forbidden"),
         @ApiResponse(code = 404, message = "Court not found"),
     })
-    public ResponseEntity<List<Facility>> updateCourtFacility(@PathVariable String slug, @RequestBody List<Facility> courtFacilities) {
-        return ok(adminCourtFacilityService.updateCourtFacility(slug, courtFacilities));
+    public ResponseEntity<List<Facility>> updateCourtFacility(@PathVariable String slug,
+                                                              @RequestBody List<Facility> courtFacilities,
+                                                              Authentication authentication) {
+        List<Facility> response = adminCourtFacilityService.updateCourtFacility(slug, courtFacilities);
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
+        return ok(response);
     }
 }
 

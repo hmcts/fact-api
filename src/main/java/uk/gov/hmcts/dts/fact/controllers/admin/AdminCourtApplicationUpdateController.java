@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtApplicationUpdateService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.util.List;
 
@@ -24,10 +26,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtApplicationUpdateController {
     private final AdminCourtApplicationUpdateService adminCourtApplicationUpdateService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtApplicationUpdateController(AdminCourtApplicationUpdateService adminService) {
+    public AdminCourtApplicationUpdateController(AdminCourtApplicationUpdateService adminService,
+                                                 AdminCourtLockService adminCourtLockService) {
         this.adminCourtApplicationUpdateService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     /**
@@ -64,8 +69,10 @@ public class AdminCourtApplicationUpdateController {
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<ApplicationUpdate>> updateApplicationUpdates(@PathVariable String slug,
-                                                                            @RequestBody List<ApplicationUpdate> adminApplicationUpdates) {
-        return ok(adminCourtApplicationUpdateService.updateApplicationUpdates(slug, adminApplicationUpdates));
+                                                                            @RequestBody List<ApplicationUpdate> adminApplicationUpdates,
+                                                                            Authentication authentication) {
+        List<ApplicationUpdate> response = adminCourtApplicationUpdateService.updateApplicationUpdates(slug, adminApplicationUpdates);
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
+        return ok(response);
     }
-
 }

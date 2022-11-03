@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "admin_courtlock")
@@ -33,10 +33,10 @@ public class CourtLock {
 
     @Override
     public String toString() {
-        return "CourtLock{" +
-            "lockAcquired=" + lockAcquired +
-            ", userEmail='" + userEmail + '\'' +
-            ", courtSlug='" + courtSlug + '\'' +
-            '}';
+        return "CourtLock{"
+            + "lockAcquired=" + lockAcquired
+            + ", userEmail='" + userEmail + '\''
+            + ", courtSlug='" + courtSlug + '\''
+            + '}';
     }
 }
