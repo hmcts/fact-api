@@ -335,7 +335,7 @@ task migratePostgresDatabase(type: FlywayMigrateTask) {
   }
 }
 
-task fortifyScan(type: JavaExec) {
+task fortifyScan(type: JavaExec)  {
   main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
   classpath += sourceSets.test.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
