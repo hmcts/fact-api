@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,12 +12,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
+import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,15 +28,18 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtAddressController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AdminCourtAddressControllerTest {
     private static final String TEST_SLUG = "court-slug";
+    private static final String TEST_USER = "mosh@cat.com";
     private static final String NOT_FOUND = "Not found: ";
     private static final String BASE_PATH = "/admin/courts/";
     private static final String ADDRESSES_PATH = "/" + "addresses";
@@ -80,6 +87,17 @@ public class AdminCourtAddressControllerTest {
     @MockBean
     private AdminCourtAddressService adminService;
 
+    @MockBean
+    private AdminCourtLockService adminCourtLockService;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @BeforeEach
+    public void setUpMvc() {
+        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context, TEST_USER);
+    }
+
     @BeforeAll
     static void setUp() throws JsonProcessingException {
         courtAddressesJson = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES);
@@ -109,32 +127,41 @@ public class AdminCourtAddressControllerTest {
         when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
+                            .with(csrf())
                             .content(courtAddressesJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(courtAddressesJson));
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForUnknownCourtSlug() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenThrow(new NotFoundException(TEST_SLUG));
+        when(adminService.updateCourtAddressesAndCoordinates(
+            TEST_SLUG,
+            COURT_ADDRESSES
+        )).thenThrow(new NotFoundException(TEST_SLUG));
 
         ResultActions resultActions = mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
-                            .content(courtAddressesJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON));
+                                                          .with(csrf())
+                                                          .content(courtAddressesJson)
+                                                          .contentType(MediaType.APPLICATION_JSON)
+                                                          .accept(MediaType.APPLICATION_JSON));
 
         resultActions
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
+        verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidPostcode() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
+                            .with(csrf())
                             .content(courtAddressesJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -142,5 +169,6 @@ public class AdminCourtAddressControllerTest {
             .andExpect(content().json(JSON_POSTCODE2));
 
         verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
+        verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 }

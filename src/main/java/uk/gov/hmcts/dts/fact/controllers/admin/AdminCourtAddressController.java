@@ -6,12 +6,14 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.util.List;
 
@@ -26,10 +28,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtAddressController {
     private final AdminCourtAddressService adminService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtAddressController(AdminCourtAddressService adminService) {
+    public AdminCourtAddressController(AdminCourtAddressService adminService,
+                                       AdminCourtLockService adminCourtLockService) {
         this.adminService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     /**
@@ -67,10 +72,14 @@ public class AdminCourtAddressController {
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<CourtAddress>> updateCourtAddresses(@PathVariable String slug, @RequestBody List<CourtAddress> courtAddresses) {
+    public ResponseEntity<List<CourtAddress>> updateCourtAddresses(@PathVariable String slug,
+                                                                   @RequestBody List<CourtAddress> courtAddresses,
+                                                                   Authentication authentication) {
         final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(courtAddresses);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
-            return ok(adminService.updateCourtAddressesAndCoordinates(slug, courtAddresses));
+            List<CourtAddress> response = adminService.updateCourtAddressesAndCoordinates(slug, courtAddresses);
+            adminCourtLockService.updateCourtLock(slug, authentication.getName());
+            return ok(response);
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }
