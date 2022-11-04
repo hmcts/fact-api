@@ -23,6 +23,7 @@ import uk.gov.hmcts.dts.fact.util.Action;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -195,6 +196,10 @@ public class CourtService {
             serviceArea,
             action
         );
+        if (Objects.isNull(results) || Objects.isNull(results.getCourts())) {
+            log.error("Mapit has returned a not found request for postcode: {}", postcode);
+            throw new NotFoundException(String.format("Mapit can not find information related to postcode %s", postcode));
+        }
         results.setCourts(results.getCourts()
                               .stream()
                               .filter(c -> c.getAreasOfLawSpoe().contains(areaOfLaw))
