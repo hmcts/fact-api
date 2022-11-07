@@ -46,7 +46,7 @@ public class AdminCourtLockService {
         int courtListSize = courtLockEntityList.size();
 
         if (courtListSize == LOCK_AMOUNT_PER_COURT && !courtLockEntityList.get(0).getUserEmail().equals(courtUserEmail)) {
-            // If it doesn't, but we have a lock for the court, return with an error code
+            // If the name doesn't match, but we have a lock for the court, return with an error code
             throw new LockExistsException(String.format("Lock for court '%s' is currently held by user '%s'",
                                                         courtSlug, courtLockEntityList.get(0).getUserEmail()
             ));
@@ -113,7 +113,8 @@ public class AdminCourtLockService {
             ));
         } else if (courtLockList.size() > LOCK_AMOUNT_PER_COURT) {
             throw new LockExistsException(String.format(
-                "More than one lock exists for multiple users: %s",
+                "More than one lock exists for %s: %s",
+                courtSlug,
                 Arrays.toString(courtLockList.toArray())
             ));
         }
