@@ -105,16 +105,7 @@ public class AdminCourtLockServiceTest {
         verify(courtLockRepository, times(1)).findCourtLockByCourtSlug(TEST_SLUG_2);
         verify(courtLockRepository, times(1)).findCourtLockByCourtSlugAndUserEmail(TEST_SLUG_2, TEST_USER_2);
         verify(courtLockRepository, times(1)).save(captor.capture());
-        verify(adminAuditService, times(1))
-            .saveAudit(
-                "Update court lock",
-                String.format("User kupo@cat.com has a lock acquired time (before) of: %s", TEST_LOCK_ACQUIRED_2),
-                String.format(
-                    "User kupo@cat.com has a lock acquired time (after) of: %s",
-                    ENTITY_COURT_LOCK_2.getLockAcquired()
-                ),
-                TEST_SLUG_2
-            );
+        verify(adminAuditService, times(1)).saveAudit(anyString(), anyString(), anyString(), anyString());
 
         // Check that the edited court has a date larger than the original
         List<CourtLock> courtLock = captor.getAllValues();
