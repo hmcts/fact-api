@@ -27,14 +27,14 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
     path = "/admin/courts",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
-public class AdminCourtsLockController {
+public class AdminCourtLockController {
 
     private final AdminCourtLockService adminCourtLockService;
     private static final String FORBIDDEN = "Forbidden";
     private static final String UNAUTHORISED = "Unauthorised";
 
     @Autowired
-    public AdminCourtsLockController(final AdminCourtLockService adminCourtLockService) {
+    public AdminCourtLockController(final AdminCourtLockService adminCourtLockService) {
         this.adminCourtLockService = adminCourtLockService;
     }
 
