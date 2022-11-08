@@ -46,9 +46,8 @@ public class AdminCourtOpeningTimeController {
     public ResponseEntity<List<OpeningTime>> updateCourtOpeningTimes(@PathVariable String slug,
                                                                      @RequestBody List<OpeningTime> openingTimes,
                                                                      Authentication authentication) {
-        List<OpeningTime> response = adminService.updateCourtOpeningTimes(slug, openingTimes);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminService.updateCourtOpeningTimes(slug, openingTimes));
     }
 
 }

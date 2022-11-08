@@ -46,8 +46,7 @@ public class AdminCourtContactController {
     public ResponseEntity<List<Contact>> updateCourtContacts(@PathVariable String slug,
                                                              @RequestBody List<Contact> contacts,
                                                              Authentication authentication) {
-        List<Contact> response = adminService.updateCourtContacts(slug, contacts);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminService.updateCourtContacts(slug, contacts));
     }
 }

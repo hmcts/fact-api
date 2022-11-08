@@ -72,8 +72,7 @@ public class AdminCourtSpoeAreasOfLawController {
     public ResponseEntity<List<SpoeAreaOfLaw>> updateCourtAreasOfLaw(@PathVariable String slug,
                                                                      @RequestBody List<SpoeAreaOfLaw> areasOfLaw,
                                                                      Authentication authentication) {
-        List<SpoeAreaOfLaw> responseList = adminCourtAreasOfLawSpoeService.updateSpoeAreasOfLawForCourt(slug, areasOfLaw);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(responseList);
+        return ok(adminCourtAreasOfLawSpoeService.updateSpoeAreasOfLawForCourt(slug, areasOfLaw));
     }
 }

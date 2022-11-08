@@ -71,8 +71,7 @@ public class AdminCourtApplicationUpdateController {
     public ResponseEntity<List<ApplicationUpdate>> updateApplicationUpdates(@PathVariable String slug,
                                                                             @RequestBody List<ApplicationUpdate> adminApplicationUpdates,
                                                                             Authentication authentication) {
-        List<ApplicationUpdate> response = adminCourtApplicationUpdateService.updateApplicationUpdates(slug, adminApplicationUpdates);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminCourtApplicationUpdateService.updateApplicationUpdates(slug, adminApplicationUpdates));
     }
 }

@@ -55,8 +55,7 @@ public class AdminCourtGeneralInfoController {
     public ResponseEntity<CourtGeneralInfo> updateCourtGeneralInfo(@PathVariable String slug,
                                                                    @RequestBody CourtGeneralInfo generalInfo,
                                                                    Authentication authentication) {
-        CourtGeneralInfo courtGeneralInfo = adminService.updateCourtGeneralInfo(slug, generalInfo);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(courtGeneralInfo);
+        return ok(adminService.updateCourtGeneralInfo(slug, generalInfo));
     }
 }

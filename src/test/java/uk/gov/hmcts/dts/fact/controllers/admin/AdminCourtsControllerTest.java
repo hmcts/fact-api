@@ -338,6 +338,6 @@ class AdminCourtsControllerTest {
             .andExpect(content().json(JSON_NOT_FOUND_SEARCH_CRITERIA))
             .andReturn();
 
-        verify(adminCourtLockService, never()).updateCourtLock(TEST_SEARCH_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SEARCH_SLUG, TEST_USER);
     }
 }

@@ -47,9 +47,8 @@ public class AdminCourtEmailController {
     public ResponseEntity<List<Email>> updateCourtEmails(@PathVariable String slug,
                                                          @RequestBody List<Email> adminEmails,
                                                          Authentication authentication) {
-        List<Email> response = adminCourtEmailService.updateEmailListForCourt(slug, adminEmails);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminCourtEmailService.updateEmailListForCourt(slug, adminEmails));
     }
 
     @GetMapping(path = "/emailTypes")

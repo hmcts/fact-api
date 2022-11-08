@@ -88,9 +88,8 @@ public class AdminCourtPostcodeController {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             adminService.checkPostcodesDoNotExist(slug, postcodes);
-            final List<String> postcodeCreated = adminService.addCourtPostcodes(slug, postcodes);
             adminCourtLockService.updateCourtLock(slug, authentication.getName());
-            return created(URI.create(StringUtils.EMPTY)).body(postcodeCreated);
+            return created(URI.create(StringUtils.EMPTY)).body(adminService.addCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }
@@ -120,9 +119,8 @@ public class AdminCourtPostcodeController {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             adminService.checkPostcodesExist(slug, postcodes);
-            int response = adminService.deleteCourtPostcodes(slug, postcodes);
             adminCourtLockService.updateCourtLock(slug, authentication.getName());
-            return ok(response);
+            return ok(adminService.deleteCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }
@@ -156,9 +154,8 @@ public class AdminCourtPostcodeController {
                                                       Authentication authentication) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
-            List<String> responsePostcodes = adminService.moveCourtPostcodes(sourceSlug, destinationSlug, postcodes);
             adminCourtLockService.updateCourtLock(sourceSlug, authentication.getName());
-            return ok(responsePostcodes);
+            return ok(adminService.moveCourtPostcodes(sourceSlug, destinationSlug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }

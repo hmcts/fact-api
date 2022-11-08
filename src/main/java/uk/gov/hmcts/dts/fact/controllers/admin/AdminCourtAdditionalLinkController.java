@@ -60,8 +60,7 @@ public class AdminCourtAdditionalLinkController {
     public ResponseEntity<List<AdditionalLink>> updateCourtAdditionalLinks(@PathVariable String slug,
                                                                            @RequestBody List<AdditionalLink> additionalLinks,
                                                                            Authentication authentication) {
-        List<AdditionalLink> response = adminService.updateCourtAdditionalLinks(slug, additionalLinks);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminService.updateCourtAdditionalLinks(slug, additionalLinks));
     }
 }

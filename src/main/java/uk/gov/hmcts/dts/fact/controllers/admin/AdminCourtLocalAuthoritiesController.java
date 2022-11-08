@@ -49,8 +49,7 @@ public class AdminCourtLocalAuthoritiesController {
                                                                             @PathVariable String areaOfLaw,
                                                                             @RequestBody List<LocalAuthority> localAuthorities,
                                                                             Authentication authentication) {
-        List<LocalAuthority> response = adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(slug, areaOfLaw, localAuthorities);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(slug, areaOfLaw, localAuthorities));
     }
 }

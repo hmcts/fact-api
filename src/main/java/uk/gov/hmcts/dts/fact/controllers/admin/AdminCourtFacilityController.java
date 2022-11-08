@@ -60,9 +60,8 @@ public class AdminCourtFacilityController {
     public ResponseEntity<List<Facility>> updateCourtFacility(@PathVariable String slug,
                                                               @RequestBody List<Facility> courtFacilities,
                                                               Authentication authentication) {
-        List<Facility> response = adminCourtFacilityService.updateCourtFacility(slug, courtFacilities);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminCourtFacilityService.updateCourtFacility(slug, courtFacilities));
     }
 }
 

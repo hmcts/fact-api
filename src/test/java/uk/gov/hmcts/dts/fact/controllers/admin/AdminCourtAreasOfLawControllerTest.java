@@ -112,6 +112,6 @@ public class AdminCourtAreasOfLawControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
 
-        verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 }

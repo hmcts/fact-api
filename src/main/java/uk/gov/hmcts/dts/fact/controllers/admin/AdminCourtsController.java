@@ -113,9 +113,8 @@ public class AdminCourtsController {
     public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug,
                                                    @RequestBody Court updatedCourt,
                                                    Authentication authentication) {
-        Court response = adminService.save(slug, updatedCourt);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminService.save(slug, updatedCourt));
     }
 
     @GetMapping(path = "/{slug}/courtPhoto")
@@ -143,8 +142,7 @@ public class AdminCourtsController {
     public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug,
                                                          @RequestBody ImageFile imageFile,
                                                          Authentication authentication) {
-        String response = adminService.updateCourtImage(slug, imageFile.getImageName());
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(adminService.updateCourtImage(slug, imageFile.getImageName()));
     }
 }

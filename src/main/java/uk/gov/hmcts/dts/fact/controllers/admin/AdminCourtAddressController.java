@@ -77,9 +77,8 @@ public class AdminCourtAddressController {
                                                                    Authentication authentication) {
         final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(courtAddresses);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
-            List<CourtAddress> response = adminService.updateCourtAddressesAndCoordinates(slug, courtAddresses);
             adminCourtLockService.updateCourtLock(slug, authentication.getName());
-            return ok(response);
+            return ok(adminService.updateCourtAddressesAndCoordinates(slug, courtAddresses));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }

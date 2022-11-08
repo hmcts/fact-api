@@ -72,8 +72,7 @@ public class AdminCourtTypesAndCodesController {
     public ResponseEntity<CourtTypesAndCodes> updateCourtTypesAndCodes(@PathVariable String slug,
                                                                        @RequestBody CourtTypesAndCodes courtTypesAndCodes,
                                                                        Authentication authentication) {
-        CourtTypesAndCodes response = courtTypesAndCodesService.updateCourtTypesAndCodes(slug, courtTypesAndCodes);
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(response);
+        return ok(courtTypesAndCodesService.updateCourtTypesAndCodes(slug, courtTypesAndCodes));
     }
 }
