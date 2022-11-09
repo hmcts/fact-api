@@ -138,8 +138,8 @@ public class AdminService {
     }
 
     @Transactional
-    public void updateCourtRegion(final String slug, final String region, int addressId) {
-        courtRepository.updateRegionBySlug(slug, region, addressId);
+    public void updateCourtRegion(final String slug, final String region) {
+        courtRepository.updateRegionBySlug(slug, region);
     }
 
     public String getCourtImage(final String slug) {

@@ -35,7 +35,6 @@ public class AdminCourtAddressService {
     private final MapitService mapitService;
     private final ValidationService validationService;
     private final AdminAuditService adminAuditService;
-    private final AdminRegionService regionService;
 
     @Autowired
     public AdminCourtAddressService(final CourtRepository courtRepository,
@@ -46,8 +45,7 @@ public class AdminCourtAddressService {
                                     final AdminService adminService,
                                     final MapitService mapitService,
                                     final ValidationService validationService,
-                                    final AdminAuditService adminAuditService,
-                                    final AdminRegionService regionService) {
+                                    final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
         this.courtAddressRepository = courtAddressRepository;
         this.courtSecondaryAddressTypeRepository = courtSecondaryAddressTypeRepository;
@@ -57,7 +55,6 @@ public class AdminCourtAddressService {
         this.mapitService = mapitService;
         this.validationService = validationService;
         this.adminAuditService = adminAuditService;
-        this.regionService = regionService;
     }
 
     public List<CourtAddress> getCourtAddressesBySlug(final String slug) {
@@ -72,19 +69,14 @@ public class AdminCourtAddressService {
 
     @Transactional()
     public List<CourtAddress> updateCourtAddressesAndCoordinates(final String slug, final List<CourtAddress> courtAddresses) {
-        // Update the in-person court with its primary postcode coordinates
+        // Update the in-person court with its primary postcode coordinates and region
         final List<String> postcodes = getAllPostcodesSortedByAddressType(courtAddresses);
         if (isInPersonCourt(slug) && !CollectionUtils.isEmpty(postcodes)) {
             final String primaryPostcode = postcodes.get(0);
             if (StringUtils.isNotBlank(primaryPostcode)) {
-                updateCourtLatLonRegionUsingPrimaryPostcode(
+                updateCourtLatLonAndRegionUsingPrimaryPostcode(
                     slug,
-                    primaryPostcode,
-                    courtAddresses.stream().filter(ca -> (ca.getAddressTypeId() == 5880 || ca.getAddressTypeId() == 5882)).findFirst().orElseThrow(
-                        () -> new NotFoundException(
-                            "Cant find primary address with given postcodes: " + Arrays.toString(
-                                postcodes.toArray()))).getId()
-                );
+                    primaryPostcode);
             }
         }
 
@@ -164,22 +156,17 @@ public class AdminCourtAddressService {
         return courtEntity.isInPerson();
     }
 
-    private void updateCourtLatLonRegionUsingPrimaryPostcode(final String slug, final String postcode, Integer addressId) {
+    private void updateCourtLatLonAndRegionUsingPrimaryPostcode(final String slug, final String postcode) {
         final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
         if (mapitData.isPresent()) {
             adminService.updateCourtLatLon(slug, mapitData.get().getLat(), mapitData.get().getLon());
-            adminService.updateCourtRegion(slug, mapitData.get().getRegionFromMapitData(), addressId);
-
-            // 1. Rename function above
-            // 2. make sure below works
-
+            adminService.updateCourtRegion(slug, mapitData.get().getRegionFromMapitData());
         }
     }
 
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         final Map<Integer, County> countyMap = countyService.getCountyMap();
-        final Map<Integer, Region> regionMap = regionService.getRegionMap();
 
         return courtAddresses.stream()
             .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(
@@ -190,8 +177,7 @@ public class AdminCourtAddressService {
                 a.getTownName(),
                 a.getTownNameCy(),
                 countyMap.get(a.getCountyId()),
-                a.getPostcode(),
-                regionMap.get(a.getRegionId())
+                a.getPostcode()
             ))
             .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
             .collect(toList());
