@@ -28,8 +28,6 @@ public class CourtAddress {
     private String description;
     @JsonProperty("fields_of_law")
     private CourtSecondaryAddressType courtSecondaryAddressType;
-    private String region;
-
 
     public CourtAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.addressType = chooseString(
@@ -58,7 +56,6 @@ public class CourtAddress {
                     .collect(Collectors.toList())
             );
         }
-        this.region = courtAddress.getRegion() == null ? "" : courtAddress.getRegion().getName();
 
     }
 }
