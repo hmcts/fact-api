@@ -43,7 +43,6 @@ public class AdminCourtAddressControllerTest {
     private static final String POSTCODE1 = "first postcode";
     private static final String POSTCODE2 = "second postcode";
     private static final Integer COUNTY = 1;
-    private static final Integer REGION = 1;
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
     private static final String JSON_POSTCODE2 = String.format(MESSAGE, POSTCODE2);
@@ -69,8 +68,8 @@ public class AdminCourtAddressControllerTest {
     );
 
     private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
-        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, REGION),
-        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, REGION)
+        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST),
+        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST)
     );
 
     private static String courtAddressesJson;
