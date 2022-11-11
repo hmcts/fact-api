@@ -53,6 +53,7 @@ public class AdminCourtAddressServiceTest {
     private static final String VISIT_US_ADDRESS_TYPE_NAME_CY = VISIT_US_ADDRESS_TYPE_NAME + " cy";
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME_CY = WRITE_TO_US_ADDRESS_TYPE_NAME + " cy";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY = VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME + " cy";
+    private static final String REGION = "North West";
 
     private static final AddressType VISIT_US_ADDRESS_TYPE = new AddressType(
         VISIT_US_ADDRESS_TYPE_ID,
@@ -406,6 +407,7 @@ public class AdminCourtAddressServiceTest {
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
         when(mapitData.getLat()).thenReturn(LATITUDE);
         when(mapitData.getLon()).thenReturn(LONGITUDE);
+        when(mapitData.getRegionFromMapitData()).thenReturn(REGION);
 
         when(MOCK_COURT.isInPerson()).thenReturn(true);
 
@@ -423,6 +425,7 @@ public class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
+        verify(adminService).updateCourtRegion(COURT_SLUG, REGION);
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
                                                            EXPECTED_ADDRESSES,
                                                            results, COURT_SLUG
@@ -520,6 +523,80 @@ public class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
+        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+                                                           EXPECTED_ADDRESSES,
+                                                           results, COURT_SLUG
+        );
+    }
+
+    @Test
+    void shouldNotUpdateRegionForNotInPersonCourt() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(
+            VISIT_US_ADDRESS_TYPE_ID, VISIT_US_ADDRESS_TYPE,
+            WRITE_TO_US_ADDRESS_TYPE_ID, WRITE_TO_US_ADDRESS_TYPE,
+            VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE
+        ));
+        doAnswer(i -> i.getArguments()[0])
+            .when(courtSecondaryAddressTypeRepository)
+            .saveAll(anyList());
+        when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
+        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
+
+        when(MOCK_COURT.isInPerson()).thenReturn(false);
+
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(
+            COURT_SLUG,
+            EXPECTED_ADDRESSES
+        );
+        assertThat(results).hasSize(ADDRESS_COUNT);
+        assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(2)).isEqualTo(WRITE_TO_US_ADDRESS);
+
+        verify(courtAddressRepository).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAllByAddressIdIn(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
+        verify(adminService, never()).updateCourtRegion(eq(COURT_SLUG), anyString());
+        verify(adminAuditService, atLeastOnce()).saveAudit(
+            "Update court addresses and coordinates",
+            EXPECTED_ADDRESSES,
+            results,
+            "court-slug"
+        );
+    }
+
+    @Test
+    void shouldNotUpdateRegionForEmptyMapitData() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(Map.of(
+            VISIT_US_ADDRESS_TYPE_ID,
+            VISIT_US_ADDRESS_TYPE,
+            WRITE_TO_US_ADDRESS_TYPE_ID,
+            WRITE_TO_US_ADDRESS_TYPE,
+            VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, VISIT_OR_CONTACT_US_ADDRESS_TYPE
+        ));
+        doAnswer(i -> i.getArguments()[0])
+            .when(courtSecondaryAddressTypeRepository)
+            .saveAll(anyList());
+        when(courtAddressRepository.saveAll(any())).thenReturn(COURT_ADDRESSES_ENTITY);
+        when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.empty());
+
+        final List<CourtAddress> results = adminCourtAddressService.updateCourtAddressesAndCoordinates(
+            COURT_SLUG,
+            EXPECTED_ADDRESSES
+        );
+        assertThat(results).hasSize(ADDRESS_COUNT);
+        assertThat(results.get(0)).isEqualTo(VISIT_US_ADDRESS);
+        assertThat(results.get(1)).isEqualTo(NO_SECONDARY_COURT_TYPE_ADDRESS);
+        assertThat(results.get(2)).isEqualTo(WRITE_TO_US_ADDRESS);
+
+        verify(courtAddressRepository).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAllByAddressIdIn(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
+        verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
+        verify(adminService, never()).updateCourtRegion(eq(COURT_SLUG), anyString());
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
                                                            EXPECTED_ADDRESSES,
                                                            results, COURT_SLUG

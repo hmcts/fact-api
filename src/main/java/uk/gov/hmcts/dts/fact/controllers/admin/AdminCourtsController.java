@@ -45,7 +45,6 @@ public class AdminCourtsController {
     @ApiOperation("Return all courts")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtReference>> getAllCourts() {
-        System.out.println(adminService.getAllCourtReferences());
         return ok(adminService.getAllCourtReferences());
     }
 

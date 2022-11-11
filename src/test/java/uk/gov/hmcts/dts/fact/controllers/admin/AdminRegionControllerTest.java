@@ -24,7 +24,7 @@ public class AdminRegionControllerTest {
     private static final String PATH = "/admin/regions";
     private static final List<Region> EXPECTED_REGIONS = Arrays.asList(
         new Region(1, "North West", "England"),
-        new Region(2, "East Midlands", "Scotland"),
+        new Region(2, "East Midlands", "England"),
         new Region(3,"Mid and West Wales","Wales")
     );
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
