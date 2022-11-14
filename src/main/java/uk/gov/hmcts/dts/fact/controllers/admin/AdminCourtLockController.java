@@ -18,8 +18,7 @@ import javax.validation.Valid;
 
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.ok;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 
 @Validated
 @RestController
@@ -43,7 +42,7 @@ public class AdminCourtLockController {
     @ApiResponses(value = {
         @ApiResponse(code = 401, message = UNAUTHORISED),
         @ApiResponse(code = 403, message = FORBIDDEN)})
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtLock>> getCourtLocks(@PathVariable String slug) {
         return ok(adminCourtLockService.getCourtLocks(slug));
     }
@@ -56,7 +55,7 @@ public class AdminCourtLockController {
         @ApiResponse(code = 403, message = FORBIDDEN),
         @ApiResponse(code = 409, message = "Court lock already exists")
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtLock> addNewCourtLock(@PathVariable String slug,
                                                      @Valid @RequestBody CourtLock courtLock) {
         return created(URI.create("/admin/courts/" + slug + "/lock"))
@@ -70,7 +69,7 @@ public class AdminCourtLockController {
         @ApiResponse(code = 401, message = UNAUTHORISED),
         @ApiResponse(code = 403, message = FORBIDDEN)
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtLock>> deleteCourt(@PathVariable String slug,
                                                        @PathVariable String userEmail) {
         return ok().body(adminCourtLockService.deleteCourtLock(slug, userEmail));
