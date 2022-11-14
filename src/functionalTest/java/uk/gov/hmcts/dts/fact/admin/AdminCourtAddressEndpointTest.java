@@ -37,7 +37,6 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private static final int VISIT_US_TYPE_ID = 5880;
     private static final int WRITE_TO_US_TYPE_ID = 5881;
     private static final int COUNTY_ID = 1;
-    private static final int REGION_ID = 2;
     private static final List<String> TEST_ADDRESS_LINES = Arrays.asList("The Law Courts", "10 Armada Way");
     private static final List<String> TEST_ADDRESS_LINES_CY = Arrays.asList("abc", "abc");
     private static final CourtSecondaryAddressType COURT_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
@@ -244,8 +243,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             TEST_TOWN_NAME_CY,
             COUNTY_ID,
             TEST_POSTCODE,
-            COURT_SECONDARY_ADDRESS_TYPE_LIST,
-            REGION_ID
+            COURT_SECONDARY_ADDRESS_TYPE_LIST
         ));
         return updatedCourtAddress;
     }
@@ -267,8 +265,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 TEST_TOWN_NAME_CY,
                 COUNTY_ID,
                 POSTCODE_VALID,
-                COURT_SECONDARY_ADDRESS_TYPE_LIST,
-                REGION_ID
+                COURT_SECONDARY_ADDRESS_TYPE_LIST
             ),
             new CourtAddress(
                 null,
@@ -279,8 +276,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 TEST_TOWN_NAME_CY,
                 COUNTY_ID,
                 POSTCODES_INVALID,
-                COURT_SECONDARY_ADDRESS_TYPE_LIST,
-                REGION_ID
+                COURT_SECONDARY_ADDRESS_TYPE_LIST
             )
         );
     }
