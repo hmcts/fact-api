@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalControllerExceptionHandler {
 
     private static final String MESSAGE = "message";
@@ -44,6 +46,7 @@ public class GlobalControllerExceptionHandler {
     ResponseEntity lockExistsExceptionHandler(final LockExistsException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
+        log.error("Lock is currently in use exception: {}", ex.getMessage());
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
         error.put(MESSAGE, ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.CONFLICT);
