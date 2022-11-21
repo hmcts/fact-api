@@ -10,7 +10,6 @@ class AdditionalLinkTest {
 
     @Test
     void testCreation() {
-
         final uk.gov.hmcts.dts.fact.entity.AdditionalLink additionalLinkEntity = new uk.gov.hmcts.dts.fact.entity.AdditionalLink(TEST_URL, TEST_DESCRIPTION, TEST_DESCRIPTION_CY);
         final AdditionalLink result = new AdditionalLink(additionalLinkEntity);
 
