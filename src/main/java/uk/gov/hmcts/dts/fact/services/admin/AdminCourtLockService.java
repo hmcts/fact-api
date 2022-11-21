@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.services.admin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.exception.LockExistsException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtLock;
@@ -96,6 +97,7 @@ public class AdminCourtLockService {
         return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
     }
 
+    @Transactional
     public List<CourtLock> deleteCourtLockByEmail(String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
             courtLockRepository.deleteAllByUserEmail(userEmail);
