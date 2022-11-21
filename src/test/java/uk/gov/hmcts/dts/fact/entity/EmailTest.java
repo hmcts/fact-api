@@ -30,7 +30,7 @@ class EmailTest {
         assertEquals("expl",email.getExplanation());
         assertEquals("expl cy",email.getExplanationCy());
         assertEquals(email.getAddress(), "address");
-        assertEquals( "",email.getDescription());
+        assertEquals("",email.getDescription());
         assertNull(email.getDescriptionCy());
     }
 
