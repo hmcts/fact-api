@@ -66,7 +66,7 @@ class AdminOpeningTypeServiceTest {
     @Test
     void shouldReturnAOpeningTypeForGivenId() {
         final uk.gov.hmcts.dts.fact.entity.OpeningType mockOpeningType = OPENING_TYPES.get(1);
-        when(openingTypeRepository.getOne(100)).thenReturn(mockOpeningType);
+        when(openingTypeRepository.getReferenceById(100)).thenReturn(mockOpeningType);
 
         final OpeningType expectedResult =
             new OpeningType(mockOpeningType);
@@ -76,7 +76,7 @@ class AdminOpeningTypeServiceTest {
 
     @Test
     void whenIdDoesNotExistGetOpeningTypeShouldThrowNotFoundException() {
-        when(openingTypeRepository.getOne(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        when(openingTypeRepository.getReferenceById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> adminOpeningTypeService
             .getOpeningType(400))
             .isInstanceOf(NotFoundException.class);
@@ -90,7 +90,7 @@ class AdminOpeningTypeServiceTest {
 
         when(openingTypeRepository.findById(openingType.getId())).thenReturn(Optional.of(mockOpeningType));
         when(openingTypeRepository.save(mockOpeningType)).thenReturn(mockOpeningType);
-        when(openingTypeRepository.getOne(any())).thenReturn(OPENING_TYPES.get(1));
+        when(openingTypeRepository.getReferenceById(any())).thenReturn(OPENING_TYPES.get(1));
 
         assertThat(adminOpeningTypeService.updateOpeningType(openingType)).isEqualTo(openingType);
 
@@ -147,7 +147,7 @@ class AdminOpeningTypeServiceTest {
     void shouldDeleteContactType() {
         when(openingTimeRepository.getOpeningTimesByAdminTypeId(any()))
             .thenReturn(Collections.emptyList());
-        when(openingTypeRepository.getOne(any())).thenReturn(OPENING_TYPES.get(0));
+        when(openingTypeRepository.getReferenceById(any())).thenReturn(OPENING_TYPES.get(0));
 
         adminOpeningTypeService.deleteOpeningType(100);
 
@@ -162,7 +162,7 @@ class AdminOpeningTypeServiceTest {
     void deleteShouldThrowListItemInUseExceptionIfOpeningTypeInUse() {
         final DataAccessException mockDataAccessException = mock(DataAccessException.class);
         doThrow(mockDataAccessException).when(openingTypeRepository).deleteById(100);
-        when(openingTypeRepository.getOne(any())).thenReturn(OPENING_TYPES.get(0));
+        when(openingTypeRepository.getReferenceById(any())).thenReturn(OPENING_TYPES.get(0));
 
         assertThatThrownBy(() -> adminOpeningTypeService
             .deleteOpeningType(100))
@@ -174,7 +174,7 @@ class AdminOpeningTypeServiceTest {
     void deleteShouldThrowNotFoundExceptionIfIdDoesNotExists() {
         final EmptyResultDataAccessException mockEmptyResultException = mock(EmptyResultDataAccessException.class);
         doThrow(mockEmptyResultException).when(openingTypeRepository).deleteById(300);
-        when(openingTypeRepository.getOne(any())).thenReturn(OPENING_TYPES.get(0));
+        when(openingTypeRepository.getReferenceById(any())).thenReturn(OPENING_TYPES.get(0));
 
         assertThatThrownBy(() -> adminOpeningTypeService
             .deleteOpeningType(300))

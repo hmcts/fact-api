@@ -82,7 +82,7 @@ class AdminContactTypeServiceTest {
     @Test
     void shouldReturnAContactTypeForGivenId() {
         final uk.gov.hmcts.dts.fact.entity.ContactType mockContactType = CONTACT_TYPES.get(1);
-        when(contactTypeRepository.getOne(100)).thenReturn(mockContactType);
+        when(contactTypeRepository.getReferenceById(100)).thenReturn(mockContactType);
 
         final ContactType expectedResult =
             new ContactType(mockContactType);
@@ -92,7 +92,7 @@ class AdminContactTypeServiceTest {
 
     @Test
     void whenIdDoesNotExistGetContactTypeShouldThrowNotFoundException() {
-        when(contactTypeRepository.getOne(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        when(contactTypeRepository.getReferenceById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> adminContactTypeService
             .getContactType(400))
             .isInstanceOf(NotFoundException.class);
