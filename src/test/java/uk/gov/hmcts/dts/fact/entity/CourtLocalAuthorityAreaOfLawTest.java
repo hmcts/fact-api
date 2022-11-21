@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CourtLocalAuthorityAreaOfLawTest {
+class CourtLocalAuthorityAreaOfLawTest {
     @Test
     void testCourtLocalAuthorityAreaOfLawTimeUpdated() {
         final CourtLocalAuthorityAreaOfLaw courtLocalAuthorityAreaOfLaw =

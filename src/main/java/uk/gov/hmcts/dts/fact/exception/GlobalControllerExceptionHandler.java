@@ -28,7 +28,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(InvalidPostcodeException.class)
-    ResponseEntity invalidPostcodeExceptionHandler(final InvalidPostcodeException ex) throws JsonProcessingException {
+    ResponseEntity<String>invalidPostcodeExceptionHandler(final InvalidPostcodeException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);

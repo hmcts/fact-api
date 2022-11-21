@@ -7,8 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
-
-public class AdditionalLinkTest {
+class AdditionalLinkTest {
     private static uk.gov.hmcts.dts.fact.entity.AdditionalLink entity = new uk.gov.hmcts.dts.fact.entity.AdditionalLink();
 
     @BeforeAll

@@ -16,7 +16,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Contact extends Element {
-    private static final String FAX = "Fax";
+    private static final String FAX_ = "Fax";
     private static final String FAX_CY = "Ffacs";
 
     @Id
@@ -63,9 +63,9 @@ public class Contact extends Element {
         final String description = super.getDescription(this);
         if (fax) {
             if (StringUtils.isBlank(description)) {
-                return FAX;
-            } else if (!description.equalsIgnoreCase(FAX)) {
-                return description + " " + FAX.toLowerCase(Locale.getDefault());
+                return FAX_;
+            } else if (!description.equalsIgnoreCase(FAX_)) {
+                return description + " " + FAX_.toLowerCase(Locale.getDefault());
             }
         }
         return description;
@@ -73,7 +73,7 @@ public class Contact extends Element {
 
     @Override
     public String getDescriptionCy(final Element element) {
-        final String description = super.getDescriptionCy(this);
+        final String descriptionCy = super.getDescriptionCy(this);
         if (fax) {
             if (StringUtils.isBlank(description)) {
                 return FAX_CY;
@@ -81,6 +81,6 @@ public class Contact extends Element {
                 return FAX_CY + " " + description;
             }
         }
-        return description;
+        return descriptionCy;
     }
 }

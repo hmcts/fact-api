@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminCourtAdditionalLinkController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtAdditionalLinkControllerTest {
+class AdminCourtAdditionalLinkControllerTest {
     private static final String TEST_SLUG = "court-slug";
     private static final String BASE_PATH = "/admin/courts/";
     private static final String ADDITIONAL_LINKS_PATH = "/additionalLinks";

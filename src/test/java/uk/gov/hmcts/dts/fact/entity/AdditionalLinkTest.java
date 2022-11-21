@@ -3,7 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
-public class AdditionalLinkTest {
+class AdditionalLinkTest {
     private static final String TEST_URL = "www.test.com";
     private static final String TEST_DESCRIPTION = "description";
     private static final String TEST_DESCRIPTION_CY = "";

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtPostcodeService.class)
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtPostcodeServiceTest {
+class AdminCourtPostcodeServiceTest {
     private static final String COURT_SLUG = "test-slug";
     private static final String SOURCE_COURT_SLUG = "source-slug";
     private static final String DESTINATION_COURT_SLUG = "destination-slug";

@@ -23,7 +23,7 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @WebMvcTest(AdminCourtFacilityController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtFacilityControllerTest {
+class AdminCourtFacilityControllerTest {
 
     private static final String BASE_PATH = "/admin/courts/";
     private static final String FACILITIES_PATH = "/facilities";

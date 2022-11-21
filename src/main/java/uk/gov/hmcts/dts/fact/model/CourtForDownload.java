@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.model;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,7 @@ import static java.util.stream.Collectors.joining;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 public class CourtForDownload {
     private String name;
@@ -118,7 +119,7 @@ public class CourtForDownload {
             courtAddress.getAddress()
                 .lines()
                 .filter(s -> !s.isBlank())
-                .map(s -> s.replaceAll("\t", ""))
+                .map(s -> s.replace("\t", ""))
                 .collect(joining(", ")),
             courtAddress.getTownName(),
             courtAddress.getPostcode()

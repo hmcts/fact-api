@@ -11,7 +11,7 @@ import static org.mockito.Mockito.*;
 import static uk.gov.hmcts.dts.fact.util.RepoUtils.checkIfCourtAlreadyExists;
 
 @SuppressWarnings("PMD.LawOfDemeter")
-public class RepoUtilsTest {
+class RepoUtilsTest {
 
     private static final String TEST_SLUG = "test-slug";
     private final CourtRepository courtRepository = mock(CourtRepository.class);

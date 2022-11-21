@@ -6,7 +6,7 @@ import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApplicationUpdateTest {
+class ApplicationUpdateTest {
     private static final String TYPE = "type";
     private static final String TYPE_CY = "type cy";
     private static final String EMAIL = "email@test.com";

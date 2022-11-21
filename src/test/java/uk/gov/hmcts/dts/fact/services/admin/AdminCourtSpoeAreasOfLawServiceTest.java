@@ -33,7 +33,7 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtSpoeAreasOfLawService.class)
-public class AdminCourtSpoeAreasOfLawServiceTest {
+class AdminCourtSpoeAreasOfLawServiceTest {
 
     private static final String COURT_SLUG = "some slug";
     private static final int COURT_AREAS_OF_LAW_COUNT = 3;
@@ -103,7 +103,7 @@ public class AdminCourtSpoeAreasOfLawServiceTest {
             .first()
             .isInstanceOf(SpoeAreaOfLaw.class);
 
-        assertThat(results.get(0).isSinglePointEntry()).isEqualTo(true);
+        assertThat(results.get(0).isSinglePointEntry()).isTrue();
     }
 
     @Test

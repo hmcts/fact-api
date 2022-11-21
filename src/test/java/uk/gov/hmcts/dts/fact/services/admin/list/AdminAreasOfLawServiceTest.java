@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminAreasOfLawService.class)
-public class AdminAreasOfLawServiceTest {
+class AdminAreasOfLawServiceTest {
 
     @Autowired
     private AdminAreasOfLawService areasOfLawService;

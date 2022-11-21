@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminContactTypeService.class)
-public class AdminContactTypeServiceTest {
+class AdminContactTypeServiceTest {
 
     private static final String TYPE_2 = "Type2";
 

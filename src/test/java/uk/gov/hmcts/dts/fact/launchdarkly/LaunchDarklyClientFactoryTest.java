@@ -20,7 +20,7 @@ class LaunchDarklyClientFactoryTest {
     @Test
     void testCreate() throws IOException {
         try (LDClientInterface client = factory.create("test key", true)) {
-            assertThat(client).isNotEqualTo(null);
+            assertThat(client).isNotNull();
         }
     }
 }

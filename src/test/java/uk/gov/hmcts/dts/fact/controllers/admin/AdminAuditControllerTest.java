@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminAuditController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminAuditControllerTest {
+class AdminAuditControllerTest {
 
     @Autowired
     private transient MockMvc mockMvc;

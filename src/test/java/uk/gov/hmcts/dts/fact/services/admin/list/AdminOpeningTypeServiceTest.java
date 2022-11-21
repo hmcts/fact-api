@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminOpeningTypeService.class)
-public class AdminOpeningTypeServiceTest {
+class AdminOpeningTypeServiceTest {
 
     private static final List<uk.gov.hmcts.dts.fact.entity.OpeningType> OPENING_TYPES = Arrays.asList(
         new uk.gov.hmcts.dts.fact.entity.OpeningType(100, "Type1","type1Cy"),

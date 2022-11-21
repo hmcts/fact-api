@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = LocalAuthorityValidator.class)
-public class LocalAuthorityValidatorTest {
+class LocalAuthorityValidatorTest {
 
     @MockBean
     private MapitService mockMapitService;
@@ -24,13 +24,13 @@ public class LocalAuthorityValidatorTest {
     private LocalAuthorityValidator localAuthorityValidator;
 
     @Test
-    public void testWhenLocalAuthorityIsValid() {
+    void testWhenLocalAuthorityIsValid() {
         when(mockMapitService.localAuthorityExists(Mockito.anyString())).thenReturn(true);
         assertTrue(localAuthorityValidator.localAuthorityNameIsValid("Birmingham City Council"));
     }
 
     @Test
-    public void testWhenLocalAuthorityIsInvalid() {
+    void testWhenLocalAuthorityIsInvalid() {
         when(mockMapitService.localAuthorityExists(Mockito.anyString())).thenReturn(false);
         assertFalse(localAuthorityValidator.localAuthorityNameIsValid("Brnimgham City Councl"));
     }

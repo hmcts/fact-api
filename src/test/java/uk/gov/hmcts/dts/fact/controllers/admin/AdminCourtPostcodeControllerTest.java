@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AdminCourtPostcodeController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtPostcodeControllerTest {
+class AdminCourtPostcodeControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String POSTCODE_PATH = "/postcodes";
     private static final String TEST_SLUG = "test-slug";

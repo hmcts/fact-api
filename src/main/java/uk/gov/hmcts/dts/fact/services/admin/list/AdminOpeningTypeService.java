@@ -48,7 +48,7 @@ public class AdminOpeningTypeService {
 
     public OpeningType getOpeningType(final Integer id) {
         try {
-            return new OpeningType(openingTypeRepository.getOne(id));
+            return new OpeningType(openingTypeRepository.getReferenceById(id));
         } catch (final javax.persistence.EntityNotFoundException exception) {
             throw new NotFoundException(exception);
         }
