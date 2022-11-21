@@ -101,11 +101,11 @@ class AdminOpeningTypeServiceTest {
 
     @Test
     void updateShouldThrowNotFoundExceptionWhenOpeningTypeDoesNotExist() {
-        final uk.gov.hmcts.dts.fact.entity.OpeningType mockOpeningType = OPENING_TYPES.get(1);
+        OpeningType mockOpeningType = new OpeningType(OPENING_TYPES.get(1));
         when(openingTypeRepository.findById(mockOpeningType.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> adminOpeningTypeService
-            .updateOpeningType(new OpeningType(mockOpeningType)))
+            .updateOpeningType(mockOpeningType))
             .isInstanceOf(NotFoundException.class);
 
         verify(openingTypeRepository, never()).save(any());

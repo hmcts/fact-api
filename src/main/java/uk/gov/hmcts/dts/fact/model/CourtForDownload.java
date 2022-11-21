@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 import static java.util.Optional.ofNullable;

@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;

@@ -11,6 +11,7 @@ public final class ElementFormatter {
     }
 
     private static String EXPLANATION = ", Explanation: %s";
+
     public static String formatContact(final Contact contact) {
         final StringBuilder formatted = new StringBuilder(format(
             "Number: %s, Description: %s",

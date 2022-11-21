@@ -100,7 +100,7 @@ public class OldCourt {
     }
 
     private List<Contact> getContactsWithDx(final Court courtEntity) {
-        List<Contact> DxContacts = ofNullable(courtEntity.getCourtContacts())
+        List<Contact> dxContacts = ofNullable(courtEntity.getCourtContacts())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtContact::getContact)
@@ -119,9 +119,9 @@ public class OldCourt {
             contactEntity.setExplanation(dx.getExplanation());
             contactEntity.setExplanationCy(dx.getExplanationCy());
             contactEntity.setNumber(dx.getCode());
-            DxContacts.add(new Contact(contactEntity));
+            dxContacts.add(new Contact(contactEntity));
         });
 
-        return DxContacts;
+        return dxContacts;
     }
 }

@@ -163,11 +163,11 @@ class AdminAreasOfLawServiceTest {
 
     @Test
     void updateShouldThrowNotFoundExceptionWhenAreaOfLawDoesNotExist() {
-        final AreaOfLaw testAreaOfLaw = AREAS_OF_LAW.get(0);
+        final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw testAreaOfLaw = new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(AREAS_OF_LAW.get(0));
         when(areasOfLawRepository.findById(testAreaOfLaw.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> areasOfLawService
-            .updateAreaOfLaw(new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(testAreaOfLaw)))
+            .updateAreaOfLaw(testAreaOfLaw))
             .isInstanceOf(NotFoundException.class);
 
         verify(areasOfLawRepository, never()).save(any());

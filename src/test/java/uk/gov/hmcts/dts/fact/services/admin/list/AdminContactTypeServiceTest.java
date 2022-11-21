@@ -124,11 +124,11 @@ class AdminContactTypeServiceTest {
 
     @Test
     void updateShouldThrowNotFoundExceptionWhenContactTypeDoesNotExist() {
-        final uk.gov.hmcts.dts.fact.entity.ContactType mockContactType = CONTACT_TYPES.get(1);
+        ContactType mockContactType = new ContactType(CONTACT_TYPES.get(1));
         when(contactTypeRepository.findById(mockContactType.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> adminContactTypeService
-            .updateContactType(new ContactType(mockContactType)))
+            .updateContactType(mockContactType))
             .isInstanceOf(NotFoundException.class);
 
         verify(contactTypeRepository, never()).save(any());
