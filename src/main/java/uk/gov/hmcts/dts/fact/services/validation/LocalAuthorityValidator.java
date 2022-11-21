@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.dts.fact.services.MapitService;
 
+import java.util.Objects;
+
 @Slf4j
 @Component
 public class LocalAuthorityValidator {
@@ -19,7 +21,7 @@ public class LocalAuthorityValidator {
     public boolean localAuthorityNameIsValid(final String localAuthorityName) {
         Boolean localAuthorityExists = this.mapitService.localAuthorityExists(localAuthorityName);
 
-        log.info((Boolean.TRUE.equals(localAuthorityExists)
+        log.info((Objects.equals(Boolean.TRUE,localAuthorityExists)
             ? "Mapit data exists for local authority: "
             : "Mapit data does not exist for local authority: ") + localAuthorityName);
 

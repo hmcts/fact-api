@@ -7,10 +7,10 @@ import static java.lang.String.format;
 
 public final class ElementFormatter {
 
+    private static String explanation = ", Explanation: %s";
+
     private ElementFormatter() {
     }
-
-    private static String EXPLANATION = ", Explanation: %s";
 
     public static String formatContact(final Contact contact) {
         final StringBuilder formatted = new StringBuilder(format(
@@ -20,7 +20,7 @@ public final class ElementFormatter {
         ));
 
         if (StringUtils.isNotBlank(contact.getExplanation())) {
-            formatted.append(format(EXPLANATION, contact.getExplanation()));
+            formatted.append(format(explanation, contact.getExplanation()));
         }
         return formatted.toString();
     }
@@ -28,7 +28,7 @@ public final class ElementFormatter {
     public static String formatDxCode(final DxCode dx) {
         final StringBuilder formatted = new StringBuilder(format("Code: %s", dx.getCode()));
         if (StringUtils.isNotBlank(dx.getExplanation())) {
-            formatted.append(format(EXPLANATION, dx.getExplanation()));
+            formatted.append(format(explanation, dx.getExplanation()));
         }
         return formatted.toString();
     }
@@ -40,7 +40,7 @@ public final class ElementFormatter {
             email.getDescription(email)
         ));
         if (StringUtils.isNotBlank(email.getExplanation())) {
-            formatted.append(format(EXPLANATION, email.getExplanation()));
+            formatted.append(format(explanation, email.getExplanation()));
         }
         return formatted.toString();
     }

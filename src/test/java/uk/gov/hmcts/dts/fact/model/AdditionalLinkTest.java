@@ -9,13 +9,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.Locale;
 
 class AdditionalLinkTest {
-    private static final uk.gov.hmcts.dts.fact.entity.AdditionalLink entity = new uk.gov.hmcts.dts.fact.entity.AdditionalLink();
+    private static final uk.gov.hmcts.dts.fact.entity.AdditionalLink ENTITY = new uk.gov.hmcts.dts.fact.entity.AdditionalLink();
 
     @BeforeAll
     static void setUp() {
-        entity.setUrl("https://test.com");
-        entity.setDescription("Description");
-        entity.setDescriptionCy("Description cy");
+        ENTITY.setUrl("https://test.com");
+        ENTITY.setDescription("Description");
+        ENTITY.setDescriptionCy("Description cy");
     }
 
     @ParameterizedTest
@@ -25,11 +25,11 @@ class AdditionalLinkTest {
             Locale locale = new Locale("cy");
             LocaleContextHolder.setLocale(locale);
         }
-        AdditionalLink additionalLink = new AdditionalLink(entity);
+        AdditionalLink additionalLink = new AdditionalLink(ENTITY);
 
         final SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(additionalLink.getUrl()).isEqualTo(entity.getUrl());
-        softly.assertThat(additionalLink.getDescription()).isEqualTo(welsh ? entity.getDescriptionCy() : entity.getDescription());
+        softly.assertThat(additionalLink.getUrl()).isEqualTo(ENTITY.getUrl());
+        softly.assertThat(additionalLink.getDescription()).isEqualTo(welsh ? ENTITY.getDescriptionCy() : ENTITY.getDescription());
         softly.assertAll();
 
         LocaleContextHolder.resetLocaleContext();

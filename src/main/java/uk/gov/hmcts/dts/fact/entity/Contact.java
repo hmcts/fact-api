@@ -75,10 +75,10 @@ public class Contact extends Element {
     public String getDescriptionCy(final Element element) {
         final String descriptionCy = super.getDescriptionCy(this);
         if (fax) {
-            if (StringUtils.isBlank(description)) {
+            if (StringUtils.isBlank(descriptionCy)) {
                 return FAX_CY;
-            } else if (!description.equalsIgnoreCase(FAX_CY)) {
-                return FAX_CY + " " + description;
+            } else if (!descriptionCy.equalsIgnoreCase(FAX_CY)) {
+                return FAX_CY + " " + descriptionCy;
             }
         }
         return descriptionCy;
