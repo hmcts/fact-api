@@ -96,6 +96,18 @@ public class AdminCourtLockService {
         return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
     }
 
+    public List<CourtLock> deleteCourtLockByEmail(String userEmail) {
+        List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
+            courtLockRepository.deleteAllByUserEmail(userEmail);
+        adminAuditService.saveAudit(
+            AuditType.findByName("Delete court lock"),
+            courtLockList,
+            null,
+            null
+        );
+        return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
+    }
+
     public CourtLock updateCourtLock(String courtSlug, String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
             courtLockRepository.findCourtLockByCourtSlugAndUserEmail(courtSlug, userEmail);

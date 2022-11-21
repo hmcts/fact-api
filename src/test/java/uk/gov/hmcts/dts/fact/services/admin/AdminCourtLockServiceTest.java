@@ -238,6 +238,26 @@ public class AdminCourtLockServiceTest {
     }
 
     @Test
+    void shouldDeleteCourtLockByEmail() {
+        when(courtLockRepository.deleteAllByUserEmail(TEST_USER_2))
+            .thenReturn(Collections.singletonList(
+                EXPECTED_COURT_LOCK_LIST.get(0)));
+        assertThat(adminCourtLockService.deleteCourtLockByEmail(TEST_USER_2)).containsExactlyElementsOf(
+            Collections.singletonList(new uk.gov.hmcts.dts.fact.model.admin.CourtLock(
+                ENTITY_COURT_LOCK_1))
+        );
+        verify(courtLockRepository, times(1))
+            .deleteAllByUserEmail(TEST_USER_2);
+        verify(adminAuditService, times(1))
+            .saveAudit(
+                "Delete court lock",
+                Collections.singletonList(EXPECTED_COURT_LOCK_LIST.get(0)),
+                null,
+                null
+            );
+    }
+
+    @Test
     void shouldReturnNotFoundWhenDeletingCourtThatDoesNotExist() {
         when(courtLockRepository.findCourtLockByCourtSlugAndUserEmail(TEST_SLUG_2, TEST_USER_2))
             .thenReturn(Collections.emptyList());

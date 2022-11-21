@@ -133,4 +133,18 @@ public class AdminCourtLockControllerTest {
                                                          uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class)))
             .isEqualTo(Collections.singletonList(EXPECTED_COURT_LOCK_LIST.get(1)));
     }
+
+    @Test
+    void deleteCourtLockByEmailSuccess() throws Exception {
+        when(adminCourtLockService.deleteCourtLockByEmail(TEST_USER_2))
+            .thenReturn(Collections.singletonList(new uk.gov.hmcts.dts.fact.model.admin.CourtLock(ENTITY_COURT_LOCK_2)));
+
+        MvcResult mvcResult = mockMvc.perform(delete(BASE_PATH + TEST_USER_2 + CHILD_PATH)
+                                                  .with(csrf()))
+            .andExpect(status().isOk()).andReturn();
+
+        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(),
+                                                         uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class)))
+            .isEqualTo(Collections.singletonList(EXPECTED_COURT_LOCK_LIST.get(1)));
+    }
 }

@@ -10,4 +10,6 @@ public interface CourtLockRepository extends JpaRepository<CourtLock, Integer> {
 
     List<CourtLock> findCourtLockByCourtSlugAndUserEmail(String courtSlug,
                                                          String userEmail);
+
+    List<CourtLock> deleteAllByUserEmail(String userEmail);
 }

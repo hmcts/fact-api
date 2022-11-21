@@ -63,15 +63,28 @@ public class AdminCourtLockController {
     }
 
     @DeleteMapping("/{slug}/lock/{userEmail}")
-    @ApiOperation("Delete a court")
+    @ApiOperation("Delete a court lock by slug and email")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Deleted"),
         @ApiResponse(code = 401, message = UNAUTHORISED),
         @ApiResponse(code = 403, message = FORBIDDEN)
     })
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
-    public ResponseEntity<List<CourtLock>> deleteCourt(@PathVariable String slug,
-                                                       @PathVariable String userEmail) {
+    public ResponseEntity<List<CourtLock>> deleteCourtLockBySlugAndEmail(@PathVariable String slug,
+                                                                         @PathVariable String userEmail) {
         return ok().body(adminCourtLockService.deleteCourtLock(slug, userEmail));
+    }
+
+    @DeleteMapping("/{userEmail}/lock")
+    @ApiOperation("Delete a court lock by email")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Delete a court by email"),
+        @ApiResponse(code = 401, message = UNAUTHORISED),
+        @ApiResponse(code = 403, message = FORBIDDEN)
+    })
+    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
+    public ResponseEntity<List<CourtLock>> deleteCourtByEmail(
+        @PathVariable String userEmail) {
+        return ok().body(adminCourtLockService.deleteCourtLockByEmail(userEmail));
     }
 }
