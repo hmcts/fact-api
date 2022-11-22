@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminServiceAreaController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminServiceAreaControllerTest {
+class AdminServiceAreaControllerTest {
 
     @Autowired
     private transient MockMvc mockMvc;

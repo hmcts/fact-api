@@ -5,7 +5,7 @@ import uk.gov.hmcts.dts.fact.entity.EmailType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EmailTest {
+class EmailTest {
 
     private static final int EMAIL_TYPE_ID = 1;
     private static final String EMAIL_TYPE_DESCRIPTION = "desc";
@@ -28,7 +28,7 @@ public class EmailTest {
         assertEquals(email.getAdminEmailTypeId(), EMAIL_TYPE.getId());
         assertEquals(email.getExplanation(), "expl");
         assertEquals(email.getExplanationCy(), "expl cy");
-        assertEquals(email.getAddress(), "address");
+        assertEquals("address",email.getAddress());
     }
 
     /**
@@ -39,9 +39,9 @@ public class EmailTest {
         ENT_EMAIL.setAdminType(null);
         Email email = new Email(ENT_EMAIL);
 
-        assertEquals(email.getExplanation(), "expl");
-        assertEquals(email.getExplanationCy(), "expl cy");
-        assertEquals(email.getAddress(), "address");
-        assertEquals(email.getAdminEmailTypeId(), 0);
+        assertEquals("expl",email.getExplanation());
+        assertEquals("expl cy",email.getExplanationCy());
+        assertEquals("address",email.getAddress());
+        assertEquals(0,email.getAdminEmailTypeId());
     }
 }

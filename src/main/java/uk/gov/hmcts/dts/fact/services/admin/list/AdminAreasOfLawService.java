@@ -48,7 +48,7 @@ public class AdminAreasOfLawService {
 
     public AreaOfLaw getAreaOfLaw(final Integer id) {
         try {
-            return new AreaOfLaw(areasOfLawRepository.getOne(id));
+            return new AreaOfLaw(areasOfLawRepository.getReferenceById(id));
         } catch (final javax.persistence.EntityNotFoundException exception) {
             throw new NotFoundException(exception);
         }

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtContactService.class)
-public class AdminCourtContactServiceTest {
+class AdminCourtContactServiceTest {
     private static final String COURT_SLUG = "some slug";
     private static final int TEST_TYPE_ID1 = 1;
     private static final int TEST_TYPE_ID2 = 2;

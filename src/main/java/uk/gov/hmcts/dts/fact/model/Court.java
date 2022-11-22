@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
@@ -33,7 +33,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "image_file", "lat", "lon", "urgent_message",
     "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
@@ -108,7 +108,7 @@ public class Court {
     }
 
     private ServiceCentre getServiceCentreDetails(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        return new ServiceCentre(courtEntity.getServiceAreas().size() > 0,
+        return new ServiceCentre(!courtEntity.getServiceAreas().isEmpty(),
                                  courtEntity.getServiceCentre() == null
                                      ? "" : courtEntity.getServiceCentre().getIntroParagraph(),
                                  courtEntity.getServiceCentre() == null

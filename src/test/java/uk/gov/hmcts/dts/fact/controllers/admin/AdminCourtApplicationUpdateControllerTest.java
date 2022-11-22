@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminCourtApplicationUpdateController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtApplicationUpdateControllerTest {
+class AdminCourtApplicationUpdateControllerTest {
     private static final String TEST_SLUG = "court-slug";
     private static final String NOT_FOUND = "Not found: ";
     private static final String MESSAGE = "{\"message\":\"%s\"}";

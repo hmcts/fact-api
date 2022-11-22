@@ -32,7 +32,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtTypesAndCodesService.class)
-public class AdminCourtTypesAndCodesServiceTest {
+class AdminCourtTypesAndCodesServiceTest {
 
     private static final int COURT_TYPE_COUNT = 3;
     private static final List<CourtType> COURT_TYPES = new ArrayList<>();

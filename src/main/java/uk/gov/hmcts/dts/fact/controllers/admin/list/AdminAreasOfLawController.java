@@ -97,7 +97,7 @@ public class AdminAreasOfLawController {
         @ApiResponse(code = 409, message = "Area of Law in use")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity deleteAreaOfLaw(@PathVariable Integer areaOfLawId) {
+    public ResponseEntity<Integer> deleteAreaOfLaw(@PathVariable Integer areaOfLawId) {
         adminAreasOfLawService.deleteAreaOfLaw(areaOfLawId);
         return ok().body(areaOfLawId);
     }

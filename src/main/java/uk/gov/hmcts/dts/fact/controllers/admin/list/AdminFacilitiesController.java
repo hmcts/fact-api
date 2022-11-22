@@ -109,7 +109,7 @@ public class AdminFacilitiesController {
         @ApiResponse(code = 409, message = "Facility Type in use")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity deleteFacilityType(@PathVariable Integer facilityTypeId) {
+    public ResponseEntity<Integer> deleteFacilityType(@PathVariable Integer facilityTypeId) {
         adminFacilityService.deleteFacilityType(facilityTypeId);
         return ok().body(facilityTypeId);
     }

@@ -102,7 +102,7 @@ public class AdminCourtPostcodeController {
         @ApiResponse(code = 404, message = "Postcodes do not exist", response = String.class, responseContainer = "List")
     })
     @Role(FACT_SUPER_ADMIN)
-    public ResponseEntity deleteCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
+    public ResponseEntity<Integer> deleteCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             adminService.checkPostcodesExist(slug, postcodes);

@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtAdditionalLinkService.class)
-public class AdminCourtAdditionalLinkServiceTest {
+class AdminCourtAdditionalLinkServiceTest {
     private static final String TEST_SLUG = "court-slug";
     private static final Court MOCK_COURT = mock(Court.class);
 

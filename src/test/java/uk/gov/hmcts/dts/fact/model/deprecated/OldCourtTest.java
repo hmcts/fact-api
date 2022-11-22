@@ -9,7 +9,7 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
-public class OldCourtTest {
+class OldCourtTest {
     private static final String DX_DESCRIPTION = "DX";
     private static final String TEST_CONTACT_DESCRIPTION = "Enquiries";
     private static final String TEST_CONTACT_EXPLANATION = "Contact explanation";

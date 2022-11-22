@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.dts.fact.mapit.MapItHealthService.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MapItHealthServiceTest {
+class MapItHealthServiceTest {
     @Mock
     RestTemplate restTemplate;
 

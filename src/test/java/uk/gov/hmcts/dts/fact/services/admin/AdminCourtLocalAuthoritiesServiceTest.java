@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtLocalAuthoritiesService.class)
-public class AdminCourtLocalAuthoritiesServiceTest {
+class AdminCourtLocalAuthoritiesServiceTest {
 
     private static final int LOCAL_AUTHORITIES_COUNT = 3;
     private static final List<CourtLocalAuthorityAreaOfLaw> COURT_LOCAL_AUTHORITIES = new ArrayList<>();

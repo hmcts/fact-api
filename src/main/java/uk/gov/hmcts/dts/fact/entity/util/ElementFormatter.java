@@ -7,38 +7,40 @@ import static java.lang.String.format;
 
 public final class ElementFormatter {
 
+    private static String explanation = ", Explanation: %s";
+
     private ElementFormatter() {
     }
 
     public static String formatContact(final Contact contact) {
-        final StringBuffer formatted = new StringBuffer(format(
+        final StringBuilder formatted = new StringBuilder(format(
             "Number: %s, Description: %s",
             contact.getNumber(),
             contact.getDescription(contact)
         ));
 
         if (StringUtils.isNotBlank(contact.getExplanation())) {
-            formatted.append(format(", Explanation: %s", contact.getExplanation()));
+            formatted.append(format(explanation, contact.getExplanation()));
         }
         return formatted.toString();
     }
 
     public static String formatDxCode(final DxCode dx) {
-        final StringBuffer formatted = new StringBuffer(format("Code: %s", dx.getCode()));
+        final StringBuilder formatted = new StringBuilder(format("Code: %s", dx.getCode()));
         if (StringUtils.isNotBlank(dx.getExplanation())) {
-            formatted.append(format(", Explanation: %s", dx.getExplanation()));
+            formatted.append(format(explanation, dx.getExplanation()));
         }
         return formatted.toString();
     }
 
     public static String formatEmail(final Email email) {
-        final StringBuffer formatted = new StringBuffer(format(
+        final StringBuilder formatted = new StringBuilder(format(
             "Address: %s, Description: %s",
             email.getAddress(),
             email.getDescription(email)
         ));
         if (StringUtils.isNotBlank(email.getExplanation())) {
-            formatted.append(format(", Explanation: %s", email.getExplanation()));
+            formatted.append(format(explanation, email.getExplanation()));
         }
         return formatted.toString();
     }
@@ -48,7 +50,7 @@ public final class ElementFormatter {
     }
 
     public static String formatApplicationUpdate(final ApplicationUpdate applicationUpdate) {
-        final StringBuffer formatted = new StringBuffer(format("Type: %s, ", applicationUpdate.getType()));
+        final StringBuilder formatted = new StringBuilder(format("Type: %s, ", applicationUpdate.getType()));
         if (StringUtils.isNotBlank(applicationUpdate.getEmail())) {
             return formatted.append(format("Email: %s", applicationUpdate.getEmail()))
                 .toString();

@@ -55,7 +55,7 @@ public class AdminCourtFacilityService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
 
-        courtFacilities.forEach((facility) -> {
+        courtFacilities.forEach(facility -> {
             facility.setDescription(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescription()));
             facility.setDescriptionCy(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescriptionCy()));
         });

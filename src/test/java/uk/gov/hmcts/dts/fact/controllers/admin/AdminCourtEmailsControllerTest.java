@@ -25,7 +25,7 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @WebMvcTest(AdminCourtEmailController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtEmailsControllerTest {
+class AdminCourtEmailsControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String ALL_EMAILS_PATH = "/emails";
     private static final String ALL_EMAIL_TYPES_PATH = "emailTypes";

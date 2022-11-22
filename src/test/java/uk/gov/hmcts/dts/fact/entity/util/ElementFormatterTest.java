@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ElementFormatterTest {
+class ElementFormatterTest {
     private static final String TEST_CONTACT_NUMBER = "123";
     private static final String TEST_CONTACT_DESCRIPTION = "Contact description";
     private static final String TEST_CONTACT_DESCRIPTION_CY = "Contact description cy";

@@ -97,7 +97,7 @@ public class AdminCourtsController {
         @ApiResponse(code = 403, message = FORBIDDEN)
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity deleteCourt(@PathVariable String slug) {
+    public ResponseEntity<String> deleteCourt(@PathVariable String slug) {
         adminService.deleteCourt(slug);
         return ok().body("Court with slug: " + slug + " has been deleted");
     }

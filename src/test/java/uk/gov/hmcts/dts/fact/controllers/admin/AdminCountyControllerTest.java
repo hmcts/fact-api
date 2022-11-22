@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminCountyController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCountyControllerTest {
+class AdminCountyControllerTest {
     private static final String PATH = "/admin/counties";
     private static final List<County> EXPECTED_COUNTIES = Arrays.asList(
         new County(1, "West Midlands", "England"),

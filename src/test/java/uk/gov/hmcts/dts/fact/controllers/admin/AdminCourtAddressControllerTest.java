@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminCourtAddressController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtAddressControllerTest {
+class AdminCourtAddressControllerTest {
     private static final String TEST_SLUG = "court-slug";
     private static final String NOT_FOUND = "Not found: ";
     private static final String BASE_PATH = "/admin/courts/";

@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CourtSecondaryAddressTypeTest {
+class CourtSecondaryAddressTypeTest {
 
     private static final List<String> AREAS_OF_LAW =
         Arrays.asList("area 1", "area 2", "area 3");
@@ -18,7 +18,7 @@ public class CourtSecondaryAddressTypeTest {
     void testConstructor() {
         CourtSecondaryAddressType courtSecondaryAddressType
             = new CourtSecondaryAddressType(AREAS_OF_LAW, COURT_TYPES);
-        assertEquals(courtSecondaryAddressType.getCourtTypesList(), COURT_TYPES);
-        assertEquals(courtSecondaryAddressType.getAreaOfLawList(), AREAS_OF_LAW);
+        assertEquals(COURT_TYPES, courtSecondaryAddressType.getCourtTypesList());
+        assertEquals(AREAS_OF_LAW, courtSecondaryAddressType.getAreaOfLawList());
     }
 }

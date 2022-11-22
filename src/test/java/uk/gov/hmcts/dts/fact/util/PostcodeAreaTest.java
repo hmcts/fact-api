@@ -5,7 +5,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PostcodeAreaTest {
+class PostcodeAreaTest {
     @ParameterizedTest
     @ValueSource(strings = {
         "M", "SS", "YO", "n", "Sw"

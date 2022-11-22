@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminAddressTypeService.class)
-public class AdminAddressTypeServiceTest {
+class AdminAddressTypeServiceTest {
     private static final int TEST_TYPE_ID1 = 1;
     private static final int TEST_TYPE_ID2 = 2;
     private static final int TEST_TYPE_ID3 = 3;
