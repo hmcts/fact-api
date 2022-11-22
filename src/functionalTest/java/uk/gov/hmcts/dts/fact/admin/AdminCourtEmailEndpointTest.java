@@ -24,8 +24,8 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ALL_EMAILS_PATH = "/emails";
     private static final String ALL_EMAIL_TYPES_PATH = "emailTypes";
-    private static final String PLYMOUTH_COMBINED_COURT_SLUG = "plymouth-combined-court";
-    private static final String PLYMOUTH_ALL_EMAILS_PATH = ADMIN_COURTS_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG + ALL_EMAILS_PATH;
+    private static final String BEXLEY_MAGISTRATES_COURT_SLUG = "bexley-magistrates-court";
+    private static final String BEXLEY_MAGISTRATES_ALL_EMAILS_PATH = ADMIN_COURTS_ENDPOINT + BEXLEY_MAGISTRATES_COURT_SLUG + ALL_EMAILS_PATH;
     private static final String TEST_EMAIL_ADDRESS = "fancy.pancy.email@cat.com";
     private static final String TEST_EMAIL_EXPLANATION = "explanation";
     private static final String TEST_EMAIL_EXPLANATION_CY = "explanation cy";
@@ -33,7 +33,7 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldGetEmails() {
-        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final var response = doGetRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<Email> openingTimes = response.body().jsonPath().getList(".", Email.class);
@@ -42,13 +42,13 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenGettingEmails() {
-        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH);
+        final var response = doGetRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForGettingEmails() {
-        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
+        final var response = doGetRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
@@ -57,7 +57,7 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
         final List<Email> expectedEmails = updateEmails(getCurrentEmails());
         final String json = objectMapper().writeValueAsString(expectedEmails);
 
-        final var response = doPutRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
+        final var response = doPutRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), json);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<Email> updatedOpeningTimes = response.body().jsonPath().getList(".", Email.class);
@@ -66,13 +66,13 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenUpdatingEmails() throws JsonProcessingException {
-        final var response = doPutRequest(PLYMOUTH_ALL_EMAILS_PATH, getTestEmails());
+        final var response = doPutRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, getTestEmails());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenFromUpdatingEmails() throws JsonProcessingException {
-        final var response = doPutRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestEmails());
+        final var response = doPutRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestEmails());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
@@ -98,7 +98,7 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     }
 
     private List<Email> getCurrentEmails() {
-        final var response = doGetRequest(PLYMOUTH_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+        final var response = doGetRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         return response.body().jsonPath().getList(".", Email.class);
     }
 

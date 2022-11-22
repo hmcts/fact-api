@@ -39,6 +39,7 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         + COURT_POSTCODES_PATH;
     private static final String COURT_NOT_FIND_PATH = ADMIN_COURTS_ENDPOINT
         + "birmingham-civil-and-fay-justice-centre" + COURT_POSTCODES_PATH;
+    private static final String DELETE_LOCK_BY_EMAIL_PATH = ADMIN_COURTS_ENDPOINT + "hmcts.fact@gmail.com/lock";
     private static final String NOT_FOUND_POSTCODE = "B119";
     private static final String CONFLICT_POSTCODE = "B75";
 
@@ -113,6 +114,11 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldCreateValidPostcodes() throws JsonProcessingException {
 
+        //calling user delete lock endpoint to remove lock for the court
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
+
         final List<String> currentPostcodes = getCurrentPostcodes(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG);
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_VALID);
         final var response = doPostRequest(
@@ -153,6 +159,10 @@ public class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldNotCreateDuplicatePostcodes() throws JsonProcessingException {
+
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
 
         // Clean up both destination court postcodes if lingering from previous run failure
         cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_DUPLICATE));
