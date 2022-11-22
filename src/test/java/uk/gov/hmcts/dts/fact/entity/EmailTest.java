@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class EmailTest {
+class EmailTest {
     private static final String EMAIL_ADDRESS = "test@test.com";
     private static final String EXPLANATION = "explanation";
     private static final String EXPLANATION_CY = "explanation cy";
@@ -27,10 +27,10 @@ public class EmailTest {
         Email email = new Email(
             "address", "expl", "expl cy", emailType);
         assertEquals(email.getAdminType(), emailType);
-        assertEquals(email.getExplanation(), "expl");
-        assertEquals(email.getExplanationCy(), "expl cy");
+        assertEquals("expl",email.getExplanation());
+        assertEquals("expl cy",email.getExplanationCy());
         assertEquals(email.getAddress(), "address");
-        assertEquals(email.getDescription(), "");
+        assertEquals("",email.getDescription());
         assertNull(email.getDescriptionCy());
     }
 

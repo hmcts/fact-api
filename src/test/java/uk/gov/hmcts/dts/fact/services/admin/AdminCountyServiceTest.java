@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCountyService.class)
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCountyServiceTest {
+class AdminCountyServiceTest {
     private static final int COUNTY_ID1 = 1;
     private static final int COUNTY_ID2 = 2;
     private static final int COUNTY_ID3 = 3;

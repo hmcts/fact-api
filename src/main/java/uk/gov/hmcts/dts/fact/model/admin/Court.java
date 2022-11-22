@@ -2,12 +2,13 @@ package uk.gov.hmcts.dts.fact.model.admin;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 
 import java.util.Collection;
@@ -21,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Court {
 
     private String slug;
@@ -56,7 +57,7 @@ public class Court {
         this.openingTimes = ofNullable(courtEntity.getCourtOpeningTimes())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
-            .map(cot -> cot.getOpeningTime())
+            .map(CourtOpeningTime::getOpeningTime)
             .map(OpeningTime::new).collect(toList());
         this.courtTypes = ofNullable(courtEntity.getCourtTypes())
             .map(Collection::stream)

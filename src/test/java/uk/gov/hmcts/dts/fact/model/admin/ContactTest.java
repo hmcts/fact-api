@@ -5,7 +5,7 @@ import uk.gov.hmcts.dts.fact.entity.ContactType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ContactTest {
+class ContactTest {
     private static final String TYPE = "type";
     private static final String TYPE_CY = "type cy";
     private static final String CONTACT_NUMBER = "123";
@@ -22,7 +22,7 @@ public class ContactTest {
         assertThat(contact.getNumber()).isEqualTo(CONTACT_NUMBER);
         assertThat(contact.getExplanation()).isEqualTo(EXPLANATION);
         assertThat(contact.getExplanationCy()).isEqualTo(EXPLANATION_CY);
-        assertThat(contact.isFax()).isEqualTo(false);
+        assertThat(contact.isFax()).isFalse();
     }
 
     @Test
@@ -34,6 +34,6 @@ public class ContactTest {
         assertThat(contact.getNumber()).isEqualTo(CONTACT_NUMBER);
         assertThat(contact.getExplanation()).isEqualTo(EXPLANATION);
         assertThat(contact.getExplanationCy()).isEqualTo(EXPLANATION_CY);
-        assertThat(contact.isFax()).isEqualTo(true);
+        assertThat(contact.isFax()).isTrue();
     }
 }

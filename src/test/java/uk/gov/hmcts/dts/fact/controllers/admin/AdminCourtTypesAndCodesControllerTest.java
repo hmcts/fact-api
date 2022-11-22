@@ -26,7 +26,7 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 @WebMvcTest(AdminCourtTypesAndCodesController.class)
 @AutoConfigureMockMvc(addFilters = false)
 
-public class AdminCourtTypesAndCodesControllerTest {
+class AdminCourtTypesAndCodesControllerTest {
 
 
     private static final String BASE_PATH = "/admin/courts/";

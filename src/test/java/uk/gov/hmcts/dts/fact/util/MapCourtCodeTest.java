@@ -13,7 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MapCourtCodeTest {
+class MapCourtCodeTest {
 
     private static final String UNKNOWN_COURT_TYPE_PREFIX = "Unknown court type: ";
     private static final String UNKNOWN_COURT_TYPE = "Any type";
