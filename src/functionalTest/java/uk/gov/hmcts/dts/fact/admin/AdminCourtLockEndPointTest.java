@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +63,7 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     public void shouldCreateLock() throws JsonProcessingException {
 
         final CourtLock expectedCourtLock = createCourtLock();
-        final String newCourtLockJson = objectMapper().writeValueAsString(expectedCourtLock);
+        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
 
         final var response = doPostRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,
@@ -72,6 +73,18 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
 
         assertThat(response.statusCode()).isEqualTo(CREATED.value());
         final CourtLock createdCourtLock = response.as(CourtLock.class);
+        assertThat(createdCourtLock.getUserEmail()).isEqualTo(expectedCourtLock.getUserEmail());
+
+        // delete request test
+        final var cleanUpResponse = doDeleteRequest(
+            BARNSLEY_LAW_COURT_LOCK_PATH + createdCourtLock.getUserEmail(),
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),""
+        );
+
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+        final List<CourtLock> currentCourtLock = getCurrentLock();
+        assertThat(currentCourtLock).isEmpty();
+
     }
 
     @Test
