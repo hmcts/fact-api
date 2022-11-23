@@ -118,7 +118,7 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isCreated())
             .andExpect(content().json(expectedPostcodeJson));
 
-        // verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test

@@ -7,10 +7,12 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtPostcodeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
@@ -30,15 +32,15 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 public class AdminCourtPostcodeController {
     private final AdminCourtPostcodeService adminService;
     private final ValidationService validationService;
-    // private final AdminCourtLockService adminCourtLockService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
     public AdminCourtPostcodeController(AdminCourtPostcodeService adminService,
-                                        ValidationService validationService) {
-        //                              AdminCourtLockService adminCourtLockService) {
+                                        ValidationService validationService,
+                                        AdminCourtLockService adminCourtLockService) {
         this.adminService = adminService;
         this.validationService = validationService;
-        //         this.adminCourtLockService = adminCourtLockService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     /**
@@ -81,12 +83,12 @@ public class AdminCourtPostcodeController {
     })
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<String>> addCourtPostcodes(@PathVariable String slug,
-                                                          @RequestBody List<String> postcodes) {
-        //                                                           Authentication authentication) {
+                                                          @RequestBody List<String> postcodes,
+                                                          Authentication authentication) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             adminService.checkPostcodesDoNotExist(slug, postcodes);
-            //             adminCourtLockService.updateCourtLock(slug, authentication.getName());
+            adminCourtLockService.updateCourtLock(slug, authentication.getName());
             return created(URI.create(StringUtils.EMPTY)).body(adminService.addCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
