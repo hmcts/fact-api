@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.entity.CourtLock;
+import uk.gov.hmcts.dts.fact.exception.LockExistsException;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
@@ -26,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
@@ -98,8 +100,10 @@ public class AdminCourtLockControllerTest {
         MvcResult mvcResult = mockMvc.perform(get(BASE_PATH + TEST_SLUG + CHILD_PATH))
             .andExpect(status().isOk()).andReturn();
 
-        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(),
-                                                         uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class)))
+        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(
+            mvcResult.getResponse().getContentAsString(),
+            uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class
+        )))
             .isEqualTo(EXPECTED_COURT_LOCK_LIST);
     }
 
@@ -110,14 +114,31 @@ public class AdminCourtLockControllerTest {
 
         MvcResult mvcResult = mockMvc.perform(post(BASE_PATH + TEST_SLUG + CHILD_PATH)
                                                   .with(csrf())
-                                                  .content(OBJECT_MAPPER.writeValueAsString(EXPECTED_COURT_LOCK_LIST.get(0)))
+                                                  .content(OBJECT_MAPPER.writeValueAsString(EXPECTED_COURT_LOCK_LIST.get(
+                                                      0)))
                                                   .contentType(MediaType.APPLICATION_JSON)
                                                   .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated()).andReturn();
 
-        assertThat(OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(),
-                                                         uk.gov.hmcts.dts.fact.model.admin.CourtLock.class))
+        assertThat(OBJECT_MAPPER.readValue(
+            mvcResult.getResponse().getContentAsString(),
+            uk.gov.hmcts.dts.fact.model.admin.CourtLock.class
+        ))
             .isEqualTo(EXPECTED_COURT_LOCK_LIST.get(0));
+    }
+
+    @Test
+    void shouldHandleLockExistsException() throws Exception {
+        when(adminCourtLockService.addNewCourtLock(new uk.gov.hmcts.dts.fact.model.admin.CourtLock(ENTITY_COURT_LOCK_1)))
+            .thenThrow(new LockExistsException("Lock exists exception, oh no!"));
+
+        mockMvc.perform(post(BASE_PATH + TEST_SLUG + CHILD_PATH)
+                            .with(csrf())
+                            .content(OBJECT_MAPPER.writeValueAsString(EXPECTED_COURT_LOCK_LIST.get(0)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict())
+            .andExpect(content().json("{\"message\":\"Lock exists exception, oh no!\"}"));
     }
 
     @Test
@@ -129,8 +150,10 @@ public class AdminCourtLockControllerTest {
                                                   .with(csrf()))
             .andExpect(status().isOk()).andReturn();
 
-        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(),
-                                                         uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class)))
+        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(
+            mvcResult.getResponse().getContentAsString(),
+            uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class
+        )))
             .isEqualTo(Collections.singletonList(EXPECTED_COURT_LOCK_LIST.get(1)));
     }
 
@@ -143,8 +166,10 @@ public class AdminCourtLockControllerTest {
                                                   .with(csrf()))
             .andExpect(status().isOk()).andReturn();
 
-        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(),
-                                                         uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class)))
+        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(
+            mvcResult.getResponse().getContentAsString(),
+            uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class
+        )))
             .isEqualTo(Collections.singletonList(EXPECTED_COURT_LOCK_LIST.get(1)));
     }
 }
