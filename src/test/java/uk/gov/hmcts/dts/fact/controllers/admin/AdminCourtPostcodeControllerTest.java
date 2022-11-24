@@ -258,7 +258,7 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(expectedPostcodeJson));
 
-        // verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
     }
 
     @Test
@@ -274,7 +274,7 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_SOURCE_SLUG));
 
-        // verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
     }
 
     @Test
@@ -290,7 +290,7 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_DESTINATION_SLUG));
 
-        // verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
     }
 
     @Test
@@ -322,7 +322,7 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().json(expectedNotFoundPostcodesJson));
 
-        // verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
     }
 
     @Test
@@ -338,6 +338,6 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isConflict())
             .andExpect(content().json(expectedExistedPostcodesJson));
 
-        // verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(SOURCE_SLUG, TEST_USER);
     }
 }
