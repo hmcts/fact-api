@@ -3,7 +3,7 @@ package uk.gov.hmcts.dts.fact.entity;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
-public class ApplicationUpdateTest {
+class ApplicationUpdateTest {
     private static final String TEST_TYPE = "English type";
     private static final String TEST_TYPE_CY = "Welsh type";
     private static final String TEST_EMAIL = "test@test.com";

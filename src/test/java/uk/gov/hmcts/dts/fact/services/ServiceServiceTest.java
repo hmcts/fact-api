@@ -55,7 +55,7 @@ class ServiceServiceTest {
         when(serviceRepository.findAll()).thenReturn(services);
 
         final List<uk.gov.hmcts.dts.fact.model.Service> allServices = serviceService.getAllServices();
-        assertThat(allServices.size()).isEqualTo(1);
+        assertThat(allServices).hasSize(1);
         assertThat(allServices.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Service.class);
     }
 
@@ -71,7 +71,7 @@ class ServiceServiceTest {
         when(serviceArea.getAreaOfLaw()).thenReturn(areaOfLaw);
 
         final List<uk.gov.hmcts.dts.fact.model.ServiceArea> allServices = serviceService.getServiceAreas(SERVICE_NAME);
-        assertThat(allServices.size()).isEqualTo(1);
+        assertThat(allServices).hasSize(1);
         assertThat(allServices.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.model.ServiceArea.class);
     }
 }

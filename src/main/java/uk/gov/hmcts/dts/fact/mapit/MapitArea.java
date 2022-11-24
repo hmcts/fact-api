@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MapitArea {
-    public String id;
-    public String name;
-    public String type;
+    public  String id;
+    public  String name;
+    public  String type;
 }

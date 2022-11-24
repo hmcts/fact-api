@@ -2,7 +2,7 @@ package uk.gov.hmcts.dts.fact.model.deprecated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +25,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
     "crown_location_code", "county_location_code", "cci_code", "magistrates_location_code", "areas_of_law",
@@ -100,7 +100,7 @@ public class OldCourt {
     }
 
     private List<Contact> getContactsWithDx(final Court courtEntity) {
-        List<Contact> contacts = ofNullable(courtEntity.getCourtContacts())
+        List<Contact> dxContacts = ofNullable(courtEntity.getCourtContacts())
             .map(Collection::stream)
             .orElseGet(Stream::empty)
             .map(CourtContact::getContact)
@@ -119,9 +119,9 @@ public class OldCourt {
             contactEntity.setExplanation(dx.getExplanation());
             contactEntity.setExplanationCy(dx.getExplanationCy());
             contactEntity.setNumber(dx.getCode());
-            contacts.add(new Contact(contactEntity));
+            dxContacts.add(new Contact(contactEntity));
         });
 
-        return contacts;
+        return dxContacts;
     }
 }

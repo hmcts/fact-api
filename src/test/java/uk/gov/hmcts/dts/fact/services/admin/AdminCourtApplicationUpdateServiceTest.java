@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtApplicationUpdateService.class)
-public class AdminCourtApplicationUpdateServiceTest {
+class AdminCourtApplicationUpdateServiceTest {
     private static final String TEST_SLUG = "court-slug";
     private static final Court MOCK_COURT = mock(Court.class);
     private static final String TEST_TYPE_1 = "English type 1";

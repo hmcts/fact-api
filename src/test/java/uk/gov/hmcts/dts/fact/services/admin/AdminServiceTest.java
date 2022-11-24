@@ -149,7 +149,7 @@ class AdminServiceTest {
         final Court mock = mock(Court.class);
         when(courtRepository.findAll()).thenReturn(singletonList(mock));
         final List<CourtReference> results = adminService.getAllCourtReferences();
-        assertThat(results.size()).isEqualTo(1);
+        assertThat(results).hasSize(1);
         assertThat(results.get(0)).isInstanceOf(CourtReference.class);
     }
 
@@ -158,7 +158,7 @@ class AdminServiceTest {
         final Court mock = mock(Court.class);
         when(courtRepository.findAll()).thenReturn(singletonList(mock));
         final List<CourtForDownload> results = adminService.getAllCourtsForDownload();
-        assertThat(results.size()).isEqualTo(1);
+        assertThat(results).hasSize(1);
         assertThat(results.get(0)).isInstanceOf(CourtForDownload.class);
     }
 
@@ -203,7 +203,7 @@ class AdminServiceTest {
         assertThat(courtResults.getInfo()).isEqualTo(court.getInfo());
         assertThat(courtResults.getInfoCy()).isEqualTo(court.getInfoCy());
         assertThat(courtResults.getOpen()).isEqualTo(court.getOpen());
-        assertThat(courtResults.getAccessScheme()).isEqualTo(null);
+        assertThat(courtResults.getAccessScheme()).isNull();
         verify(adminAuditService, atLeastOnce()).saveAudit("Update court details",
                                                            court,
                                                            courtResults, SOME_SLUG

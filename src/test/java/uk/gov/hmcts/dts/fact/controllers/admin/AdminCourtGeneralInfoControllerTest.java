@@ -28,7 +28,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtGeneralInfoController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtGeneralInfoControllerTest {
+class AdminCourtGeneralInfoControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/generalInfo";
     private static final String TEST_SLUG = "unknownSlug";

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminFacilityService.class)
-public class AdminFacilityServiceTest {
+class AdminFacilityServiceTest {
 
     private static final int FACILITY_TYPE_COUNT = 3;
 

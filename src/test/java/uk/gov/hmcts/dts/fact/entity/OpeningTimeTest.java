@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OpeningTimeTest {
+class OpeningTimeTest {
     private static final String DESCRIPTION = "description";
     private static final String DESCRIPTION_CY = "description cy";
     private static final String HOURS = "9 to 5";
@@ -15,6 +15,6 @@ public class OpeningTimeTest {
         assertThat(openingTime.getDescription()).isEqualTo(DESCRIPTION);
         assertThat(openingTime.getDescriptionCy()).isEqualTo(DESCRIPTION_CY);
         assertThat(openingTime.getHours()).isEqualTo(HOURS);
-        assertThat(openingTime.getAdminType()).isEqualTo(null);
+        assertThat(openingTime.getAdminType()).isNull();
     }
 }

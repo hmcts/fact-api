@@ -18,7 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-public class ProximitySearchTest {
+class ProximitySearchTest {
 
     @Mock
     private CourtWithDistanceRepository courtWithDistanceRepository;

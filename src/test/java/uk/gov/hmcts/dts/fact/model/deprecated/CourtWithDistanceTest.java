@@ -16,7 +16,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class CourtWithDistanceTest {
+class CourtWithDistanceTest {
     private static final String TEST_DX_CODE = "DX 99";
 
     private static final Court COURT_ENTITY = new Court();

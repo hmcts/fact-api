@@ -176,6 +176,19 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnPostcode() {
+        when(mapitService.getMapitData(JE2_4BA)).thenReturn(Optional.of(mapitData));
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class)
+        );
+        when(proximitySearch.searchWith(mapitData)).thenReturn(courts);
+
+        List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
+            JE2_4BA
+        );
+        assertEquals(2, results.size());
+        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
         proximitySearch.searchWith(mapitData);
     }
 
@@ -186,7 +199,7 @@ class CourtServiceTest {
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
         final List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
-        assertThat(results.size()).isEqualTo(1);
+        assertThat(results).hasSize(1);
     }
 
     @Test
@@ -293,7 +306,7 @@ class CourtServiceTest {
             AREA_OF_LAW_NAME
         );
 
-        assertThat(results.size()).isEqualTo(10);
+        assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
 
@@ -361,7 +374,7 @@ class CourtServiceTest {
             "OX2 1RZ",
             AREA_OF_LAW_NAME
         );
-        assertThat(results.size()).isEqualTo(10);
+        assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
 
@@ -495,7 +508,7 @@ class CourtServiceTest {
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
-        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts()).hasSize(2);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
@@ -522,7 +535,7 @@ class CourtServiceTest {
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
-        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts()).hasSize(2);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
@@ -659,7 +672,7 @@ class CourtServiceTest {
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
-        assertThat(results.getCourts().size()).isEqualTo(1);
+        assertThat(results.getCourts()).hasSize(1);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 

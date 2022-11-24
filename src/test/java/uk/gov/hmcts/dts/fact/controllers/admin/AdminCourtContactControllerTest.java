@@ -30,7 +30,7 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @WebMvcTest(AdminCourtContactController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtContactControllerTest {
+class AdminCourtContactControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CONTACTS_PATH = "/" + "contacts";
     private static final String TEST_SLUG = "unknownSlug";

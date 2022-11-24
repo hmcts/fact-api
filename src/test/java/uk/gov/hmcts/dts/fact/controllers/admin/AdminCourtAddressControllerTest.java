@@ -37,7 +37,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtAddressController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtAddressControllerTest {
+class AdminCourtAddressControllerTest {
     private static final String TEST_SLUG = "court-slug";
     private static final String TEST_USER = "mosh@cat.com";
     private static final String NOT_FOUND = "Not found: ";

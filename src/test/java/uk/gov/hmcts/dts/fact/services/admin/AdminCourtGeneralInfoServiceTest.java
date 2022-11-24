@@ -39,7 +39,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ContextConfiguration(classes = AdminCourtGeneralInfoService.class)
-public class AdminCourtGeneralInfoServiceTest {
+class AdminCourtGeneralInfoServiceTest {
     private static final String COURT_NAME = "Test court name";
     private static final String COURT_DUPLICATED_NAME = "test-court-name-duplicate";
     private static final String COURT_SLUG = "some slug";
@@ -230,9 +230,9 @@ public class AdminCourtGeneralInfoServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
 
         final CourtGeneralInfo result = adminService.getCourtGeneralInfoBySlug(COURT_SLUG);
-        assertThat(result.getInPerson()).isEqualTo(false);
-        assertThat(result.getAccessScheme()).isEqualTo(false);
-        assertThat(result.isCommonPlatform()).isEqualTo(false);
+        assertThat(result.getInPerson()).isFalse();
+        assertThat(result.getAccessScheme()).isFalse();
+        assertThat(result.isCommonPlatform()).isFalse();
     }
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")

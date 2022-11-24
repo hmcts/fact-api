@@ -53,7 +53,7 @@ public class CivilSearch implements Search {
         }
 
         if (courtsWithDistance.isEmpty()) {
-            final String areacode = postcode.split("[0-9]")[0];
+            final String areacode = postcode.split("\\d")[0];
             courtsWithDistance = courtWithDistanceRepository
                 .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, areacode);
         }

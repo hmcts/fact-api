@@ -97,7 +97,7 @@ public class AdminContactTypeController {
         @ApiResponse(code = 409, message = "Contact type in use")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity deleteContactType(@PathVariable Integer contactTypeId) {
+    public ResponseEntity<Integer> deleteContactType(@PathVariable Integer contactTypeId) {
         adminContactTypeService.deleteContactType(contactTypeId);
         return ok().body(contactTypeId);
     }

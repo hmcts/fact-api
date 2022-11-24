@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ApplicationUpdateTest {
+class ApplicationUpdateTest {
     private static uk.gov.hmcts.dts.fact.entity.ApplicationUpdate entity;
 
     @BeforeAll

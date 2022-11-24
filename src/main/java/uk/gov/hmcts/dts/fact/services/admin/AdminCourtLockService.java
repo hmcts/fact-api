@@ -31,6 +31,17 @@ public class AdminCourtLockService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     *
+     * <p>Get all court locks from the database that match a provided court slug.</p>
+     *
+     * <p> Important to note is at the moment one lock is used per court, but this is
+     * being returned as a list to accommodate for a future change where more than one
+     * lock may be required instead. </p>
+     *
+     * @param courtSlug the court slug.
+     * @return a list of court locks.
+     */
     public List<CourtLock> getCourtLocks(String courtSlug) {
         return courtLockRepository
             .findCourtLockByCourtSlug(courtSlug)
@@ -39,6 +50,20 @@ public class AdminCourtLockService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * <p>Add the new court lock to the database.</p>
+     *
+     * <p>Exceptions will occur if a lock already exists for a court and a different user is
+     * attempting to retrieve that lock (by calling this method).</p>
+     *
+     * <p>If the same user is hitting the logic that calls this method, then we simply update their
+     * timestamp on the database by calling updateCourtLock.</p>
+     *
+     * <p>Otherwise we add them to the database</p>
+     *
+     * @param courtLock the new CourtLock object to add to the database.
+     * @return The new CourtLock object that has been added to the database.
+     */
     public CourtLock addNewCourtLock(CourtLock courtLock) {
         String courtSlug = courtLock.getCourtSlug();
         String courtUserEmail = courtLock.getUserEmail();
@@ -77,6 +102,21 @@ public class AdminCourtLockService {
         }
     }
 
+    /**
+     *
+     * <p>Remove the court lock provided using both a slug and an email.</p>
+     *
+     * <p>This is primarily used if two people are interacting with a court.</p>
+     *
+     * <p>The frontend logic for this is as follows:
+     *      Person one comes in, makes a change and leaves. 20 minutes passes.
+     *      Person two then comes in, clicks on the court and because the time has passed the
+     *      threshold, for that specific court only, person 2 gets the lock, and person 1 loses it.</p>
+     *
+     * @param courtSlug the court slug.
+     * @param userEmail the users email, for example moshcat@justice.cat.meow.
+     * @return A list of court locks that have been deleted from the database.
+     */
     public List<CourtLock> deleteCourtLock(String courtSlug, String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
             courtLockRepository.findCourtLockByCourtSlugAndUserEmail(courtSlug, userEmail);
@@ -97,6 +137,16 @@ public class AdminCourtLockService {
         return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
     }
 
+    /**
+     *
+     * <p>Delete the court lock by email.</p>
+     *
+     * <p>The frontend logic for this is when a user clicks the logout button, or when they log in.
+     * At that point, we would want no locks to be assigned to them.</p>
+     *
+     * @param userEmail the users email.
+     * @return A list of court locks that have been removed.
+     */
     @Transactional
     public List<CourtLock> deleteCourtLockByEmail(String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
@@ -110,6 +160,21 @@ public class AdminCourtLockService {
         return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
     }
 
+    /**
+     *
+     * <p>Update the court locks timestamp.</p>
+     *
+     * <p>Used when a user is editing a court and performs actions on selected resources.
+     * For example, if they are updating the opening hours of a court.</p>
+     *
+     * <p>The timeout for a lock is based upon the most recent action time of the user who has it allocated to them.
+     * This is to ensure that if a user quits the admin portal by closing their browser, that
+     * the lock is not indefinitely attributed to them.</p>
+     *
+     * @param courtSlug the court slug.
+     * @param userEmail the users email, for example kupocat@justice.cat.meow.
+     * @return The updated court lock object.
+     */
     public CourtLock updateCourtLock(String courtSlug, String userEmail) {
         List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
             courtLockRepository.findCourtLockByCourtSlugAndUserEmail(courtSlug, userEmail);
