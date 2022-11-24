@@ -114,12 +114,12 @@ public class AdminCourtPostcodeController {
     })
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity deleteCourtPostcodes(@PathVariable String slug,
-                                               @RequestBody List<String> postcodes) {
-        //                                                Authentication authentication) {
+                                               @RequestBody List<String> postcodes,
+                                               Authentication authentication) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             adminService.checkPostcodesExist(slug, postcodes);
-            //             adminCourtLockService.updateCourtLock(slug, authentication.getName());
+            adminCourtLockService.updateCourtLock(slug, authentication.getName());
             return ok(adminService.deleteCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);

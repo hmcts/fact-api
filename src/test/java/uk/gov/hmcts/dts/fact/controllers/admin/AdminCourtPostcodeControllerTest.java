@@ -190,7 +190,7 @@ public class AdminCourtPostcodeControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().string("3"));
 
-        // verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test
