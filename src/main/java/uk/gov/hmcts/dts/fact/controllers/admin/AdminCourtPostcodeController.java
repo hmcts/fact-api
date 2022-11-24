@@ -150,11 +150,9 @@ public class AdminCourtPostcodeController {
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<String>> movePostcodes(@PathVariable String sourceSlug,
                                                       @PathVariable String destinationSlug,
-                                                      @RequestBody List<String> postcodes,
-                                                      Authentication authentication) {
+                                                      @RequestBody List<String> postcodes) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
-            adminCourtLockService.updateCourtLock(sourceSlug, authentication.getName());
             return ok(adminService.moveCourtPostcodes(sourceSlug, destinationSlug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
