@@ -45,6 +45,8 @@ public class Court {
     private Integer number;
     private Integer cciCode;
     private Integer magistrateCode;
+    private Integer locationCode;
+    private Integer courtCode;
     private Boolean welshEnabled;
     private Boolean hideAols;
     @UpdateTimestamp
