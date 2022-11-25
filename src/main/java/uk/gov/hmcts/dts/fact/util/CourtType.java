@@ -20,8 +20,8 @@ public enum CourtType {
     MAGISTRATES_COURT("Magistrates' Court", c -> c.getMagistrateCode(), (c, v) -> c.setMagistrateCode(v)),
     CROWN_COURT("Crown Court", c -> c.getNumber(), (c, v) -> c.setNumber(v)),
     COUNTY_COURT("County Court", c -> c.getCciCode(), (c, v) -> c.setCciCode(v)),
-    FAMILY_COURT("Family Court"),
-    TRIBUNAL("Tribunal");
+    FAMILY_COURT("Family Court", c -> c.getCourtCode(), (c, v) -> c.setCourtCode(v)),
+    TRIBUNAL("Tribunal", c -> c.getLocationCode(), (c, v) -> c.setLocationCode(v));
 
     private static final Map<String, CourtType> LOOKUP = new ConcurrentHashMap<>();
 

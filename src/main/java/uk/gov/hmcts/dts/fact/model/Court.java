@@ -36,9 +36,9 @@ import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "image_file", "lat", "lon", "urgent_message",
-    "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
-    "types", "emails", "contacts", "opening_times", "application_updates", "facilities", "addresses", "gbs", "dx_number",
-    "service_area", "in_person", "access_scheme", "additional_links"})
+    "crown_location_code", "county_location_code", "magistrates_location_code", "family_location_code",
+    "tribunal_location_code", "areas_of_law", "types", "emails", "contacts", "opening_times", "application_updates",
+    "facilities", "addresses", "gbs", "dx_number", "service_area", "in_person", "access_scheme", "additional_links"})
 public class Court {
     private String name;
     private String slug;
@@ -53,6 +53,8 @@ public class Court {
     private Integer crownLocationCode;
     private Integer countyLocationCode;
     private Integer magistratesLocationCode;
+    private Integer familyLocationCode;
+    private Integer tribunalLocationCode;
     private List<AreaOfLaw> areasOfLaw;
     @JsonProperty("types")
     private List<String> courtTypes;
@@ -89,6 +91,8 @@ public class Court {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
+        this.familyLocationCode = courtEntity.getCourtCode();
+        this.tribunalLocationCode = courtEntity.getLocationCode();
         this.areasOfLaw = getAreasOfLaw(courtEntity, courtEntity.isInPerson());
         this.contacts = getContacts(courtEntity);
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());

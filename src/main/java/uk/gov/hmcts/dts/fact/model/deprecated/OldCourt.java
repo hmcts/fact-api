@@ -41,6 +41,8 @@ public class OldCourt {
     private Integer crownLocationCode;
     private Integer countyLocationCode;
     private Integer cciCode;
+    private Integer locationCode;
+    private Integer courtCode;
     private Integer magistratesLocationCode;
     private List<String> areasOfLaw;
     @JsonProperty("areas_of_law_spoe")
@@ -65,6 +67,8 @@ public class OldCourt {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.cciCode = courtEntity.getCciCode();
+        this.locationCode = courtEntity.getLocationCode();
+        this.courtCode = courtEntity.getCourtCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
         this.areasOfLaw = courtEntity.getAreasOfLaw().stream().map(AreaOfLaw::getName)
             .collect(toList());
