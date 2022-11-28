@@ -13,8 +13,8 @@ import javax.persistence.*;
 @Setter
 public class Email extends Element {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_email_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-email", sequenceName = "search_email_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-email")
     private Integer id;
     private String address;
     private String description;

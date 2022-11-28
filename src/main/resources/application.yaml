@@ -77,7 +77,4 @@ resilience4j:
           limitForPeriod: 15
           limitRefreshPeriod: 1s
           timeoutDuration: 0
-logging:
-  level:
-    root: ERROR
-    org.foo.bar.baz: INFO
+

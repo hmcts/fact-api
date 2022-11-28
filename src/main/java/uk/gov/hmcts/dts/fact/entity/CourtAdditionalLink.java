@@ -15,8 +15,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CourtAdditionalLink {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtadditionallink_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-links", sequenceName = "search_courtadditionallink_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-links")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")

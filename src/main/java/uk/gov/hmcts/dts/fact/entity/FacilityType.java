@@ -12,8 +12,8 @@ import javax.persistence.*;
 public class FacilityType {
 
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_facility_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-facility-type", sequenceName = "search_facility_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-facility-type")
     private Integer id;
     private String name;
     @Column(name = "name_cy")

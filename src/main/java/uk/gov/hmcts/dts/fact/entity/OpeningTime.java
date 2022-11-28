@@ -13,8 +13,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class OpeningTime extends Element {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_openingtime_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-opening-time", sequenceName = "search_openingtime_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-opening-time")
     private Integer id;
     @Column(name = "type")
     private String description;

@@ -13,8 +13,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CourtAreaOfLawSpoe {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtareaoflawspoe_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-aol-spoe", sequenceName = "search_courtareaoflawspoe_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-aol-spoe")
     private Integer id;
 
     @OneToOne()
