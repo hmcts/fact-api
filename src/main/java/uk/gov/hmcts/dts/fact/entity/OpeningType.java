@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class OpeningType extends ElementType {
     @Id
     @SequenceGenerator(name = "seq-gen-opening-type", sequenceName = "admin_openingtype_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-openning-type")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-opening-type")
     private Integer id;
     @Column(name = "name")
     private String description;
