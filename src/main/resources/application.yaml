@@ -38,6 +38,8 @@ spring:
           lob:
             # silence the 'wall-of-text' - unnecessary exception throw about blob types
             non_contextual_creation: true
+    open-in-view: false
+
   security:
     oauth2:
       resourceserver:
