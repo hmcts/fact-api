@@ -17,7 +17,7 @@ public class CourtSecondaryAddressType {
 
     @Id
     @SequenceGenerator(name = "seq-gen-secondary-address", sequenceName = "search_courtapplicationupdate_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gens-econdary-address")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-secondary-address")
     private Integer id;
 
     @OneToOne
