@@ -1,2 +1,3 @@
-update search_courtaddress set postcode = 'ME4 4AR' where address = 'Medway County and Family Court
- 9-11 The Brook';
+UPDATE search_courtaddress SET postcode = 'ME4 4AR' WHERE court_id = (
+  SELECT id FROM search_court WHERE slug = 'medway-county-court-and-family-court' LIMIT 1
+);
