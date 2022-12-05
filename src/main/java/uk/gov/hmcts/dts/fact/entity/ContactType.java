@@ -15,8 +15,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class ContactType extends ElementType {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "admin_contacttype_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-contact-type", sequenceName = "admin_contacttype_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-contact-type")
     private Integer id;
     @Column(name = "name")
     private String description;

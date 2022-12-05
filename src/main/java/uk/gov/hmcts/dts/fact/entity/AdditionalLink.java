@@ -15,8 +15,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class AdditionalLink {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_additionallink_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-al", sequenceName = "search_additionallink_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-al")
     private Integer id;
     private String url;
     private String description;
