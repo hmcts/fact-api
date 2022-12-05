@@ -16,8 +16,8 @@ import javax.persistence.*;
 public class CourtFacility {
 
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtfacility_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-court-facility", sequenceName = "search_courtfacility_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-court-facility")
     private Integer id;
 
     @OneToOne()

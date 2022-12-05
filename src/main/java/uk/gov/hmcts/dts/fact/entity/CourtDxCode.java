@@ -15,8 +15,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CourtDxCode {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtdxcode_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-dx-code", sequenceName = "search_courtdxcode_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-dx-code")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")

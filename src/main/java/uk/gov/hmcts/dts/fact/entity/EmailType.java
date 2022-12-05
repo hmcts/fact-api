@@ -15,8 +15,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class EmailType extends ElementType {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_email_type_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-email-type", sequenceName = "search_email_type_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-email-type")
     private Integer id;
     private String description;
     @Column(name = "description_cy")
