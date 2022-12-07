@@ -13,8 +13,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CourtApplicationUpdate {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtapplicationupdate_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-update", sequenceName = "search_courtapplicationupdate_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-update")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")

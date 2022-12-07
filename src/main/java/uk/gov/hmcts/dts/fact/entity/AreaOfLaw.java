@@ -15,8 +15,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class AreaOfLaw {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_areaoflaw_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-aol", sequenceName = "search_areaoflaw_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-aol")
     private Integer id;
     private String name;
     private String externalLink;

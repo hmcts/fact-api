@@ -21,8 +21,8 @@ public class Facility {
     private static final String FACILITY_ID = "facility_id";
 
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_facility_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-facility", sequenceName = "search_facility_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-facility")
     private Integer id;
     private String description;
     @Column(name = "description_cy")

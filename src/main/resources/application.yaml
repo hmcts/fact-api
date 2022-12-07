@@ -38,6 +38,8 @@ spring:
           lob:
             # silence the 'wall-of-text' - unnecessary exception throw about blob types
             non_contextual_creation: true
+    open-in-view: true
+
   security:
     oauth2:
       resourceserver:
@@ -77,3 +79,4 @@ resilience4j:
           limitForPeriod: 15
           limitRefreshPeriod: 1s
           timeoutDuration: 0
+
