@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
@@ -14,6 +15,7 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
 import uk.gov.hmcts.dts.fact.util.Utils;
 
@@ -33,12 +35,15 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 public class AdminCourtsController {
 
     private final AdminService adminService;
+    private final AdminCourtLockService adminCourtLockService;
     private static final String FORBIDDEN = "Forbidden";
     private static final String UNAUTHORISED = "Unauthorised";
 
     @Autowired
-    public AdminCourtsController(final AdminService adminService) {
+    public AdminCourtsController(final AdminService adminService,
+                                 AdminCourtLockService adminCourtLockService) {
         this.adminService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping(path = "/all")
@@ -60,7 +65,6 @@ public class AdminCourtsController {
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Void> updateCourtsInfo(@RequestBody CourtInfoUpdate info) {
         adminService.updateMultipleCourtsInfo(info);
-
         return noContent().build();
     }
 
@@ -86,7 +90,8 @@ public class AdminCourtsController {
             .body(adminService.addNewCourt(newCourt.getNewCourtName(),
                                            newCourtSlug, newCourt.getServiceCentre(),
                                            newCourt.getLon(), newCourt.getLat(),
-                                           newCourt.getServiceAreas()));
+                                           newCourt.getServiceAreas()
+            ));
     }
 
     @DeleteMapping("/{slug}")
@@ -105,7 +110,10 @@ public class AdminCourtsController {
     @PutMapping(path = "/{slug}/general")
     @ApiOperation("Update court")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
-    public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug, @RequestBody Court updatedCourt) {
+    public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug,
+                                                   @RequestBody Court updatedCourt,
+                                                   Authentication authentication) {
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
         return ok(adminService.save(slug, updatedCourt));
     }
 
@@ -131,7 +139,10 @@ public class AdminCourtsController {
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug, @RequestBody ImageFile imageFile) {
+    public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug,
+                                                         @RequestBody ImageFile imageFile,
+                                                         Authentication authentication) {
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
         return ok(adminService.updateCourtImage(slug, imageFile.getImageName()));
     }
 }

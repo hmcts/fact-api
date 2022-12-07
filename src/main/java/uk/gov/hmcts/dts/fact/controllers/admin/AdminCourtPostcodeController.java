@@ -7,10 +7,12 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtPostcodeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
@@ -30,15 +32,20 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 public class AdminCourtPostcodeController {
     private final AdminCourtPostcodeService adminService;
     private final ValidationService validationService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtPostcodeController(AdminCourtPostcodeService adminService, ValidationService validationService) {
+    public AdminCourtPostcodeController(AdminCourtPostcodeService adminService,
+                                        ValidationService validationService,
+                                        AdminCourtLockService adminCourtLockService) {
         this.adminService = adminService;
         this.validationService = validationService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     /**
      * Retrieves postcodes handled by the court for civil service type.
+     *
      * @param slug Court slug
      * @return A list of postcodes
      */
@@ -57,11 +64,12 @@ public class AdminCourtPostcodeController {
 
     /**
      * Adds new postcodes to be handled by the court for civil service type.
-     * @param slug Court slug
+     *
+     * @param slug      Court slug
      * @param postcodes a list of postcodes to be added
      * @return A list of postcodes created if successful.
-     *         If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
-     *         If one of more input postcodes already exist in the database, return the existed postcodes and a '409' response.
+     *      If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
+     *      If one of more input postcodes already exist in the database, return the existed postcodes and a '409' response.
      */
     @PostMapping(path = "/{slug}/postcodes")
     @ApiOperation("Add new court postcodes")
@@ -74,23 +82,26 @@ public class AdminCourtPostcodeController {
         @ApiResponse(code = 409, message = "Postcodes already exist", response = String.class, responseContainer = "List")
     })
     @Role(FACT_SUPER_ADMIN)
-    public ResponseEntity<List<String>> addCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
+    public ResponseEntity<List<String>> addCourtPostcodes(@PathVariable String slug,
+                                                          @RequestBody List<String> postcodes,
+                                                          Authentication authentication) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             adminService.checkPostcodesDoNotExist(slug, postcodes);
-            final List<String> postcodeCreated = adminService.addCourtPostcodes(slug, postcodes);
-            return created(URI.create(StringUtils.EMPTY)).body(postcodeCreated);
+            adminCourtLockService.updateCourtLock(slug, authentication.getName());
+            return created(URI.create(StringUtils.EMPTY)).body(adminService.addCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
     }
 
     /**
      * Deletes existing postcodes currently handled by the court for civil service type.
-     * @param slug Court slug
+     *
+     * @param slug      Court slug
      * @param postcodes a list of postcodes to be deleted
      * @return The number of postcodes deleted if successful
-     *         If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
-     *         If one of more input postcodes do not exist in the database, return the not found postcodes and a '404' response.
+     *      If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
+     *      If one of more input postcodes do not exist in the database, return the not found postcodes and a '404' response.
      */
     @DeleteMapping(path = "/{slug}/postcodes")
     @ApiOperation("Delete existing court postcodes")
@@ -102,10 +113,13 @@ public class AdminCourtPostcodeController {
         @ApiResponse(code = 404, message = "Postcodes do not exist", response = String.class, responseContainer = "List")
     })
     @Role(FACT_SUPER_ADMIN)
-    public ResponseEntity<Integer> deleteCourtPostcodes(@PathVariable String slug, @RequestBody List<String> postcodes) {
+    public ResponseEntity deleteCourtPostcodes(@PathVariable String slug,
+                                               @RequestBody List<String> postcodes,
+                                               Authentication authentication) {
         final List<String> invalidPostcodes = validationService.validatePostcodes(postcodes);
         if (CollectionUtils.isEmpty(invalidPostcodes)) {
             adminService.checkPostcodesExist(slug, postcodes);
+            adminCourtLockService.updateCourtLock(slug, authentication.getName());
             return ok(adminService.deleteCourtPostcodes(slug, postcodes));
         }
         throw new InvalidPostcodeException(invalidPostcodes);
@@ -113,14 +127,15 @@ public class AdminCourtPostcodeController {
 
     /**
      * This endpoint moves a list of postcodes from one court to another.
-     * @param sourceSlug The source slug is the court where the postcodes currently are
+     *
+     * @param sourceSlug      The source slug is the court where the postcodes currently are
      * @param destinationSlug The slug of the court where the postcodes will be moved to
-     * @param postcodes a list of postcodes to be moved
+     * @param postcodes       a list of postcodes to be moved
      * @return A successful response if the courts have been moved from the source court to the destination court
-     *         and also return a list of strings that have been updated.
-     *         If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
-     *         If one of more input postcodes do not exist in the source court, return the not found postcodes and a '404' response.
-     *         If one of more input postcodes already exist in the destination court, return the conflicting postcodes and a '409' response.
+     *      and also return a list of strings that have been updated.
+     *      If one of more input postcodes are invalid, return the invalid postcodes and a '400' response.
+     *      If one of more input postcodes do not exist in the source court, return the not found postcodes and a '404' response.
+     *      If one of more input postcodes already exist in the destination court, return the conflicting postcodes and a '409' response.
      */
     @PutMapping(path = "/{sourceSlug}/{destinationSlug}/postcodes")
     @ApiOperation("Move postcodes from one court to another")

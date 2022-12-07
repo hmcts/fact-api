@@ -13,11 +13,11 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 public class MvcSecurityUtil {
 
-    public MockMvc getMockMvcSecurityConfig(String role, WebApplicationContext context) {
+    public MockMvc getMockMvcSecurityConfig(String role, WebApplicationContext context, String username) {
         SecurityContextHolder.getContext()
             .setAuthentication(new UsernamePasswordAuthenticationToken(
-                "mosh@cat.com",
-                "moshpass",
+                username,
+                "kupocatword",
                 Collections.singletonList(
                     new SimpleGrantedAuthority(
                         role))

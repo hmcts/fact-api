@@ -4,10 +4,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLocalAuthoritiesService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.util.List;
 
@@ -21,10 +23,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 )
 public class AdminCourtLocalAuthoritiesController {
     private final AdminCourtLocalAuthoritiesService adminCourtLocalAuthoritiesService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtLocalAuthoritiesController(AdminCourtLocalAuthoritiesService adminService) {
+    public AdminCourtLocalAuthoritiesController(AdminCourtLocalAuthoritiesService adminService,
+                                                AdminCourtLockService adminCourtLockService) {
         this.adminCourtLocalAuthoritiesService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     //returns local authorities for a court by passing in a court slug ,area of law and returning local authorities list
@@ -40,7 +45,11 @@ public class AdminCourtLocalAuthoritiesController {
     @PutMapping(path = "/{slug}/{areaOfLaw}/localAuthorities")
     @ApiOperation("Update a courts local authorities for a area of law by super admin")
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity<List<LocalAuthority>> updateCourtLocalAuthorities(@PathVariable String slug, @PathVariable String areaOfLaw, @RequestBody List<LocalAuthority> localAuthorities) {
+    public ResponseEntity<List<LocalAuthority>> updateCourtLocalAuthorities(@PathVariable String slug,
+                                                                            @PathVariable String areaOfLaw,
+                                                                            @RequestBody List<LocalAuthority> localAuthorities,
+                                                                            Authentication authentication) {
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
         return ok(adminCourtLocalAuthoritiesService.updateCourtLocalAuthority(slug, areaOfLaw, localAuthorities));
     }
 }
