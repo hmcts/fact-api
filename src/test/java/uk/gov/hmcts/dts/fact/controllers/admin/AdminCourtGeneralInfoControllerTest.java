@@ -15,9 +15,10 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtGeneralInfoService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -31,6 +32,7 @@ class AdminCourtGeneralInfoControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/generalInfo";
     private static final String TEST_SLUG = "unknownSlug";
+    private static final String TEST_USER = "mosh@cat.com";
     private static final String NOT_FOUND = "Not found: ";
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
@@ -59,9 +61,12 @@ class AdminCourtGeneralInfoControllerTest {
     @MockBean
     private AdminCourtGeneralInfoService adminService;
 
+    @MockBean
+    private AdminCourtLockService adminCourtLockService;
+
     @BeforeEach
     public void setUpMvc() {
-        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context);
+        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context, TEST_USER);
     }
 
     @BeforeAll
@@ -98,6 +103,7 @@ class AdminCourtGeneralInfoControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(courtGeneralInfoJson));
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test
@@ -112,5 +118,7 @@ class AdminCourtGeneralInfoControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 }

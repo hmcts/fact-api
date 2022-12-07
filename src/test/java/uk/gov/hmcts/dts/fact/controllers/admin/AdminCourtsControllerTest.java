@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
@@ -15,7 +17,9 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
+import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,11 +32,13 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 @WebMvcTest(AdminCourtsController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AdminCourtsControllerTest {
@@ -44,6 +50,7 @@ class AdminCourtsControllerTest {
     private static final String TEST_GENERAL_FILE = "birmingham-civil-and-family-justice-centre-general.json";
     private static final String TEST_COURT_ENTITY_FILE = "full-birmingham-civil-and-family-justice-centre-entity.json";
     private static final String TEST_SEARCH_SLUG = "some-slug";
+    private static final String TEST_USER = "mosh@cat.com";
     private static final String SEARCH_CRITERIA = "search criteria";
     private static final String NOT_FOUND = "Not found: ";
     private static final String MESSAGE = "{\"message\":\"%s\"}";
@@ -55,6 +62,17 @@ class AdminCourtsControllerTest {
 
     @MockBean
     private AdminService adminService;
+
+    @MockBean
+    private AdminCourtLockService adminCourtLockService;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @BeforeEach
+    public void setUpMvc() {
+        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context, TEST_USER);
+    }
 
     @Test
     void shouldFindAllCourts() throws Exception {
@@ -75,7 +93,8 @@ class AdminCourtsControllerTest {
         String testSlugName = "test-court";
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName(testCourtName);
-        mockMvc.perform(delete(TEST_URL + "/" + testSlugName))
+        mockMvc.perform(delete(TEST_URL + "/" + testSlugName)
+                            .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(content().string("Court with slug: test-court has been deleted"))
             .andReturn();
@@ -93,6 +112,7 @@ class AdminCourtsControllerTest {
         when(adminService.addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre(),
                                       newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas())).thenReturn(expectedCourt);
         mockMvc.perform(post(TEST_URL + "/")
+                            .with(csrf())
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -115,6 +135,7 @@ class AdminCourtsControllerTest {
                                       newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas()))
             .thenReturn(expectedCourt);
         mockMvc.perform(post(TEST_URL + "/")
+                            .with(csrf())
                             .content(OBJECT_MAPPER.writeValueAsString(newCourt))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -211,6 +232,7 @@ class AdminCourtsControllerTest {
         final String json = OBJECT_MAPPER.writeValueAsString(court);
 
         mockMvc.perform(put(String.format(TEST_URL + "/%s/general", TEST_SEARCH_SLUG))
+                            .with(csrf())
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -221,6 +243,7 @@ class AdminCourtsControllerTest {
             .andExpect(jsonPath("$.info_cy").value(court.getInfoCy()))
             .andReturn();
 
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SEARCH_SLUG, TEST_USER);
     }
 
     @Test
@@ -236,6 +259,7 @@ class AdminCourtsControllerTest {
         String json = mapper.writeValueAsString(courtInfo);
 
         mockMvc.perform(put(TEST_URL + "/info")
+                            .with(csrf())
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
@@ -286,10 +310,13 @@ class AdminCourtsControllerTest {
         when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenReturn(TEST_COURT_PHOTO_NAME);
 
         mockMvc.perform(put(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG))
+                            .with(csrf())
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SEARCH_SLUG, TEST_USER);
     }
 
     @Test
@@ -303,11 +330,14 @@ class AdminCourtsControllerTest {
 
         when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenThrow(new NotFoundException(SEARCH_CRITERIA));
         mockMvc.perform(put(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG))
+                            .with(csrf())
                             .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_SEARCH_CRITERIA))
             .andReturn();
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SEARCH_SLUG, TEST_USER);
     }
 }

@@ -29,14 +29,15 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @SuppressWarnings("PMD.TooManyMethods")
 public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
-    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE = "Birmingham Civil and Family Justice Centre";
-    private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
+    private static final String CARDIFF_CROWN_COURT = "Cardiff Crown Court";
+    private static final String CARDIFF_CROWN_COURT_SLUG = "cardiff-crown-court";
     private static final String TEST_STRING = "test";
     private static final String ALL_COURT_ENDPOINT = "/courts/all";
     private static final String COURT_GENERAL_ENDPOINT = "/general";
     private static final String COURT_PHOTO_ENDPOINT = "/courtPhoto";
-    private static final String BIRMINGHAM_COURT_PHOTO_PATH = COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_PHOTO_ENDPOINT;
+    private static final String CARDIFF_COURT_PHOTO_PATH = COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_PHOTO_ENDPOINT;
     private static final String COURT_NOT_FIND_PATH = COURTS_ENDPOINT + "Birmingham-Centre" + COURT_PHOTO_ENDPOINT;
+    private static final String DELETE_LOCK_BY_EMAIL_PATH = ADMIN_COURTS_ENDPOINT + "hmcts.fact@gmail.com/lock";
     private static final double LONGITUDE = 100.02;
     private static final double LATITUDE = -100.02;
     private static final NewCourt EXPECTED_NEW_COURT = new NewCourt("new court1", true, asList(
@@ -119,12 +120,12 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .get(COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final Court court = response.as(Court.class);
-        assertThat(court.getName()).isEqualTo(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE);
+        assertThat(court.getName()).isEqualTo(CARDIFF_CROWN_COURT);
     }
 
     @Test
@@ -134,7 +135,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .get(COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -142,10 +143,13 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateCourtBySlugAsAdmin() throws Exception {
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
         final Court courtUpdate = new Court(
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            CARDIFF_CROWN_COURT_SLUG,
+            CARDIFF_CROWN_COURT,
+            CARDIFF_CROWN_COURT,
             "Admin Info",
             "Welsh Admin Info",
             true,
@@ -166,7 +170,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + authenticatedToken)
             .body(json)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -180,9 +184,9 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldBeForbiddenToUpdateCourtBySlug() throws Exception {
         final Court court = new Court(
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            CARDIFF_CROWN_COURT_SLUG,
+            CARDIFF_CROWN_COURT,
+            CARDIFF_CROWN_COURT,
             "Admin Info",
             "Welsh Admin Info",
             true,
@@ -203,7 +207,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + forbiddenToken)
             .body(json)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -211,10 +215,16 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateCourtBySlugAsSuperAdmin() throws Exception {
+
+        //calling user delete lock endpoint to remove lock for the court
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
+
         final Court courtUpdate = new Court(
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            CARDIFF_CROWN_COURT_SLUG,
+            CARDIFF_CROWN_COURT,
+            CARDIFF_CROWN_COURT,
             "Super Admin Info",
             "Super Welsh Admin Info",
             true,
@@ -235,7 +245,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(AUTHORIZATION, BEARER + superAdminToken)
             .body(json)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -249,9 +259,9 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldNotUpdateCourtAsNoTokenProvided() throws Exception {
         final Court courtUpdate = new Court(
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
-            BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE,
+            CARDIFF_CROWN_COURT_SLUG,
+            CARDIFF_CROWN_COURT,
+            CARDIFF_CROWN_COURT,
             "Admin Info",
             "Welsh Admin Info",
             true,
@@ -270,7 +280,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .body(json)
             .when()
-            .put(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .put(COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
@@ -279,7 +289,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldUpdateCourts() throws Exception {
         CourtInfoUpdate courtInfo = new CourtInfoUpdate(
-            Lists.newArrayList(BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG),
+            Lists.newArrayList(CARDIFF_CROWN_COURT_SLUG),
             "Bulk info updated",
             "Bulk info updated Cy"
         );
@@ -302,7 +312,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
             .header(AUTHORIZATION, BEARER + superAdminToken)
             .when()
-            .get(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + COURT_GENERAL_ENDPOINT)
+            .get(COURTS_ENDPOINT + CARDIFF_CROWN_COURT_SLUG + COURT_GENERAL_ENDPOINT)
             .thenReturn();
 
         assertThat(getResponse.statusCode()).isEqualTo(OK.value());
@@ -315,12 +325,12 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldRetrieveCourtPhoto() {
         final var response = doGetRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+            CARDIFF_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final String courtPhoto = response.getBody().asString();
         assertThat(courtPhoto).isNotNull();
-        assertThat(courtPhoto).isEqualTo("birmingham_civil_justice_centre_and_family_courts.jpg");
+        assertThat(courtPhoto).isEqualTo("cardiff_crown_court.jpg");
 
     }
 
@@ -332,14 +342,14 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldRequireATokenWhenRetrievingCourtPhoto() {
-        final var response = doGetRequest(BIRMINGHAM_COURT_PHOTO_PATH);
+        final var response = doGetRequest(CARDIFF_COURT_PHOTO_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
     public void shouldBeForbiddenForRetrievingCourtPhoto() {
         final var response = doGetRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH,
+            CARDIFF_COURT_PHOTO_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -350,14 +360,14 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     @Test
     public void shouldUpdateCourtPhoto() throws JsonProcessingException {
         final var response = doGetRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
+            CARDIFF_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final String originalCourtPhotoString = response.getBody().asString();
 
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final var updateResponse = doPutRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            CARDIFF_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             objectMapper().writeValueAsString(imageFile));
 
         assertThat(updateResponse.statusCode()).isEqualTo(OK.value());
@@ -368,7 +378,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         //cleanup
         imageFile.setImageName(originalCourtPhotoString);
         final var responseTestClean = doPutRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            CARDIFF_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             objectMapper().writeValueAsString(imageFile));
         assertThat(responseTestClean.statusCode()).isEqualTo(OK.value());
         final String originalString = responseTestClean.getBody().asString();
@@ -381,7 +391,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH,
+            CARDIFF_COURT_PHOTO_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), objectMapper().writeValueAsString(imageFile)
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
@@ -392,7 +402,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
-            BIRMINGHAM_COURT_PHOTO_PATH, objectMapper().writeValueAsString(imageFile)
+            CARDIFF_COURT_PHOTO_PATH, objectMapper().writeValueAsString(imageFile)
         );
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
