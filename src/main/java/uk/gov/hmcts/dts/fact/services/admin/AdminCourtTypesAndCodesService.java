@@ -97,6 +97,8 @@ public class AdminCourtTypesAndCodesService {
         courtEntity.setMagistrateCode(null);
         courtEntity.setCciCode(null);
         courtEntity.setNumber(null);
+        courtEntity.setCourtCode(null);
+        courtEntity.setLocationCode(null);
 
         courtEntity.setGbs(courtTypesAndCode.getGbsCode());
 

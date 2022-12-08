@@ -30,6 +30,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private static final String COURT_SEARCH_ENDPOINT = "/courts/";
     private static final String PLYMOUTH_COMBINED_COURT_PATH = COURT_SEARCH_ENDPOINT + PLYMOUTH_COMBINED_COURT_SLUG;
+    private static final String DELETE_LOCK_BY_EMAIL_PATH = ADMIN_COURTS_ENDPOINT + "hmcts.super.fact@gmail.com/lock";
 
     private static final String TEST_POSTCODE = "PL2 2ER";
     private static final String TEST_TOWN_NAME = "town name";
@@ -173,6 +174,12 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldUpdateCoordinatesWhenPostcodeIsChanged() throws JsonProcessingException {
+
+        //calling user delete lock endpoint to remove lock for the court
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
+
         // Call the court endpoint to get the current coordinates
         Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_PATH,

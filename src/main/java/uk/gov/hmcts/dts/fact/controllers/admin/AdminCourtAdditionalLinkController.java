@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.AdditionalLink;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAdditionalLinkService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.util.List;
 
@@ -24,10 +26,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtAdditionalLinkController {
     private final AdminCourtAdditionalLinkService adminService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtAdditionalLinkController(AdminCourtAdditionalLinkService adminService) {
+    public AdminCourtAdditionalLinkController(AdminCourtAdditionalLinkService adminService,
+                                              AdminCourtLockService adminCourtLockService) {
         this.adminService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping(path = "/{slug}/additionalLinks")
@@ -52,7 +57,10 @@ public class AdminCourtAdditionalLinkController {
         @ApiResponse(code = 404, message = "Court not Found")
     })
     @Role(FACT_SUPER_ADMIN)
-    public ResponseEntity<List<AdditionalLink>> updateCourtAdditionalLinks(@PathVariable String slug, @RequestBody List<AdditionalLink> additionalLinks) {
+    public ResponseEntity<List<AdditionalLink>> updateCourtAdditionalLinks(@PathVariable String slug,
+                                                                           @RequestBody List<AdditionalLink> additionalLinks,
+                                                                           Authentication authentication) {
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
         return ok(adminService.updateCourtAdditionalLinks(slug, additionalLinks));
     }
 }
