@@ -263,6 +263,7 @@ dependencies {
   annotationProcessor 'org.projectlombok:lombok'
 
   implementation group: 'io.github.resilience4j', name: 'resilience4j-spring-boot2', version: '1.7.0'
+  implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
 
   testImplementation 'com.github.hmcts:fortify-client:1.2.2:all'
   testImplementation 'org.springframework.security:spring-security-test:5.7.5'
