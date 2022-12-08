@@ -260,6 +260,7 @@ dependencies {
   implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20220608.1'
 
   implementation group: 'org.projectlombok', name: 'lombok'
+  implementation group: 'org.apache.commons', name: 'commons-configuration2', version: '2.8.0'
   annotationProcessor 'org.projectlombok:lombok'
 
   implementation group: 'io.github.resilience4j', name: 'resilience4j-spring-boot2', version: '1.7.0'
