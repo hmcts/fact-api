@@ -61,6 +61,10 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private static final String POSTCODE_VALID = "PL6 5DQ";
     private static final String POSTCODES_INVALID = "PL2 56ERR";
 
+    private static final Integer SORT_ORDER_1 = 0;
+    private static final Integer SORT_ORDER_2 = 1;
+
+
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
@@ -250,7 +254,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             TEST_TOWN_NAME_CY,
             COUNTY_ID,
             TEST_POSTCODE,
-            COURT_SECONDARY_ADDRESS_TYPE_LIST
+            COURT_SECONDARY_ADDRESS_TYPE_LIST,
+            SORT_ORDER_1
         ));
         return updatedCourtAddress;
     }
@@ -272,7 +277,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 TEST_TOWN_NAME_CY,
                 COUNTY_ID,
                 POSTCODE_VALID,
-                COURT_SECONDARY_ADDRESS_TYPE_LIST
+                COURT_SECONDARY_ADDRESS_TYPE_LIST,
+                SORT_ORDER_1
             ),
             new CourtAddress(
                 null,
@@ -283,7 +289,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 TEST_TOWN_NAME_CY,
                 COUNTY_ID,
                 POSTCODES_INVALID,
-                COURT_SECONDARY_ADDRESS_TYPE_LIST
+                COURT_SECONDARY_ADDRESS_TYPE_LIST,
+                SORT_ORDER_2
             )
         );
     }

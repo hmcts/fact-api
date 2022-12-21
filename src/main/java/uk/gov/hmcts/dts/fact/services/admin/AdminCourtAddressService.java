@@ -61,8 +61,8 @@ public class AdminCourtAddressService {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getAddresses()
                 .stream()
-                .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
                 .map(CourtAddress::new)
+                .sorted(Comparator.comparingInt(CourtAddress::getSortOrder))
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
     }
@@ -105,9 +105,8 @@ public class AdminCourtAddressService {
         // the get addresses by slug method will not work for this purpose
         List<CourtAddress> updatedAddresses = updateResponseModel(updatedAddressesEntity
                                                                       .stream()
-                                                                      .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(
-                                                                          a.getAddressType().getName()) ? 0 : 1))
                                                                       .map(CourtAddress::new)
+                                                                      .sorted(Comparator.comparingInt(CourtAddress::getSortOrder))
                                                                       .collect(toList()), courtSecondaryAddressType);
 
         adminAuditService.saveAudit(
@@ -174,9 +173,10 @@ public class AdminCourtAddressService {
                 a.getTownName(),
                 a.getTownNameCy(),
                 countyMap.get(a.getCountyId()),
-                a.getPostcode()
+                a.getPostcode(),
+                a.getSortOrder()
             ))
-            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
+            .sorted(Comparator.comparingInt(a -> a.getSortOrder()))
             .collect(toList());
     }
 
