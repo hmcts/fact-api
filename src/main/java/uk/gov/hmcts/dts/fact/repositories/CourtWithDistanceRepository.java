@@ -17,24 +17,26 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     String LAT = "lat";
     String LON = "lon";
     String AND_UPPER_AOL_NAME_UPPER_AOL = "AND UPPER(aol.name) = UPPER(:aol) ";
+    String WHERE_INCLUDES_CLOSED = "WHERE c.displayed = :includeClosed ";
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
-            + WHERE_C_DISPLAYED
+            + WHERE_INCLUDES_CLOSED
             + "ORDER BY distance, name "
             + LIMIT_10)
-    List<CourtWithDistance> findNearestTen(@Param(LAT) Double lat, @Param(LON) Double lon);
+    List<CourtWithDistance> findNearestTen(@Param(LAT) Double lat, @Param(LON) Double lon, Boolean includeClosed);
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
             + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
             + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
-            + "WHERE c.displayed AND UPPER(aol.name) = UPPER(:aol) "
+            + WHERE_INCLUDES_CLOSED
+            + AND_UPPER_AOL_NAME_UPPER_AOL
             + ORDER_BY_DISTANCE_C_NAME
             + LIMIT_10)
-    List<CourtWithDistance> findNearestTenByAreaOfLaw(@Param(LAT) Double lat, @Param(LON) Double lon, String aol);
+    List<CourtWithDistance> findNearestTenByAreaOfLaw(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, Boolean includeClosed);
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
@@ -54,12 +56,12 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "JOIN search_courtlocalauthorityareaoflaw claaol ON claaol.court_id = c.id "
             + "JOIN search_localauthority la ON la.id = claaol.local_authority_id "
             + "JOIN search_areaoflaw aol ON aol.id = claaol.area_of_law_id "
-            + WHERE_C_DISPLAYED
+            + WHERE_INCLUDES_CLOSED
             + AND_UPPER_AOL_NAME_UPPER_AOL
             + "AND UPPER(la.name) = UPPER(:localAuthority) "
             + ORDER_BY_DISTANCE_C_NAME
             + LIMIT_10)
-    List<CourtWithDistance> findNearestTenByAreaOfLawAndLocalAuthority(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String localAuthority);
+    List<CourtWithDistance> findNearestTenByAreaOfLawAndLocalAuthority(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String localAuthority, Boolean includeClosed);
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE

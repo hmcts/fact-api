@@ -58,13 +58,13 @@ class CivilSearchTest {
         when(mapitData.getLon()).thenReturn(LON);
         when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA))
             .thenReturn(courts);
-        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
-        verify(fallbackProximitySearch).fallbackIfEmpty(courts, AREA_OF_LAW, mapitData);
+        verify(fallbackProximitySearch).fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData);
         verify(courtWithDistanceRepository, times(1)).findNearestTenByAreaOfLawAndCourtPostcode(
             any(),
             any(),
@@ -89,9 +89,9 @@ class CivilSearchTest {
             .thenReturn(emptyList());
         when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4))
             .thenReturn(courts);
-        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
@@ -121,9 +121,9 @@ class CivilSearchTest {
             .thenReturn(emptyList());
         when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2))
             .thenReturn(courts);
-        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
@@ -155,9 +155,9 @@ class CivilSearchTest {
             .thenReturn(emptyList());
         when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE))
             .thenReturn(courts);
-        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);
@@ -189,9 +189,9 @@ class CivilSearchTest {
             .thenReturn(emptyList());
         when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE))
             .thenReturn(emptyList());
-        when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW, true, mapitData)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = civilSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndCourtPostcode(LAT, LON, AREA_OF_LAW, JE2_4BA);

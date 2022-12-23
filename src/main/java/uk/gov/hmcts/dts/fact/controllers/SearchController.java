@@ -51,20 +51,18 @@ public class SearchController {
     public ResponseEntity<List<CourtWithDistance>> findCourtByPostcode(
         @RequestParam Optional<String> postcode,
         @ApiParam("Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
+        @ApiParam("Include Closed") @RequestParam(name = "include-closed", required = false, defaultValue = "false") Optional<Boolean> includeClosed,
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
             if (areaOfLaw.get().equals(CHILDRENAREAOFLAW)) {
-                return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
-                    postcode.get(),
-                    areaOfLaw.get()
-                ));
+                return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode.get(), areaOfLaw.get(), includeClosed.get()));
             }
-            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
+            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get(), includeClosed.get()));
         } else if (postcode.isPresent()) {
-            return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
+            return ok(courtService.getNearestCourtsByPostcode(postcode.get(), includeClosed.get()));
         } else if (query.isPresent()) {
-            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get()));
+            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get(), includeClosed.get()));
         } else {
             return badRequest().build();
         }
@@ -79,8 +77,9 @@ public class SearchController {
                 + "[A-Ha-hJ-Yj-y]\\d{1,2})|(([A-Za-z]\\d[A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
                 + "\\d[A-Za-z]?))))\\s?\\d[A-Za-z]{2})",
             message = "Provided postcode is not valid")
-        @PathVariable String postcode) {
-        return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
+        @PathVariable String postcode,
+        @ApiParam("Include Closed") @RequestParam(name = "include-closed", required = false, defaultValue = "false") Boolean includeClosed) {
+        return ok(courtService.getNearestCourtReferencesByPostcode(postcode, includeClosed));
     }
 
     @GetMapping(path = "/results")
@@ -89,6 +88,7 @@ public class SearchController {
     public ResponseEntity<ServiceAreaWithCourtReferencesWithDistance> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
         @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
+        @ApiParam("Include Closed") @RequestParam(name = "include-closed", required = false, defaultValue = "false") Boolean includeClosed,
         @RequestParam("action") Optional<Action> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
@@ -96,19 +96,22 @@ public class SearchController {
                 return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
                     postcode.get(),
                     serviceAreaSlug.get(),
-                    Action.NEAREST
+                    Action.NEAREST,
+                    includeClosed
                 ));
             } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
                     postcode.get(),
                     serviceAreaSlug.get(),
                     CHILDRENAREAOFLAW,
-                    Action.UNDEFINED
+                    Action.UNDEFINED,
+                    includeClosed
                 ));
             } else {
                 return ok(courtService.getNearestCourtsByPostcodeSearch(
                     postcode.get(),
                     serviceAreaSlug.get(),
+                    includeClosed,
                     Action.UNDEFINED
                 ));
             }

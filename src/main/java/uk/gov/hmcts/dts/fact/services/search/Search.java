@@ -8,5 +8,10 @@ import java.util.List;
 
 public interface Search {
 
-    List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode);
+    List<CourtWithDistance> searchWith(
+        final ServiceArea serviceArea,
+        final MapitData mapitData,
+        final String postcode,
+        final Boolean includeClosed
+        );
 }

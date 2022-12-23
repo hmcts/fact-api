@@ -20,20 +20,20 @@ public class CourtWithDistanceRepositoryTest {
     private static final String AREA_OF_LAW = "Divorce";
     private static final double LON = -0.25;
     private static final double LAT = 50.84;
-    
+
     @Autowired
     private CourtWithDistanceRepository courtWithDistanceRepository;
 
     @Test
     void shouldFindNearestTen() {
-        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTen(51.8, -1.3);
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTen(51.8, -1., true);
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
     }
 
     @Test
     void shouldFindNearestTenByAreaOfLaw() {
-        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLaw(51.8, -1.3, "Tax");
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTenByAreaOfLaw(51.8, -1.3, "Tax", true);
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
         assertThat(result.get(0).getAreasOfLaw().stream().map(AreaOfLaw::getName).anyMatch("Tax"::equals));
@@ -54,8 +54,8 @@ public class CourtWithDistanceRepositoryTest {
             LAT,
             LON,
             "Adoption",
-            "Brighton and Hove City Council"
-        );
+            "Brighton and Hove City Council",
+            true);
 
         assertThat(result).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
         assertThat(result.size()).isEqualTo(2);

@@ -42,12 +42,12 @@ class FallbackProximitySearchTest {
 
         when(mapitData.getLat()).thenReturn(LAT);
         when(mapitData.getLon()).thenReturn(LON);
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW)).thenReturn(courts);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW, true)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW, mapitData);
+        final List<CourtWithDistance> courtWithDistances = fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW, true, mapitData);
 
         assertThat(courtWithDistances).isEqualTo(courts);
-        verify(courtWithDistanceRepository).findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW);
+        verify(courtWithDistanceRepository).findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW, true);
     }
 
     @Test
@@ -56,7 +56,7 @@ class FallbackProximitySearchTest {
         final MapitData mapitData = mock(MapitData.class);
         final List<CourtWithDistance> courts = singletonList(mock(CourtWithDistance.class));
 
-        final List<CourtWithDistance> courtWithDistances = fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData);
+        final List<CourtWithDistance> courtWithDistances = fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verifyNoInteractions(courtWithDistanceRepository);

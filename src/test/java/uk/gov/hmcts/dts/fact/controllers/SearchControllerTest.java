@@ -21,12 +21,14 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+@SuppressWarnings("PMD.TooManyMethods")
 @WebMvcTest(SearchController.class)
 class SearchControllerTest {
 
     private static final String BASE_URL = "/search";
     private static final String POSTCODE = "OX1 1RZ";
+    private static final String CRIME = "Crime";
+    private static final String CHILDREN = "Children";
 
     @MockBean
     private CourtService courtService;
@@ -47,7 +49,23 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcode(POSTCODE);
+        verify(courtService).getNearestCourtsByPostcode(POSTCODE, false);
+    }
+
+    @Test
+    void shouldSearchByPostcode2() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&include-closed=false"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcode(POSTCODE, false);
+    }
+
+    @Test
+    void shouldSearchByPostcode3() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&include-closed=true"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcode(POSTCODE, true);
     }
 
     @Test
@@ -55,7 +73,23 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, "Crime");
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, CRIME, false);
+    }
+
+    @Test
+    void shouldSearchByPostcodeAndAreaOfLaw2() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime&include-closed=false"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, CRIME, false);
+    }
+
+    @Test
+    void shouldSearchByPostcodeAndAreaOfLaw3() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime&include-closed=true"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, CRIME, true);
     }
 
     @Test
@@ -63,7 +97,23 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority("BN21 2BH", "Children");
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority("BN21 2BH", CHILDREN, false);
+    }
+
+    @Test
+    void shouldSearchByPostcodeAndAreaOfLawAndLocalAuthority2() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children&include-closed=false"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority("BN21 2BH", CHILDREN, false);
+    }
+
+    @Test
+    void shouldSearchByPostcodeAndAreaOfLawAndLocalAuthority3() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children&include-closed=true"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority("BN21 2BH", CHILDREN, true);
     }
 
     @Test
@@ -71,7 +121,23 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?q=name"))
             .andExpect(status().isOk());
 
-        verify(courtService).getCourtsByNameOrAddressOrPostcodeOrTown("name");
+        verify(courtService).getCourtsByNameOrAddressOrPostcodeOrTown("name", false);
+    }
+
+    @Test
+    void shouldSearchByNameOrAddress2() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?q=name&include-closed=true"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getCourtsByNameOrAddressOrPostcodeOrTown("name", true);
+    }
+
+    @Test
+    void shouldSearchByNameOrAddress3() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results.json?q=name&include-closed=false"))
+            .andExpect(status().isOk());
+
+        verify(courtService).getCourtsByNameOrAddressOrPostcodeOrTown("name", false);
     }
 
     @Test
@@ -79,7 +145,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime&action="))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeSearch(POSTCODE, "Crime", Action.UNDEFINED);
+        verify(courtService).getNearestCourtsByPostcodeSearch(POSTCODE, CRIME, false, Action.UNDEFINED);
     }
 
     @Test
@@ -87,7 +153,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=childcare-arrangements&action="))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", "Children", Action.UNDEFINED);
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", CHILDREN, Action.UNDEFINED, false);
     }
 
     @Test
@@ -95,7 +161,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=OX1 1RZ&serviceArea=Crime&action=nearest"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcodeActionAndAreaOfLawSearch(POSTCODE, "Crime", Action.NEAREST);
+        verify(courtService).getNearestCourtsByPostcodeActionAndAreaOfLawSearch(POSTCODE, CRIME, Action.NEAREST, false);
     }
 
     @Test
@@ -103,7 +169,7 @@ class SearchControllerTest {
         mockMvc.perform(get(format("%s/%s", BASE_URL, "results/sw1a2by")))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtReferencesByPostcode("sw1a2by");
+        verify(courtService).getNearestCourtReferencesByPostcode("sw1a2by", false);
     }
 
     @ParameterizedTest

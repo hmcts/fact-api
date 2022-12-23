@@ -23,7 +23,7 @@ public class CivilSearch implements Search {
     }
 
     @Override
-    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode) {
+    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode, final Boolean includeClosed) {
 
         final String areaOfLaw = serviceArea.getAreaOfLaw().getName();
 
@@ -58,7 +58,7 @@ public class CivilSearch implements Search {
                 .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, areacode);
         }
 
-        courtsWithDistance = fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
+        courtsWithDistance = fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, includeClosed, mapitData);
 
         return courtsWithDistance.stream().distinct().limit(10).collect(toList());
     }

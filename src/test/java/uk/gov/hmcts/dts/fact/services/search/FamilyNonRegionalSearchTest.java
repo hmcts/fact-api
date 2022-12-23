@@ -56,15 +56,15 @@ class FamilyNonRegionalSearchTest {
         when(mapitData.getLat()).thenReturn(LAT);
         when(mapitData.getLon()).thenReturn(LON);
         when(mapitData.getLocalAuthority()).thenReturn(Optional.of(LOCAL_AUTHORITY_NAME));
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW, LOCAL_AUTHORITY_NAME))
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW, LOCAL_AUTHORITY_NAME, true))
             .thenReturn(courts);
-        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = familyNonRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = familyNonRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
-        verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW, LOCAL_AUTHORITY_NAME);
-        verify(fallbackProximitySearch).fallbackIfEmpty(courts, AREA_OF_LAW, mapitData);
+        verify(courtWithDistanceRepository).findNearestTenByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW, LOCAL_AUTHORITY_NAME, true);
+        verify(fallbackProximitySearch).fallbackIfEmpty(courts, AREA_OF_LAW, true, mapitData);
     }
 
     @Test
@@ -80,12 +80,12 @@ class FamilyNonRegionalSearchTest {
         when(mapitData.getLat()).thenReturn(LAT);
         when(mapitData.getLon()).thenReturn(LON);
         when(mapitData.getLocalAuthority()).thenReturn(empty());
-        when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW, true, mapitData)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = familyNonRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = familyNonRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
-        verify(fallbackProximitySearch).fallbackIfEmpty(emptyList(), AREA_OF_LAW, mapitData);
+        verify(fallbackProximitySearch).fallbackIfEmpty(emptyList(), AREA_OF_LAW, true, mapitData);
         verifyNoMoreInteractions(courtWithDistanceRepository);
     }
 }

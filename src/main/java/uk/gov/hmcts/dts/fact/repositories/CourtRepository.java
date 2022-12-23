@@ -28,7 +28,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
 
     @Query(nativeQuery = true,
         value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca ON ca.court_id = c.id AND ca.address_type_id != 5881 "
-        + "WHERE displayed = true AND ("
+        + "WHERE c.displayed = :includeClosed AND ("
         + "  CAST (c.cci_code AS text) ILIKE concat('%', :query, '%') "
         + "  OR CAST (c.number AS text) ILIKE concat('%', :query, '%') "
         + "  OR CAST (c.magistrate_code AS text) ILIKE concat('%', :query, '%') "
@@ -51,7 +51,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
         + "  CASE WHEN COALESCE(ca.town_name, '') ILIKE concat('%', :query, '%') OR COALESCE(ca.town_name_cy, '') ILIKE concat('%', :query, '%') THEN 1 ELSE 0 END DESC, "
         + "  CASE WHEN COALESCE(ca.address, '') ILIKE concat('%', :query, '%') OR COALESCE(ca.address_cy, '') ILIKE concat('%', :query, '%') THEN 1 ELSE 0 END DESC, "
         + "  name")
-    List<Court> queryBy(String query);
+    List<Court> queryBy(String query, Boolean includeClosed);
 
     /**
      * Searching by court name, town name or court address using fuzzy matching.
