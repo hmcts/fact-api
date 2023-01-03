@@ -64,18 +64,14 @@ public class MapitData {
         // We will only ever have one ER, or one WAE
         // For english regions
         for (JsonNode mapitArea : this.areas) {
-            System.out.println(mapitArea.get("type").asText());
             if (mapitArea.get("type").asText().equals("ER"))
                 return mapitArea.get("name").asText();
         }
-
         // For welsh regions
         for (JsonNode mapitArea : this.areas) {
-            System.out.println(mapitArea.get("type").asText());
             if (mapitArea.get("type").asText().equals("WAE"))
                 return mapitArea.get("name").asText();
         }
-
         // If we have no region at all
         throw new NotFoundException("Could not find region for query");
     }
