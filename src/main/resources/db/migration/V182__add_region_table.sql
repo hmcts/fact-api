@@ -33,4 +33,3 @@ VALUES
   ('South Wales East', 'Wales'),
   ('Mid and West Wales', 'Wales'),
   ('North Wales', 'Wales');
-
