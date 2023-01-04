@@ -12,7 +12,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.Region;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
@@ -54,6 +53,8 @@ class AdminCourtAddressServiceTest {
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME_CY = WRITE_TO_US_ADDRESS_TYPE_NAME + " cy";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY = VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME + " cy";
     private static final String REGION = "North West";
+
+    private static final String UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE = "Update court addresses and coordinates";
 
     private static final AddressType VISIT_US_ADDRESS_TYPE = new AddressType(
         VISIT_US_ADDRESS_TYPE_ID,
@@ -426,7 +427,7 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
         verify(adminService).updateCourtRegion(COURT_SLUG, REGION);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+        verify(adminAuditService, atLeastOnce()).saveAudit(UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
                                                            EXPECTED_ADDRESSES,
                                                            results, COURT_SLUG
         );
@@ -486,7 +487,7 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
         verify(adminAuditService, atLeastOnce()).saveAudit(
-            "Update court addresses and coordinates",
+            UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
             EXPECTED_ADDRESSES,
             results,
             "court-slug"
@@ -523,7 +524,7 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+        verify(adminAuditService, atLeastOnce()).saveAudit(UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
                                                            EXPECTED_ADDRESSES,
                                                            results, COURT_SLUG
         );
@@ -560,7 +561,7 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtRegion(eq(COURT_SLUG), anyString());
         verify(adminAuditService, atLeastOnce()).saveAudit(
-            "Update court addresses and coordinates",
+            UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
             EXPECTED_ADDRESSES,
             results,
             "court-slug"
@@ -597,7 +598,7 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtRegion(eq(COURT_SLUG), anyString());
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+        verify(adminAuditService, atLeastOnce()).saveAudit(UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
                                                            EXPECTED_ADDRESSES,
                                                            results, COURT_SLUG
         );

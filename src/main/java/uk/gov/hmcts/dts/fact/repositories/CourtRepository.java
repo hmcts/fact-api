@@ -17,31 +17,10 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     @Query("UPDATE Court c SET c.info = :info, c.infoCy = :infoCy WHERE c.slug in :slugs")
     void updateInfoForSlugs(@Param("slugs") List<String> slugs, @Param("info") String info, @Param("infoCy") String infoCy);
 
-//  Builds and only changes one court's region id, but not much use as can't get court id
-/*    @Modifying(clearAutomatically = true)
-    @Query(nativeQuery = true,
-        value = "UPDATE search_courtaddress SET region_id = 1 WHERE court_id = '1479529'")
-    void updateRegionBySlug(String slug, String region);*/
-
-//  Won't build
-/*    @Modifying(clearAutomatically = true)
-    @Query(nativeQuery = true,
-        value = "UPDATE search_courtaddress SET region_id = 1 WHERE postcode = :postcode")
-    void updateRegionBySlug(String postcode, String region);*/
-
-
-//  Builds but changes region ids for ALL courts
-/*    @Modifying(flushAutomatically = true)
-    @Query(nativeQuery = true,
-        value = "UPDATE search_courtaddress SET region_id = (SELECT id FROM search_region WHERE name = :region) "
-            + "FROM search_courtaddress ca LEFT JOIN search_court sc ON ca.court_id = sc.id WHERE sc.slug = :slug")
-    void updateRegionBySlug(String slug, String region);*/
-
-//  Builds but crashes when query run
     @Modifying(clearAutomatically = true)
     @Query(nativeQuery = true,
-        value = " UPDATE search_court SET region_id = (SELECT id FROM search_region WHERE name = :region) " +
-            " WHERE search_court.slug = :slug ")
+        value = " UPDATE search_court SET region_id = (SELECT id FROM search_region WHERE name = :region) "
+            + " WHERE search_court.slug = :slug ")
     void updateRegionBySlug(String slug, String region);
 
     @Modifying(clearAutomatically = true)

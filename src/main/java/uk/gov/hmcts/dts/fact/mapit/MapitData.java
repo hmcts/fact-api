@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Optional.*;
 
@@ -64,13 +63,15 @@ public class MapitData {
         // We will only ever have one ER, or one WAE
         // For english regions
         for (JsonNode mapitArea : this.areas) {
-            if (mapitArea.get("type").asText().equals("ER"))
+            if (mapitArea.get("type").asText().equals("ER")) {
                 return mapitArea.get("name").asText();
+            }
         }
         // For welsh regions
         for (JsonNode mapitArea : this.areas) {
-            if (mapitArea.get("type").asText().equals("WAE"))
+            if (mapitArea.get("type").asText().equals("WAE")) {
                 return mapitArea.get("name").asText();
+            }
         }
         // If we have no region at all
         throw new NotFoundException("Could not find region for query");
