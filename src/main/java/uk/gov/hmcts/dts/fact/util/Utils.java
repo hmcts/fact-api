@@ -26,7 +26,7 @@ public final class Utils {
 
     public static String convertNameToSlug(final String courtName) {
         return courtName.toLowerCase(Locale.getDefault())
-            .replaceAll("[^A-Za-z0-9 -]", "").trim().replace(" ", "-");
+            .replaceAll("[^A-Za-z\\d -]", "").trim().replace(" ", "-");
     }
 
     public static String decodeUrlFromString(String url) {

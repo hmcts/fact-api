@@ -3,18 +3,22 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtGeneralInfoService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+@Slf4j
 @RestController
 @RequestMapping(
     path = "/admin/courts/{slug}/generalInfo",
@@ -22,10 +26,13 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtGeneralInfoController {
     private final AdminCourtGeneralInfoService adminService;
+    private final AdminCourtLockService adminCourtLockService;
 
     @Autowired
-    public AdminCourtGeneralInfoController(AdminCourtGeneralInfoService adminService) {
+    public AdminCourtGeneralInfoController(AdminCourtGeneralInfoService adminService,
+                                           AdminCourtLockService adminCourtLockService) {
         this.adminService = adminService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     @GetMapping()
@@ -45,7 +52,10 @@ public class AdminCourtGeneralInfoController {
         @ApiResponse(code = 409, message = "Court already exists")
     })
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
-    public ResponseEntity<CourtGeneralInfo> updateCourtGeneralInfo(@PathVariable String slug, @RequestBody CourtGeneralInfo generalInfo) {
+    public ResponseEntity<CourtGeneralInfo> updateCourtGeneralInfo(@PathVariable String slug,
+                                                                   @RequestBody CourtGeneralInfo generalInfo,
+                                                                   Authentication authentication) {
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
         return ok(adminService.updateCourtGeneralInfo(slug, generalInfo));
     }
 }

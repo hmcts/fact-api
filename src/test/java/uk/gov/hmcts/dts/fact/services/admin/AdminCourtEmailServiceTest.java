@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtEmailService.class)
-public class AdminCourtEmailServiceTest {
+class AdminCourtEmailServiceTest {
     private static final String COURT_SLUG = "some slug";
 
     private static final int TEST_EMAIL_TYPE = 1;

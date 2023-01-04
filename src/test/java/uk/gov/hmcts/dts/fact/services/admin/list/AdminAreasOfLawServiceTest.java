@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminAreasOfLawService.class)
-public class AdminAreasOfLawServiceTest {
+class AdminAreasOfLawServiceTest {
 
     @Autowired
     private AdminAreasOfLawService areasOfLawService;
@@ -112,7 +112,7 @@ public class AdminAreasOfLawServiceTest {
     @Test
     void shouldReturnAnAreaOfLawForGivenId() {
         final AreaOfLaw mockAreaOfLaw = AREAS_OF_LAW.get(0);
-        when(areasOfLawRepository.getOne(100)).thenReturn(mockAreaOfLaw);
+        when(areasOfLawRepository.getReferenceById(100)).thenReturn(mockAreaOfLaw);
 
         final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw expectedResult =
             new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(mockAreaOfLaw);
@@ -122,7 +122,7 @@ public class AdminAreasOfLawServiceTest {
 
     @Test
     void whenIdDoesNotExistGetAreaOfLawShouldThrowNotFoundException() {
-        when(areasOfLawRepository.getOne(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        when(areasOfLawRepository.getReferenceById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> areasOfLawService
             .getAreaOfLaw(400))
             .isInstanceOf(NotFoundException.class);
@@ -163,11 +163,11 @@ public class AdminAreasOfLawServiceTest {
 
     @Test
     void updateShouldThrowNotFoundExceptionWhenAreaOfLawDoesNotExist() {
-        final AreaOfLaw testAreaOfLaw = AREAS_OF_LAW.get(0);
+        final uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw testAreaOfLaw = new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(AREAS_OF_LAW.get(0));
         when(areasOfLawRepository.findById(testAreaOfLaw.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> areasOfLawService
-            .updateAreaOfLaw(new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(testAreaOfLaw)))
+            .updateAreaOfLaw(testAreaOfLaw))
             .isInstanceOf(NotFoundException.class);
 
         verify(areasOfLawRepository, never()).save(any());

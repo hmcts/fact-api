@@ -24,6 +24,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String CONTACT_TYPES_FULL_PATH = "/admin/contactTypes/";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String BIRMINGHAM_CONTACTS_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + CONTACTS_PATH;
+    private static final String DELETE_LOCK_BY_EMAIL_PATH = ADMIN_COURTS_ENDPOINT + "hmcts.super.fact@gmail.com/lock";
     private static final String TEST_NUMBER = "test number";
     private static final Contact TEST_CONTACT = new Contact(null, TEST_NUMBER, "explanation", "explanation cy", true);
     private static final String FAX_TYPE_SUFFIX = " fax";
@@ -51,6 +52,12 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldAddAndRemoveContacts() throws JsonProcessingException {
+
+        //calling user delete lock endpoint to remove lock for the court
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
+
         var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         final List<Contact> currentContacts = response.body().jsonPath().getList(".", Contact.class);
 
@@ -81,6 +88,12 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldChangePhoneNumberToFaxAndViceVersa() throws JsonProcessingException {
+
+        //calling user delete lock endpoint to remove lock for the court
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
+
         var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         final List<Contact> currentContacts = response.body().jsonPath().getList(".", Contact.class);
 

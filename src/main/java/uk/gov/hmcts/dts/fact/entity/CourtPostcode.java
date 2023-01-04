@@ -13,8 +13,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CourtPostcode {
     @Id()
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtpostcode_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-court-postcode", sequenceName = "search_courtpostcode_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-court-postcode")
     private Integer id;
     private String postcode;
     @ManyToOne

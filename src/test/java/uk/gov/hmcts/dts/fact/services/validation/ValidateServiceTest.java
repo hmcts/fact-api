@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ValidationService.class)
-public class ValidateServiceTest {
+class ValidateServiceTest {
 
     @MockBean
     private PostcodeValidator postcodeValidator;
@@ -30,7 +30,7 @@ public class ValidateServiceTest {
     private ValidationService validationService;
 
     @Test
-    public void testValidatePostcodesSuccess() {
+    void testValidatePostcodesSuccess() {
         // Expect no strings to be returned if all checks have passed
         final List<String> testPostcodes = Arrays.asList("M0", "MO5", "MO53", "MO533");
         when(postcodeValidator.postcodeDataExists(anyString())).thenReturn(true);
@@ -38,7 +38,7 @@ public class ValidateServiceTest {
     }
 
     @Test
-    public void testValidatePostcodesInvalid() {
+    void testValidatePostcodesInvalid() {
         // Expect an array of strings to be returned if one or more checks have failed
         // Note: this also tests that the stripping/trimming works, as else the mocking will not succeed
         when(postcodeValidator.postcodeDataExists("avalidpostcode")).thenReturn(true);
@@ -55,14 +55,14 @@ public class ValidateServiceTest {
     }
 
     @Test
-    public void testValidateFullPostcodesSuccess() {
+    void testValidateFullPostcodesSuccess() {
         final List<String> testPostcodes = Arrays.asList("SW1A 1AA", "M11AA");
         when(postcodeValidator.fullPostcodeValid(anyString())).thenReturn(true);
         assertThat(validationService.validateFullPostcodes(testPostcodes)).isEmpty();
     }
 
     @Test
-    public void testValidateFullPostcodesInvalid() {
+    void testValidateFullPostcodesInvalid() {
         final String testPostcode1 = "SW1A 1AA";
         final String testPostcode1WithoutSpace = "SW1A1AA";
         final String testPostcode2 = "M11";
@@ -77,13 +77,13 @@ public class ValidateServiceTest {
     }
 
     @Test
-    public void testValidateWhenLocalAuthorityIsValid() {
+    void testValidateWhenLocalAuthorityIsValid() {
         when(localAuthorityValidator.localAuthorityNameIsValid(any())).thenReturn(true);
         assertThat(validationService.validateLocalAuthority("Birmingham City Council")).isTrue();
     }
 
     @Test
-    public void testValidateWhenLocalAuthorityIsInvalid() {
+    void testValidateWhenLocalAuthorityIsInvalid() {
         when(localAuthorityValidator.localAuthorityNameIsValid(any())).thenReturn(false);
         assertThat(validationService.validateLocalAuthority("Brmgham Council")).isFalse();
     }

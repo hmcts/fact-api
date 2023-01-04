@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminLocalAuthorityService.class)
-public class AdminLocalAuthorityServiceTest {
+class AdminLocalAuthorityServiceTest {
 
     @Autowired
     private AdminLocalAuthorityService localAuthorityService;

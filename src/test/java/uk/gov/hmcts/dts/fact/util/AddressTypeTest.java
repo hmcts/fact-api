@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.dts.fact.util.AddressType.*;
 
-public class AddressTypeTest {
+class AddressTypeTest {
     @Test
     void testFindByName() {
         final SoftAssertions softly = new SoftAssertions();

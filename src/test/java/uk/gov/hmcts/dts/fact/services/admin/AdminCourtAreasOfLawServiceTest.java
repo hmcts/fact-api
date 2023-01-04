@@ -33,7 +33,7 @@ import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtAreasOfLawService.class)
-public class AdminCourtAreasOfLawServiceTest {
+class AdminCourtAreasOfLawServiceTest {
 
     private static final String COURT_SLUG = "some slug";
     private static final int COURT_AREAS_OF_LAW_COUNT = 3;

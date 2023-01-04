@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static uk.gov.hmcts.dts.fact.util.Action.*;
 
-public class ActionTest {
+class ActionTest {
     @Test
     void testFindByName() {
         final SoftAssertions softly = new SoftAssertions();
@@ -26,5 +26,6 @@ public class ActionTest {
         softly.assertThat(isNearest(DOCUMENTS)).isEqualTo(false);
         softly.assertThat(isNearest(UPDATE)).isEqualTo(false);
         softly.assertThat(isNearest(UNDEFINED)).isEqualTo(false);
+        softly.assertAll();
     }
 }

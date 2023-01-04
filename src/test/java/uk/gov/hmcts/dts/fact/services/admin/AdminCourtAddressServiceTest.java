@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtAddressService.class)
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtAddressServiceTest {
+class AdminCourtAddressServiceTest {
     private static final String COURT_SLUG = "court-slug";
     private static final int VISIT_US_ADDRESS_TYPE_ID = 5880;
     private static final int WRITE_TO_US_ADDRESS_TYPE_ID = 5881;

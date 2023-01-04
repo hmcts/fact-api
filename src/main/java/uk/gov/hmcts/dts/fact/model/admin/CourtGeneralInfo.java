@@ -41,7 +41,7 @@ public class CourtGeneralInfo {
         this.infoCy = court.getInfoCy();
         this.alert = court.getAlert();
         this.alertCy = court.getAlertCy();
-        this.serviceCentre = court.getServiceAreas().size() > 0;
+        this.serviceCentre = !court.getServiceAreas().isEmpty();
         this.scIntroParagraph = court.getServiceCentre() == null
             ? "" : court.getServiceCentre().getIntroParagraph();
         this.scIntroParagraphCy = court.getServiceCentre() == null

@@ -18,8 +18,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CourtAddress {
     @Id()
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_courtaddress_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-address", sequenceName = "search_courtaddress_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-address")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")

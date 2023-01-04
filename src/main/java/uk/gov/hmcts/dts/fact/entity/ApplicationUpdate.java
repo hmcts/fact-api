@@ -15,8 +15,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class ApplicationUpdate {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "search_applicationupdate_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-au", sequenceName = "search_applicationupdate_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-au")
     private Integer id;
     private String type;
     @Column(name = "type_cy")

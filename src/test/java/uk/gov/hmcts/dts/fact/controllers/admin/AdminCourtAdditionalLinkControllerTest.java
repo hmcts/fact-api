@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,23 +11,29 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AdditionalLink;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAdditionalLinkService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
+import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtAdditionalLinkController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtAdditionalLinkControllerTest {
+class AdminCourtAdditionalLinkControllerTest {
     private static final String TEST_SLUG = "court-slug";
+    private static final String TEST_USER = "mosh@cat.com";
     private static final String BASE_PATH = "/admin/courts/";
     private static final String ADDITIONAL_LINKS_PATH = "/additionalLinks";
 
@@ -59,6 +66,17 @@ public class AdminCourtAdditionalLinkControllerTest {
     @MockBean
     private AdminCourtAdditionalLinkService adminService;
 
+    @MockBean
+    private AdminCourtLockService adminCourtLockService;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @BeforeEach
+    public void setUpMvc() {
+        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context, TEST_USER);
+    }
+
     @BeforeAll
     static void setUp() throws JsonProcessingException {
         additionalLinksJson = OBJECT_MAPPER.writeValueAsString(EXPECTED_ADDITIONAL_LINKS);
@@ -87,11 +105,14 @@ public class AdminCourtAdditionalLinkControllerTest {
         when(adminService.updateCourtAdditionalLinks(TEST_SLUG, EXPECTED_ADDITIONAL_LINKS)).thenReturn(EXPECTED_ADDITIONAL_LINKS);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDITIONAL_LINKS_PATH)
+                            .with(csrf())
                             .content(additionalLinksJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().json(additionalLinksJson));
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test
@@ -99,10 +120,13 @@ public class AdminCourtAdditionalLinkControllerTest {
         when(adminService.updateCourtAdditionalLinks(TEST_SLUG, EXPECTED_ADDITIONAL_LINKS)).thenThrow(new NotFoundException(TEST_SLUG));
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDITIONAL_LINKS_PATH)
+                            .with(csrf())
                             .content(additionalLinksJson)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 }

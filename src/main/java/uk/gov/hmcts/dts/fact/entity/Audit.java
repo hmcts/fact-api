@@ -16,8 +16,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Audit {
     @Id
-    @SequenceGenerator(name = "seq-gen", sequenceName = "admin_audit_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen")
+    @SequenceGenerator(name = "seq-gen-a", sequenceName = "admin_audit_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-a")
     private Integer id;
     @Column(name = "user_email")
     private String userEmail;

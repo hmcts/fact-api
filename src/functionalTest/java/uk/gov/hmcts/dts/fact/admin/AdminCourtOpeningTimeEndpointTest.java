@@ -24,6 +24,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
     private static final String BIRMINGHAM_OPENING_TIMES_PATH = ADMIN_COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG + OPENING_TIMES_PATH;
+    private static final String DELETE_LOCK_BY_EMAIL_PATH = ADMIN_COURTS_ENDPOINT + "hmcts.super.fact@gmail.com/lock";
     private static final String TEST_HOURS = "test hour";
     private static final int BAILIFF_OFFICE_OPEN_TYPE_ID = 5;
     private static final String BAILIFF_OFFICE_OPEN_TYPE = "Bailiff office open";
@@ -53,6 +54,12 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     @Test
     public void shouldAddAndRemoveOpeningTimes() throws JsonProcessingException {
+
+        //calling user delete lock endpoint to remove lock for the court
+        final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+                                                "");
+        assertThat(delResponse.statusCode()).isEqualTo(OK.value());
+
         var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
 

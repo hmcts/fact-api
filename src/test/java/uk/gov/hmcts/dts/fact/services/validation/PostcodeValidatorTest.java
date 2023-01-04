@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = PostcodeValidator.class)
-public class PostcodeValidatorTest {
+class PostcodeValidatorTest {
 
     @MockBean
     private MapitService mockMapitService;

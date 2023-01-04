@@ -41,6 +41,7 @@ public class SearchController {
 
     /**
      * Find court by postcode.
+     *
      * @deprecated Use {@link #findCourtsByPostcodeAndServiceArea}, path = /results}
      */
     @Deprecated(since = "1.0", forRemoval = true)
@@ -53,8 +54,11 @@ public class SearchController {
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
-            if (areaOfLaw.get().equals("Children")) {
-                return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode.get(), areaOfLaw.get()));
+            if (areaOfLaw.get().equals(CHILDRENAREAOFLAW)) {
+                return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
+                    postcode.get(),
+                    areaOfLaw.get()
+                ));
             }
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
         } else if (postcode.isPresent()) {
@@ -71,9 +75,9 @@ public class SearchController {
     @Description("Endpoint to return the 10 closest courts for a provided postcode")
     public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcode(
         @Pattern(regexp =
-            "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]"
-            + "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
-            + "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})",
+            "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z]\\d{1,2})|(([A-Za-z]"
+                + "[A-Ha-hJ-Yj-y]\\d{1,2})|(([A-Za-z]\\d[A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
+                + "\\d[A-Za-z]?))))\\s?\\d[A-Za-z]{2})",
             message = "Provided postcode is not valid")
         @PathVariable String postcode) {
         return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
@@ -89,11 +93,24 @@ public class SearchController {
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
             if (action.isPresent() && Action.isNearest(action.get())) {
-                return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(postcode.get(), serviceAreaSlug.get(), Action.NEAREST));
+                return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
+                    postcode.get(),
+                    serviceAreaSlug.get(),
+                    Action.NEAREST
+                ));
             } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
-                return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(postcode.get(), serviceAreaSlug.get(), CHILDRENAREAOFLAW, Action.UNDEFINED));
+                return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
+                    postcode.get(),
+                    serviceAreaSlug.get(),
+                    CHILDRENAREAOFLAW,
+                    Action.UNDEFINED
+                ));
             } else {
-                return ok(courtService.getNearestCourtsByPostcodeSearch(postcode.get(), serviceAreaSlug.get(), Action.UNDEFINED));
+                return ok(courtService.getNearestCourtsByPostcodeSearch(
+                    postcode.get(),
+                    serviceAreaSlug.get(),
+                    Action.UNDEFINED
+                ));
             }
         } else {
             return badRequest().build();

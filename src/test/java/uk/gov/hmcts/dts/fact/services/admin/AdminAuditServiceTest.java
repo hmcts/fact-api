@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminAuditService.class)
-public class AdminAuditServiceTest {
+class AdminAuditServiceTest {
 
     @Autowired
     private AdminAuditService adminAuditService;

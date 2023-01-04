@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer.sanitizeHtml;
 
 
-public class OwaspHtmlSanitizer {
+class OwaspHtmlSanitizerTest {
     @Test
     void shouldSanitizeHtml() {
         assertThat(sanitizeHtml("<p>urgent notice</p>")).isEqualTo("urgent notice");

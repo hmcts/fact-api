@@ -103,12 +103,12 @@ class CourtAddressTest {
         assertEquals(welsh ? entity.getTownNameCy() : entity.getTownName(), courtAddress.getTownName());
         assertEquals("", courtAddress.getCounty());
         assertEquals(
-            entity.getCourtSecondaryAddressType().get(0).getAreaOfLaw().getName(),
-            "area of law"
+            "area of law",
+            entity.getCourtSecondaryAddressType().get(0).getAreaOfLaw().getName()
         );
         assertEquals(
-            entity.getCourtSecondaryAddressType().get(1).getCourtType().getName(),
-            "court type"
+            "court type",
+            entity.getCourtSecondaryAddressType().get(1).getCourtType().getName()
         );
 
         LocaleContextHolder.resetLocaleContext();

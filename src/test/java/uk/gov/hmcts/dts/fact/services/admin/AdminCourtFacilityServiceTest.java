@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtFacilityService.class)
-public class AdminCourtFacilityServiceTest {
+class AdminCourtFacilityServiceTest {
 
     private static final int FACILITY_COUNT = 3;
     private static final String COURT_SLUG = "some slug";
@@ -129,8 +129,7 @@ public class AdminCourtFacilityServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
 
         final List<uk.gov.hmcts.dts.fact.model.admin.Facility> results = adminCourtFacilityService.getCourtFacilitiesBySlug(COURT_SLUG);
-        assertThat(results).hasSize(FACILITY_COUNT);
-        assertThat(results).containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
+        assertThat(results).hasSize(FACILITY_COUNT).containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
     }
 
     @Test

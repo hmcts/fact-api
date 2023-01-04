@@ -99,7 +99,7 @@ public class AdminOpeningTypeController {
         @ApiResponse(code = 409, message = "Opening type in use")
     })
     @Role({FACT_SUPER_ADMIN})
-    public ResponseEntity deleteOpeningType(@PathVariable Integer openingTypeId) {
+    public ResponseEntity<Integer> deleteOpeningType(@PathVariable Integer openingTypeId) {
         adminService.deleteOpeningType(openingTypeId);
         return ok().body(openingTypeId);
     }

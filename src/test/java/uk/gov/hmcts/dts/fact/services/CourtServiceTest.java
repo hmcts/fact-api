@@ -49,7 +49,7 @@ class CourtServiceTest {
     private static final String SOME_SLUG = "some-slug";
     private static final String AREA_OF_LAW_NAME = "AreaOfLawName";
     private static final String JE2_4BA = "JE2 4BA";
-    private static final String NN7_4EH  = "NN7 4EH";
+    private static final String NN7_4EH = "NN7 4EH";
     private static final String LONDON = "London";
     private static final String TAX = "tax";
     private static final double LAT = 52.1;
@@ -176,6 +176,19 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnPostcode() {
+        when(mapitService.getMapitData(JE2_4BA)).thenReturn(Optional.of(mapitData));
+
+        final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class)
+        );
+        when(proximitySearch.searchWith(mapitData)).thenReturn(courts);
+
+        List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
+            JE2_4BA
+        );
+        assertEquals(2, results.size());
+        assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
         proximitySearch.searchWith(mapitData);
     }
 
@@ -186,13 +199,14 @@ class CourtServiceTest {
         when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
         final List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
-        assertThat(results.size()).isEqualTo(1);
+        assertThat(results).hasSize(1);
     }
 
     @Test
     void fuzzyMatchingShouldReturnListOfCourtsUsingExactName() {
         final String query = LONDON;
-        when(courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(query)).thenReturn(singletonList(mock(Court.class)));
+        when(courtRepository.findCourtByNameAddressTownOrPartialPostcodeExactMatch(query)).thenReturn(singletonList(mock(
+            Court.class)));
         final List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query);
 
         assertThat(results).hasSize(1);
@@ -278,7 +292,12 @@ class CourtServiceTest {
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
             courts.add(mock);
         }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW_NAME, LOCAL_AUTHORITY_NAME)).thenReturn(
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(
+            LAT,
+            LON,
+            AREA_OF_LAW_NAME,
+            LOCAL_AUTHORITY_NAME
+        )).thenReturn(
             courts);
         when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW_NAME, mapitData)).thenReturn(courts);
 
@@ -287,7 +306,7 @@ class CourtServiceTest {
             AREA_OF_LAW_NAME
         );
 
-        assertThat(results.size()).isEqualTo(10);
+        assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
 
@@ -307,7 +326,12 @@ class CourtServiceTest {
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
             courts.add(mock);
         }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW_NAME, LOCAL_AUTHORITY_NAME)).thenReturn(emptyList());
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLawAndLocalAuthority(
+            LAT,
+            LON,
+            AREA_OF_LAW_NAME,
+            LOCAL_AUTHORITY_NAME
+        )).thenReturn(emptyList());
         when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW_NAME, mapitData)).thenReturn(courts);
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
@@ -350,7 +374,7 @@ class CourtServiceTest {
             "OX2 1RZ",
             AREA_OF_LAW_NAME
         );
-        assertThat(results.size()).isEqualTo(10);
+        assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
 
@@ -381,8 +405,15 @@ class CourtServiceTest {
             }
             courts.add(court);
         }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), eq(IMMIGRATION))).thenReturn(courts);
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw("BT701AH", IMMIGRATION);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(
+            anyDouble(),
+            anyDouble(),
+            eq(IMMIGRATION)
+        )).thenReturn(courts);
+        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
+            "BT701AH",
+            IMMIGRATION
+        );
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getName()).isEqualTo(GLASGOW_TRIBUNALS_CENTRE);
@@ -461,7 +492,8 @@ class CourtServiceTest {
         final String serviceAreaSlug = TAX;
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
-            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class)
+        );
 
         when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
@@ -476,7 +508,7 @@ class CourtServiceTest {
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
-        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts()).hasSize(2);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
@@ -487,7 +519,8 @@ class CourtServiceTest {
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
-            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class)
+        );
 
         when(serviceArea.getSlug()).thenReturn(serviceAreaSlug);
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
@@ -502,7 +535,7 @@ class CourtServiceTest {
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
-        assertThat(results.getCourts().size()).isEqualTo(2);
+        assertThat(results.getCourts()).hasSize(2);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
@@ -538,7 +571,8 @@ class CourtServiceTest {
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = asList(
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
-            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
+            mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class)
+        );
         when(proximitySearch.searchWith(mapitData)).thenReturn(courts);
 
         List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
@@ -585,6 +619,25 @@ class CourtServiceTest {
     }
 
     @Test
+    void shouldReturnNotFoundIfPostcodeNotExistsForMapit() {
+        final String serviceAreaSlug = TAX;
+
+        when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(empty());
+        when(mapitService.getMapitData(any())).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> {
+            courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
+                JE2_4BA,
+                serviceAreaSlug,
+                "money-claims",
+                Action.NEAREST
+            );
+        });
+
+        verifyNoInteractions(serviceAreaSearchFactory);
+    }
+
+    @Test
     void shouldReturnCourtReferenceListWhenSearchingByPrefixAndActive() {
         when(courtRepository.findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(anyString(), anyBoolean()))
             .thenReturn(singletonList(court));
@@ -619,7 +672,7 @@ class CourtServiceTest {
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
-        assertThat(results.getCourts().size()).isEqualTo(1);
+        assertThat(results.getCourts()).hasSize(1);
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 

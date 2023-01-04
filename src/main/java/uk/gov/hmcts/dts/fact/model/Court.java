@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparingInt;
 import static java.util.Optional.ofNullable;
@@ -33,12 +33,12 @@ import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(SnakeCaseStrategy.class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @SuppressWarnings("PMD.TooManyFields")
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "image_file", "lat", "lon", "urgent_message",
-    "crown_location_code", "county_location_code", "magistrates_location_code", "areas_of_law",
-    "types", "emails", "contacts", "opening_times", "application_updates", "facilities", "addresses", "gbs", "dx_number",
-    "service_area", "in_person", "access_scheme", "additional_links"})
+    "crown_location_code", "county_location_code", "magistrates_location_code", "family_location_code",
+    "tribunal_location_code", "areas_of_law", "types", "emails", "contacts", "opening_times", "application_updates",
+    "facilities", "addresses", "gbs", "dx_number", "service_area", "in_person", "access_scheme", "additional_links"})
 public class Court {
     private String name;
     private String slug;
@@ -53,6 +53,8 @@ public class Court {
     private Integer crownLocationCode;
     private Integer countyLocationCode;
     private Integer magistratesLocationCode;
+    private Integer familyLocationCode;
+    private Integer tribunalLocationCode;
     private List<AreaOfLaw> areasOfLaw;
     @JsonProperty("types")
     private List<String> courtTypes;
@@ -90,6 +92,8 @@ public class Court {
         this.crownLocationCode = courtEntity.getNumber();
         this.countyLocationCode = courtEntity.getCciCode();
         this.magistratesLocationCode = courtEntity.getMagistrateCode();
+        this.familyLocationCode = courtEntity.getCourtCode();
+        this.tribunalLocationCode = courtEntity.getLocationCode();
         this.areasOfLaw = getAreasOfLaw(courtEntity, courtEntity.isInPerson());
         this.contacts = getContacts(courtEntity);
         this.courtTypes = courtEntity.getCourtTypes().stream().map(CourtType::getName).collect(toList());
@@ -110,7 +114,7 @@ public class Court {
     }
 
     private ServiceCentre getServiceCentreDetails(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
-        return new ServiceCentre(courtEntity.getServiceAreas().size() > 0,
+        return new ServiceCentre(!courtEntity.getServiceAreas().isEmpty(),
                                  courtEntity.getServiceCentre() == null
                                      ? "" : courtEntity.getServiceCentre().getIntroParagraph(),
                                  courtEntity.getServiceCentre() == null

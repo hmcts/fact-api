@@ -99,15 +99,20 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
      * @return a list of courts matching the search string
      */
     @Query(nativeQuery = true,
-        value = "SELECT *,"
+        value = "WITH split AS ( "
+            + "  SELECT (string_to_array(btrim(:query),' '))[1] AS first_word"
+            + ") "
+            + "SELECT *,"
             + "    CASE WHEN length(ca.town_name) > 0 AND (ca.town_name_cy IS NULL OR ca.town_name_cy = '') THEN levenshtein(lower(ca.town_name), lower(:query))"
             + "         WHEN length(ca.town_name_cy) > 0 AND (ca.town_name IS NULL OR ca.town_name = '') THEN levenshtein(lower(ca.town_name_cy), lower(:query))"
             + "         ELSE lEAST(levenshtein(lower(ca.town_name), lower(:query)), levenshtein(lower(ca.town_name_cy), lower(:query))) END"
             + "    AS town_diff"
             + "  FROM search_court c LEFT JOIN search_courtaddress ca"
             + "    ON ca.court_id = c.id AND ca.address_type_id != 5881"
-            + "  WHERE displayed = true AND ("
-            + "    (:query <% c.name AND word_similarity(:query, c.name) > 0.6)"
+            + "  WHERE displayed AND ("
+            + "    c.name ILIKE concat('%', (select first_word from split), '%')"
+            + "    OR c.name_cy ILIKE concat('%', (select first_word from split), '%')"
+            + "    OR (:query <% c.name AND word_similarity(:query, c.name) > 0.6)"
             + "    OR (:query <% c.name_cy AND word_similarity(:query, c.name_cy) > 0.6)"
             + "    OR (c.name ILIKE concat(split_part(:query, ' ' , 1), '%') AND word_similarity(:query, c.name) > 0.5)"
             + "    OR (c.name_cy ILIKE concat(split_part(:query, ' ' , 1), '%') AND word_similarity(:query, c.name_cy) > 0.5)"

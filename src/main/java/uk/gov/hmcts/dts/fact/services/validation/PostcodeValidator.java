@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 public class PostcodeValidator {
 
     private final MapitService mapitService;
-    private static final String FULL_POSTCODE = "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z]"
-        + "[A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
-        + "[0-9][A-Za-z]?))))\\s?[0-9][A-Za-z]{2})";
+    private static final String FULL_POSTCODE = "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z]\\d{1,2})|(([A-Za-z]"
+        + "[A-Ha-hJ-Yj-y]\\d{1,2})|(([A-Za-z]\\d[A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
+        + "\\d[A-Za-z]?))))\\s?\\d[A-Za-z]{2})";
     private static final String PARTIAL_POSTCODE_SEARCH = "[A-Za-z]{2}";
     private static final String PARTIAL_POSTCODE_NUMERIC = "(^[A-Za-z]{1,2}[0-9]{1,3}$)";
     private static final String PARTIAL_POSTCODE_EDGECASE = "(^[A-Za-z][0-9]{1,2}[A-Za-z][0-9]?$)|"
