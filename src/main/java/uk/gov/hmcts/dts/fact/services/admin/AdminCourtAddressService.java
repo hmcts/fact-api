@@ -164,9 +164,9 @@ public class AdminCourtAddressService {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         final Map<Integer, County> countyMap = countyService.getCountyMap();
 
-        final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> court_Addresses = new ArrayList<>();
+        final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> courtAddressArrayList = new ArrayList<>();
         for (int i = 0; i < courtAddresses.size(); i++) {
-            court_Addresses.add(new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
+            courtAddressArrayList.add(new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
                                                                               addressTypeMap.get(courtAddresses.get(i).getAddressTypeId()),
                                                                               courtAddresses.get(i).getAddressLines(),
                                                                               courtAddresses.get(i).getAddressLinesCy(),
@@ -176,7 +176,7 @@ public class AdminCourtAddressService {
                                                                               courtAddresses.get(i).getPostcode(),
                                                                               i));
         }
-        return court_Addresses;
+        return courtAddressArrayList;
     }
 
     /**
