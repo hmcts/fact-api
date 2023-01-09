@@ -164,20 +164,19 @@ public class AdminCourtAddressService {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         final Map<Integer, County> countyMap = countyService.getCountyMap();
 
-        return courtAddresses.stream()
-            .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(
-                court,
-                addressTypeMap.get(a.getAddressTypeId()),
-                a.getAddressLines(),
-                a.getAddressLinesCy(),
-                a.getTownName(),
-                a.getTownNameCy(),
-                countyMap.get(a.getCountyId()),
-                a.getPostcode(),
-                a.getSortOrder()
-            ))
-            .sorted(Comparator.comparingInt(a -> a.getSortOrder()))
-            .collect(toList());
+        final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> court_Addresses = new ArrayList<>();
+        for (int i = 0; i < courtAddresses.size(); i++) {
+            court_Addresses.add(new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
+                                                                              addressTypeMap.get(courtAddresses.get(i).getAddressTypeId()),
+                                                                              courtAddresses.get(i).getAddressLines(),
+                                                                              courtAddresses.get(i).getAddressLinesCy(),
+                                                                              courtAddresses.get(i).getTownName(),
+                                                                              courtAddresses.get(i).getTownNameCy(),
+                                                                              countyMap.get(courtAddresses.get(i).getCountyId()),
+                                                                              courtAddresses.get(i).getPostcode(),
+                                                                              i));
+        }
+        return court_Addresses;
     }
 
     /**

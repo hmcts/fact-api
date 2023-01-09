@@ -255,7 +255,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             COUNTY_ID,
             TEST_POSTCODE,
             COURT_SECONDARY_ADDRESS_TYPE_LIST,
-            SORT_ORDER_1
+            SORT_ORDER_2
         ));
         return updatedCourtAddress;
     }
