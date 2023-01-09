@@ -160,6 +160,7 @@ public class AdminCourtAddressService {
         }
     }
 
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         final Map<Integer, County> countyMap = countyService.getCountyMap();
