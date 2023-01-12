@@ -61,8 +61,8 @@ public class AdminCourtAddressService {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getAddresses()
                 .stream()
-                .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
                 .map(CourtAddress::new)
+                .sorted(Comparator.comparingInt(CourtAddress::getSortOrder))
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
     }
@@ -105,9 +105,8 @@ public class AdminCourtAddressService {
         // the get addresses by slug method will not work for this purpose
         List<CourtAddress> updatedAddresses = updateResponseModel(updatedAddressesEntity
                                                                       .stream()
-                                                                      .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(
-                                                                          a.getAddressType().getName()) ? 0 : 1))
                                                                       .map(CourtAddress::new)
+                                                                      .sorted(Comparator.comparingInt(CourtAddress::getSortOrder))
                                                                       .collect(toList()), courtSecondaryAddressType);
 
         adminAuditService.saveAudit(
@@ -161,23 +160,24 @@ public class AdminCourtAddressService {
         }
     }
 
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         final Map<Integer, County> countyMap = countyService.getCountyMap();
 
-        return courtAddresses.stream()
-            .map(a -> new uk.gov.hmcts.dts.fact.entity.CourtAddress(
-                court,
-                addressTypeMap.get(a.getAddressTypeId()),
-                a.getAddressLines(),
-                a.getAddressLinesCy(),
-                a.getTownName(),
-                a.getTownNameCy(),
-                countyMap.get(a.getCountyId()),
-                a.getPostcode()
-            ))
-            .sorted(Comparator.comparingInt(a -> AddressType.isCourtAddress(a.getAddressType().getName()) ? 0 : 1))
-            .collect(toList());
+        final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> courtAddressArrayList = new ArrayList<>();
+        for (int i = 0; i < courtAddresses.size(); i++) {
+            courtAddressArrayList.add(new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
+                                                                              addressTypeMap.get(courtAddresses.get(i).getAddressTypeId()),
+                                                                              courtAddresses.get(i).getAddressLines(),
+                                                                              courtAddresses.get(i).getAddressLinesCy(),
+                                                                              courtAddresses.get(i).getTownName(),
+                                                                              courtAddresses.get(i).getTownNameCy(),
+                                                                              countyMap.get(courtAddresses.get(i).getCountyId()),
+                                                                              courtAddresses.get(i).getPostcode(),
+                                                                              i));
+        }
+        return courtAddressArrayList;
     }
 
     /**

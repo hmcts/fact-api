@@ -40,8 +40,10 @@ public class CourtAddress {
     @JoinColumn(name = "address_id")
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;
 
+    private Integer sortOrder;
+
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,
-                        final String townName, final String townNameCy, final County county, final String postcode) {
+                        final String townName, final String townNameCy, final County county, final String postcode, final Integer sortOrder) {
         this.court = court;
         this.addressType = addressType;
         this.address = CollectionUtils.isEmpty(addressLines) ? "" : convertAddressLines(addressLines);
@@ -50,6 +52,7 @@ public class CourtAddress {
         this.townNameCy = townNameCy;
         this.county = county;
         this.postcode = postcode;
+        this.sortOrder = sortOrder;
     }
 
     private String convertAddressLines(final List<String> addressLines) {

@@ -35,6 +35,8 @@ public class CourtAddress {
     private String postcode;
     @JsonProperty("fields_of_law")
     private CourtSecondaryAddressType courtSecondaryAddressType;
+    @JsonProperty("sort_order")
+    private Integer sortOrder;
 
     public CourtAddress(final uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         this.id = Objects.isNull(courtAddress.getId()) ? null : courtAddress.getId();
@@ -65,5 +67,6 @@ public class CourtAddress {
                     .map(s -> new CourtType(s.getCourtType()))
                     .collect(Collectors.toList())
             );
+        this.sortOrder = courtAddress.getSortOrder();
     }
 }
