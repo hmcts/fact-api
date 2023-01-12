@@ -20,5 +20,6 @@
     <cve>CVE-2022-3064</cve><!-- Wait until a version exists that fixes this -->
     <cve>CVE-2021-4235</cve><!-- Wait until a version exists that fixes this -->
     <cve>CVE-2021-4277</cve><!-- Wait until a version exists that fixes this -->
+    <cve>CVE-2022-45143</cve><!-- Wait until a version exists that fixes this -->
   </suppress>
 </suppressions>
