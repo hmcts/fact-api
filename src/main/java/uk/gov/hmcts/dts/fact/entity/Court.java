@@ -105,6 +105,7 @@ public class Court {
     private List<Facility> facilities;
 
     @OneToMany(mappedBy = COURT_STRING)
+    @OrderBy("sort_order")
     private List<CourtAddress> addresses;
 
     private String gbs;
