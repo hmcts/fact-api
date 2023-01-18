@@ -54,7 +54,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByPostcode2() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&include-closed=false"))
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&includeClosed=false"))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByPostcode(POSTCODE, false);
@@ -62,7 +62,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByPostcode3() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&include-closed=true"))
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&includeClosed=true"))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByPostcode(POSTCODE, true);
@@ -78,7 +78,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByPostcodeAndAreaOfLaw2() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime&include-closed=false"))
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime&includeClosed=false"))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, CRIME, false);
@@ -86,7 +86,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByPostcodeAndAreaOfLaw3() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime&include-closed=true"))
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ&aol=Crime&includeClosed=true"))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByPostcodeAndAreaOfLaw(POSTCODE, CRIME, true);
@@ -102,7 +102,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByPostcodeAndAreaOfLawAndLocalAuthority2() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children&include-closed=false"))
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children&includeClosed=false"))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority("BN21 2BH", CHILDREN, false);
@@ -110,7 +110,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByPostcodeAndAreaOfLawAndLocalAuthority3() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children&include-closed=true"))
+        mockMvc.perform(get(BASE_URL + "/results.json?postcode=BN21 2BH&aol=Children&includeClosed=true"))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority("BN21 2BH", CHILDREN, true);
@@ -126,7 +126,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByNameOrAddress2() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?q=name&include-closed=true"))
+        mockMvc.perform(get(BASE_URL + "/results.json?q=name&includeClosed=true"))
             .andExpect(status().isOk());
 
         verify(courtService).getCourtsByNameOrAddressOrPostcodeOrTown("name", true);
@@ -134,7 +134,7 @@ class SearchControllerTest {
 
     @Test
     void shouldSearchByNameOrAddress3() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/results.json?q=name&include-closed=false"))
+        mockMvc.perform(get(BASE_URL + "/results.json?q=name&includeClosed=false"))
             .andExpect(status().isOk());
 
         verify(courtService).getCourtsByNameOrAddressOrPostcodeOrTown("name", false);

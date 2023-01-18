@@ -51,7 +51,7 @@ public class SearchController {
     public ResponseEntity<List<CourtWithDistance>> findCourtByPostcode(
         @RequestParam Optional<String> postcode,
         @ApiParam("Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
-        @ApiParam("Include Closed") @RequestParam(name = "include-closed", required = false, defaultValue = "false") Optional<Boolean> includeClosed,
+        @ApiParam("Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Optional<Boolean> includeClosed,
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
@@ -78,7 +78,7 @@ public class SearchController {
                 + "\\d[A-Za-z]?))))\\s?\\d[A-Za-z]{2})",
             message = "Provided postcode is not valid")
         @PathVariable String postcode,
-        @ApiParam("Include Closed") @RequestParam(name = "include-closed", required = false, defaultValue = "false") Boolean includeClosed) {
+        @ApiParam("Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Boolean includeClosed) {
         return ok(courtService.getNearestCourtReferencesByPostcode(postcode, includeClosed));
     }
 
@@ -88,7 +88,7 @@ public class SearchController {
     public ResponseEntity<ServiceAreaWithCourtReferencesWithDistance> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
         @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
-        @ApiParam("Include Closed") @RequestParam(name = "include-closed", required = false, defaultValue = "false") Boolean includeClosed,
+        @ApiParam("Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Boolean includeClosed,
         @RequestParam("action") Optional<Action> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {

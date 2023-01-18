@@ -28,7 +28,12 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
 
     @Query(nativeQuery = true,
         value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca ON ca.court_id = c.id AND ca.address_type_id != 5881 "
-        + "WHERE c.displayed = :includeClosed AND ("
+        + "WHERE "
+        + "CASE "
+        + "     WHEN :includeClosed THEN c.displayed IS NOT NULL "
+        + "     ELSE c.displayed "
+        + "END "
+        + " AND ("
         + "  CAST (c.cci_code AS text) ILIKE concat('%', :query, '%') "
         + "  OR CAST (c.number AS text) ILIKE concat('%', :query, '%') "
         + "  OR CAST (c.magistrate_code AS text) ILIKE concat('%', :query, '%') "
