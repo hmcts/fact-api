@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -42,15 +43,18 @@ public class SearchEndpointTest extends FunctionalTestBase {
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
         assertTrue(courts
-            .stream()
-            .allMatch(c -> c.getAreasOfLaw()
-                .stream()
-                .anyMatch(a -> a.getName().equals(aol))));
+                       .stream()
+                       .allMatch(c -> c.getAreasOfLaw()
+                           .stream()
+                           .anyMatch(a -> a.getName().equals(aol))));
     }
 
     @Test
     public void postcodeSearchShouldSupportWelsh() {
-        final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?includeClosed=true&postcode=CF10 1ET", Map.of(ACCEPT_LANGUAGE, "cy"));
+        final var welshResponse = doGetRequest(
+            SEARCH_ENDPOINT + "results.json?includeClosed=true&postcode=CF10 1ET",
+            Map.of(ACCEPT_LANGUAGE, "cy")
+        );
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
         final List<CourtWithDistance> welshCourts = welshResponse.body().jsonPath()
@@ -67,7 +71,10 @@ public class SearchEndpointTest extends FunctionalTestBase {
 
     @Test
     public void nameSearchShouldSupportWelsh() {
-        final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?q=caerdydd", Map.of(ACCEPT_LANGUAGE, "cy"));
+        final var welshResponse = doGetRequest(
+            SEARCH_ENDPOINT + "results.json?q=caerdydd",
+            Map.of(ACCEPT_LANGUAGE, "cy")
+        );
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
         final List<CourtWithDistance> welshCourts = welshResponse.body().jsonPath()
@@ -107,7 +114,10 @@ public class SearchEndpointTest extends FunctionalTestBase {
         assertThat(englishServiceAreaCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
             "Cardiff  Magistrates' Court");
 
-        final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&postcode=CF24 0RZ&serviceArea=" + serviceArea, Map.of(ACCEPT_LANGUAGE, "cy"));
+        final var welshResponse = doGetRequest(
+            SEARCH_ENDPOINT + "results?includeClosed=true&postcode=CF24 0RZ&serviceArea=" + serviceArea,
+            Map.of(ACCEPT_LANGUAGE, "cy")
+        );
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -178,5 +188,20 @@ public class SearchEndpointTest extends FunctionalTestBase {
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(10);
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts()).isSortedAccordingTo(Comparator.comparing(
             CourtReferenceWithDistance::getDistance));
+    }
+    
+    @Test
+    public void shouldNotReturnClosedCourtWhenIncludeClosedIsFalse() {
+
+
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&aol=Children&postcode=mk92dt");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        Assertions.assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
     }
 }
