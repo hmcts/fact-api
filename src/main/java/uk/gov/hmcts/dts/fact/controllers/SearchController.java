@@ -51,18 +51,17 @@ public class SearchController {
     public ResponseEntity<List<CourtWithDistance>> findCourtByPostcode(
         @RequestParam Optional<String> postcode,
         @ApiParam("Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
-        @ApiParam("Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Optional<Boolean> includeClosed,
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
             if (areaOfLaw.get().equals(CHILDRENAREAOFLAW)) {
-                return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode.get(), areaOfLaw.get(), includeClosed.get()));
+                return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode.get(), areaOfLaw.get(), true));
             }
-            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get(), includeClosed.get()));
+            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get(), true));
         } else if (postcode.isPresent()) {
-            return ok(courtService.getNearestCourtsByPostcode(postcode.get(), includeClosed.get()));
+            return ok(courtService.getNearestCourtsByPostcode(postcode.get(), true));
         } else if (query.isPresent()) {
-            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get(), includeClosed.get()));
+            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get(), true));
         } else {
             return badRequest().build();
         }
@@ -77,9 +76,8 @@ public class SearchController {
                 + "[A-Ha-hJ-Yj-y]\\d{1,2})|(([A-Za-z]\\d[A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
                 + "\\d[A-Za-z]?))))\\s?\\d[A-Za-z]{2})",
             message = "Provided postcode is not valid")
-        @PathVariable String postcode,
-        @ApiParam("Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Boolean includeClosed) {
-        return ok(courtService.getNearestCourtReferencesByPostcode(postcode, includeClosed));
+        @PathVariable String postcode) {
+        return ok(courtService.getNearestCourtReferencesByPostcode(postcode, true));
     }
 
     @GetMapping(path = "/results")
