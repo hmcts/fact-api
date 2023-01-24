@@ -68,7 +68,7 @@ public class CourtsController {
         return ok(courtService.getCourtsByPrefixAndActiveSearch(prefix));
     }
 
-    @GetMapping(path ="/court-types/{courtTypes}")
+    @GetMapping(path = "/court-types/{courtTypes}")
     @ApiOperation("Find courts by court types")
     public ResponseEntity<List<Court>> findByCourtTypes(@PathVariable List<String> courtTypes) {
         return ok(courtService.getCourtsByCourtTypes(courtTypes));

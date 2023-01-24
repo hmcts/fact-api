@@ -132,6 +132,7 @@ class CourtServiceTest {
         final List<uk.gov.hmcts.dts.fact.model.Court> results = courtService.getCourtsByCourtTypes(emptyList());
         assertThat(results).isEmpty();
     }
+
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForTypesTests() {
         return Stream.of(

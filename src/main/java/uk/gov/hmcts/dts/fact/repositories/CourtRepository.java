@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uk.gov.hmcts.dts.fact.entity.Court;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
