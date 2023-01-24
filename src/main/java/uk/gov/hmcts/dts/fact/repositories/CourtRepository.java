@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uk.gov.hmcts.dts.fact.entity.Court;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public interface CourtRepository extends JpaRepository<Court, Integer> {
     Optional<Court> findBySlug(String slug);
+
+    List<Court> findByCourtTypesNameIn(List<String> courtTypes);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Court c SET c.info = :info, c.infoCy = :infoCy WHERE c.slug in :slugs")

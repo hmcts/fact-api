@@ -67,4 +67,10 @@ public class CourtsController {
     public ResponseEntity<List<CourtReference>> getCourtsBySearch(@RequestParam @Size(min = 1, max = 1) @NotBlank String prefix) {
         return ok(courtService.getCourtsByPrefixAndActiveSearch(prefix));
     }
+
+    @GetMapping(path ="/court-types/{courtTypes}")
+    @ApiOperation("Find courts by court types")
+    public ResponseEntity<List<Court>> findByCourtTypes(@PathVariable List<String> courtTypes) {
+        return ok(courtService.getCourtsByCourtTypes(courtTypes));
+    }
 }

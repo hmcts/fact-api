@@ -61,6 +61,7 @@ class CourtServiceTest {
     private static final String GLASGOW_TRIBUNALS_CENTRE = "Glasgow Tribunals Centre";
     private static final String TEST_TYPE_IN_SEARCH_TABLE = "Test type in search table";
     private static final String TEST_TYPE_IN_ADMIN_TABLE = "Test type in admin table";
+    private static final List<String> COURT_TYPE_LIST = asList("Family Court", "Tribunal");
 
     @Autowired
     private CourtService courtService;
@@ -116,6 +117,21 @@ class CourtServiceTest {
         assertThat(courtService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
     }
 
+
+    @Test
+    void shouldReturnCourtObjectWhenSearchingByCourtType() {
+        when(courtRepository.findByCourtTypesNameIn(COURT_TYPE_LIST)).thenReturn(singletonList(court));
+        final List<uk.gov.hmcts.dts.fact.model.Court> results = courtService.getCourtsByCourtTypes(COURT_TYPE_LIST);
+        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+        assertThat(results).hasSize(1);
+    }
+
+    @Test
+    void shouldReturnNoCourtObjectWhenSearchingByEmptyCourtType() {
+        when(courtRepository.findByCourtTypesNameIn(emptyList())).thenReturn(emptyList());
+        final List<uk.gov.hmcts.dts.fact.model.Court> results = courtService.getCourtsByCourtTypes(emptyList());
+        assertThat(results).isEmpty();
+    }
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> parametersForTypesTests() {
         return Stream.of(
