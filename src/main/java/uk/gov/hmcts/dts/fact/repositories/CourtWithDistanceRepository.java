@@ -17,7 +17,11 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     String LAT = "lat";
     String LON = "lon";
     String AND_UPPER_AOL_NAME_UPPER_AOL = "AND UPPER(aol.name) = UPPER(:aol) ";
-    String WHERE_INCLUDES_CLOSED = "WHERE c.displayed = :includeClosed ";
+    String WHERE_INCLUDES_CLOSED = "WHERE "
+        + "CASE "
+        + "   WHEN :includeClosed THEN c.displayed IS NOT NULL "
+        + "   ELSE c.displayed "
+        + "END ";
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE

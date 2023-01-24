@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -200,7 +199,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
             response.as(ServiceAreaWithCourtReferencesWithDistance.class);
 
-        Assertions.assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
             true)));
 
     }
