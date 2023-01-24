@@ -182,15 +182,14 @@ class CourtServiceTest {
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class)
         );
-        when(proximitySearch.searchWith(mapitData,true)).thenReturn(courts);
+        when(proximitySearch.searchWith(mapitData)).thenReturn(courts);
 
         List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
-            JE2_4BA,
-            true
+            JE2_4BA
         );
         assertEquals(2, results.size());
         assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);
-        proximitySearch.searchWith(mapitData,true);
+        proximitySearch.searchWith(mapitData);
     }
 
     @Test
@@ -270,9 +269,9 @@ class CourtServiceTest {
         for (int i = 0; i < 10; i++) {
             courts.add(mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class));
         }
-        when(courtWithDistanceRepository.findNearestTen(anyDouble(), anyDouble(), anyBoolean())).thenReturn(courts);
+        when(courtWithDistanceRepository.findNearestTen(anyDouble(), anyDouble())).thenReturn(courts);
 
-        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode("OX1 1RZ", anyBoolean());
+        final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcode("OX1 1RZ");
         assertThat(results.size()).isEqualTo(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
     }
@@ -349,7 +348,7 @@ class CourtServiceTest {
         when(mapitService.getMapitData(any())).thenReturn(empty());
 
         assertThrows(InvalidPostcodeException.class, () -> {
-            courtService.getNearestCourtsByPostcode("JE3 4BA", true);
+            courtService.getNearestCourtsByPostcode("JE3 4BA");
         });
         verifyNoInteractions(courtRepository);
     }
@@ -567,8 +566,7 @@ class CourtServiceTest {
     void shouldReturnEmptyListIfNoMapitdataForPostcodeOnlySearch() {
         when(mapitService.getMapitData(any())).thenReturn(empty());
         List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
-            JE2_4BA,
-            true
+            JE2_4BA
         );
         assertEquals(0, results.size());
         verifyNoInteractions(serviceAreaSearchFactory);
@@ -582,11 +580,10 @@ class CourtServiceTest {
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class),
             mock(uk.gov.hmcts.dts.fact.entity.CourtWithDistance.class)
         );
-        when(proximitySearch.searchWith(mapitData,true)).thenReturn(courts);
+        when(proximitySearch.searchWith(mapitData)).thenReturn(courts);
 
         List<CourtReferenceWithDistance> results = courtService.getNearestCourtReferencesByPostcode(
-            JE2_4BA,
-            true
+            JE2_4BA
         );
         assertEquals(2, results.size());
         assertThat(results.get(0)).isInstanceOf(CourtReferenceWithDistance.class);

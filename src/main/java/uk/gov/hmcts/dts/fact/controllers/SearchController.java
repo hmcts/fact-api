@@ -59,7 +59,7 @@ public class SearchController {
             }
             return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get(), true));
         } else if (postcode.isPresent()) {
-            return ok(courtService.getNearestCourtsByPostcode(postcode.get(), true));
+            return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
         } else if (query.isPresent()) {
             return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get(), true));
         } else {
@@ -77,7 +77,7 @@ public class SearchController {
                 + "\\d[A-Za-z]?))))\\s?\\d[A-Za-z]{2})",
             message = "Provided postcode is not valid")
         @PathVariable String postcode) {
-        return ok(courtService.getNearestCourtReferencesByPostcode(postcode, true));
+        return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
     }
 
     @GetMapping(path = "/results")

@@ -91,10 +91,10 @@ public class CourtService {
         return getCourtByQuery(query, includeClosed, CourtWithDistance::new);
     }
 
-    public List<CourtWithDistance> getNearestCourtsByPostcode(final String postcode, final Boolean includeClosed) {
+    public List<CourtWithDistance> getNearestCourtsByPostcode(final String postcode) {
         return mapitService.getMapitData(postcode)
             .map(value -> courtWithDistanceRepository
-                .findNearestTen(value.getLat(), value.getLon(), includeClosed)
+                .findNearestTen(value.getLat(), value.getLon())
                 .stream()
                 .map(CourtWithDistance::new)
                 .collect(toList()))
@@ -145,7 +145,7 @@ public class CourtService {
             .collect(toList());
     }
 
-    public List<CourtReferenceWithDistance> getNearestCourtReferencesByPostcode(final String postcode, final Boolean includeClosed) {
+    public List<CourtReferenceWithDistance> getNearestCourtReferencesByPostcode(final String postcode) {
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
 
         if (optionalMapitData.isEmpty()) {
@@ -153,7 +153,7 @@ public class CourtService {
             return emptyList(); // Return empty so the frontend logic can be invoked
         }
 
-        List<CourtReferenceWithDistance> courtReferences = convert(proximitySearch.searchWith(optionalMapitData.get(), includeClosed));
+        List<CourtReferenceWithDistance> courtReferences = convert(proximitySearch.searchWith(optionalMapitData.get()));
         log.debug("Found {} nearest courts for postcode {}: {}",
                   courtReferences.size(), postcode, Arrays.stream(courtReferences.toArray()).toArray()
         );

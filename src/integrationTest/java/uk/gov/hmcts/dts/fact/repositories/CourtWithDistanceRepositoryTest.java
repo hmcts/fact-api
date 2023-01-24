@@ -26,7 +26,7 @@ public class CourtWithDistanceRepositoryTest {
 
     @Test
     void shouldFindNearestTen() {
-        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTen(51.8, -1.3, true);
+        final List<CourtWithDistance> result = courtWithDistanceRepository.findNearestTen(51.8, -1.3);
         final List<CourtWithDistance> collect = result.stream().filter(r -> null != r.getDistance()).collect(Collectors.toList());
         assertThat(collect).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
     }

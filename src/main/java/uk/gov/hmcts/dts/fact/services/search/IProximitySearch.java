@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface IProximitySearch {
 
-    List<CourtWithDistance> searchWith(final MapitData mapitData, final Boolean includeClosed);
+    List<CourtWithDistance> searchWith(final MapitData mapitData);
 }

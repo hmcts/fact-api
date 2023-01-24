@@ -49,7 +49,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results.json?postcode=OX1 1RZ"))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByPostcode(POSTCODE, true);
+        verify(courtService).getNearestCourtsByPostcode(POSTCODE);
     }
 
     @Test
@@ -105,7 +105,7 @@ class SearchControllerTest {
         mockMvc.perform(get(format("%s/%s", BASE_URL, "results/sw1a2by")))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtReferencesByPostcode("sw1a2by", true);
+        verify(courtService).getNearestCourtReferencesByPostcode("sw1a2by");
     }
 
     @ParameterizedTest

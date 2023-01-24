@@ -17,11 +17,10 @@ public class ProximitySearch implements IProximitySearch {
     }
 
     @Override
-    public List<CourtWithDistance> searchWith(final MapitData mapitData, final Boolean includeClosed) {
+    public List<CourtWithDistance> searchWith(final MapitData mapitData) {
         return courtWithDistanceRepository.findNearestTen(
             mapitData.getLat(),
-            mapitData.getLon(),
-            includeClosed
+            mapitData.getLon()
         );
     }
 }

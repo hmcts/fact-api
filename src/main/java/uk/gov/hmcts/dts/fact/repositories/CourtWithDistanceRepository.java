@@ -22,10 +22,10 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE
             + FROM_SEARCH_COURT_AS_C
-            + WHERE_INCLUDES_CLOSED
+            + WHERE_C_DISPLAYED
             + "ORDER BY distance, name "
             + LIMIT_10)
-    List<CourtWithDistance> findNearestTen(@Param(LAT) Double lat, @Param(LON) Double lon, Boolean includeClosed);
+    List<CourtWithDistance> findNearestTen(@Param(LAT) Double lat, @Param(LON) Double lon);
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE

@@ -29,9 +29,9 @@ class ProximitySearchTest {
         final MapitData mapitData = new MapitData();
         mapitData.setLat(10.0);
         mapitData.setLon(10.1);
-        when(courtWithDistanceRepository.findNearestTen(10.0, 10.1, true)).thenReturn(asList(
+        when(courtWithDistanceRepository.findNearestTen(10.0, 10.1)).thenReturn(asList(
             mock(CourtWithDistance.class), mock(CourtWithDistance.class)));
-        List<CourtWithDistance> cwd = proximitySearch.searchWith(mapitData, true);
+        List<CourtWithDistance> cwd = proximitySearch.searchWith(mapitData);
         assertEquals(2, cwd.size());
         assertThat(cwd.get(0)).isInstanceOf(CourtWithDistance.class);
         assertThat(cwd.get(1)).isInstanceOf(CourtWithDistance.class);

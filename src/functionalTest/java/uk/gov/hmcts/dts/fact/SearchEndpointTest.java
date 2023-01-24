@@ -189,7 +189,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts()).isSortedAccordingTo(Comparator.comparing(
             CourtReferenceWithDistance::getDistance));
     }
-    
+
     @Test
     public void shouldNotReturnClosedCourtWhenIncludeClosedIsFalse() {
 
