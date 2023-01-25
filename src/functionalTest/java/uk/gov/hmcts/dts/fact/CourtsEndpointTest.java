@@ -31,7 +31,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
     private static final String COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT = "/courts/search";
     private static final String OLD_COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/%s.json";
     private static final String COURT_SEARCH_ENDPOINT = "/courts";
-    private static final String COURT_SEARCH_BY_COURT_TYPES_ENDPOINT = "/courts/court-types";
+    private static final String COURT_SEARCH_BY_COURT_TYPES_ENDPOINT = "/courts/court-types/";
 
     protected static final String CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL = "cardiff-social-security-and-child-support-tribunal";
 
@@ -197,7 +197,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldReturnCourtsByCourtTypes() {
-        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "/tribunal,family court");
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "tribunal,family court");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<Court> courts = Arrays.asList(response.getBody().as(Court[].class));
@@ -207,7 +207,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldReturnNotFoundForEmptyCourtTypes() {
-        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT);
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "");
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 }
