@@ -207,7 +207,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldReturnNotFoundForEmptyCourtTypes() {
-        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "");
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 }
