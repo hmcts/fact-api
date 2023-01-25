@@ -120,7 +120,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnCourtObjectWhenSearchingByCourtType() {
-        when(courtRepository.findByCourtTypesNameIn(COURT_TYPE_LIST)).thenReturn(singletonList(court));
+        when(courtRepository.findByCourtTypesNameInOrderByName(COURT_TYPE_LIST)).thenReturn(singletonList(court));
         final List<uk.gov.hmcts.dts.fact.model.Court> results = courtService.getCourtsByCourtTypes(COURT_TYPE_LIST);
         assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
         assertThat(results).hasSize(1);
@@ -128,7 +128,7 @@ class CourtServiceTest {
 
     @Test
     void shouldReturnNoCourtObjectWhenSearchingByEmptyCourtType() {
-        when(courtRepository.findByCourtTypesNameIn(emptyList())).thenReturn(emptyList());
+        when(courtRepository.findByCourtTypesNameInOrderByName(emptyList())).thenReturn(emptyList());
         final List<uk.gov.hmcts.dts.fact.model.Court> results = courtService.getCourtsByCourtTypes(emptyList());
         assertThat(results).isEmpty();
     }
