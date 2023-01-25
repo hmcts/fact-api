@@ -48,11 +48,11 @@ public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDist
             + "JOIN search_courtareaoflaw caol ON caol.court_id = c.id "
             + "JOIN search_areaoflaw aol ON aol.id = caol.area_of_law_id "
             + "JOIN search_courtpostcode cp ON cp.court_id = c.id "
-            + WHERE_C_DISPLAYED
+            + WHERE_INCLUDES_CLOSED
             + AND_UPPER_AOL_NAME_UPPER_AOL
             + "AND UPPER(REPLACE(cp.postcode, ' ', '')) = UPPER(REPLACE(:postcode, ' ', '')) "
             + ORDER_BY_DISTANCE_C_NAME)
-    List<CourtWithDistance> findNearestTenByAreaOfLawAndCourtPostcode(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String postcode);
+    List<CourtWithDistance> findNearestTenByAreaOfLawAndCourtPostcode(@Param(LAT) Double lat, @Param(LON) Double lon, String aol, String postcode, Boolean includeClosed);
 
     @Query(nativeQuery = true,
         value = SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE

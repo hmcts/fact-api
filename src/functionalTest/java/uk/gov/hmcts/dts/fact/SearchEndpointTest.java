@@ -18,6 +18,7 @@ import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(SpringExtension.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public class SearchEndpointTest extends FunctionalTestBase {
 
     private static final String SEARCH_ENDPOINT = "/search/";
@@ -190,10 +191,10 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldNotReturnClosedCourtWhenIncludeClosedIsFalse() {
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalse() {
 
-
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&aol=Children&postcode=mk92dt");
+        //includeclosed is false param should return only open
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=Children&postcode=mk92dt");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -201,6 +202,38 @@ public class SearchEndpointTest extends FunctionalTestBase {
 
         assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
             true)));
+
+    }
+
+    @Test
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefault() {
+
+        //includeclosed is missing param should return only open
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=Children&postcode=mk92dt");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrue() {
+
+        //includeclosed is true param should return open and closed
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=Children&postcode=mk92dt");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            true)));
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            false)));
 
     }
 }
