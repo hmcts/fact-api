@@ -202,12 +202,12 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
         final List<Court> courts = Arrays.asList(response.getBody().as(Court[].class));
         assertThat(courts.get(0).getCourtTypes()).anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court"));
-        assertThat(courts.get(courts.size()-1).getCourtTypes()).anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court"));
+        assertThat(courts.get(courts.size() - 1).getCourtTypes()).anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court"));
     }
 
     @Test
     public void shouldReturnNotFoundForEmptyCourtTypes() {
-        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT );
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 }
