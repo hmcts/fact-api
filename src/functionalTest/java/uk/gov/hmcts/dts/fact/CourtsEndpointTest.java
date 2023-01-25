@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpStatus.*;
 
+
 @SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class})
 public class CourtsEndpointTest extends FunctionalTestBase {
@@ -30,6 +31,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
     private static final String COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT = "/courts/search";
     private static final String OLD_COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/%s.json";
     private static final String COURT_SEARCH_ENDPOINT = "/courts";
+    private static final String COURT_SEARCH_BY_COURT_TYPES_ENDPOINT = "/courts/court-types";
 
     protected static final String CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL = "cardiff-social-security-and-child-support-tribunal";
 
@@ -191,5 +193,21 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldReturnCourtsByCourtTypes() {
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "/tribunal,family court");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<Court> courts = Arrays.asList(response.getBody().as(Court[].class));
+        assertThat(courts.get(0).getCourtTypes()).anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court"));
+        assertThat(courts.get(courts.size()-1).getCourtTypes()).anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court"));
+    }
+
+    @Test
+    public void shouldReturnNotFoundForEmptyCourtTypes() {
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT );
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 }
