@@ -48,7 +48,7 @@ class CourtAddressTest {
             ),
             new CourtSecondaryAddressType(
                 entity,
-                new CourtType(1, "court type")
+                new CourtType(1, "court type", "search_type")
             )
         ));
     }

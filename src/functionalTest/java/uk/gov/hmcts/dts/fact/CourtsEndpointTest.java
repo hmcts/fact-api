@@ -197,7 +197,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
     @Test
     public void shouldReturnCourtsByCourtTypes() {
-        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "tribunal,family court");
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "tribunal,family");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<Court> courts = Arrays.asList(response.getBody().as(Court[].class));

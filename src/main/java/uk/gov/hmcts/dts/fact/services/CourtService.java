@@ -82,7 +82,7 @@ public class CourtService {
 
     public List<Court> getCourtsByCourtTypes(final List<String> courtTypes) {
         return courtRepository
-            .findByCourtTypesNameIgnoreCaseInAndDisplayedIsTrueOrderByName(courtTypes)
+            .findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(courtTypes)
             .stream()
             .map(Court::new)
             .collect(toList());
