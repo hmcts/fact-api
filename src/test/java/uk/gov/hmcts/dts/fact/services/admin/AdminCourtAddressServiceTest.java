@@ -86,7 +86,7 @@ class AdminCourtAddressServiceTest {
             new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court", "Family")
         ),
         new CourtType(
-            new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal","Tribunal" )
+            new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal","Tribunal")
         )
     );
     private static final List<AreaOfLaw> COURT_SECONDARY_ADDRESS_AREAS_OF_LAW_2 = asList(
