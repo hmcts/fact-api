@@ -98,10 +98,10 @@ class AdminCourtAddressServiceTest {
     );
     private static final List<CourtType> COURT_SECONDARY_ADDRESS_COURT_TYPES_2 = asList(
         new CourtType(
-            new uk.gov.hmcts.dts.fact.entity.CourtType(11_500, "Test Court", "search1")
+            new uk.gov.hmcts.dts.fact.entity.CourtType(11_500, "Test Court", "Search1")
         ),
         new CourtType(
-            new uk.gov.hmcts.dts.fact.entity.CourtType(11_600, "Test Court 2", "search2")
+            new uk.gov.hmcts.dts.fact.entity.CourtType(11_600, "Test Court 2", "Search2")
         )
     );
     private static final CourtSecondaryAddressType COURT_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
