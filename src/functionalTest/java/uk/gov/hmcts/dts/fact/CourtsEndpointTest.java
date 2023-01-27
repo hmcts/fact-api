@@ -15,6 +15,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpStatus.*;
 
@@ -130,8 +131,8 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
     }
 
     @Test
@@ -140,8 +141,8 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'B'));
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'b'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'B'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'b'));
     }
 
     @Test
@@ -201,8 +202,12 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<Court> courts = Arrays.asList(response.getBody().as(Court[].class));
-        assertThat(courts.get(0).getCourtTypes()).anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court"));
-        assertThat(courts.get(courts.size() - 1).getCourtTypes()).anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court"));
+        assertTrue(courts.get(0).getCourtTypes()
+                       .stream()
+                       .anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court")));
+        assertTrue(courts.get(courts.size() - 1).getCourtTypes()
+                       .stream()
+                       .anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court")));
     }
 
     @Test

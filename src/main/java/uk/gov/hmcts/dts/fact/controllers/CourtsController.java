@@ -68,6 +68,14 @@ public class CourtsController {
         return ok(courtService.getCourtsByPrefixAndActiveSearch(prefix));
     }
 
+    /**
+     * Find courts by court types endpoint.
+     *
+     * This endpoint can be used to search for courts that have a court type associated to it.
+     * @input a comma seperated list of court types which can include any of (magistrates,family,crown,tribunal,county)
+     * @return array of courts that contain any of the input court types.
+     * @path /courts/court-types/{courtTypes}
+     */
     @GetMapping(path = "/court-types/{courtTypes}")
     @ApiOperation("Find courts by court types")
     public ResponseEntity<List<Court>> findByCourtTypes(@PathVariable List<String> courtTypes) {
