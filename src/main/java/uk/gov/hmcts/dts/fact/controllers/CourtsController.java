@@ -70,7 +70,6 @@ public class CourtsController {
 
     /**
      * Find courts by court types endpoint.
-     *
      * This endpoint can be used to search for courts that have a court type associated to it.
      * @input a comma seperated list of court types which can include any of (magistrates,family,crown,tribunal,county)
      * @return array of courts that contain any of the input court types.
