@@ -67,10 +67,10 @@ class AdminCourtAddressControllerTest {
         ),
         Arrays.asList(
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court", "Family")
             ),
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal", "Tribunal")
             )
         )
     );

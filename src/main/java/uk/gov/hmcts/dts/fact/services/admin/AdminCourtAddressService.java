@@ -239,7 +239,8 @@ public class AdminCourtAddressService {
     private CourtType constructCourtType(uk.gov.hmcts.dts.fact.model.admin.CourtType courtType) {
         return new CourtType(
             courtType.getId(),
-            courtType.getName()
+            courtType.getName(),
+            courtType.getSearch()
         );
     }
 

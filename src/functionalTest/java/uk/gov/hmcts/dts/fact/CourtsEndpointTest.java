@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -15,8 +14,10 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpStatus.*;
+
 
 @SuppressWarnings("PMD.TooManyMethods")
 @ExtendWith({SpringExtension.class})
@@ -30,6 +31,7 @@ public class CourtsEndpointTest extends FunctionalTestBase {
     private static final String COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT = "/courts/search";
     private static final String OLD_COURT_DETAIL_BY_SLUG_ENDPOINT = "/courts/%s.json";
     private static final String COURT_SEARCH_ENDPOINT = "/courts";
+    private static final String COURT_SEARCH_BY_COURT_TYPES_ENDPOINT = "/courts/court-types/";
 
     protected static final String CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL = "cardiff-social-security-and-child-support-tribunal";
 
@@ -128,8 +130,8 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
     }
 
     @Test
@@ -138,8 +140,8 @@ public class CourtsEndpointTest extends FunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'B'));
-        Assertions.assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'b'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'B'));
+        assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'b'));
     }
 
     @Test
@@ -191,5 +193,25 @@ public class CourtsEndpointTest extends FunctionalTestBase {
 
         final List<CourtReference> courts = Arrays.asList(response.getBody().as(CourtReference[].class));
         assertThat(courts.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldReturnCourtsByCourtTypes() {
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT + "tribunal,family");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<Court> courts = Arrays.asList(response.getBody().as(Court[].class));
+        assertTrue(courts.get(0).getCourtTypes()
+                       .stream()
+                       .anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court")));
+        assertTrue(courts.get(courts.size() - 1).getCourtTypes()
+                       .stream()
+                       .anyMatch(type -> type.contains("Tribunal") || type.contains("Family Court")));
+    }
+
+    @Test
+    public void shouldReturnNotFoundForEmptyCourtTypes() {
+        final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT);
+        assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 }
