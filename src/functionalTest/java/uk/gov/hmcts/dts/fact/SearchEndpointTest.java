@@ -283,4 +283,51 @@ public class SearchEndpointTest extends FunctionalTestBase {
             false)));
 
     }
+
+    @Test
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForProbate() {
+
+        //includeclosed is false param should return only open
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=probate&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForProbate() {
+
+        //includeclosed is missing param should return only open
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=probate&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForProbate() {
+
+        //includeclosed is true param should return open and closed
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=probate&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            true)));
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            false)));
+
+    }
 }
