@@ -116,7 +116,7 @@ public class AdminCourtTypesAndCodesService {
 
     private List<uk.gov.hmcts.dts.fact.entity.CourtType> getNewCourtCourtTypesEntity(final List<CourtType> courtTypes) {
         return courtTypes.stream()
-            .map(o -> new uk.gov.hmcts.dts.fact.entity.CourtType(o.getId(),o.getName()))
+            .map(o -> new uk.gov.hmcts.dts.fact.entity.CourtType(o.getId(),o.getName(),o.getSearch()))
             .collect(toList());
     }
 

@@ -1,0 +1,274 @@
+[{
+  "name": "Lancaster Courthouse",
+  "slug": "lancaster-courthouse",
+  "info": "<p><a href=https://www.gov.uk/government/news/scammers-using-hmcts-telephone-numbers>Scammers are mimicking genuine HMCTS phone numbers and email addresses</a>. They may demand payment and claim to be from HMRC or enforcement. If you're unsure, do not pay anything and report the scam to <a href=https://www.actionfraud.police.uk/>Action Fraud</a>.</p>",
+  "open": true,
+  "directions": null,
+  "image_file": "lancaster_county_court_and_family_court.jpg",
+  "lat": 54.046440429237016,
+  "lon": -2.797440119149024,
+  "urgent_message": "",
+  "crown_location_code": null,
+  "county_location_code": 242,
+  "magistrates_location_code": null,
+  "family_location_code": null,
+  "tribunal_location_code": null,
+  "areas_of_law": [
+    {
+      "name": "Bankruptcy",
+      "external_link": "https://www.gov.uk/apply-for-bankruptcy",
+      "display_url": null,
+      "external_link_desc": "Information about applying for bankruptcy",
+      "display_name": null,
+      "display_external_link": "https://www.gov.uk/bankruptcy"
+    },
+    {
+      "name": "Children",
+      "external_link": "",
+      "display_url": null,
+      "external_link_desc": null,
+      "display_name": "Childcare arrangements if you separate from your partner",
+      "display_external_link": "https://www.gov.uk/looking-after-children-divorce"
+    },
+    {
+      "name": "Crime",
+      "external_link": "",
+      "display_url": null,
+      "external_link_desc": null,
+      "display_name": null,
+      "display_external_link": null
+    },
+    {
+      "name": "Divorce",
+      "external_link": "https://www.gov.uk/divorce",
+      "display_url": null,
+      "external_link_desc": "Information about getting a divorce",
+      "display_name": "Divorce hearings",
+      "display_external_link": null
+    },
+    {
+      "name": "Domestic violence",
+      "external_link": "",
+      "display_url": null,
+      "external_link_desc": null,
+      "display_name": "Domestic abuse",
+      "display_external_link": "https://www.gov.uk/injunction-domestic-violence"
+    },
+    {
+      "name": "High Court District Registry",
+      "external_link": "",
+      "display_url": null,
+      "external_link_desc": null,
+      "display_name": "High Court cases – serious or high profile criminal or civil law cases",
+      "display_external_link": null
+    },
+    {
+      "name": "Housing possession",
+      "external_link": "https://www.gov.uk/evicting-tenants",
+      "display_url": null,
+      "external_link_desc": "Information about evicting tenants",
+      "display_name": "Housing",
+      "display_external_link": null
+    },
+    {
+      "name": "Money claims",
+      "external_link": "https://www.gov.uk/make-court-claim-for-money",
+      "display_url": null,
+      "external_link_desc": "Information about making a court claim for money",
+      "display_name": null,
+      "display_external_link": null
+    },
+    {
+      "name": "Single justice procedure",
+      "external_link": "",
+      "display_url": null,
+      "external_link_desc": null,
+      "display_name": null,
+      "display_external_link": null
+    }
+  ],
+  "types": [
+    "Family Court",
+    "County Court"
+  ],
+  "emails": [
+    {
+      "address": "ln-prestonmcenq@justice.gov.uk",
+      "description": "Magistrates court",
+      "explanation": "Enquiries"
+    },
+    {
+      "address": "sscsa-liverpool@justice.gov.uk",
+      "description": "Social security and child support",
+      "explanation": null
+    },
+    {
+      "address": "lancsmagslisting@justice.gov.uk",
+      "description": "Magistrates court",
+      "explanation": "Listing enquiries"
+    },
+    {
+      "address": "lancaster.breathingspace@justice.gov.uk",
+      "description": "Breathing space enquiries",
+      "explanation": ""
+    },
+    {
+      "address": "lancasterfamily@justice.gov.uk",
+      "description": "County court",
+      "explanation": "Family queries"
+    },
+    {
+      "address": "lancasterdivorce@justice.gov.uk",
+      "description": "Family court",
+      "explanation": null
+    },
+    {
+      "address": "lancashirefamilylisting@justice.gov.uk",
+      "description": "County court",
+      "explanation": "Family Listing"
+    },
+    {
+      "address": "enquiries.lancaster.countycourt@justice.gov.uk",
+      "description": "County court",
+      "explanation": "Civil queries"
+    },
+    {
+      "address": "lancashirefamilyorders@justice.gov.uk",
+      "description": "County court",
+      "explanation": "Orders and accounts"
+    },
+    {
+      "address": "www.gov.uk/looking-after-children-divorce/apply-for-court-order",
+      "description": "County court",
+      "explanation": null
+    },
+    {
+      "address": "lancashirefamilyapplications@justice.gov.uk",
+      "description": "Family public law (children in care)",
+      "explanation": "Paper process including C100 applications"
+    },
+    {
+      "address": "contactfpl@justice.gov.uk",
+      "description": "Family public law (children in care)",
+      "explanation": "Digital process for case numbers starting with C5"
+    }
+  ],
+  "contacts": [
+    {
+      "number": "01772 208 000",
+      "description": "Magistrates court",
+      "explanation": "Enquiries"
+    },
+    {
+      "number": "01282 610 000",
+      "description": "Magistrates court",
+      "explanation": "Fine queries"
+    },
+    {
+      "number": "0300 332 1000",
+      "description": "Magistrates court",
+      "explanation": "Witness Service"
+    },
+    {
+      "number": "0870 324 0190",
+      "description": "Fax",
+      "explanation": "Magistrates"
+    },
+    {
+      "number": "0300 123 1142",
+      "description": "Social security and child support",
+      "explanation": null
+    },
+    {
+      "number": "01524 597 000",
+      "description": "Family public law (children in care)",
+      "explanation": "Paper process"
+    },
+    {
+      "number": "0330 808 4424",
+      "description": "Family public law (children in care)",
+      "explanation": "Digital process for case numbers starting with C5"
+    },
+    {
+      "number": "0870 739 4451",
+      "description": "Fax",
+      "explanation": "Civil and Family"
+    }
+  ],
+  "opening_times": [
+    {
+      "description": "Counter service by appointment only",
+      "hours": "10:00 - 14:00",
+      "description_cy": null
+    },
+    {
+      "description": "Court open",
+      "hours": "09:00 - 16:00",
+      "description_cy": null
+    }
+  ],
+  "application_updates": [],
+  "facilities": [
+    {
+      "description": "We do not have any public car parking. However, there are plenty of public car parks nearby. We are beside the Town Hall and Police station on the map;\r\nhttps://www.lancaster.gov.uk/assets/attach/195/Lancaster%20Car%20Parks.pdf\r\nMore information regarding them including prices can be found here; https://www.lancaster.gov.uk/parking/car-parks",
+      "name": "Parking",
+      "order": 0
+    },
+    {
+      "description": "This building has a ramp to the building entrance, a lift between the ground floor and the first floor, and level access in to court rooms and hearing rooms.\r\nIf you have a disability and need help coming to a hearing, please contact the court or tribunal to make sure the facilities meet your specific needs or to discuss a reasonable adjustment you need.",
+      "name": "Disabled access",
+      "order": 2
+    },
+    {
+      "description": "Assistance dogs are welcome.",
+      "name": "Assistance dogs",
+      "order": 3
+    },
+    {
+      "description": "Loop hearing assistance is available in various Courtrooms - please contact the listing officer for information. Voice enhancement facilities are also available from the enquiries desk on the first floor.",
+      "name": "Hearing Loop",
+      "order": 4
+    },
+    {
+      "description": " Refreshments are available",
+      "name": "Refreshments",
+      "order": 10
+    },
+    {
+      "description": "Consultation rooms are available at this court",
+      "name": "Interview room",
+      "order": 11
+    },
+    {
+      "description": "Baby changing facilities are available.",
+      "name": "Baby changing facility",
+      "order": 14
+    },
+    {
+      "description": "Court/hearing room video conferencing facilities and prison to court video link facilities are available (by prior arrangement)\r\nBooking of video hearings/booths please ring 01772 208000",
+      "name": "Video facilities",
+      "order": 16
+    }
+  ],
+  "addresses": [],
+  "gbs": "Y492",
+  "dx_number": [
+    "145880 Lancaster 2"
+  ],
+  "service_area": [],
+  "in_person": true,
+  "access_scheme": true,
+  "additional_links": [
+    {
+      "url": "https://www.gov.uk/guidance/debt-respite-breathing-space-scheme-creditors-responsibilities-to-the-court",
+      "description": "Breathing Space"
+    }
+  ],
+  "common_flag": false,
+  "service_centre": {
+    "is_a_service_centre": false,
+    "intro_paragraph": "",
+    "intro_paragraph_cy": ""
+  }
+}
+  ]

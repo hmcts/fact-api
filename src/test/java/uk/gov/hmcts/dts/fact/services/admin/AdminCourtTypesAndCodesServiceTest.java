@@ -41,15 +41,15 @@ class AdminCourtTypesAndCodesServiceTest {
     private static final String GBS_CODE = "123";
 
     private static final List<CourtType> EXPECTED_COURT_TYPES_ENTITY = Arrays.asList(
-        new CourtType(1,"test1"),
-        new CourtType(2,"test2"),
-        new CourtType(3,"test3")
+        new CourtType(1,"test1", "search1"),
+        new CourtType(2,"test2","search2"),
+        new CourtType(3,"test3", "search3")
     );
 
     private static final List<uk.gov.hmcts.dts.fact.model.admin.CourtType> EXPECTED_COURT_TYPES = Arrays.asList(
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(1,"test1",null),
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(2,"test2",null),
-        new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3",1)
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(1,"test1","search1",null),
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(2,"test2","search2",null),
+        new uk.gov.hmcts.dts.fact.model.admin.CourtType(3, "test3","search3",1)
     );
 
 

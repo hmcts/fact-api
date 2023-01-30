@@ -80,6 +80,14 @@ public class CourtService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    public List<Court> getCourtsByCourtTypes(final List<String> courtTypes) {
+        return courtRepository
+            .findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(courtTypes)
+            .stream()
+            .map(Court::new)
+            .collect(toList());
+    }
+
     public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(final String query) {
         return getCourtsFromRepository(query)
             .stream()

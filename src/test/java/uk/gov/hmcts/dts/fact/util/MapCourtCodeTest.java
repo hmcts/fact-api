@@ -19,13 +19,13 @@ class MapCourtCodeTest {
     private static final String UNKNOWN_COURT_TYPE = "Any type";
 
     private static final List<CourtType> COURT_TYPES = Arrays.asList(
-        new CourtType(1, "Magistrates' Court", 100),
-        new CourtType(2,"County Court",101),
-        new CourtType(3, "Crown Court",102)
+        new CourtType(1, "Magistrates' Court", "Magistrates",100),
+        new CourtType(2,"County Court","County",101),
+        new CourtType(3, "Crown Court", "Crown",102)
     );
 
     private static final List<CourtType>  INCORRECT_COURT_TYPES = Collections.singletonList(
-        new CourtType(1, UNKNOWN_COURT_TYPE, 100)
+        new CourtType(1, UNKNOWN_COURT_TYPE,"search", 100)
     );
 
     private final MapCourtCode mapCourtCode = new MapCourtCode();
@@ -63,14 +63,14 @@ class MapCourtCodeTest {
 
     @Test
     void shouldNotUpdateCourtCodeForTribunal() {
-        List<CourtType> courtTypes = Collections.singletonList(new CourtType(1, "Tribunal", 100));
+        List<CourtType> courtTypes = Collections.singletonList(new CourtType(1, "Tribunal","Tribunal", 100));
         mapCourtCode.mapCourtCodesForCourtEntity(courtTypes, court);
         assertNullCourtCode(court);
     }
 
     @Test
     void shouldNotUpdateCourtCodeForFamilyCourt() {
-        List<CourtType> courtTypes = Collections.singletonList(new CourtType(1, "Family Court", 100));
+        List<CourtType> courtTypes = Collections.singletonList(new CourtType(1, "Family Court", "Family",100));
         mapCourtCode.mapCourtCodesForCourtTypeModel(courtTypes, court);
         assertNullCourtCode(court);
     }
