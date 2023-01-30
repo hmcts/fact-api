@@ -1,7 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -76,7 +76,12 @@ public class CourtsController {
      * @path /courts/court-types/{courtTypes}
      */
     @GetMapping(path = "/court-types/{courtTypes}")
-    @ApiOperation("Find courts by court types")
+    @ApiOperation(value = "Find courts by court types", notes = "This endpoint can be used to search for courts that have a court type associated to it")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = Court.class, responseContainer = "List"),
+        @ApiResponse(code = 404, message = "Not Found"),
+    })
+    @ApiModelProperty(value = "Court types list", name = "CourtTypes", dataType = "List<String>", example = "magistrates,family,crown,tribunal,county")
     public ResponseEntity<List<Court>> findByCourtTypes(@PathVariable List<String> courtTypes) {
         return ok(courtService.getCourtsByCourtTypes(courtTypes));
     }
