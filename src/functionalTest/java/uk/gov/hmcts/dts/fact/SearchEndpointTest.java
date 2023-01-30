@@ -191,10 +191,10 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalse() {
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForMoneyClaims() {
 
         //includeclosed is false param should return only open
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=Children&postcode=mk92dt");
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=money-claims&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -206,10 +206,10 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefault() {
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForMoneyClaims() {
 
         //includeclosed is missing param should return only open
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=Children&postcode=mk92dt");
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=money-claims&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -221,10 +221,57 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrue() {
+    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForMoneyClaims() {
 
         //includeclosed is true param should return open and closed
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=Children&postcode=mk92dt");
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=money-claims&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            true)));
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            false)));
+
+    }
+
+    @Test
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForTax() {
+
+        //includeclosed is false param should return only open
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=tax&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForTax() {
+
+        //includeclosed is missing param should return only open
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=tax&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForTax() {
+
+        //includeclosed is true param should return open and closed
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=tax&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
