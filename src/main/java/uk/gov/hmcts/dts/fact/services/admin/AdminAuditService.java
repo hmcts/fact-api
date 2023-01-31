@@ -1,6 +1,8 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +23,6 @@ public class AdminAuditService {
 
     private final AuditRepository auditRepository;
     private final AuditTypeRepository auditTypeRepository;
-    private final Gson gson = new Gson();
 
     @Autowired
     public AdminAuditService(AuditRepository auditRepository, AuditTypeRepository auditTypeRepository) {
@@ -47,12 +48,14 @@ public class AdminAuditService {
             .collect(Collectors.toList());
     }
 
+    @SneakyThrows
     public void saveAudit(String auditType, Object auditDataBefore, Object auditDataAfter, String auditLocation) {
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         auditRepository.save(new Audit(
             SecurityContextHolder.getContext().getAuthentication().getName(),
             auditTypeRepository.findByName(auditType),
-            gson.toJson(auditDataBefore),
-            gson.toJson(auditDataAfter),
+            objectMapper.writeValueAsString(auditDataBefore),
+            objectMapper.writeValueAsString(auditDataAfter),
             auditLocation,
             LocalDateTime.now()
         ));
