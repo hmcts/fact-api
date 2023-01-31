@@ -33,7 +33,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     private static final String TEST_GBS_CODE = "Y288";
 
     private static final List<CourtType> EXPECTED_COURT_TYPE_CODES = Arrays.asList(
-        new CourtType(11_419,"County Court",123)
+        new CourtType(11_419,"County Court","County",123)
     );
 
     private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(

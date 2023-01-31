@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface CourtRepository extends JpaRepository<Court, Integer> {
     Optional<Court> findBySlug(String slug);
 
+    List<Court> findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(List<String> courtTypes);
+
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Court c SET c.info = :info, c.infoCy = :infoCy WHERE c.slug in :slugs")
     void updateInfoForSlugs(@Param("slugs") List<String> slugs, @Param("info") String info, @Param("infoCy") String infoCy);
