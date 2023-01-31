@@ -41,7 +41,7 @@ class AdminAuditServiceTest {
     @MockBean
     private AuditTypeRepository auditTypeRepository;
 
-    private static final List<Audit> AUDIT_DATA = new ArrayList<>();
+    public static List<Audit> AUDIT_DATA = new ArrayList<>();
     private static final String TEST_LOCATION = "mosh court";
     private static final String TEST_EMAIL = "kupo email";
 

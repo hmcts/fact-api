@@ -1,6 +1,11 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.launchdarkly.shaded.com.google.gson.Gson;
+import com.launchdarkly.shaded.com.google.gson.GsonBuilder;
+import com.launchdarkly.shaded.com.google.gson.JsonDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +16,8 @@ import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,7 +28,11 @@ public class AdminAuditService {
 
     private final AuditRepository auditRepository;
     private final AuditTypeRepository auditTypeRepository;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().registerTypeAdapter(
+        LocalDateTime.class,
+        (JsonDeserializer<LocalDateTime>) (json, type, jsonDeserializationContext) ->
+            ZonedDateTime.parse(json.getAsJsonPrimitive().getAsString()).toLocalDateTime()
+    ).create();
 
     @Autowired
     public AdminAuditService(AuditRepository auditRepository, AuditTypeRepository auditTypeRepository) {
@@ -47,12 +58,14 @@ public class AdminAuditService {
             .collect(Collectors.toList());
     }
 
-    public void saveAudit(String auditType, Object auditDataBefore, Object auditDataAfter, String auditLocation) {
+    public void saveAudit(String auditType, Object auditDataBefore, Object auditDataAfter, String auditLocation) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
         auditRepository.save(new Audit(
             SecurityContextHolder.getContext().getAuthentication().getName(),
             auditTypeRepository.findByName(auditType),
-            gson.toJson(auditDataBefore),
-            gson.toJson(auditDataAfter),
+            objectMapper.writeValueAsString(auditDataBefore),
+            objectMapper.writeValueAsString(auditDataAfter),
             auditLocation,
             LocalDateTime.now()
         ));
