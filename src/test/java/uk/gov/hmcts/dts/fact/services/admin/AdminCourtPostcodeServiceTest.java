@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
