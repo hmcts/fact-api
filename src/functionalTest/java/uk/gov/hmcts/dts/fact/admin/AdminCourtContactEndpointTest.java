@@ -185,7 +185,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
             .first()
             .isNotNull();
         final List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
-        assertThat(contacts.stream()).noneMatch(c -> c.getName().equals("DX"));
+        assertThat(contacts.stream()).noneMatch(c -> "DX".equals(c.getName()));
     }
 
     private List<Contact> addNewContact(final List<Contact> contacts) {

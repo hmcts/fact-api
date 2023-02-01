@@ -98,7 +98,7 @@ public class SearchController {
                     serviceAreaSlug.get(),
                     Action.NEAREST
                 ));
-            } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
+            } else if ("childcare-arrangements".equals(serviceAreaSlug.get())) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
                     postcode.get(),
                     serviceAreaSlug.get(),

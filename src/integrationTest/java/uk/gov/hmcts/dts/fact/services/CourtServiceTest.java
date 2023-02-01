@@ -27,7 +27,7 @@ public class CourtServiceTest {
     void shouldFindCourtWithMissingWordInCourtName() {
         final List<CourtReference> results = courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch("Sheffield court");
         assertThat(results).hasSizeGreaterThanOrEqualTo(1);
-        assertThat(results.stream().anyMatch(r -> r.getName().equals(EXPECTED_COURT_NAME))).isTrue();
+        assertThat(results.stream().anyMatch(r -> EXPECTED_COURT_NAME.equals(r.getName()))).isTrue();
     }
 
     @Test
