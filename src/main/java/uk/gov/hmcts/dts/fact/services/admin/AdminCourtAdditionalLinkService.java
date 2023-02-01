@@ -13,6 +13,8 @@ import uk.gov.hmcts.dts.fact.util.AuditType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.random.RandomGeneratorFactory;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -76,5 +78,14 @@ public class AdminCourtAdditionalLinkService {
                                                              i));
         }
         return courtAdditionalLinks;
+    }
+
+    // to check java 17 compiles
+    public IntStream getPseudoInts(String algorithm, int streamSize) {
+        // returns an IntStream with size @streamSize of random numbers generated using the @algorithm
+        // where the lower bound is 0 and the upper is 100 (exclusive)
+        return RandomGeneratorFactory.of(algorithm)
+            .create()
+            .ints(streamSize, 0,100);
     }
 }
