@@ -36,7 +36,7 @@ withPipeline(type, product, component) {
   enableDbMigration('fact')
   syncBranchesWithMaster(branchesToSync)
 
-  after('test') {
+  afterAlways('test') {
     builder.gradle('integration')
   }
 
