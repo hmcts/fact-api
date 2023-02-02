@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_ADDRESS_PATH = "/addresses";
@@ -68,7 +68,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void returnAddressForTheCourt() {
+    void returnAddressForTheCourt() {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -80,13 +80,13 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAddressForTheCourt() {
+    void shouldRequireATokenWhenGettingAddressForTheCourt() {
         final Response response = doGetRequest(PLYMOUTH_COMBINED_COURT_ADDRESS_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAddressForTheCourt() {
+    void shouldBeForbiddenForGettingAddressForTheCourt() {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -97,7 +97,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    public void shouldUpdateAddress() throws JsonProcessingException {
+    void shouldUpdateAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
@@ -130,7 +130,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingCourtAddress() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -142,7 +142,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtAddress() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -153,7 +153,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotUpdateAddressWithInvalidPostcodes() throws JsonProcessingException {
+    void shouldNotUpdateAddressWithInvalidPostcodes() throws JsonProcessingException {
 
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> courtAddressesToBeUpdated = createCourtAddresses();
@@ -177,7 +177,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateCoordinatesWhenPostcodeIsChanged() throws JsonProcessingException {
+    void shouldUpdateCoordinatesWhenPostcodeIsChanged() throws JsonProcessingException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),

@@ -18,12 +18,12 @@ import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(SpringExtension.class)
-public class SearchEndpointTest extends FunctionalTestBase {
+class SearchEndpointTest extends FunctionalTestBase {
 
     private static final String SEARCH_ENDPOINT = "/search/";
 
     @Test
-    public void shouldRetrieve10CourtDetailsSortedByDistance() {
+    void shouldRetrieve10CourtDetailsSortedByDistance() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results.json?postcode=OX1 1RZ");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -33,7 +33,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieve10CourtDetailsByAreaOfLawSortedByDistance() {
+    void shouldRetrieve10CourtDetailsByAreaOfLawSortedByDistance() {
         final String aol = "Adoption";
         final var response = doGetRequest(SEARCH_ENDPOINT + "results.json?postcode=OX1 1RZ&aol=" + aol);
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -49,7 +49,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void postcodeSearchShouldSupportWelsh() {
+    void postcodeSearchShouldSupportWelsh() {
         final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?postcode=CF10 1ET", Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
@@ -66,7 +66,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void nameSearchShouldSupportWelsh() {
+    void nameSearchShouldSupportWelsh() {
         final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?q=caerdydd", Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
@@ -83,7 +83,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSortedByDistance() {
+    void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSortedByDistance() {
         final String serviceArea = "claims-against-employers";
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=OX1 1RZ&serviceArea=" + serviceArea);
 
@@ -97,7 +97,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSupportWelsh() {
+    void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSupportWelsh() {
         final String serviceArea = "claims-against-employers";
         final var englishResponse = doGetRequest(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&serviceArea=" + serviceArea);
         assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
@@ -117,7 +117,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveRegionalCourtReferenceByPostcodeAndServiceArea() {
+    void shouldRetrieveRegionalCourtReferenceByPostcodeAndServiceArea() {
         final String serviceArea = "divorce";
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=IP1 2AG&serviceArea=" + serviceArea);
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -128,7 +128,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveClosestRegionalCourt() {
+    void shouldRetrieveClosestRegionalCourt() {
         final String serviceArea = "divorce";
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=TR11 2PH&serviceArea=" + serviceArea);
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -139,7 +139,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveCourtReferenceByCourtPostcodeAndServiceAreaSortedByDistance() {
+    void shouldRetrieveCourtReferenceByCourtPostcodeAndServiceAreaSortedByDistance() {
         final String serviceArea = "money-claims";
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=W1U 6PU&serviceArea=" + serviceArea);
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -154,7 +154,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveSpoeCourtReferenceByPostcodeAndServiceArea() {
+    void shouldRetrieveSpoeCourtReferenceByPostcodeAndServiceArea() {
         final String serviceArea = "childcare-arrangements";
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=B1 1AA&serviceArea=" + serviceArea);
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -167,7 +167,7 @@ public class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieve10CourtReferenceByPostcodeAndActionAndServiceAreaSortedByDistance() {
+    void shouldRetrieve10CourtReferenceByPostcodeAndActionAndServiceAreaSortedByDistance() {
         final String action = "nearest";
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=RM19 1SR&serviceArea=money-claims&action=" + action);
 

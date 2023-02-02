@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     private static final String OPENING_TIMES_PATH = "/" + "openingTimes";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
@@ -32,7 +32,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
 
     @Test
-    public void shouldGetOpeningTimes() {
+    void shouldGetOpeningTimes() {
         final var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -41,19 +41,19 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingOpeningTimes() {
+    void shouldRequireATokenWhenGettingOpeningTimes() {
         final var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingOpeningTimes() {
+    void shouldBeForbiddenForGettingOpeningTimes() {
         final var response = doGetRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldAddAndRemoveOpeningTimes() throws JsonProcessingException {
+    void shouldAddAndRemoveOpeningTimes() throws JsonProcessingException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -80,8 +80,8 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
         Court court = response.as(Court.class);
         List<uk.gov.hmcts.dts.fact.model.OpeningTime> openingTimes = court.getOpeningTimes();
         assertThat(openingTimes).hasSizeGreaterThan(1);
-        assertThat(openingTimes.stream()).anyMatch(openingTime -> openingTime.getHours().equals(TEST_HOURS)
-            && openingTime.getType().equals(BAILIFF_OFFICE_OPEN_TYPE));
+        assertThat(openingTimes.stream()).anyMatch(openingTime -> TEST_HOURS.equals(openingTime.getHours())
+            && BAILIFF_OFFICE_OPEN_TYPE.equals(openingTime.getType()));
 
         // Check the standard court endpoint still display the added opening type in Welsh after the opening time update
         response = doGetRequest(COURTS_ENDPOINT + BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG, Map.of(ACCEPT_LANGUAGE, "cy"));
@@ -90,8 +90,8 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
         court = response.as(Court.class);
         openingTimes = court.getOpeningTimes();
         assertThat(openingTimes).hasSizeGreaterThan(1);
-        assertThat(openingTimes.stream()).anyMatch(openingTime -> openingTime.getHours().equals(TEST_HOURS)
-            && openingTime.getType().equals(BAILIFF_OFFICE_OPEN_TYPE_WELSH));
+        assertThat(openingTimes.stream()).anyMatch(openingTime -> TEST_HOURS.equals(openingTime.getHours())
+            && BAILIFF_OFFICE_OPEN_TYPE_WELSH.equals(openingTime.getType()));
 
         // Remove the added opening time
         expectedOpeningTimes = removeOpeningTime(updatedOpeningTimes);
@@ -105,13 +105,13 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingOpeningTimes() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingOpeningTimes() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, getTestOpeningTimeJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingOpeningTimes() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingOpeningTimes() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestOpeningTimeJson());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
@@ -125,7 +125,7 @@ public class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
 
     private List<OpeningTime> removeOpeningTime(List<OpeningTime> openingTimes) {
         List<OpeningTime> updatedOpeningTimes = new ArrayList<>(openingTimes);
-        updatedOpeningTimes.removeIf(time -> time.getHours().equals(TEST_HOURS));
+        updatedOpeningTimes.removeIf(time -> TEST_HOURS.equals(time.getHours()));
         return updatedOpeningTimes;
     }
 

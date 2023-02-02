@@ -19,8 +19,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith({SpringExtension.class})
 @SuppressWarnings("PMD.TooManyMethods")
-
-public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
+class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_TYPES_PATH = "courtTypes";
@@ -43,7 +42,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     /************************************************************* GET request tests section. ***************************************************************/
 
     @Test
-    public void returnAllCourtTypes() {
+    void returnAllCourtTypes() {
         final var response = doGetRequest(
             ALL_COURT_TYPES_FULL_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -55,7 +54,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllCourtTypes() {
+    void shouldRequireATokenWhenGettingAllCourtTypes() {
         final var response = doGetRequest(
             ALL_COURT_TYPES_FULL_PATH
         );
@@ -63,7 +62,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllCourtTypes() {
+    void shouldBeForbiddenForGettingAllCourtTypes() {
         final var response = doGetRequest(
             ALL_COURT_TYPES_FULL_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -74,7 +73,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     /************************************************************* Court type and code GET request tests section. ***************************************************************/
 
     @Test
-    public void shouldReturnCourtTypesAndCodes() {
+    void shouldReturnCourtTypesAndCodes() {
         final var response = doGetRequest(
             AYLESBURY_COURT_TYPES_AND_CODE_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -87,7 +86,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingCourtTypesAndCodes() {
+    void shouldRequireATokenWhenGettingCourtTypesAndCodes() {
         final var response = doGetRequest(
             AYLESBURY_COURT_TYPES_AND_CODE_PATH
         );
@@ -95,7 +94,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldBeForbiddenForGettingCourtTypesAndCodes() {
+    void shouldBeForbiddenForGettingCourtTypesAndCodes() {
         final var response = doGetRequest(
             AYLESBURY_COURT_TYPES_AND_CODE_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -105,7 +104,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     /************************************************************* Court type and code PUT request tests section. ***************************************************************/
 
     @Test
-    public void shouldUpdateCourtTypesAndCode() throws JsonProcessingException {
+    void shouldUpdateCourtTypesAndCode() throws JsonProcessingException {
 
         final var response = doGetRequest(
             WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH,
@@ -138,7 +137,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtTypesAndCode() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtTypesAndCode() throws JsonProcessingException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
@@ -150,7 +149,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingCourtTypesAndCode() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtTypesAndCode() throws JsonProcessingException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
@@ -162,7 +161,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldNotUpdatingCourtTypesAndCodeForCourtDoesNotExist() throws JsonProcessingException {
+    void shouldNotUpdatingCourtTypesAndCodeForCourtDoesNotExist() throws JsonProcessingException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 

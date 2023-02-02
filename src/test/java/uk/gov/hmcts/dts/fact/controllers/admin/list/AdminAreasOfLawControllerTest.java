@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminAreasOfLawController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminAreasOfLawControllerTest {
+class AdminAreasOfLawControllerTest {
     private static final String BASE_PATH = "/admin/areasOfLaw";
 
     @Autowired

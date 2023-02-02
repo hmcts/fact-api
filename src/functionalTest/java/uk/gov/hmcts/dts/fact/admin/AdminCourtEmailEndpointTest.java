@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ALL_EMAILS_PATH = "/emails";
     private static final String ALL_EMAIL_TYPES_PATH = "emailTypes";
@@ -32,7 +32,7 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     private static final int TEST_EMAIL_TYPE = 7;
 
     @Test
-    public void shouldGetEmails() {
+    void shouldGetEmails() {
         final var response = doGetRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -41,19 +41,19 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingEmails() {
+    void shouldRequireATokenWhenGettingEmails() {
         final var response = doGetRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingEmails() {
+    void shouldBeForbiddenForGettingEmails() {
         final var response = doGetRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldUpdateEmails() throws JsonProcessingException {
+    void shouldUpdateEmails() throws JsonProcessingException {
         final List<Email> expectedEmails = updateEmails(getCurrentEmails());
         final String json = objectMapper().writeValueAsString(expectedEmails);
 
@@ -65,19 +65,19 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingEmails() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingEmails() throws JsonProcessingException {
         final var response = doPutRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, getTestEmails());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenFromUpdatingEmails() throws JsonProcessingException {
+    void shouldBeForbiddenFromUpdatingEmails() throws JsonProcessingException {
         final var response = doPutRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestEmails());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldGetAllEmailTypes() {
+    void shouldGetAllEmailTypes() {
         final var response = doGetRequest(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -86,13 +86,13 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingEmailTypes() {
+    void shouldRequireATokenWhenGettingEmailTypes() {
         final var response = doGetRequest(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllEmailTypes() {
+    void shouldBeForbiddenForGettingAllEmailTypes() {
         final var response = doGetRequest(ADMIN_COURTS_ENDPOINT + ALL_EMAIL_TYPES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
@@ -107,11 +107,11 @@ public class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
         final boolean testRecordPresent = openingTimes.stream()
             .map(Email::getAddress)
-            .anyMatch(o -> o.equals(TEST_EMAIL_ADDRESS));
+            .anyMatch(TEST_EMAIL_ADDRESS::equals);
 
         if (testRecordPresent) {
             newEmailList = openingTimes.stream()
-                .filter(o -> !o.getAddress().equals(TEST_EMAIL_ADDRESS))
+                .filter(o -> !TEST_EMAIL_ADDRESS.equals(o.getAddress()))
                 .collect(toList());
         } else {
             // Add test email

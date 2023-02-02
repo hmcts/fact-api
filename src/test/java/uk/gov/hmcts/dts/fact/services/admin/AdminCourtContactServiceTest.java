@@ -109,7 +109,7 @@ class AdminCourtContactServiceTest {
             .hasSize(CONTACT_COUNT)
             .first()
             .isInstanceOf(Contact.class);
-        assertThat(results.stream()).noneMatch(c -> c.getNumber().equals(TEST_DX_NUMBER));
+        assertThat(results.stream()).noneMatch(c -> TEST_DX_NUMBER.equals(c.getNumber()));
     }
 
     @Test

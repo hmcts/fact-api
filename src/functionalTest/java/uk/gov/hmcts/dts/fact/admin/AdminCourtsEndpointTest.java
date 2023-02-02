@@ -27,7 +27,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith({SpringExtension.class})
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
     private static final String CARDIFF_CROWN_COURT = "Cardiff Crown Court";
     private static final String CARDIFF_CROWN_COURT_SLUG = "cardiff-crown-court";
@@ -47,7 +47,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     private static final String EXPECTED_NEW_SLUG = "new-court1";
 
     @Test
-    public void shouldRetrieveCourtsForDownload() {
+    void shouldRetrieveCourtsForDownload() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -62,7 +62,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenForAllCourtsForDownload() {
+    void shouldRequireATokenForAllCourtsForDownload() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -74,7 +74,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveAllCourts() {
+    void shouldRetrieveAllCourts() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -89,7 +89,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenForAllCourts() {
+    void shouldRequireATokenForAllCourts() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -101,7 +101,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForAllCourts() {
+    void shouldBeForbiddenForAllCourts() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -114,7 +114,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveCourtBySlug() {
+    void shouldRetrieveCourtBySlug() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -129,7 +129,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenFromGettingCourtBySlug() {
+    void shouldBeForbiddenFromGettingCourtBySlug() {
         final var response = given()
             .relaxedHTTPSValidation()
             .header(CONTENT_TYPE, CONTENT_TYPE_VALUE)
@@ -142,7 +142,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateCourtBySlugAsAdmin() throws Exception {
+    void shouldUpdateCourtBySlugAsAdmin() throws Exception {
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
                                                 "");
         assertThat(delResponse.statusCode()).isEqualTo(OK.value());
@@ -182,7 +182,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenToUpdateCourtBySlug() throws Exception {
+    void shouldBeForbiddenToUpdateCourtBySlug() throws Exception {
         final Court court = new Court(
             CARDIFF_CROWN_COURT_SLUG,
             CARDIFF_CROWN_COURT,
@@ -214,7 +214,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateCourtBySlugAsSuperAdmin() throws Exception {
+    void shouldUpdateCourtBySlugAsSuperAdmin() throws Exception {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -257,7 +257,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotUpdateCourtAsNoTokenProvided() throws Exception {
+    void shouldNotUpdateCourtAsNoTokenProvided() throws Exception {
         final Court courtUpdate = new Court(
             CARDIFF_CROWN_COURT_SLUG,
             CARDIFF_CROWN_COURT,
@@ -287,7 +287,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateCourts() throws Exception {
+    void shouldUpdateCourts() throws Exception {
         CourtInfoUpdate courtInfo = new CourtInfoUpdate(
             Lists.newArrayList(CARDIFF_CROWN_COURT_SLUG),
             "Bulk info updated",
@@ -323,7 +323,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* court photo GET request tests section. ***************************************************************/
 
     @Test
-    public void shouldRetrieveCourtPhoto() {
+    void shouldRetrieveCourtPhoto() {
         final var response = doGetRequest(
             CARDIFF_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
 
@@ -335,19 +335,19 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotRetrieveCourtPhotoWhenCourtSlugNotFound() {
+    void shouldNotRetrieveCourtPhotoWhenCourtSlugNotFound() {
         final var response = doGetRequest(COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
     @Test
-    public void shouldRequireATokenWhenRetrievingCourtPhoto() {
+    void shouldRequireATokenWhenRetrievingCourtPhoto() {
         final var response = doGetRequest(CARDIFF_COURT_PHOTO_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForRetrievingCourtPhoto() {
+    void shouldBeForbiddenForRetrievingCourtPhoto() {
         final var response = doGetRequest(
             CARDIFF_COURT_PHOTO_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -358,7 +358,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* court photo PUT request tests section. ***************************************************************/
 
     @Test
-    public void shouldUpdateCourtPhoto() throws JsonProcessingException {
+    void shouldUpdateCourtPhoto() throws JsonProcessingException {
         final var response = doGetRequest(
             CARDIFF_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -387,7 +387,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingCourtPhoto() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtPhoto() throws JsonProcessingException {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
@@ -398,7 +398,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtPhoto() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtPhoto() throws JsonProcessingException {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
@@ -408,7 +408,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotFoundForPhotoUpdateWhenCourtDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForPhotoUpdateWhenCourtDoesNotExist() throws JsonProcessingException {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
@@ -421,7 +421,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* court POST request tests section. ***************************************************************/
 
     @Test
-    public void shouldCreateNewCourt() throws JsonProcessingException {
+    void shouldCreateNewCourt() throws JsonProcessingException {
         EXPECTED_NEW_COURT.setNewCourtName("new court1");
         final String newCourtNameJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final var response = doPostRequest(
@@ -453,7 +453,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void shouldNotCreateCourtThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateCourtThatAlreadyExist() throws JsonProcessingException {
         EXPECTED_NEW_COURT.setNewCourtName("aldershot Justice Centre");
         final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final Response response = doPostRequest(
@@ -464,7 +464,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void adminShouldBeForbiddenToCreateCourt() throws JsonProcessingException {
+    void adminShouldBeForbiddenToCreateCourt() throws JsonProcessingException {
         final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final Response response = doPostRequest(
             COURTS_ENDPOINT,
@@ -474,7 +474,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenCreatingNewCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingNewCourt() throws JsonProcessingException {
         final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final Response response = doPostRequest(
             COURTS_ENDPOINT, testJson);
@@ -484,7 +484,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Delete request tests section. ***************************************************************/
 
     @Test
-    public void adminShouldBeForbiddenForDeletingCourt() {
+    void adminShouldBeForbiddenForDeletingCourt() {
 
         final var response = doDeleteRequest(
             COURTS_ENDPOINT + EXPECTED_NEW_SLUG,
@@ -494,7 +494,7 @@ public class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenDeletingOpeningCourt() {
+    void shouldRequireATokenWhenDeletingOpeningCourt() {
         final var response = doDeleteRequest(
             COURTS_ENDPOINT + EXPECTED_NEW_SLUG,
             ""

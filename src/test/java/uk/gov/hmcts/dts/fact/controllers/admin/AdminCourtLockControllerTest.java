@@ -33,7 +33,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtLockController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtLockControllerTest {
+class AdminCourtLockControllerTest {
 
     @Autowired
     private transient MockMvc mockMvc;

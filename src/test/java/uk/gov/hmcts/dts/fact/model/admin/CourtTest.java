@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("PMD.NcssCount")
 class CourtTest {
-    static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
+    private static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
 
     @BeforeAll
     static void setUp() {

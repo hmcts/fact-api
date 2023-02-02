@@ -64,7 +64,7 @@ public class Contact extends Element {
         if (fax) {
             if (StringUtils.isBlank(description)) {
                 return FAX_;
-            } else if (!description.equalsIgnoreCase(FAX_)) {
+            } else if (!FAX_.equalsIgnoreCase(description)) {
                 return description + " " + FAX_.toLowerCase(Locale.getDefault());
             }
         }
@@ -77,7 +77,7 @@ public class Contact extends Element {
         if (fax) {
             if (StringUtils.isBlank(descriptionCy)) {
                 return FAX_CY;
-            } else if (!descriptionCy.equalsIgnoreCase(FAX_CY)) {
+            } else if (!FAX_CY.equalsIgnoreCase(descriptionCy)) {
                 return FAX_CY + " " + descriptionCy;
             }
         }

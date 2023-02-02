@@ -22,7 +22,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @SuppressWarnings("PMD.SystemPrintln")
 @ExtendWith(SpringExtension.class)
 @Disabled
-public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
+class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_AUDIT_ENDPOINT = "/admin/audit/";
     private static final String OPENING_TIMES_PATH = "/openingTimes";
@@ -34,7 +34,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     private static final String TEST_AUDIT_NAME = "Update court opening times";
 
     @BeforeEach
-    public void setUpTestData() throws JsonProcessingException {
+    void setUpTestData() throws JsonProcessingException {
         setUpOpeningTimes();
     }
 
@@ -42,32 +42,32 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void shouldReturnAllAuditsForPageAndSize() {
+    void shouldReturnAllAuditsForPageAndSize() {
         checkAuditData("", "", "", "");
     }
 
 
     @Test
-    public void shouldReturnAllAuditsForLocation() {
+    void shouldReturnAllAuditsForLocation() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "", "", "");
     }
 
 
     @Test
-    public void shouldReturnAllAuditsForLocationAndEmail() {
+    void shouldReturnAllAuditsForLocationAndEmail() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "", "");
     }
 
     @Test
-    public void shouldReturnAllAuditsForLocationEmailAndToAndFromDates() {
+    void shouldReturnAllAuditsForLocationEmailAndToAndFromDates() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "2020-01-01T01:01:01.111", "2520-01-01T01:01:01.111");
     }
 
     @Test
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    public void shouldReturnPaginatedResultsForPageAndSize() {
+    void shouldReturnPaginatedResultsForPageAndSize() {
 
         final List<Audit> currentAudits = getCurrentAudits(0,200_000, "", "", "", "");
         assertThat(currentAudits).isNotEmpty();
@@ -85,13 +85,13 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllAudits() {
+    void shouldRequireATokenWhenGettingAllAudits() {
         final Response response = doGetRequest(ADMIN_AUDIT_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllAudits() {
+    void shouldBeForbiddenForGettingAllAudits() {
         final Response response = doGetRequest(
             ADMIN_AUDIT_ENDPOINT + "?page=0&size=20000",
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -178,7 +178,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private List<OpeningTime> removeOpeningTime(List<OpeningTime> openingTimes) {
         List<OpeningTime> updatedOpeningTimes = new ArrayList<>(openingTimes);
-        updatedOpeningTimes.removeIf(time -> time.getHours().equals(TEST_HOURS));
+        updatedOpeningTimes.removeIf(time -> TEST_HOURS.equals(time.getHours()));
         return updatedOpeningTimes;
     }
 }

@@ -15,12 +15,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-public class CourtWithDistanceRepositoryTest {
+class CourtWithDistanceRepositoryTest {
 
     private static final String AREA_OF_LAW = "Divorce";
     private static final double LON = -0.25;
     private static final double LAT = 50.84;
-    
+
     @Autowired
     private CourtWithDistanceRepository courtWithDistanceRepository;
 

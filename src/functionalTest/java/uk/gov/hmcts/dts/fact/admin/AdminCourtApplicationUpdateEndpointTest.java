@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String DIVORCE_SERVICE_CENTRE_SLUG = "divorce-service-centre";
@@ -34,7 +34,7 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     private static final String TEST_EXTERNAL_LINK_DESCRIPTION_CY = "test description welsh";
 
     @Test
-    public void shouldGetApplicationUpdateTypes() {
+    void shouldGetApplicationUpdateTypes() {
         final var response = doGetRequest(APPLICATION_PROGRESSION_OPTION_FULL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -43,13 +43,13 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingApplicationUpdateTypes() {
+    void shouldRequireATokenWhenGettingApplicationUpdateTypes() {
         final var response = doGetRequest(APPLICATION_PROGRESSION_OPTION_FULL_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingApplicationUpdateTypes() {
+    void shouldBeForbiddenForGettingApplicationUpdateTypes() {
         final var response = doGetRequest(
             APPLICATION_PROGRESSION_OPTION_FULL_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -58,7 +58,7 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     }
 
     @Test
-    public void shouldReturnNotFoundWhenServiceCentreDoesNotExist() {
+    void shouldReturnNotFoundWhenServiceCentreDoesNotExist() {
         final Response response = doGetRequest(
             ADMIN_COURTS_ENDPOINT + "test"
                 + APPLICATION_PROGRESSION_PATH,
@@ -70,7 +70,7 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    public void shouldUpdateApplicationUpdatesTypes() throws JsonProcessingException {
+    void shouldUpdateApplicationUpdatesTypes() throws JsonProcessingException {
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final List<ApplicationUpdate> expectedApplicationUpdateTypes = addNewApplicationUpdateType(currentApplicationUpdateTypes);
         final String updatedJson = objectMapper().writeValueAsString(expectedApplicationUpdateTypes);
@@ -100,7 +100,7 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
 
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
@@ -109,7 +109,7 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
 
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
@@ -121,7 +121,7 @@ public class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTest
     }
 
     @Test
-    public void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
+    void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
 
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);

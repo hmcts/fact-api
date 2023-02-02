@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminContactTypeController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminContactTypeControllerTest {
+class AdminContactTypeControllerTest {
     private static final String BASE_PATH = "/admin/contactTypes";
     private static final Integer ID = 100;
 

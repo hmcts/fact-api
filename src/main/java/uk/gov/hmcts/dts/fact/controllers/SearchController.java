@@ -54,7 +54,7 @@ public class SearchController {
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
-            if (areaOfLaw.get().equals(CHILDRENAREAOFLAW)) {
+            if (CHILDRENAREAOFLAW.equals(areaOfLaw.get())) {
                 return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
                     postcode.get(),
                     areaOfLaw.get()

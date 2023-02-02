@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
+class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_LOCK_PATH = "/lock/";
@@ -33,7 +33,7 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void returnLockForTheCourt() {
+    void returnLockForTheCourt() {
         final Response response = doGetRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -43,13 +43,13 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingLocksForTheCourt() {
+    void shouldRequireATokenWhenGettingLocksForTheCourt() {
         final Response response = doGetRequest(BARNSLEY_LAW_COURT_LOCK_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingLocksForTheCourt() {
+    void shouldBeForbiddenForGettingLocksForTheCourt() {
         final Response response = doGetRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -60,7 +60,7 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    public void shouldCreateLock() throws JsonProcessingException {
+    void shouldCreateLock() throws JsonProcessingException {
 
         final CourtLock expectedCourtLock = createCourtLock();
         final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
@@ -88,7 +88,7 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForCreatingCourtLock() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingCourtLock() throws JsonProcessingException {
         final CourtLock expectedCourtLock = createCourtLock();
         final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
 
@@ -100,7 +100,7 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenCreatingCourtLock() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingCourtLock() throws JsonProcessingException {
         final CourtLock expectedCourtLock = createCourtLock();
         final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
 
@@ -111,7 +111,7 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotCreateCourtLockIfAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateCourtLockIfAlreadyExist() throws JsonProcessingException {
         final CourtLock expectedCourtLock = createCourtLock();
         final String courtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
         final CourtLock alreadyExistCourtLock = createCourtLock();
@@ -148,7 +148,7 @@ public class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void shouldRequireATokenWhenDeletingCourtLock() {
+    void shouldRequireATokenWhenDeletingCourtLock() {
         final var response = doDeleteRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH + USER_EMAIL,
             ""

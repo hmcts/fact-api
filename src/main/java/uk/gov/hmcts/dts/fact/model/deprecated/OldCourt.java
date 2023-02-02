@@ -26,7 +26,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@SuppressWarnings("PMD.TooManyFields")
+@SuppressWarnings({"PMD.TooManyFields", "PMD.UnusedAssignment"})
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
     "crown_location_code", "county_location_code", "cci_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs"})

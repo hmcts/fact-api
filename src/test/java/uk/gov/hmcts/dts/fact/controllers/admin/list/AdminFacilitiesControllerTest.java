@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SuppressWarnings("PMD.TooManyMethods")
 @WebMvcTest(AdminFacilitiesController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminFacilitiesControllerTest {
+class AdminFacilitiesControllerTest {
 
     private static final String BASE_PATH = "/admin/facilities";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

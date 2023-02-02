@@ -36,7 +36,7 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CourtTest {
-    static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
+    private static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
 
     private static final String VISIT_US_ADDRESS_TYPE_NAME = "Visit us";
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME = "Write to us";

@@ -87,6 +87,7 @@ class CourtsControllerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.AddEmptyString")
     void shouldRespondWithBadRequestForFindCourtByEmptyQuery() throws Exception {
 
         final List<CourtReference> courts = new ArrayList<>();

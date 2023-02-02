@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CourtPostcodeRepositoryTest {
+class CourtPostcodeRepositoryTest {
     private static final String TEST_MANCHESTER_COURT_SLUG = "manchester-civil-justice-centre-civil-and-family-courts";
     private static final String TEST_MANCHESTER_POSTCODE = "M11";
     private static final String TEST_MANCHESTER_POSTCODE2 = "M12";

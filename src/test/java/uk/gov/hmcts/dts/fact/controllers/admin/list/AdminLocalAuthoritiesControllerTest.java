@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminLocalAuthoritiesController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminLocalAuthoritiesControllerTest {
+class AdminLocalAuthoritiesControllerTest {
 
     private static final String BASE_PATH = "/admin/localauthorities";
     private static final String GET_ALL_PATH = "/all";

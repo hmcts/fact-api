@@ -187,7 +187,7 @@ class CourtRepositoryTest {
 
         // Remove the added opening time
         courtOpeningTimes = court.getCourtOpeningTimes();
-        courtOpeningTimes.removeIf(o -> o.getOpeningTime().getHours().equals(TEST_HOURS));
+        courtOpeningTimes.removeIf(o -> TEST_HOURS.equals(o.getOpeningTime().getHours()));
         court.setCourtOpeningTimes(courtOpeningTimes);
         result = courtRepository.save(court);
 

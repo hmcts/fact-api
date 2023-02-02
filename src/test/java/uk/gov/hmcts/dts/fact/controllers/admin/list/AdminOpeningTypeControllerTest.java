@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminOpeningTypeController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminOpeningTypeControllerTest {
+class AdminOpeningTypeControllerTest {
     private static final String BASE_PATH = "/admin/openingTypes";
     private static final Integer ID = 100;
 

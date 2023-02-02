@@ -5,6 +5,7 @@ import uk.gov.hmcts.dts.fact.entity.*;
 
 import static java.lang.String.format;
 
+@SuppressWarnings("PMD.InsufficientStringBufferDeclaration")
 public final class ElementFormatter {
 
     private static String explanation = ", Explanation: %s";

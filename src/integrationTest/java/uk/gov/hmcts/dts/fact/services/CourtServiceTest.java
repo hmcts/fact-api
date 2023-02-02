@@ -10,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest()
-public class CourtServiceTest {
+class CourtServiceTest {
     private static final String EXPECTED_COURT_NAME = "Sheffield Magistrates' Court";
 
     @Autowired

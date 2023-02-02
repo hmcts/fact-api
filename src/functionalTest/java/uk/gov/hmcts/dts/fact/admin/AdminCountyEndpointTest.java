@@ -16,12 +16,12 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCountyEndpointTest extends AdminFunctionalTestBase {
+class AdminCountyEndpointTest extends AdminFunctionalTestBase {
 
     private static final String COUNTIES_ENDPOINT = "/admin/counties";
 
     @Test
-    public void shouldGetAllCounties() {
+    void shouldGetAllCounties() {
         final Response response = doGetRequest(COUNTIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -30,13 +30,13 @@ public class AdminCountyEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllCounties() {
+    void shouldRequireATokenWhenGettingAllCounties() {
         final Response response = doGetRequest(COUNTIES_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllCounties() {
+    void shouldBeForbiddenForGettingAllCounties() {
         final Response response = doGetRequest(COUNTIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }

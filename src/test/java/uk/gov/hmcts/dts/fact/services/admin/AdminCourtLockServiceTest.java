@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtLockService.class)
-public class AdminCourtLockServiceTest {
+class AdminCourtLockServiceTest {
 
     @MockBean
     private CourtLockRepository courtLockRepository;

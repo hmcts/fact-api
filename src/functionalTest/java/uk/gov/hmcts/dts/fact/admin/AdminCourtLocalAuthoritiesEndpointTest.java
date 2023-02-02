@@ -19,8 +19,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
-
+class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String LOCAL_AUTHORITIES_PATH = "localAuthorities";
@@ -34,7 +33,7 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     private static final int TEST_ID = 397_243;
 
     @Test
-    public void returnLocalAuthoritiesForTheCourtAsPerTheAreasOfLaw() {
+    void returnLocalAuthoritiesForTheCourtAsPerTheAreasOfLaw() {
         final var response = doGetRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -46,13 +45,13 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingLocalAuthoritiesForAreasOfLaw() {
+    void shouldRequireATokenWhenGettingLocalAuthoritiesForAreasOfLaw() {
         final var response = doGetRequest(AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingLocalAuthoritiesForAreasOfLaw() {
+    void shouldBeForbiddenForGettingLocalAuthoritiesForAreasOfLaw() {
         final var response = doGetRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -61,7 +60,7 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     }
 
     @Test
-    public void shouldUpdateCourtLocalAuthorities() throws JsonProcessingException {
+    void shouldUpdateCourtLocalAuthorities() throws JsonProcessingException {
         final List<LocalAuthority> currentCourtLocalAuthorities = getCurrentLocalAuthorities();
         final List<LocalAuthority> expectedCourtLocalAuthorities = updateLocalAuthorities(currentCourtLocalAuthorities);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtLocalAuthorities);
@@ -96,7 +95,7 @@ public class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestB
     }
 
     @Test
-    public void adminShouldBeForbiddenForUpdatingLocalAuthoritiesForAreasOfLaw() throws JsonProcessingException {
+    void adminShouldBeForbiddenForUpdatingLocalAuthoritiesForAreasOfLaw() throws JsonProcessingException {
 
         final var response = doPutRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
