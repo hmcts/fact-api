@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
 import uk.gov.hmcts.dts.fact.util.Utils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -145,10 +145,10 @@ public class AdminCourtPostcodeService {
             .stream()
             .map(CourtPostcode::getPostcode)
             .collect(toList());
-        JsonObject auditData = new JsonObject();
-        auditData.addProperty("moved-from", sourceSlug);
-        auditData.addProperty("moved-to", destinationSlug);
-        auditData.addProperty("postcodes", postcodes.toString());
+        HashMap<String, String> auditData = new HashMap<>();
+        auditData.put("moved-from", sourceSlug);
+        auditData.put("moved-to", destinationSlug);
+        auditData.put("postcodes", postcodes.toString());
 
         adminAuditService.saveAudit(
             AuditType.findByName("Move court postcodes"),
