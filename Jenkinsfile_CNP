@@ -36,15 +36,15 @@ withPipeline(type, product, component) {
   enableDbMigration('fact')
   syncBranchesWithMaster(branchesToSync)
 
-  after('test') {
+  afterAlways('test') {
     builder.gradle('integration')
   }
 
-  after('functionalTest:preview') {
+  afterAlways('functionalTest:preview') {
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/**/*'
   }
 
-  after('functionalTest:aat') {
+  afterAlways('functionalTest:aat') {
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/reports/tests/**/*'
   }
 }

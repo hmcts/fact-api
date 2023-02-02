@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.launchdarkly.shaded.com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -180,10 +179,10 @@ class AdminCourtPostcodeServiceTest {
         assertThat(results)
             .hasSize(2)
             .containsExactlyInAnyOrderElementsOf(POSTCODES_TO_BE_MOVED);
-        JsonObject auditData = new JsonObject();
-        auditData.addProperty("moved-from", SOURCE_COURT_SLUG);
-        auditData.addProperty("moved-to", DESTINATION_COURT_SLUG);
-        auditData.addProperty("postcodes", results.toString());
+        HashMap<String, String> auditData = new HashMap<>();
+        auditData.put("moved-from", SOURCE_COURT_SLUG);
+        auditData.put("moved-to", DESTINATION_COURT_SLUG);
+        auditData.put("postcodes", results.toString());
 
         verify(adminAuditService, atLeastOnce()).saveAudit("Move court postcodes",
                                                            auditData,
