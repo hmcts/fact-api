@@ -14,6 +14,10 @@ plugins {
 group = 'uk.gov.hmcts.dts'
 version = '0.0.1'
 
+apply plugin: 'checkstyle'
+apply plugin: 'org.owasp.dependencycheck'
+apply plugin: 'org.sonarqube'
+
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(17)
