@@ -16,7 +16,10 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.ADMIN_COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
 class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
