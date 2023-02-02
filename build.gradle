@@ -14,10 +14,6 @@ plugins {
 group = 'uk.gov.hmcts.dts'
 version = '0.0.1'
 
-apply plugin: 'checkstyle'
-apply plugin: 'org.owasp.dependencycheck'
-apply plugin: 'org.sonarqube'
-
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(17)
@@ -125,7 +121,7 @@ checkstyle {
 }
 
 pmd {
-  toolVersion = "6.31.0"
+  toolVersion = "6.52.0"
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
   reportsDir = file("$project.buildDir/reports/pmd")
   // https://github.com/pmd/pmd/issues/876

@@ -21,7 +21,7 @@ public class AdminAddressTypeEndpointTest extends AdminFunctionalTestBase {
     private static final String ADDRESS_TYPES_ENDPOINT = "/admin/addressTypes";
 
     @Test
-    public void shouldGetAllAddressTypes() {
+    void shouldGetAllAddressTypes() {
         final Response response = doGetRequest(ADDRESS_TYPES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
