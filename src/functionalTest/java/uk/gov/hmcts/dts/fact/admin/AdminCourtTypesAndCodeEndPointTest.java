@@ -5,7 +5,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.admin.*;
+import uk.gov.hmcts.dts.fact.model.admin.CourtType;
+import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
+import uk.gov.hmcts.dts.fact.model.admin.DxCode;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.Arrays;
