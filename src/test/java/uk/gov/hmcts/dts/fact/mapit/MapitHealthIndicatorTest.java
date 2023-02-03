@@ -12,7 +12,8 @@ import uk.gov.hmcts.dts.fact.exception.MapitUsageException;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MapitHealthIndicatorTest {

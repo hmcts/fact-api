@@ -4,7 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
+import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.ContactType;
+import uk.gov.hmcts.dts.fact.entity.DxCode;
+import uk.gov.hmcts.dts.fact.entity.Email;
+import uk.gov.hmcts.dts.fact.entity.EmailType;
+import uk.gov.hmcts.dts.fact.entity.OpeningTime;
+import uk.gov.hmcts.dts.fact.entity.OpeningType;
 
 import java.util.stream.Stream;
 
