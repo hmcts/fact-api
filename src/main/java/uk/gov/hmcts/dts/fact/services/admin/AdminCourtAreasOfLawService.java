@@ -12,7 +12,8 @@ import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
