@@ -14,10 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.*;
 
 @ExtendWith({SpringExtension.class})
-public class ServiceEndpointTest extends FunctionalTestBase {
+class ServiceEndpointTest extends FunctionalTestBase {
 
     @Test
-    public void shouldRetrieveServices() {
+    void shouldRetrieveServices() {
         final var response = doGetRequest("/services");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -26,7 +26,7 @@ public class ServiceEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveService() {
+    void shouldRetrieveService() {
         final var response = doGetRequest("/services/money");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -37,7 +37,7 @@ public class ServiceEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldRetrieveServiceAreasSortedbySortOrder() {
+    void shouldRetrieveServiceAreasSortedbySortOrder() {
         final var response = doGetRequest("/services/money/service-areas");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 

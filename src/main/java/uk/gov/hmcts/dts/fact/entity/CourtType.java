@@ -10,13 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "search_courttype")
 @Getter
 @Setter
 @NoArgsConstructor
-
 public class CourtType {
 
     @ManyToMany(mappedBy = "courtTypes")

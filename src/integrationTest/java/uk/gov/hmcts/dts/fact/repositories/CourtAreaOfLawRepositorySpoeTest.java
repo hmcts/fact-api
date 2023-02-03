@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CourtAreaOfLawRepositorySpoeTest {
+class CourtAreaOfLawRepositorySpoeTest {
 
     @Autowired
     private CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;

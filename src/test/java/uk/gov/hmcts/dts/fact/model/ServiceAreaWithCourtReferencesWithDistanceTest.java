@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ServiceAreaWithCourtReferencesWithDistanceTest {
 
-    static uk.gov.hmcts.dts.fact.entity.ServiceArea entity;
-    static List<CourtReferenceWithDistance> courts;
+    private static uk.gov.hmcts.dts.fact.entity.ServiceArea entity;
+    private static List<CourtReferenceWithDistance> courts;
 
     @BeforeAll
     static void setUp() {

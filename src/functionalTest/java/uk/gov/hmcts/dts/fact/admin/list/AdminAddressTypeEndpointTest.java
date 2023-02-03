@@ -13,15 +13,15 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 @ExtendWith(SpringExtension.class)
-public class AdminAddressTypeEndpointTest extends AdminFunctionalTestBase {
+class AdminAddressTypeEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADDRESS_TYPES_ENDPOINT = "/admin/addressTypes";
 
     @Test
-    public void shouldGetAllAddressTypes() {
+    void shouldGetAllAddressTypes() {
         final Response response = doGetRequest(ADDRESS_TYPES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -30,13 +30,13 @@ public class AdminAddressTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllAddressTypes() {
+    void shouldRequireATokenWhenGettingAllAddressTypes() {
         final Response response = doGetRequest(ADDRESS_TYPES_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllAddressTypes() {
+    void shouldBeForbiddenForGettingAllAddressTypes() {
         final Response response = doGetRequest(ADDRESS_TYPES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }

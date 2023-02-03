@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ServiceAreaTest {
 
-    static uk.gov.hmcts.dts.fact.entity.ServiceArea entity;
+    private static uk.gov.hmcts.dts.fact.entity.ServiceArea entity;
 
     @BeforeAll
     static void setUp() {

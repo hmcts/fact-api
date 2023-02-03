@@ -17,7 +17,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
+class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_CONTACT_TYPE_ENDPOINT = "/admin/contactTypes/";
     private static final int CONTACT_TYPE_ID = 203;
@@ -30,7 +30,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void shouldReturnAllContactTypes() {
+    void shouldReturnAllContactTypes() {
         final Response response = doGetRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -43,13 +43,13 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllContactTypes() {
+    void shouldRequireATokenWhenGettingAllContactTypes() {
         final Response response = doGetRequest(ADMIN_CONTACT_TYPE_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllContactTypes() {
+    void shouldBeForbiddenForGettingAllContactTypes() {
         final Response response = doGetRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -60,7 +60,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void shouldReturnContactType() {
+    void shouldReturnContactType() {
         final Response response = doGetRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -72,13 +72,13 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingContactType() {
+    void shouldRequireATokenWhenGettingContactType() {
         final Response response = doGetRequest(ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingContactType() {
+    void shouldBeForbiddenForGettingContactType() {
         final Response response = doGetRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -87,7 +87,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnContactTypeNotFound() {
+    void shouldReturnContactTypeNotFound() {
         final Response response = doGetRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + "12345",
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -98,7 +98,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    public void shouldUpdateContactType() throws JsonProcessingException {
+    void shouldUpdateContactType() throws JsonProcessingException {
         final ContactType currentContactType = getCurrentContactType();
         final ContactType expectedContactType = getUpdatedContactType();
         final String updatedJson = objectMapper().writeValueAsString(expectedContactType);
@@ -128,7 +128,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingContactType() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingContactType() throws JsonProcessingException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -140,7 +140,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingContactType() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingContactType() throws JsonProcessingException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -150,7 +150,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotFoundForUpdateWhenContactTypeDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForUpdateWhenContactTypeDoesNotExist() throws JsonProcessingException {
         final ContactType currentContactType = getCurrentContactType();
         currentContactType.setId(1234);
         final String testJson = objectMapper().writeValueAsString(currentContactType);
@@ -165,7 +165,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    public void shouldCreateContactType() throws JsonProcessingException {
+    void shouldCreateContactType() throws JsonProcessingException {
 
         final List<ContactType> currentContactType = getCurrentContactTypes();
         final ContactType expectedContactType = createContactType();
@@ -211,7 +211,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForCreatingContactType() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingContactType() throws JsonProcessingException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -223,7 +223,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenCreatingContactType() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingContactType() throws JsonProcessingException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -233,7 +233,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotCreateContactTypeThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateContactTypeThatAlreadyExist() throws JsonProcessingException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -247,7 +247,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Delete request tests section. ***************************************************************/
 
     @Test
-    public void adminShouldBeForbiddenForDeletingContactType() {
+    void adminShouldBeForbiddenForDeletingContactType() {
 
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,
@@ -257,7 +257,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenDeletingContactType() {
+    void shouldRequireATokenWhenDeletingContactType() {
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,
             ""
@@ -266,7 +266,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotDeleteContactTypeNotFound() {
+    void shouldNotDeleteContactTypeNotFound() {
 
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + 1234,
@@ -276,7 +276,7 @@ public class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotDeleteContactTypeInUse() {
+    void shouldNotDeleteContactTypeInUse() {
 
         final var response = doDeleteRequest(
             ADMIN_CONTACT_TYPE_ENDPOINT + CONTACT_TYPE_ID,

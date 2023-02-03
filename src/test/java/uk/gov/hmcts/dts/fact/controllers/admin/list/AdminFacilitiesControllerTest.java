@@ -17,15 +17,20 @@ import uk.gov.hmcts.dts.fact.services.admin.list.AdminFacilityService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings("PMD.TooManyMethods")
 @WebMvcTest(AdminFacilitiesController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminFacilitiesControllerTest {
+class AdminFacilitiesControllerTest {
 
     private static final String BASE_PATH = "/admin/facilities";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

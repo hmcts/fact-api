@@ -13,7 +13,7 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CourtReferenceTest {
-    static Court courtEntity;
+    private static Court courtEntity;
     private static final Timestamp CURRENT_TIME = new Timestamp(System.currentTimeMillis());
 
     @BeforeAll

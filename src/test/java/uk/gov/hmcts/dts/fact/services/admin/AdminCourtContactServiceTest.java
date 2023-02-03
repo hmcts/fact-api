@@ -26,7 +26,12 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtContactService.class)
@@ -109,7 +114,7 @@ class AdminCourtContactServiceTest {
             .hasSize(CONTACT_COUNT)
             .first()
             .isInstanceOf(Contact.class);
-        assertThat(results.stream()).noneMatch(c -> c.getNumber().equals(TEST_DX_NUMBER));
+        assertThat(results.stream()).noneMatch(c -> TEST_DX_NUMBER.equals(c.getNumber()));
     }
 
     @Test

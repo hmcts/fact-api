@@ -15,11 +15,14 @@ import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.ADMIN_COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String CONTACTS_PATH = "/" + "contacts";
     private static final String CONTACT_TYPES_FULL_PATH = "/admin/contactTypes/";
     private static final String BIRMINGHAM_CIVIL_AND_FAMILY_JUSTICE_CENTRE_SLUG = "birmingham-civil-and-family-justice-centre";
@@ -30,7 +33,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     private static final String FAX_TYPE_SUFFIX = " fax";
 
     @Test
-    public void shouldRetrieveContacts() {
+    void shouldRetrieveContacts() {
         final var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -39,19 +42,19 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenRetrievingContacts() {
+    void shouldRequireATokenWhenRetrievingContacts() {
         final var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForRetrievingContacts() {
+    void shouldBeForbiddenForRetrievingContacts() {
         final var response = doGetRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldAddAndRemoveContacts() throws JsonProcessingException {
+    void shouldAddAndRemoveContacts() throws JsonProcessingException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -87,7 +90,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldChangePhoneNumberToFaxAndViceVersa() throws JsonProcessingException {
+    void shouldChangePhoneNumberToFaxAndViceVersa() throws JsonProcessingException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -137,13 +140,13 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingContacts() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingContacts() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, getTestContactsJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingContacts() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingContacts() throws JsonProcessingException {
         final var response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestContactsJson());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
@@ -185,7 +188,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
             .first()
             .isNotNull();
         final List<uk.gov.hmcts.dts.fact.model.Contact> contacts = court.getContacts();
-        assertThat(contacts.stream()).noneMatch(c -> c.getName().equals("DX"));
+        assertThat(contacts.stream()).noneMatch(c -> "DX".equals(c.getName()));
     }
 
     private List<Contact> addNewContact(final List<Contact> contacts) {
@@ -196,7 +199,7 @@ public class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
 
     private List<Contact> removeContact(final List<Contact> contacts) {
         final List<Contact> updatedContacts = new ArrayList<>(contacts);
-        updatedContacts.removeIf(time -> time.getNumber().equals(TEST_NUMBER));
+        updatedContacts.removeIf(time -> TEST_NUMBER.equals(time.getNumber()));
         return updatedContacts;
     }
 

@@ -19,7 +19,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts";
     private static final String SPOE_AREAS_OF_LAW_PATH = "/SpoeAreasOfLaw";
@@ -36,7 +36,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void shouldReturnAllSpoeAreasOfLaw() {
+    void shouldReturnAllSpoeAreasOfLaw() {
         final Response response = doGetRequest(
             SPOE_AREA_OF_LAW_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
@@ -48,13 +48,13 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingSpoeAreasOfLaw() {
+    void shouldRequireATokenWhenGettingSpoeAreasOfLaw() {
         final var response = doGetRequest(SPOE_AREA_OF_LAW_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingSpoeAreasOfLaw() {
+    void shouldBeForbiddenForGettingSpoeAreasOfLaw() {
         final var response = doGetRequest(
             SPOE_AREA_OF_LAW_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -65,7 +65,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     /************************************************************* Spoe Get Request Tests for a court. ***************************************************************/
 
     @Test
-    public void returnSpoeAreasOfLawForTheCourt() {
+    void returnSpoeAreasOfLawForTheCourt() {
         final var response = doGetRequest(
             ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
@@ -77,13 +77,13 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingSpoeAreasOfLawForTheCourt() {
+    void shouldRequireATokenWhenGettingSpoeAreasOfLawForTheCourt() {
         final var response = doGetRequest(ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingSpoeAreasOfLawForTheCourt() {
+    void shouldBeForbiddenForGettingSpoeAreasOfLawForTheCourt() {
         final var response = doGetRequest(
             ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -92,7 +92,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     }
 
     @Test
-    public void shouldReturnNotFoundWhenSpoeCourtDoesNotExist() {
+    void shouldReturnNotFoundWhenSpoeCourtDoesNotExist() {
         final Response response = doGetRequest(
             ABERYSTWYTH_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken)
@@ -102,7 +102,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     /************************************************************* PUT request tests section. ***************************************************************/
 
     @Test
-    public void shouldUpdateCourtSpoeAreaOfLaw() throws JsonProcessingException {
+    void shouldUpdateCourtSpoeAreaOfLaw() throws JsonProcessingException {
         final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
         final List<SpoeAreaOfLaw> expectedCourtAreasOfLaw = updateCourtAreasOfLaw(currentCourtSpoeAreaOfLaw);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAreasOfLaw);
@@ -139,14 +139,14 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
         final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final var response = doPutRequest(ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH, testJson);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
         final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final var response = doPutRequest(
             ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
@@ -156,7 +156,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     }
 
     @Test
-    public void shouldnotUpdateAndReturnNotFoundWhenSpoeCourtDoesNotExist() throws JsonProcessingException {
+    void shouldnotUpdateAndReturnNotFoundWhenSpoeCourtDoesNotExist() throws JsonProcessingException {
         final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final Response response = doPutRequest(
             ABERYSTWYTH_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
@@ -167,7 +167,7 @@ public class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase
     }
 
     @Test
-    public void shouldNotUpdateSpoeAreaOfLawForTheCourtThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotUpdateSpoeAreaOfLawForTheCourtThatAlreadyExist() throws JsonProcessingException {
         final String testJson = objectMapper()
             .writeValueAsString(updateCourtAreasOfLaw(updateCourtAreasOfLaw(getCurrentSpoeAreaOflaw())));
         final Response response = doPutRequest(

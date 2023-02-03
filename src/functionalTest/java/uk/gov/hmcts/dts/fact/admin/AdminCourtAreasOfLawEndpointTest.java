@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtAreasOfLawEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String AREAS_OF_LAW_PATH = "courtAreasOfLaw";
@@ -27,7 +27,7 @@ public class AdminCourtAreasOfLawEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void returnAreasOfLawForTheCourt() {
+    void returnAreasOfLawForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -39,13 +39,13 @@ public class AdminCourtAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAreasOfLawForTheCourt() {
+    void shouldRequireATokenWhenGettingAreasOfLawForTheCourt() {
         final var response = doGetRequest(AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAreasOfLawForTheCourt() {
+    void shouldBeForbiddenForGettingAreasOfLawForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)

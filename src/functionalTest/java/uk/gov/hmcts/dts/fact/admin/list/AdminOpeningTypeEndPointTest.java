@@ -16,7 +16,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
+class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_OPENING_TYPE_ENDPOINT = "/admin/openingTypes/";
     private static final int OPENING_TYPE_ID = 5;
@@ -27,7 +27,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void shouldReturnAllOpeningTypes() {
+    void shouldReturnAllOpeningTypes() {
         final Response response = doGetRequest(
             ADMIN_OPENING_TYPE_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -39,13 +39,13 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllOpeningTypes() {
+    void shouldRequireATokenWhenGettingAllOpeningTypes() {
         final Response response = doGetRequest(ADMIN_OPENING_TYPE_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllOpeningTypes() {
+    void shouldBeForbiddenForGettingAllOpeningTypes() {
         final Response response = doGetRequest(
             ADMIN_OPENING_TYPE_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -56,7 +56,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void shouldReturnOpeningType() {
+    void shouldReturnOpeningType() {
         final Response response = doGetRequest(
             ADMIN_OPENING_TYPE_ENDPOINT + OPENING_TYPE_ID,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -68,13 +68,13 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingOpeningType() {
+    void shouldRequireATokenWhenGettingOpeningType() {
         final Response response = doGetRequest(ADMIN_OPENING_TYPE_ENDPOINT + OPENING_TYPE_ID);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingOpeningType() {
+    void shouldBeForbiddenForGettingOpeningType() {
         final Response response = doGetRequest(
             ADMIN_OPENING_TYPE_ENDPOINT + OPENING_TYPE_ID,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -83,7 +83,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOpeningTypeNotFound() {
+    void shouldReturnOpeningTypeNotFound() {
         final Response response = doGetRequest(
             ADMIN_OPENING_TYPE_ENDPOINT + "12345",
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -94,7 +94,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    public void shouldUpdateOpeningType() throws JsonProcessingException {
+    void shouldUpdateOpeningType() throws JsonProcessingException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final OpeningType expectedOpeningType = getUpdatedOpeningType();
         final String updatedJson = objectMapper().writeValueAsString(expectedOpeningType);
@@ -124,7 +124,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingOpeningType() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingOpeningType() throws JsonProcessingException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -136,7 +136,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingOpeningType() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingOpeningType() throws JsonProcessingException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -146,7 +146,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotFoundForUpdateWhenOpeningTypeDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForUpdateWhenOpeningTypeDoesNotExist() throws JsonProcessingException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         currentOpeningType.setId(123);
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
@@ -161,7 +161,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* Delete request tests section. ***************************************************************/
 
     @Test
-    public void adminShouldBeForbiddenForDeletingOpeningType() {
+    void adminShouldBeForbiddenForDeletingOpeningType() {
 
         final var response = doDeleteRequest(
             ADMIN_OPENING_TYPE_ENDPOINT + OPENING_TYPE_ID,
@@ -171,7 +171,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenDeletingOpeningType() {
+    void shouldRequireATokenWhenDeletingOpeningType() {
         final var response = doDeleteRequest(
             ADMIN_OPENING_TYPE_ENDPOINT + OPENING_TYPE_ID,
             ""
@@ -180,7 +180,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotDeleteOpeningTypeNotFound() {
+    void shouldNotDeleteOpeningTypeNotFound() {
 
         final var response = doDeleteRequest(
             ADMIN_OPENING_TYPE_ENDPOINT + 123,
@@ -190,7 +190,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotDeleteOpeningTypeInUse() {
+    void shouldNotDeleteOpeningTypeInUse() {
 
         final var response = doDeleteRequest(
             ADMIN_OPENING_TYPE_ENDPOINT + OPENING_TYPE_ID,
@@ -202,7 +202,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    public void shouldCreateOpeningType() throws JsonProcessingException {
+    void shouldCreateOpeningType() throws JsonProcessingException {
 
         final List<OpeningType> currentOpeningType = getCurrentOpeningTypes();
         final OpeningType expectedOpeningType = createOpeningType();
@@ -238,7 +238,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForCreatingOpeningType() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingOpeningType() throws JsonProcessingException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -250,7 +250,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenCreatingOpeningType() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingOpeningType() throws JsonProcessingException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -260,7 +260,7 @@ public class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotCreateOpeningTypeThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateOpeningTypeThatAlreadyExist() throws JsonProcessingException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 

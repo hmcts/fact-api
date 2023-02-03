@@ -4,7 +4,11 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.dts.fact.util.AddressType.*;
+import static uk.gov.hmcts.dts.fact.util.AddressType.VISIT_OR_CONTACT_US;
+import static uk.gov.hmcts.dts.fact.util.AddressType.VISIT_US;
+import static uk.gov.hmcts.dts.fact.util.AddressType.WRITE_TO_US;
+import static uk.gov.hmcts.dts.fact.util.AddressType.findByName;
+import static uk.gov.hmcts.dts.fact.util.AddressType.isCourtAddress;
 
 class AddressTypeTest {
     @Test

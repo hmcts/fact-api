@@ -17,8 +17,11 @@ import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -26,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminLocalAuthoritiesController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminLocalAuthoritiesControllerTest {
+class AdminLocalAuthoritiesControllerTest {
 
     private static final String BASE_PATH = "/admin/localauthorities";
     private static final String GET_ALL_PATH = "/all";

@@ -37,7 +37,7 @@ public final class Utils {
     }
 
     public static String chooseString(String welsh, String english) {
-        boolean welshPreferred = LocaleContextHolder.getLocale().getLanguage().equals("cy");
+        boolean welshPreferred = "cy".equals(LocaleContextHolder.getLocale().getLanguage());
         return welshPreferred && null != welsh && !welsh.isBlank() ? welsh : english;
     }
 

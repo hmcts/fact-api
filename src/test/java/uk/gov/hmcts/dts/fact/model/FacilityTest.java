@@ -10,12 +10,11 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FacilityTest {
-    static uk.gov.hmcts.dts.fact.entity.Facility entity;
-    static uk.gov.hmcts.dts.fact.entity.FacilityType facilityType;
+    private static uk.gov.hmcts.dts.fact.entity.Facility entity;
 
     @BeforeAll
     static void setUp() {
-        facilityType = new uk.gov.hmcts.dts.fact.entity.FacilityType();
+        uk.gov.hmcts.dts.fact.entity.FacilityType facilityType = new uk.gov.hmcts.dts.fact.entity.FacilityType();
         facilityType.setName("A name");
         facilityType.setNameCy("A name but in Welsh");
 

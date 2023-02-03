@@ -19,7 +19,7 @@ public enum AddressType {
     private static final Map<String, AddressType> LOOKUP = new ConcurrentHashMap<>();
 
     private final String name;
-    private final boolean isCourtAddress;
+    private final boolean isACourtAddress;
 
     static {
         Arrays.stream(values())
@@ -35,6 +35,6 @@ public enum AddressType {
     }
 
     public static boolean isCourtAddress(final String name) {
-        return findByName(name).isCourtAddress;
+        return findByName(name).isACourtAddress;
     }
 }

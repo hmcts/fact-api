@@ -9,7 +9,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import java.util.Arrays;
 import java.util.List;
 
-public class CourtAddressTest {
+class CourtAddressTest {
     private static final List<String> ADDRESS = Arrays.asList("address line 1", "address line 2");
     private static final List<String> ADDRESS_CY = Arrays.asList("address line 1 cy", "address line 2 cy");
     private static final String TOWN_NAME = "town";
