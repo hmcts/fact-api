@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.util;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("PMD.JUnit5TestShouldBePackagePrivate")
 public class AdminFunctionalTestBase extends FunctionalTestBase {
 
     @Autowired
@@ -13,7 +14,7 @@ public class AdminFunctionalTestBase extends FunctionalTestBase {
     protected String superAdminToken;
 
     @BeforeEach
-    public void setUpAuthenticationTokens() {
+    void setUpAuthenticationTokens() {
         authenticatedToken = authClient.getToken();
         forbiddenToken = authClient.getNobodyToken();
         superAdminToken = authClient.getSuperAdminToken();

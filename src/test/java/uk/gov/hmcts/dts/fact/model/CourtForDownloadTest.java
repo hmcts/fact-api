@@ -31,7 +31,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CourtForDownloadTest {
-    static Court courtEntity;
+    private static Court courtEntity;
     private static Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
     @BeforeAll

@@ -8,7 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
+import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.DxCode;
 import uk.gov.hmcts.dts.fact.model.Contact;
 import uk.gov.hmcts.dts.fact.model.Email;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
@@ -26,7 +33,7 @@ import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@SuppressWarnings("PMD.TooManyFields")
+@SuppressWarnings({"PMD.TooManyFields", "PMD.UnusedAssignment"})
 @JsonPropertyOrder({"name", "slug", "info", "open", "directions", "lat", "lon",
     "crown_location_code", "county_location_code", "cci_code", "magistrates_location_code", "areas_of_law",
     "types", "emails", "contacts", "opening_times", "facilities", "addresses", "gbs"})

@@ -11,7 +11,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 @SpringBootTest()
-public class AdminCourtPostcodeServiceTest {
+class AdminCourtPostcodeServiceTest {
     private static final String TEST_MANCHESTER_COURT_SLUG = "manchester-civil-justice-centre-civil-and-family-courts";
     private static final String EXISTED_POSTCODE = "M21";
     private static final String EXISTED_POSTCODE_LOWER_CASE = "m21";

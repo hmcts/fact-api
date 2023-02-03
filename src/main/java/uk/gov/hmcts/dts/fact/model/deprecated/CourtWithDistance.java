@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.DxCode;
 import uk.gov.hmcts.dts.fact.model.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.CourtAddress;
 

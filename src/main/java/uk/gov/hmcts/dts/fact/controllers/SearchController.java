@@ -8,7 +8,11 @@ import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
@@ -54,7 +58,7 @@ public class SearchController {
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
-            if (areaOfLaw.get().equals(CHILDRENAREAOFLAW)) {
+            if (CHILDRENAREAOFLAW.equals(areaOfLaw.get())) {
                 return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
                     postcode.get(),
                     areaOfLaw.get()
@@ -98,7 +102,7 @@ public class SearchController {
                     serviceAreaSlug.get(),
                     Action.NEAREST
                 ));
-            } else if (serviceAreaSlug.get().equals("childcare-arrangements")) {
+            } else if ("childcare-arrangements".equals(serviceAreaSlug.get())) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
                     postcode.get(),
                     serviceAreaSlug.get(),

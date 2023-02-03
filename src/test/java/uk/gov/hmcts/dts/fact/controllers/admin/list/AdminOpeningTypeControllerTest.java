@@ -17,14 +17,19 @@ import uk.gov.hmcts.dts.fact.services.admin.list.AdminOpeningTypeService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminOpeningTypeController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminOpeningTypeControllerTest {
+class AdminOpeningTypeControllerTest {
     private static final String BASE_PATH = "/admin/openingTypes";
     private static final Integer ID = 100;
 

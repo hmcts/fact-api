@@ -10,10 +10,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith({SpringExtension.class})
-public class ServiceAreaEndpointTest extends FunctionalTestBase {
+class ServiceAreaEndpointTest extends FunctionalTestBase {
 
     @Test
-    public void shouldRetrieveServiceArea() {
+    void shouldRetrieveServiceArea() {
         final var response = doGetRequest("/service-areas/money-claims");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 

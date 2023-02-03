@@ -15,10 +15,13 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.ADMIN_COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static final String ADMIN_COURT_GENERAL_INFO_PATH = "/generalInfo";
     // Do not use these court slugs on other tests, as the slug gets changed on the database. If you do,
     // make sure to add a cleanup below first
@@ -65,7 +68,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void shouldRetrieveCourtGeneralInfo() {
+    void shouldRetrieveCourtGeneralInfo() {
         var response = doGetRequest(COURTS_ENDPOINT + DARTFORD_COURT_SLUG);
         final Court expectedCourtDetails = response.as(Court.class);
 
@@ -84,19 +87,19 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void shouldRequireATokenWhenRetrievingCourtGeneralInfo() {
+    void shouldRequireATokenWhenRetrievingCourtGeneralInfo() {
         final var response = doGetRequest(DARTFORD_GENERAL_INFO_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForRetrievingCourtGeneralInfo() {
+    void shouldBeForbiddenForRetrievingCourtGeneralInfo() {
         final var response = doGetRequest(DARTFORD_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldUpdateSelectedCourtGeneralInfoAsAdmin() {
+    void shouldUpdateSelectedCourtGeneralInfoAsAdmin() {
         final var response = doPutRequest(DARTFORD_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken), adminCourtInfoJson);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -111,7 +114,7 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
+    void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
                                                 "");
         assertThat(delResponse.statusCode()).isEqualTo(OK.value());
@@ -140,13 +143,13 @@ public class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtGeneralInfo() {
+    void shouldRequireATokenWhenUpdatingCourtGeneralInfo() {
         final var response = doPutRequest(DARTFORD_GENERAL_INFO_PATH, adminCourtInfoJson);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingCourtGeneralInfo() {
+    void shouldBeForbiddenForUpdatingCourtGeneralInfo() {
         final var response = doPutRequest(DARTFORD_GENERAL_INFO_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), adminCourtInfoJson);
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }

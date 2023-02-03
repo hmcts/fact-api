@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ApplicationTest {
+class ApplicationTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -34,11 +34,11 @@ public class ApplicationTest {
     }
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
     }
 
     @Test
-    public void welcomeRootEndpoint() throws Exception {
+    void welcomeRootEndpoint() throws Exception {
         final MvcResult response = mockMvc.perform(get("/")).andExpect(status().isOk()).andReturn();
 
         assertThat(response.getResponse().getContentAsString()).startsWith("Welcome");

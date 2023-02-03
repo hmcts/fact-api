@@ -16,14 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CourtReferenceWithDistanceTest {
-    static CourtWithDistance courtEntity;
-    static AreaOfLaw areaOfLaw;
-    static List<AreaOfLaw> areasOfLaw;
+    private static CourtWithDistance courtEntity;
 
     @BeforeAll
     static void setUp() {
-        areaOfLaw = new AreaOfLaw();
-        areasOfLaw = new ArrayList<>();
+        AreaOfLaw areaOfLaw = new AreaOfLaw();
+        List<AreaOfLaw> areasOfLaw = new ArrayList<>();
         areasOfLaw.add(areaOfLaw);
         courtEntity = new CourtWithDistance();
         courtEntity.setName("Name");
@@ -31,7 +29,6 @@ class CourtReferenceWithDistanceTest {
         courtEntity.setNameCy("Name in Welsh");
         courtEntity.setDistance(2.2);
         courtEntity.setAreasOfLawSpoe(areasOfLaw);
-
     }
 
     @ParameterizedTest
