@@ -185,9 +185,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForMoneyClaims() {
-
-        //includeclosed is false param should return only open
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForMoneyClaims() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=money-claims&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -200,9 +198,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForMoneyClaims() {
-
-        //includeclosed is missing param should return only open
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForMoneyClaims() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=money-claims&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -215,9 +211,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForMoneyClaims() {
-
-        //includeclosed is true param should return open and closed
+    void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForMoneyClaims() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=money-claims&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -232,9 +226,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForTax() {
-
-        //includeclosed is false param should return only open
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForTax() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=tax&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -247,9 +239,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForTax() {
-
-        //includeclosed is missing param should return only open
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForTax() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=tax&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -262,9 +252,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForTax() {
-
-        //includeclosed is true param should return open and closed
+    void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForTax() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=tax&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -279,9 +267,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForProbate() {
-
-        //includeclosed is false param should return only open
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForProbate() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=probate&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -294,9 +280,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForProbate() {
-
-        //includeclosed is missing param should return only open
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForProbate() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=probate&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -309,9 +293,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForProbate() {
-
-        //includeclosed is true param should return open and closed
+    void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForProbate() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=probate&postcode=IP222HF");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
