@@ -95,8 +95,8 @@ public class CourtService {
             .collect(toList());
     }
 
-    public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(final String query) {
-        return getCourtByQuery(query, CourtWithDistance::new);
+    public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(final String query, final Boolean includeClosed) {
+        return getCourtByQuery(query, includeClosed, CourtWithDistance::new);
     }
 
     public List<CourtWithDistance> getNearestCourtsByPostcode(final String postcode) {
@@ -109,14 +109,14 @@ public class CourtService {
             .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
-    public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw) {
+    public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw, final Boolean includeClosed) {
         if (filterResultByPostcode(postcode, areaOfLaw)) {
             return emptyList();
         }
 
         return mapitService.getMapitData(postcode)
             .map(value -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw)
+                .findNearestTenByAreaOfLaw(value.getLat(), value.getLon(), areaOfLaw, includeClosed)
                 .stream()
                 .filter(getCourtWithDistancePredicate(postcode, areaOfLaw))
                 .map(CourtWithDistance::new)
@@ -124,7 +124,7 @@ public class CourtService {
             .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
-    public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw) {
+    public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw, final Boolean includeClosed) {
         if (filterResultByPostcode(postcode, areaOfLaw)) {
             return emptyList();
         }
@@ -142,11 +142,12 @@ public class CourtService {
                     mapitData.getLat(),
                     mapitData.getLon(),
                     areaOfLaw,
-                    localAuthority
+                    localAuthority,
+                    includeClosed
                 ))
             .orElse(emptyList());
 
-        return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData)
+        return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, includeClosed, mapitData)
             .stream()
             .map(CourtWithDistance::new)
             .collect(toList());
@@ -167,7 +168,11 @@ public class CourtService {
         return courtReferences;
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode, final String serviceAreaSlug, final Action action) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode,
+                                                                                       final String serviceAreaSlug,
+                                                                                       final Boolean includeClosed,
+                                                                                       final Action action
+    ) {
 
         final Optional<ServiceArea> serviceAreaOptional = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug);
         final Optional<MapitData> optionalMapitData = mapitService.getMapitData(postcode);
@@ -181,27 +186,28 @@ public class CourtService {
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = serviceAreaSearchFactory
             .getSearchFor(serviceArea, mapitData, action)
-            .searchWith(serviceArea, mapitData, postcode);
+            .searchWith(serviceArea, mapitData, postcode, includeClosed);
 
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeActionAndAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final Action action) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeActionAndAreaOfLawSearch(final String postcode, final String serviceAreaSlug, final Action action, final Boolean includeClosed) {
         final ServiceArea serviceArea = serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug).orElseThrow(() -> new NotFoundException(
             serviceAreaSlug));
         final MapitData mapitData = mapitService.getMapitData(postcode).orElseThrow(() -> new NotFoundException(
             serviceAreaSlug));
         final List<uk.gov.hmcts.dts.fact.entity.CourtWithDistance> courts = serviceAreaSearchFactory
             .getSearchFor(serviceArea, mapitData, action)
-            .searchWith(serviceArea, mapitData, postcode);
+            .searchWith(serviceArea, mapitData, postcode, includeClosed);
 
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final String areaOfLaw, final Action action) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final String areaOfLaw, final Action action, final Boolean includeClosed) {
         ServiceAreaWithCourtReferencesWithDistance results = this.getNearestCourtsByPostcodeSearch(
             postcode,
             serviceArea,
+            includeClosed,
             action
         );
         if (Objects.isNull(results) || Objects.isNull(results.getCourts())) {
@@ -230,9 +236,9 @@ public class CourtService {
             .collect(toList());
     }
 
-    private <T> List<T> getCourtByQuery(final String query, final Function<uk.gov.hmcts.dts.fact.entity.Court, T> function) {
+    private <T> List<T> getCourtByQuery(final String query, final Boolean includeClosed, final Function<uk.gov.hmcts.dts.fact.entity.Court, T> function) {
         return courtRepository
-            .queryBy(query)
+            .queryBy(query, includeClosed)
             .stream()
             .map(function::apply)
             .collect(toList());

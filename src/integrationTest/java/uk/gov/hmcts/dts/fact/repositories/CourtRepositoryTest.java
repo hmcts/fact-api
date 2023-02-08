@@ -126,7 +126,7 @@ class CourtRepositoryTest {
             CourtReference[].class
         ));
 
-        final List<Court> result = courtRepository.queryBy(query);
+        final List<Court> result = courtRepository.queryBy(query, true);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         final CourtReference court = new CourtReference(result.get(0));
         assertThat(court.getName()).isEqualTo(expected.get(0).getName());
@@ -152,7 +152,7 @@ class CourtRepositoryTest {
     @Test
     void shouldFindCourtsByNameOrAddress() {
         final String query = "Oxford";
-        final List<Court> result = courtRepository.queryBy(query);
+        final List<Court> result = courtRepository.queryBy(query, true);
         assertThat(result.size()).isGreaterThanOrEqualTo(1);
         assertThat(result.stream().anyMatch(r -> r.getName().contains(query)));
         assertThat(result.stream()
@@ -165,7 +165,7 @@ class CourtRepositoryTest {
 
     @Test
     void shouldNotFindNonExistentCourtByQuery() {
-        final List<Court> result = courtRepository.queryBy("This does not exist");
+        final List<Court> result = courtRepository.queryBy("This does not exist", true);
         assertThat(result).isEmpty();
     }
 
