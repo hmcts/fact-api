@@ -18,6 +18,7 @@ import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(SpringExtension.class)
+@SuppressWarnings("PMD.TooManyMethods")
 class SearchEndpointTest extends FunctionalTestBase {
 
     private static final String SEARCH_ENDPOINT = "/search/";
@@ -35,17 +36,17 @@ class SearchEndpointTest extends FunctionalTestBase {
     @Test
     void shouldRetrieve10CourtDetailsByAreaOfLawSortedByDistance() {
         final String aol = "Adoption";
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results.json?postcode=OX1 1RZ&aol=" + aol);
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results.json?includeClosed=true&postcode=OX1 1RZ&aol=" + aol);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtWithDistance> courts = response.body().jsonPath().getList(".", CourtWithDistance.class);
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
         assertTrue(courts
-            .stream()
-            .allMatch(c -> c.getAreasOfLaw()
-                .stream()
-                .anyMatch(a -> a.getName().equals(aol))));
+                       .stream()
+                       .allMatch(c -> c.getAreasOfLaw()
+                           .stream()
+                           .anyMatch(a -> a.getName().equals(aol))));
     }
 
     @Test
@@ -57,7 +58,7 @@ class SearchEndpointTest extends FunctionalTestBase {
             .getList(".", CourtWithDistance.class);
         assertThat(welshCourts.get(0).getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
 
-        final var englishResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?postcode=CF10 1ET");
+        final var englishResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?includeClosed=true&postcode=CF10 1ET");
         assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
 
         final List<CourtWithDistance> englishCourts = englishResponse.body().jsonPath()
@@ -85,7 +86,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     @Test
     void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSortedByDistance() {
         final String serviceArea = "claims-against-employers";
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=OX1 1RZ&serviceArea=" + serviceArea);
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&postcode=OX1 1RZ&serviceArea=" + serviceArea);
 
         assertThat(response.statusCode()).isEqualTo(OK.value());
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -99,7 +100,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     @Test
     void shouldRetrieve10CourtReferenceByPostcodeAndServiceAreaSupportWelsh() {
         final String serviceArea = "claims-against-employers";
-        final var englishResponse = doGetRequest(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&serviceArea=" + serviceArea);
+        final var englishResponse = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&postcode=CF24 0RZ&serviceArea=" + serviceArea);
         assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance englishServiceAreaCourtReferencesWithDistance =
@@ -107,7 +108,10 @@ class SearchEndpointTest extends FunctionalTestBase {
         assertThat(englishServiceAreaCourtReferencesWithDistance.getCourts().get(0).getName()).isEqualTo(
             "Cardiff  Magistrates' Court");
 
-        final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results?postcode=CF24 0RZ&serviceArea=" + serviceArea, Map.of(ACCEPT_LANGUAGE, "cy"));
+        final var welshResponse = doGetRequest(
+            SEARCH_ENDPOINT + "results?includeClosed=true&postcode=CF24 0RZ&serviceArea=" + serviceArea,
+            Map.of(ACCEPT_LANGUAGE, "cy")
+        );
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -119,7 +123,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     @Test
     void shouldRetrieveRegionalCourtReferenceByPostcodeAndServiceArea() {
         final String serviceArea = "divorce";
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=IP1 2AG&serviceArea=" + serviceArea);
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&postcode=IP1 2AG&serviceArea=" + serviceArea);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -130,7 +134,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     @Test
     void shouldRetrieveClosestRegionalCourt() {
         final String serviceArea = "divorce";
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=TR11 2PH&serviceArea=" + serviceArea);
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&postcode=TR11 2PH&serviceArea=" + serviceArea);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -156,7 +160,7 @@ class SearchEndpointTest extends FunctionalTestBase {
     @Test
     void shouldRetrieveSpoeCourtReferenceByPostcodeAndServiceArea() {
         final String serviceArea = "childcare-arrangements";
-        final var response = doGetRequest(SEARCH_ENDPOINT + "results?postcode=B1 1AA&serviceArea=" + serviceArea);
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&postcode=B1 1AA&serviceArea=" + serviceArea);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
@@ -178,5 +182,128 @@ class SearchEndpointTest extends FunctionalTestBase {
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts().size()).isEqualTo(10);
         assertThat(serviceAreaWithCourtReferencesWithDistance.getCourts()).isSortedAccordingTo(Comparator.comparing(
             CourtReferenceWithDistance::getDistance));
+    }
+
+    @Test
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForMoneyClaims() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=money-claims&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForMoneyClaims() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=money-claims&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForMoneyClaims() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=money-claims&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            true)));
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            false)));
+
+    }
+
+    @Test
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForTax() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=tax&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForTax() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=tax&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForTax() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=tax&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            true)));
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            false)));
+
+    }
+
+    @Test
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsFalseForProbate() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=false&serviceArea=probate&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    void shouldReturnOnlyOpenCourtsWhenIncludeClosedIsDefaultForProbate() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?serviceArea=probate&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).allMatch(d -> d.equals(
+            true)));
+
+    }
+
+    @Test
+    void shouldReturnOpenOrClosedCourtsWhenIncludeClosedIsTrueForProbate() {
+        final var response = doGetRequest(SEARCH_ENDPOINT + "results?includeClosed=true&serviceArea=probate&postcode=IP222HF");
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final ServiceAreaWithCourtReferencesWithDistance serviceAreaWithCourtReferencesWithDistance =
+            response.as(ServiceAreaWithCourtReferencesWithDistance.class);
+
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            true)));
+        assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
+            false)));
+
     }
 }

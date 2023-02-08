@@ -61,14 +61,15 @@ public class SearchController {
             if (CHILDRENAREAOFLAW.equals(areaOfLaw.get())) {
                 return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
                     postcode.get(),
-                    areaOfLaw.get()
+                    areaOfLaw.get(),
+                    true
                 ));
             }
-            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get()));
+            return ok(courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode.get(), areaOfLaw.get(), true));
         } else if (postcode.isPresent()) {
             return ok(courtService.getNearestCourtsByPostcode(postcode.get()));
         } else if (query.isPresent()) {
-            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get()));
+            return ok(courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query.get(), true));
         } else {
             return badRequest().build();
         }
@@ -93,6 +94,7 @@ public class SearchController {
     public ResponseEntity<ServiceAreaWithCourtReferencesWithDistance> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
         @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
+        @ApiParam("Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Boolean includeClosed,
         @RequestParam("action") Optional<Action> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {
@@ -100,19 +102,22 @@ public class SearchController {
                 return ok(courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
                     postcode.get(),
                     serviceAreaSlug.get(),
-                    Action.NEAREST
+                    Action.NEAREST,
+                    includeClosed
                 ));
             } else if ("childcare-arrangements".equals(serviceAreaSlug.get())) {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
                     postcode.get(),
                     serviceAreaSlug.get(),
                     CHILDRENAREAOFLAW,
-                    Action.UNDEFINED
+                    Action.UNDEFINED,
+                    includeClosed
                 ));
             } else {
                 return ok(courtService.getNearestCourtsByPostcodeSearch(
                     postcode.get(),
                     serviceAreaSlug.get(),
+                    includeClosed,
                     Action.UNDEFINED
                 ));
             }

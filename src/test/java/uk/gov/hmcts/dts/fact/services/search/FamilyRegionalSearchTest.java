@@ -56,7 +56,7 @@ class FamilyRegionalSearchTest {
         when(courtWithDistanceRepository.findNearestRegionalByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW, LOCAL_AUTHORITY_NAME))
             .thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = familyRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = familyRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestRegionalByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW, LOCAL_AUTHORITY_NAME);
@@ -79,7 +79,7 @@ class FamilyRegionalSearchTest {
             .thenReturn(emptyList());
         when(courtWithDistanceRepository.findNearestRegionalByAreaOfLaw(LAT, LON, AREA_OF_LAW)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = familyRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = familyRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestRegionalByAreaOfLawAndLocalAuthority(LAT, LON, AREA_OF_LAW, LOCAL_AUTHORITY_NAME);
@@ -101,7 +101,7 @@ class FamilyRegionalSearchTest {
         when(mapitData.getLocalAuthority()).thenReturn(empty());
         when(courtWithDistanceRepository.findNearestRegionalByAreaOfLaw(LAT, LON, AREA_OF_LAW)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = familyRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA);
+        final List<CourtWithDistance> courtWithDistances = familyRegionalSearch.searchWith(serviceArea, mapitData, JE2_4BA, true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
         verify(courtWithDistanceRepository).findNearestRegionalByAreaOfLaw(LAT, LON, AREA_OF_LAW);

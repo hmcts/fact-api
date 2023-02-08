@@ -18,10 +18,13 @@ public class DefaultSearch implements Search {
     }
 
     @Override
-    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode) {
+    public List<CourtWithDistance> searchWith(
+        final ServiceArea serviceArea, final MapitData mapitData, final String postcode, final Boolean includeClosed) {
         return courtWithDistanceRepository.findNearestTenByAreaOfLaw(
             mapitData.getLat(),
             mapitData.getLon(),
-            serviceArea.getAreaOfLaw().getName());
+            serviceArea.getAreaOfLaw().getName(),
+            includeClosed
+        );
     }
 }
