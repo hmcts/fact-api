@@ -9,7 +9,12 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.hmcts.dts.fact.util.Utils.*;
+import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+import static uk.gov.hmcts.dts.fact.util.Utils.constructAddressLines;
+import static uk.gov.hmcts.dts.fact.util.Utils.convertNameToSlug;
+import static uk.gov.hmcts.dts.fact.util.Utils.decodeUrlFromString;
+import static uk.gov.hmcts.dts.fact.util.Utils.formatServiceAreasForIntroPara;
+import static uk.gov.hmcts.dts.fact.util.Utils.upperCaseAndStripAllSpaces;
 
 @SuppressWarnings("PMD.TooManyMethods")
 class UtilsTest {

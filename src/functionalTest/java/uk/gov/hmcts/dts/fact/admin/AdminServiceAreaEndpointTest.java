@@ -14,12 +14,12 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminServiceAreaEndpointTest extends AdminFunctionalTestBase {
+class AdminServiceAreaEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_SERVICE_AREAS_ENDPOINT = "/admin/serviceAreas";
 
     @Test
-    public void shouldReturnAllServiceAreas() {
+    void shouldReturnAllServiceAreas() {
         final Response response = doGetRequest(
             ADMIN_SERVICE_AREAS_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -31,13 +31,13 @@ public class AdminServiceAreaEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllServiceAreas() {
+    void shouldRequireATokenWhenGettingAllServiceAreas() {
         final Response response = doGetRequest(ADMIN_SERVICE_AREAS_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllServiceAreas() {
+    void shouldBeForbiddenForGettingAllServiceAreas() {
         final Response response = doGetRequest(
             ADMIN_SERVICE_AREAS_ENDPOINT,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)

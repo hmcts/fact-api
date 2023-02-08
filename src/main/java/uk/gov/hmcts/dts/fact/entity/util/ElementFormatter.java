@@ -1,10 +1,15 @@
 package uk.gov.hmcts.dts.fact.entity.util;
 
 import org.apache.commons.lang.StringUtils;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.ApplicationUpdate;
+import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.DxCode;
+import uk.gov.hmcts.dts.fact.entity.Email;
+import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 
 import static java.lang.String.format;
 
+@SuppressWarnings("PMD.InsufficientStringBufferDeclaration")
 public final class ElementFormatter {
 
     private static String explanation = ", Explanation: %s";

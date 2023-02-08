@@ -15,6 +15,7 @@ import static io.restassured.RestAssured.given;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @SpringBootTest(classes = {Application.class, OAuthClient.class}, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SuppressWarnings("PMD.JUnit5TestShouldBePackagePrivate")
 public class FunctionalTestBase {
     protected static final String CONTENT_TYPE_VALUE = "application/json";
 
@@ -22,7 +23,7 @@ public class FunctionalTestBase {
     private String testUrl;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         RestAssured.baseURI = testUrl;
     }
 

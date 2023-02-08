@@ -7,7 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AdditionalLink;
+import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtAdditionalLink;
+import uk.gov.hmcts.dts.fact.entity.CourtAddress;
+import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.CourtEmail;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.Email;
+import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 
@@ -187,7 +197,7 @@ class CourtRepositoryTest {
 
         // Remove the added opening time
         courtOpeningTimes = court.getCourtOpeningTimes();
-        courtOpeningTimes.removeIf(o -> o.getOpeningTime().getHours().equals(TEST_HOURS));
+        courtOpeningTimes.removeIf(o -> TEST_HOURS.equals(o.getOpeningTime().getHours()));
         court.setCourtOpeningTimes(courtOpeningTimes);
         result = courtRepository.save(court);
 

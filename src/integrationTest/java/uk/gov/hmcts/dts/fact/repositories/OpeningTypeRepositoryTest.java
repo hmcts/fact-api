@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-public class OpeningTypeRepositoryTest {
+class OpeningTypeRepositoryTest {
     @Autowired
     private OpeningTypeRepository openingTypeRepository;
 

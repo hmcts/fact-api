@@ -12,7 +12,6 @@ class ServiceAreaTypeTest {
 
     @Test
     void shouldConvertTypeStringToServiceAreaType() {
-
         assertThat(serviceAreaTypeFrom("family")).isEqualTo(FAMILY);
         assertThat(serviceAreaTypeFrom("civil")).isEqualTo(CIVIL);
         assertThat(serviceAreaTypeFrom("other")).isEqualTo(OTHER);

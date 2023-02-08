@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminAddressTypeController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminAddressTypeControllerTest {
+class AdminAddressTypeControllerTest {
     private static final String PATH = "/admin/addressTypes";
     private static final List<AddressType> EXPECTED_ADDRESS_TYPES = Arrays.asList(
         new AddressType(1, "Visit us", "Visit us cy"),

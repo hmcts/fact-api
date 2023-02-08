@@ -16,10 +16,11 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String ADDITIONAL_LINK_PATH = "/additionalLinks";
@@ -36,7 +37,7 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void returnAdditionalLinksForTheCourt() {
+    void returnAdditionalLinksForTheCourt() {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDITIONAL_LINK_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -48,13 +49,13 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAdditionalLinksForTheCourt() {
+    void shouldRequireATokenWhenGettingAdditionalLinksForTheCourt() {
         final Response response = doGetRequest(PLYMOUTH_COMBINED_COURT_ADDITIONAL_LINK_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAdditionalLinksForTheCourt() {
+    void shouldBeForbiddenForGettingAdditionalLinksForTheCourt() {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDITIONAL_LINK_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -63,7 +64,7 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
     }
 
     @Test
-    public void shouldNotRetrieveAdditionalLinkWhenCourtSlugNotFound() {
+    void shouldNotRetrieveAdditionalLinkWhenCourtSlugNotFound() {
         final var response = doGetRequest(COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
@@ -71,7 +72,7 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    public void shouldUpdateAdditionalLink() throws JsonProcessingException {
+    void shouldUpdateAdditionalLink() throws JsonProcessingException {
         final List<AdditionalLink> currentAdditionalLink = getCurrentAdditionalLink();
         final List<AdditionalLink> expectedAdditionalLink = addNewAdditionalLink(currentAdditionalLink);
         final String updatedJson = objectMapper().writeValueAsString(expectedAdditionalLink);
@@ -100,13 +101,13 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingAdditionalLinks() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingAdditionalLinks() throws JsonProcessingException {
         final var response = doPutRequest(PLYMOUTH_COMBINED_COURT_ADDITIONAL_LINK_PATH, getTestAdditionalLink());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingAdditionalLinks() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingAdditionalLinks() throws JsonProcessingException {
         final var response = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDITIONAL_LINK_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestAdditionalLink()
@@ -115,7 +116,7 @@ public class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBas
     }
 
     @Test
-    public void shouldNotUpdateAdditionalLinkWhenCourtSlugNotFound() throws JsonProcessingException {
+    void shouldNotUpdateAdditionalLinkWhenCourtSlugNotFound() throws JsonProcessingException {
         final var response = doPutRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),

@@ -21,7 +21,8 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
+@SuppressWarnings("PMD.TooManyMethods")
+class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String ADMIN_FACILITY_TYPES_ENDPOINT = "/admin/facilities";
@@ -42,7 +43,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* GET request tests section. ***************************************************************/
     @Test
-    public void returnFacilitiesForTheCourt() {
+    void returnFacilitiesForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -54,13 +55,13 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingFacilitiesForTheCourt() {
+    void shouldRequireATokenWhenGettingFacilitiesForTheCourt() {
         final var response = doGetRequest(AYLESBURY_COURT_FACILITIES_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingFacilitiesForTheCourt() {
+    void shouldBeForbiddenForGettingFacilitiesForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -69,14 +70,14 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotRetrieveFacilitiesWhenCourtSlugNotFound() {
+    void shouldNotRetrieveFacilitiesWhenCourtSlugNotFound() {
         final var response = doGetRequest(COURT_NOT_FIND_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
     }
 
     /************************************************************* PUT request tests section. ***************************************************************/
     @Test
-    public void shouldUpdateCourtFacilities() throws JsonProcessingException {
+    void shouldUpdateCourtFacilities() throws JsonProcessingException {
         final List<Facility> currentCourtFacilities = getCurrentFacilities();
         final List<Facility> facilitiesToBeUpdated = updateFacilities(currentCourtFacilities);
         final String updatedJson = objectMapper().writeValueAsString(facilitiesToBeUpdated);
@@ -111,13 +112,13 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
         final var response = doPutRequest(AYLESBURY_COURT_FACILITIES_PATH, getTestFacilities());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
         final var response = doPutRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestFacilities()
@@ -126,7 +127,7 @@ public class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotUpdateFacilitiesWhenCourtSlugNotFound() throws JsonProcessingException {
+    void shouldNotUpdateFacilitiesWhenCourtSlugNotFound() throws JsonProcessingException {
         final var response = doPutRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),

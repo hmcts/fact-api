@@ -13,7 +13,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 
 @ExtendWith(SpringExtension.class)
-public class SmokeTest {
+class SmokeTest {
     private static final String CONTENT_TYPE_VALUE = "application/json";
     private static final String HEALTH_ENDPOINT = "/health";
 

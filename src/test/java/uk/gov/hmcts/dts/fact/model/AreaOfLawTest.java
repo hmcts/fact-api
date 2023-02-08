@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AreaOfLawTest {
 
-    static uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity;
+    private static uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity;
 
     @BeforeAll
     static void setUp() {
