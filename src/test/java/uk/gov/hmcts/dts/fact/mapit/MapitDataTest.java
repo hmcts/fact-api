@@ -1,9 +1,16 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -14,6 +21,7 @@ class MapitDataTest {
     private static final String COUNTY = "county";
     private static final String COUNCIL_AREA_NUMBER = "12345";
     private static final String COUNCIL_12345 = "Council 12345";
+
 
     @Test
     void shouldReturnTrueIfLonAndLatPresent() {
@@ -108,4 +116,54 @@ class MapitDataTest {
         assertThat(mapitData.getLocalAuthority()).isPresent();
         assertThat(mapitData.getLocalAuthority()).contains(COUNCIL_12345);
     }
+
+    @Test
+    void shouldReturnEnglishRegion() throws JsonProcessingException {
+        ObjectMapper objectmapper = new ObjectMapper();
+        final JsonNode shortcuts = mock(JsonNode.class);
+
+        HashMap<String, JsonNode> test = new HashMap<>();
+        String newString = "{\"type\": \"ER\", \"name\": \"North West\"}";
+        JsonNode newNode = objectmapper.readTree(newString);
+        test.put("name", newNode);
+        JsonNode areas = objectmapper.valueToTree(test);
+
+        final MapitData mapitData = new MapitData(null, null, null, areas);
+
+        assertThat(mapitData.getRegionFromMapitData()).contains("North West");
+    }
+
+    @Test
+    void shouldReturnWelshRegion() throws JsonProcessingException {
+        ObjectMapper objectmapper = new ObjectMapper();
+        final JsonNode shortcuts = mock(JsonNode.class);
+
+        HashMap<String, JsonNode> test = new HashMap<>();
+        String newString = "{\"type\": \"WAE\", \"name\": \"North Wales\"}";
+        JsonNode newNode = objectmapper.readTree(newString);
+        test.put("name", newNode);
+        JsonNode areas = objectmapper.valueToTree(test);
+
+        final MapitData mapitData = new MapitData(null, null, null, areas);
+
+        assertThat(mapitData.getRegionFromMapitData()).contains("North Wales");
+    }
+
+    @Test
+    void shouldReturnErrorWhenNoRegionInformation() throws JsonProcessingException {
+        ObjectMapper objectmapper = new ObjectMapper();
+        final JsonNode shortcuts = mock(JsonNode.class);
+
+        HashMap<String, JsonNode> test = new HashMap<>();
+        String newString = "{\"type\": \"PT\"}, {\"name\": \"Anywhere\"}";
+        JsonNode newNode = objectmapper.readTree(newString);
+        test.put("type", newNode);
+        JsonNode areas = objectmapper.valueToTree(test);
+
+        final MapitData mapitData = new MapitData(null, null, null, areas);
+
+        assertThrows(NotFoundException.class, mapitData::getRegionFromMapitData);
+
+    }
+
 }
