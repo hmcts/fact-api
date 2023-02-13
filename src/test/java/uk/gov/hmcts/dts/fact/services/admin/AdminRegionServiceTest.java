@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminRegionService.class)
 @SuppressWarnings("PMD.TooManyMethods")
-public class AdminRegionServiceTest {
+class AdminRegionServiceTest {
     private static final int REGION_ID1 = 1;
     private static final int REGION_ID2 = 2;
     private static final int REGION_ID3 = 3;

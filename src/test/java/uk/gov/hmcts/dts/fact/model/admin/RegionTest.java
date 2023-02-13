@@ -6,7 +6,7 @@ import uk.gov.hmcts.dts.fact.entity.Region;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RegionTest {
+class RegionTest {
     private static final Integer TEST_ID = 9;
     private static final String TEST_NAME = "North West";
     private static final String TEST_COUNTRY = "England";

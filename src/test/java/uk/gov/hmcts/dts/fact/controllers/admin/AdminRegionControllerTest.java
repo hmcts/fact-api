@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AdminRegionController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminRegionControllerTest {
+class AdminRegionControllerTest {
     private static final String PATH = "/admin/regions";
     private static final List<Region> EXPECTED_REGIONS = Arrays.asList(
         new Region(1, "North West", "England"),
