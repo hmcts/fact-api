@@ -5,7 +5,9 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.admin.*;
+import uk.gov.hmcts.dts.fact.model.admin.CourtType;
+import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
+import uk.gov.hmcts.dts.fact.model.admin.DxCode;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.Arrays;
@@ -15,12 +17,12 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith({SpringExtension.class})
 @SuppressWarnings("PMD.TooManyMethods")
-
-public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
+class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_TYPES_PATH = "courtTypes";
@@ -33,7 +35,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     private static final String TEST_GBS_CODE = "Y288";
 
     private static final List<CourtType> EXPECTED_COURT_TYPE_CODES = Arrays.asList(
-        new CourtType(11_419,"County Court",123)
+        new CourtType(11_419,"County Court","County",123)
     );
 
     private static final List<DxCode> EXPECTED_COURT_DX_CODES = Arrays.asList(
@@ -43,7 +45,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     /************************************************************* GET request tests section. ***************************************************************/
 
     @Test
-    public void returnAllCourtTypes() {
+    void returnAllCourtTypes() {
         final var response = doGetRequest(
             ALL_COURT_TYPES_FULL_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -55,7 +57,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllCourtTypes() {
+    void shouldRequireATokenWhenGettingAllCourtTypes() {
         final var response = doGetRequest(
             ALL_COURT_TYPES_FULL_PATH
         );
@@ -63,7 +65,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllCourtTypes() {
+    void shouldBeForbiddenForGettingAllCourtTypes() {
         final var response = doGetRequest(
             ALL_COURT_TYPES_FULL_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -74,7 +76,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     /************************************************************* Court type and code GET request tests section. ***************************************************************/
 
     @Test
-    public void shouldReturnCourtTypesAndCodes() {
+    void shouldReturnCourtTypesAndCodes() {
         final var response = doGetRequest(
             AYLESBURY_COURT_TYPES_AND_CODE_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -87,7 +89,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingCourtTypesAndCodes() {
+    void shouldRequireATokenWhenGettingCourtTypesAndCodes() {
         final var response = doGetRequest(
             AYLESBURY_COURT_TYPES_AND_CODE_PATH
         );
@@ -95,7 +97,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldBeForbiddenForGettingCourtTypesAndCodes() {
+    void shouldBeForbiddenForGettingCourtTypesAndCodes() {
         final var response = doGetRequest(
             AYLESBURY_COURT_TYPES_AND_CODE_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -105,7 +107,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     /************************************************************* Court type and code PUT request tests section. ***************************************************************/
 
     @Test
-    public void shouldUpdateCourtTypesAndCode() throws JsonProcessingException {
+    void shouldUpdateCourtTypesAndCode() throws JsonProcessingException {
 
         final var response = doGetRequest(
             WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH,
@@ -138,7 +140,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtTypesAndCode() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtTypesAndCode() throws JsonProcessingException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
@@ -150,7 +152,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingCourtTypesAndCode() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtTypesAndCode() throws JsonProcessingException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
@@ -162,7 +164,7 @@ public class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase 
     }
 
     @Test
-    public void shouldNotUpdatingCourtTypesAndCodeForCourtDoesNotExist() throws JsonProcessingException {
+    void shouldNotUpdatingCourtTypesAndCodeForCourtDoesNotExist() throws JsonProcessingException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 

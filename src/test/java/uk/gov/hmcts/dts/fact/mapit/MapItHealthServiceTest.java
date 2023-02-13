@@ -15,9 +15,12 @@ import java.io.IOException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.dts.fact.mapit.MapItHealthService.*;
+import static uk.gov.hmcts.dts.fact.mapit.MapItHealthService.CURRENT;
+import static uk.gov.hmcts.dts.fact.mapit.MapItHealthService.LIMIT;
+import static uk.gov.hmcts.dts.fact.mapit.MapItHealthService.QUOTA;
 
 @ExtendWith(MockitoExtension.class)
 class MapItHealthServiceTest {

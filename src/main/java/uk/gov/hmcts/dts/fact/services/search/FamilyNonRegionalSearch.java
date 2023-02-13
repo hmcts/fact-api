@@ -23,15 +23,15 @@ public class FamilyNonRegionalSearch implements Search {
     }
 
     @Override
-    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode) {
+    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode, final Boolean includeClosed) {
 
         final String areaOfLaw = serviceArea.getAreaOfLaw().getName();
 
         final List<CourtWithDistance> courtsWithDistance = mapitData.getLocalAuthority()
             .map(localAuthority -> courtWithDistanceRepository
-                .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority))
+                .findNearestTenByAreaOfLawAndLocalAuthority(mapitData.getLat(), mapitData.getLon(), areaOfLaw, localAuthority, includeClosed))
             .orElse(emptyList());
 
-        return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
+        return fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, includeClosed, mapitData);
     }
 }

@@ -17,10 +17,12 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.ADMIN_COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_ADDRESS_PATH = "/addresses";
@@ -50,10 +52,10 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         ),
         Arrays.asList(
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court","Family")
             ),
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal", "Tribunal")
             )
         )
     );
@@ -61,10 +63,14 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     private static final String POSTCODE_VALID = "PL6 5DQ";
     private static final String POSTCODES_INVALID = "PL2 56ERR";
 
+    private static final Integer SORT_ORDER_1 = 0;
+    private static final Integer SORT_ORDER_2 = 1;
+
+
     /************************************************************* Get Request Tests. ***************************************************************/
 
     @Test
-    public void returnAddressForTheCourt() {
+    void returnAddressForTheCourt() {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -76,13 +82,13 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAddressForTheCourt() {
+    void shouldRequireATokenWhenGettingAddressForTheCourt() {
         final Response response = doGetRequest(PLYMOUTH_COMBINED_COURT_ADDRESS_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAddressForTheCourt() {
+    void shouldBeForbiddenForGettingAddressForTheCourt() {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -93,7 +99,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    public void shouldUpdateAddress() throws JsonProcessingException {
+    void shouldUpdateAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
@@ -126,7 +132,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingCourtAddress() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -138,7 +144,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingCourtAddress() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtAddress() throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -149,7 +155,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldNotUpdateAddressWithInvalidPostcodes() throws JsonProcessingException {
+    void shouldNotUpdateAddressWithInvalidPostcodes() throws JsonProcessingException {
 
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> courtAddressesToBeUpdated = createCourtAddresses();
@@ -173,7 +179,7 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldUpdateCoordinatesWhenPostcodeIsChanged() throws JsonProcessingException {
+    void shouldUpdateCoordinatesWhenPostcodeIsChanged() throws JsonProcessingException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -250,7 +256,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             TEST_TOWN_NAME_CY,
             COUNTY_ID,
             TEST_POSTCODE,
-            COURT_SECONDARY_ADDRESS_TYPE_LIST
+            COURT_SECONDARY_ADDRESS_TYPE_LIST,
+            SORT_ORDER_2
         ));
         return updatedCourtAddress;
     }
@@ -272,7 +279,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 TEST_TOWN_NAME_CY,
                 COUNTY_ID,
                 POSTCODE_VALID,
-                COURT_SECONDARY_ADDRESS_TYPE_LIST
+                COURT_SECONDARY_ADDRESS_TYPE_LIST,
+                SORT_ORDER_1
             ),
             new CourtAddress(
                 null,
@@ -283,7 +291,8 @@ public class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 TEST_TOWN_NAME_CY,
                 COUNTY_ID,
                 POSTCODES_INVALID,
-                COURT_SECONDARY_ADDRESS_TYPE_LIST
+                COURT_SECONDARY_ADDRESS_TYPE_LIST,
+                SORT_ORDER_2
             )
         );
     }

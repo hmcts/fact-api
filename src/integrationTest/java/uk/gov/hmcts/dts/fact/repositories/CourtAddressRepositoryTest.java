@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-public class CourtAddressRepositoryTest {
+class CourtAddressRepositoryTest {
     @Autowired
     private CourtAddressRepository courtAddressRepository;
 
@@ -28,6 +28,7 @@ public class CourtAddressRepositoryTest {
         newAddressToBeAdded.setPostcode("W1A 1AA");
         newAddressToBeAdded.setCourt(results.get(0).getCourt());
         newAddressToBeAdded.setAddressType(results.get(0).getAddressType());
+        newAddressToBeAdded.setSortOrder(0);
         newCourtAddresses.add(newAddressToBeAdded);
 
         final List<CourtAddress> updatedResults = courtAddressRepository.saveAll(newCourtAddresses);

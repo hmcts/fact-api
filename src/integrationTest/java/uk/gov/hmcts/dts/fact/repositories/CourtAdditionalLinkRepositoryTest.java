@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-public class CourtAdditionalLinkRepositoryTest {
+class CourtAdditionalLinkRepositoryTest {
     @Autowired
     private CourtAdditionalLinkRepository courtAdditionalLinkRepository;
 

@@ -26,14 +26,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtLockController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AdminCourtLockControllerTest {
+class AdminCourtLockControllerTest {
 
     @Autowired
     private transient MockMvc mockMvc;

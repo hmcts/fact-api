@@ -8,7 +8,19 @@ import org.springframework.util.CollectionUtils;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @SuppressWarnings("PMD.ExcessiveParameterList")
 @Entity
@@ -39,8 +51,10 @@ public class CourtAddress {
     @JoinColumn(name = "address_id")
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;
 
+    private Integer sortOrder;
+
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,
-                        final String townName, final String townNameCy, final County county, final String postcode) {
+                        final String townName, final String townNameCy, final County county, final String postcode, final Integer sortOrder) {
         this.court = court;
         this.addressType = addressType;
         this.address = CollectionUtils.isEmpty(addressLines) ? "" : convertAddressLines(addressLines);
@@ -49,6 +63,7 @@ public class CourtAddress {
         this.townNameCy = townNameCy;
         this.county = county;
         this.postcode = postcode;
+        this.sortOrder = sortOrder;
     }
 
     private String convertAddressLines(final List<String> addressLines) {

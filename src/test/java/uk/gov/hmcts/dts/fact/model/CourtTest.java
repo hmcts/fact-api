@@ -33,10 +33,14 @@ import java.util.Locale;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("PMD.ExcessiveImports")
 class CourtTest {
-    static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
+    private static uk.gov.hmcts.dts.fact.entity.Court courtEntity;
 
     private static final String VISIT_US_ADDRESS_TYPE_NAME = "Visit us";
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME = "Write to us";

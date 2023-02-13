@@ -27,7 +27,10 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
+@SuppressWarnings("PMD.ExcessiveImports")
 @WebMvcTest(AdminCourtAddressController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AdminCourtAddressControllerTest {
@@ -50,6 +54,7 @@ class AdminCourtAddressControllerTest {
     private static final String POSTCODE1 = "first postcode";
     private static final String POSTCODE2 = "second postcode";
     private static final Integer COUNTY = 1;
+    private static final Integer SORT_ORDER = 0;
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
     private static final String JSON_POSTCODE2 = String.format(MESSAGE, POSTCODE2);
@@ -66,17 +71,17 @@ class AdminCourtAddressControllerTest {
         ),
         Arrays.asList(
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court", "Family")
             ),
             new CourtType(
-                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal")
+                new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal", "Tribunal")
             )
         )
     );
 
     private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
-        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST),
-        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST)
+        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER),
+        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER)
     );
 
     private static String courtAddressesJson;

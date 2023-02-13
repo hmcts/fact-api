@@ -9,7 +9,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
@@ -106,6 +118,7 @@ public class Court {
     private List<Facility> facilities;
 
     @OneToMany(mappedBy = COURT_STRING)
+    @OrderBy("sort_order")
     private List<CourtAddress> addresses;
 
     private String gbs;

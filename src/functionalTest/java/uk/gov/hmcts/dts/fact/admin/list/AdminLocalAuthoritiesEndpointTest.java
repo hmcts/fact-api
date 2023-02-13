@@ -13,10 +13,10 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 @ExtendWith(SpringExtension.class)
-public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
+class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
 
     private static final String LOCAL_AUTHORITIES_ENDPOINT = "/admin/localauthorities";
     private static final String GET_ALL_LOCAL_AUTHORITIES_ENDPOINT = LOCAL_AUTHORITIES_ENDPOINT + "/all";
@@ -24,7 +24,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     private static final String NON_EXISTENT_LOCAL_AUTHORITY = "Briminghm Council";
 
     @Test
-    public void shouldGetAllLocalAuthorities() {
+    void shouldGetAllLocalAuthorities() {
         final Response response = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
@@ -33,19 +33,19 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllLocalAuthorities() {
+    void shouldRequireATokenWhenGettingAllLocalAuthorities() {
         final Response response = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingLocalAuthorities() {
+    void shouldBeForbiddenForGettingLocalAuthorities() {
         final Response response = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + forbiddenToken));
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
     @Test
-    public void shouldUpdateExistingLocalAuthority() {
+    void shouldUpdateExistingLocalAuthority() {
         // Get all local authorities
         final Response getResponse = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         final List<LocalAuthority> localAuthorities = getResponse.body().jsonPath().getList(".", LocalAuthority.class);
@@ -62,7 +62,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeConflictForUpdateWhenLocalAuthorityAlreadyExists() {
+    void shouldBeConflictForUpdateWhenLocalAuthorityAlreadyExists() {
         // Get all local authorities
         final Response getResponse = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         final List<LocalAuthority> localAuthorities = getResponse.body().jsonPath().getList(".", LocalAuthority.class);
@@ -79,7 +79,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeNotFoundForUpdateWhereLocalAuthorityDoesNotExist() {
+    void shouldBeNotFoundForUpdateWhereLocalAuthorityDoesNotExist() {
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/9999999",
                                                Map.of(AUTHORIZATION, BEARER + superAdminToken),
                                                BIRMINGHAM_CITY_COUNCIL);
@@ -87,7 +87,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeBadRequestForUpdateLocalAuthorityToInvalidName() {
+    void shouldBeBadRequestForUpdateLocalAuthorityToInvalidName() {
         // Get all local authorities
         final Response getResponse = doGetRequest(GET_ALL_LOCAL_AUTHORITIES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         final List<LocalAuthority> localAuthorities = getResponse.body().jsonPath().getList(".", LocalAuthority.class);
@@ -100,13 +100,13 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingLocalAuthority() {
+    void shouldRequireATokenWhenUpdatingLocalAuthority() {
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321", BIRMINGHAM_CITY_COUNCIL);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingLocalAuthority() {
+    void shouldBeForbiddenForUpdatingLocalAuthority() {
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/12345",
                                                Map.of(AUTHORIZATION, BEARER + forbiddenToken),
                                                BIRMINGHAM_CITY_COUNCIL);
@@ -114,7 +114,7 @@ public class AdminLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldBeForbiddenForAdminUpdatingLocalAuthority() {
+    void shouldBeForbiddenForAdminUpdatingLocalAuthority() {
         final Response response = doPutRequest(LOCAL_AUTHORITIES_ENDPOINT + "/54321",
                                                Map.of(AUTHORIZATION, BEARER + authenticatedToken),
                                                BIRMINGHAM_CITY_COUNCIL);

@@ -20,7 +20,7 @@ public class FamilyRegionalSearch implements Search {
     }
 
     @Override
-    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode) {
+    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode, final Boolean includeClosed) {
 
         final String areaOfLaw = serviceArea.getAreaOfLaw().getName();
 

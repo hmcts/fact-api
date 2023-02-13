@@ -46,11 +46,11 @@ class DefaultSearchTest {
 
         when(mapitData.getLat()).thenReturn(LAT);
         when(mapitData.getLon()).thenReturn(LON);
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW)).thenReturn(courts);
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW, true)).thenReturn(courts);
 
-        final List<CourtWithDistance> courtWithDistances = defaultSearch.searchWith(serviceArea, mapitData, "JE2 4BA");
+        final List<CourtWithDistance> courtWithDistances = defaultSearch.searchWith(serviceArea, mapitData, "JE2 4BA", true);
 
         assertThat(courtWithDistances).isEqualTo(courts);
-        verify(courtWithDistanceRepository).findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW);
+        verify(courtWithDistanceRepository).findNearestTenByAreaOfLaw(LAT, LON, AREA_OF_LAW, true);
     }
 }

@@ -1,13 +1,20 @@
 package uk.gov.hmcts.dts.fact.controllers;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
@@ -66,5 +73,23 @@ public class CourtsController {
     @ApiOperation("Return active courts based on a provided prefix")
     public ResponseEntity<List<CourtReference>> getCourtsBySearch(@RequestParam @Size(min = 1, max = 1) @NotBlank String prefix) {
         return ok(courtService.getCourtsByPrefixAndActiveSearch(prefix));
+    }
+
+    /**
+     * Find courts by court types endpoint.
+     * This endpoint can be used to search for courts that have a court type associated to it.
+     * @input a comma seperated list of court types which can include any of (magistrates,family,crown,tribunal,county)
+     * @return array of courts that contain any of the input court types.
+     * @path /courts/court-types/{courtTypes}
+     */
+    @GetMapping(path = "/court-types/{courtTypes}")
+    @ApiOperation(value = "Find courts by court types", notes = "This endpoint can be used to search for courts that have a court type associated to it")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Successful", response = Court.class, responseContainer = "List"),
+        @ApiResponse(code = 404, message = "Not Found"),
+    })
+    @ApiModelProperty(value = "Court types list", name = "CourtTypes", dataType = "List<String>", example = "magistrates,family,crown,tribunal,county")
+    public ResponseEntity<List<Court>> findByCourtTypes(@PathVariable List<String> courtTypes) {
+        return ok(courtService.getCourtsByCourtTypes(courtTypes));
     }
 }

@@ -7,7 +7,15 @@ import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Locale;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "search_contact")
@@ -64,7 +72,7 @@ public class Contact extends Element {
         if (fax) {
             if (StringUtils.isBlank(description)) {
                 return FAX_;
-            } else if (!description.equalsIgnoreCase(FAX_)) {
+            } else if (!FAX_.equalsIgnoreCase(description)) {
                 return description + " " + FAX_.toLowerCase(Locale.getDefault());
             }
         }
@@ -77,7 +85,7 @@ public class Contact extends Element {
         if (fax) {
             if (StringUtils.isBlank(descriptionCy)) {
                 return FAX_CY;
-            } else if (!descriptionCy.equalsIgnoreCase(FAX_CY)) {
+            } else if (!FAX_CY.equalsIgnoreCase(descriptionCy)) {
                 return FAX_CY + " " + descriptionCy;
             }
         }

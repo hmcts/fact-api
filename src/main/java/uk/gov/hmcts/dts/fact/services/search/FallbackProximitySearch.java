@@ -18,10 +18,11 @@ public class FallbackProximitySearch {
 
     public List<CourtWithDistance> fallbackIfEmpty(final List<CourtWithDistance> courts,
                                                    final String areaOfLaw,
+                                                   final Boolean includeClosed,
                                                    final MapitData mapitData) {
         if (courts.isEmpty()) {
             return courtWithDistanceRepository
-                .findNearestTenByAreaOfLaw(mapitData.getLat(), mapitData.getLon(), areaOfLaw);
+                .findNearestTenByAreaOfLaw(mapitData.getLat(), mapitData.getLon(), areaOfLaw, includeClosed);
         }
 
         return courts;

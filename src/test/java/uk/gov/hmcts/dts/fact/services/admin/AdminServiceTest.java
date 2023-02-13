@@ -9,7 +9,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
@@ -29,9 +32,17 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveImports"})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AdminService.class)
 class AdminServiceTest {

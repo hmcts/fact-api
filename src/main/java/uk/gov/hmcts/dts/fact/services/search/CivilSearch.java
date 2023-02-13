@@ -23,12 +23,12 @@ public class CivilSearch implements Search {
     }
 
     @Override
-    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode) {
+    public List<CourtWithDistance> searchWith(final ServiceArea serviceArea, final MapitData mapitData, final String postcode, final Boolean includeClosed) {
 
         final String areaOfLaw = serviceArea.getAreaOfLaw().getName();
 
         List<CourtWithDistance> courtsWithDistance = courtWithDistanceRepository
-            .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, postcode);
+            .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, postcode, includeClosed);
 
         if (courtsWithDistance.isEmpty()) {
             final String postCodeMinusUnitCode = postcode.substring(0, postcode.length() - 2);
@@ -37,7 +37,8 @@ public class CivilSearch implements Search {
                     mapitData.getLat(),
                     mapitData.getLon(),
                     areaOfLaw,
-                    postCodeMinusUnitCode
+                    postCodeMinusUnitCode,
+                    includeClosed
                 );
         }
 
@@ -48,17 +49,18 @@ public class CivilSearch implements Search {
                     mapitData.getLat(),
                     mapitData.getLon(),
                     areaOfLaw,
-                    outcode.trim()
+                    outcode.trim(),
+                    includeClosed
                 );
         }
 
         if (courtsWithDistance.isEmpty()) {
             final String areacode = postcode.split("\\d")[0];
             courtsWithDistance = courtWithDistanceRepository
-                .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, areacode);
+                .findNearestTenByAreaOfLawAndCourtPostcode(mapitData.getLat(), mapitData.getLon(), areaOfLaw, areacode, includeClosed);
         }
 
-        courtsWithDistance = fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, mapitData);
+        courtsWithDistance = fallbackProximitySearch.fallbackIfEmpty(courtsWithDistance, areaOfLaw, includeClosed, mapitData);
 
         return courtsWithDistance.stream().distinct().limit(10).collect(toList());
     }

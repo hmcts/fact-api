@@ -22,7 +22,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
-public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
+class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String AREAS_OF_LAW_PATH = "/courtAreasOfLaw";
@@ -35,7 +35,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* GET request tests section. ***************************************************************/
     @Test
-    public void returnAreaOfLawForTheCourt() {
+    void returnAreaOfLawForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -47,13 +47,13 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAreaOfLawForTheCourt() {
+    void shouldRequireATokenWhenGettingAreaOfLawForTheCourt() {
         final var response = doGetRequest(AYLESBURY_COURT_AREAS_OF_LAW_PATH);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAreaOfLawForTheCourt() {
+    void shouldBeForbiddenForGettingAreaOfLawForTheCourt() {
         final var response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -62,7 +62,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldReturnNotFoundWhenCourtDoesNotExist() {
+    void shouldReturnNotFoundWhenCourtDoesNotExist() {
         final Response response = doGetRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -73,7 +73,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* PUT request tests section. ***************************************************************/
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Test
-    public void shouldUpdateCourtAreaOfLaw() throws JsonProcessingException {
+    void shouldUpdateCourtAreaOfLaw() throws JsonProcessingException {
         final List<AreaOfLaw> currentCourtAreasOfLaw = getCurrentCourtAreasOfLaw()
             .stream()
             .map(aol -> {
@@ -116,13 +116,13 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
         final var response = doPutRequest(AYLESBURY_COURT_AREAS_OF_LAW_PATH, getTestAreasOfLawJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
         final var response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestAreasOfLawJson()
@@ -131,7 +131,7 @@ public class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
+    void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
         final Response response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),

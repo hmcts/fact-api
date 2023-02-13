@@ -9,7 +9,7 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import java.util.Arrays;
 import java.util.List;
 
-public class CourtAddressTest {
+class CourtAddressTest {
     private static final List<String> ADDRESS = Arrays.asList("address line 1", "address line 2");
     private static final List<String> ADDRESS_CY = Arrays.asList("address line 1 cy", "address line 2 cy");
     private static final String TOWN_NAME = "town";
@@ -18,6 +18,8 @@ public class CourtAddressTest {
     private static final Integer ADDRESS_ID = 1;
     private static final Integer ADDRESS_TYPE_ID = 10;
     private static final Integer COUNTY_ID = 1;
+
+    private static final Integer SORT_ORDER = 0;
 
     private static final Court COURT_ENTITY = new Court();
 
@@ -34,7 +36,8 @@ public class CourtAddressTest {
                 TOWN_NAME,
                 TOWN_NAME_CY,
                 county,
-                POSTCODE
+                POSTCODE,
+                SORT_ORDER
             );
         entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
@@ -48,6 +51,7 @@ public class CourtAddressTest {
         softly.assertThat(result.getTownNameCy()).isEqualTo(TOWN_NAME_CY);
         softly.assertThat(result.getCountyId()).isEqualTo(COUNTY_ID);
         softly.assertThat(result.getPostcode()).isEqualTo(POSTCODE);
+        softly.assertThat(result.getSortOrder()).isEqualTo(SORT_ORDER);
         softly.assertAll();
     }
 
@@ -62,7 +66,8 @@ public class CourtAddressTest {
             TOWN_NAME,
             TOWN_NAME_CY,
             county,
-            POSTCODE
+            POSTCODE,
+            SORT_ORDER
         );
         entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
@@ -77,6 +82,7 @@ public class CourtAddressTest {
         softly.assertThat(result.getTownNameCy()).isEqualTo(TOWN_NAME_CY);
         softly.assertThat(result.getCountyId()).isEqualTo(COUNTY_ID);
         softly.assertThat(result.getPostcode()).isEqualTo(POSTCODE);
+        softly.assertThat(result.getSortOrder()).isEqualTo(SORT_ORDER);
         softly.assertAll();
     }
 
@@ -91,7 +97,8 @@ public class CourtAddressTest {
             TOWN_NAME,
             TOWN_NAME_CY,
             null,
-            POSTCODE
+            POSTCODE,
+            SORT_ORDER
         );
         entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
@@ -105,6 +112,7 @@ public class CourtAddressTest {
         softly.assertThat(result.getTownNameCy()).isEqualTo(TOWN_NAME_CY);
         softly.assertThat(result.getCountyId()).isNull();
         softly.assertThat(result.getPostcode()).isEqualTo(POSTCODE);
+        softly.assertThat(result.getSortOrder()).isEqualTo(SORT_ORDER);
         softly.assertAll();
     }
 }

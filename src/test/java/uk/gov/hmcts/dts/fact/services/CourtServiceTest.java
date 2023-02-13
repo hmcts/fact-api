@@ -9,7 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.entity.*;
+import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.Contact;
+import uk.gov.hmcts.dts.fact.entity.ContactType;
+import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
+import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
+import uk.gov.hmcts.dts.fact.entity.OpeningTime;
+import uk.gov.hmcts.dts.fact.entity.OpeningType;
+import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
@@ -39,7 +47,17 @@ import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.anyDouble;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CourtService.class)
@@ -61,6 +79,7 @@ class CourtServiceTest {
     private static final String GLASGOW_TRIBUNALS_CENTRE = "Glasgow Tribunals Centre";
     private static final String TEST_TYPE_IN_SEARCH_TABLE = "Test type in search table";
     private static final String TEST_TYPE_IN_ADMIN_TABLE = "Test type in admin table";
+    private static final List<String> COURT_TYPE_LIST = asList("Family Court", "Tribunal");
 
     @Autowired
     private CourtService courtService;
@@ -114,6 +133,22 @@ class CourtServiceTest {
     void shouldReturnCourtObject() {
         when(courtRepository.findBySlug(SOME_SLUG)).thenReturn(Optional.of(court));
         assertThat(courtService.getCourtBySlug(SOME_SLUG)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+    }
+
+
+    @Test
+    void shouldReturnCourtObjectWhenSearchingByCourtType() {
+        when(courtRepository.findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(COURT_TYPE_LIST)).thenReturn(singletonList(court));
+        final List<uk.gov.hmcts.dts.fact.model.Court> results = courtService.getCourtsByCourtTypes(COURT_TYPE_LIST);
+        assertThat(results.get(0)).isInstanceOf(uk.gov.hmcts.dts.fact.model.Court.class);
+        assertThat(results).hasSize(1);
+    }
+
+    @Test
+    void shouldReturnNoCourtObjectWhenSearchingByEmptyCourtType() {
+        when(courtRepository.findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(emptyList())).thenReturn(emptyList());
+        final List<uk.gov.hmcts.dts.fact.model.Court> results = courtService.getCourtsByCourtTypes(emptyList());
+        assertThat(results).isEmpty();
     }
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
@@ -196,8 +231,8 @@ class CourtServiceTest {
     void shouldReturnListOfCourts() {
         final String query = LONDON;
 
-        when(courtRepository.queryBy(query)).thenReturn(singletonList(court));
-        final List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query);
+        when(courtRepository.queryBy(query,true)).thenReturn(singletonList(court));
+        final List<CourtWithDistance> results = courtService.getCourtsByNameOrAddressOrPostcodeOrTown(query, true);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
         assertThat(results).hasSize(1);
     }
@@ -296,15 +331,15 @@ class CourtServiceTest {
             LAT,
             LON,
             AREA_OF_LAW_NAME,
-            LOCAL_AUTHORITY_NAME
-        )).thenReturn(
-            courts);
-        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW_NAME, mapitData)).thenReturn(courts);
+            LOCAL_AUTHORITY_NAME,
+            true
+        )).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(courts, AREA_OF_LAW_NAME, true, mapitData)).thenReturn(courts);
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
             JE2_4BA,
-            AREA_OF_LAW_NAME
-        );
+            AREA_OF_LAW_NAME,
+            true);
 
         assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
@@ -330,14 +365,15 @@ class CourtServiceTest {
             LAT,
             LON,
             AREA_OF_LAW_NAME,
-            LOCAL_AUTHORITY_NAME
+            LOCAL_AUTHORITY_NAME,
+            true
         )).thenReturn(emptyList());
-        when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW_NAME, mapitData)).thenReturn(courts);
+        when(fallbackProximitySearch.fallbackIfEmpty(emptyList(), AREA_OF_LAW_NAME, true, mapitData)).thenReturn(courts);
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(
             NN7_4EH,
-            AREA_OF_LAW_NAME
-        );
+            AREA_OF_LAW_NAME,
+            true);
 
         assertThat(results).hasSize(10);
     }
@@ -367,12 +403,13 @@ class CourtServiceTest {
             when(mock.getAreasOfLaw()).thenReturn(areasOfLaw);
             courts.add(mock);
         }
-        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString())).thenReturn(
+        when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(anyDouble(), anyDouble(), anyString(), anyBoolean())).thenReturn(
             courts);
 
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
             "OX2 1RZ",
-            AREA_OF_LAW_NAME
+            AREA_OF_LAW_NAME,
+            anyBoolean()
         );
         assertThat(results).hasSize(10);
         assertThat(results.get(0)).isInstanceOf(CourtWithDistance.class);
@@ -384,7 +421,8 @@ class CourtServiceTest {
         assertThrows(InvalidPostcodeException.class, () -> {
             courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
                 JE2_4BA,
-                AREA_OF_LAW_NAME
+                AREA_OF_LAW_NAME,
+                true
             );
         });
 
@@ -408,11 +446,13 @@ class CourtServiceTest {
         when(courtWithDistanceRepository.findNearestTenByAreaOfLaw(
             anyDouble(),
             anyDouble(),
-            eq(IMMIGRATION)
+            eq(IMMIGRATION),
+            anyBoolean()
         )).thenReturn(courts);
         final List<CourtWithDistance> results = courtService.getNearestCourtsByPostcodeAndAreaOfLaw(
             "BT701AH",
-            IMMIGRATION
+            IMMIGRATION,
+            anyBoolean()
         );
 
         assertThat(results).hasSize(1);
@@ -445,7 +485,7 @@ class CourtServiceTest {
         if (useMapitService) {
             when(mapitService.getMapitData(anyString())).thenReturn(Optional.of(new MapitData()));
         }
-        courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, areaOfLaw);
+        courtService.getNearestCourtsByPostcodeAndAreaOfLaw(postcode, areaOfLaw, true);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
         } else {
@@ -479,7 +519,7 @@ class CourtServiceTest {
             when(mockData.getLocalAuthority()).thenReturn(Optional.of(LOCAL_AUTHORITY_NAME));
             when(mapitService.getMapitData(anyString())).thenReturn(Optional.of(mockData));
         }
-        courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode, CHILDREN);
+        courtService.getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(postcode, CHILDREN, true);
         if (useMapitService) {
             verify(mapitService).getMapitData(postcode);
         } else {
@@ -499,11 +539,12 @@ class CourtServiceTest {
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
         when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.UNDEFINED)).thenReturn(search);
-        when(search.searchWith(serviceArea, mapitData, JE2_4BA)).thenReturn(courts);
+        when(search.searchWith(serviceArea, mapitData, JE2_4BA, true)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             serviceAreaSlug,
+            true,
             Action.UNDEFINED
         );
 
@@ -526,12 +567,13 @@ class CourtServiceTest {
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
         when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.NEAREST)).thenReturn(search);
-        when(search.searchWith(serviceArea, mapitData, postcode)).thenReturn(courts);
+        when(search.searchWith(serviceArea, mapitData, postcode, true)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeActionAndAreaOfLawSearch(
             postcode,
             serviceAreaSlug,
-            Action.NEAREST
+            Action.NEAREST,
+            true
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);
@@ -592,6 +634,7 @@ class CourtServiceTest {
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             TAX,
+            true,
             Action.UNDEFINED
         );
 
@@ -610,6 +653,7 @@ class CourtServiceTest {
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByPostcodeSearch(
             JE2_4BA,
             serviceAreaSlug,
+            true,
             Action.NEAREST
         );
 
@@ -630,7 +674,8 @@ class CourtServiceTest {
                 JE2_4BA,
                 serviceAreaSlug,
                 "money-claims",
-                Action.NEAREST
+                Action.NEAREST,
+                true
             );
         });
 
@@ -662,13 +707,14 @@ class CourtServiceTest {
         when(serviceAreaRepository.findBySlugIgnoreCase(serviceAreaSlug)).thenReturn(Optional.of(serviceArea));
         when(mapitService.getMapitData(any())).thenReturn(Optional.of(mapitData));
         when(serviceAreaSearchFactory.getSearchFor(serviceArea, mapitData, Action.DOCUMENTS)).thenReturn(search);
-        when(search.searchWith(serviceArea, mapitData, JE2_4BA)).thenReturn(courts);
+        when(search.searchWith(serviceArea, mapitData, JE2_4BA,true)).thenReturn(courts);
 
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
             JE2_4BA,
             serviceAreaSlug,
             CHILDREN,
-            Action.DOCUMENTS
+            Action.DOCUMENTS,
+            true
         );
 
         assertThat(results.getSlug()).isEqualTo(serviceAreaSlug);

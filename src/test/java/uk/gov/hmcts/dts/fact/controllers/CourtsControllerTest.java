@@ -20,7 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.nio.file.Files.readAllBytes;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -33,6 +34,7 @@ class CourtsControllerTest {
     private static final String URL = "/courts";
     private static final String SEARCH_BY_PREFIX_AND_ACTIVE_URL = "/courts/search?prefix=a&active=true";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final String SEARCH_BY_COURT_TYPES = "/court-types/Family Court,Tribunal";
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -86,6 +88,7 @@ class CourtsControllerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.AddEmptyString")
     void shouldRespondWithBadRequestForFindCourtByEmptyQuery() throws Exception {
 
         final List<CourtReference> courts = new ArrayList<>();
@@ -126,4 +129,21 @@ class CourtsControllerTest {
             .andExpect(content().json(expectedJson))
             .andReturn();
     }
+
+    @Test
+    void shouldFindCourtsByCourtTypes() throws Exception {
+
+        final Path path = Paths.get("src/test/resources/full-court-model.json");
+        final String expectedJson = new String(readAllBytes(path));
+        final List<Court> courts = Arrays.asList(OBJECT_MAPPER.readValue(path.toFile(), Court[].class));
+
+        when(courtService.getCourtsByCourtTypes(anyList())).thenReturn(courts);
+
+        mockMvc.perform(get(URL + SEARCH_BY_COURT_TYPES))
+            .andExpect(status().isOk())
+            .andExpect(content().json(expectedJson))
+            .andReturn();
+    }
+
+
 }

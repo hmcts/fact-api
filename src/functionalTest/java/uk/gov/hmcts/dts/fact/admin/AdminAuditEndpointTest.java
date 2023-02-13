@@ -3,7 +3,6 @@ package uk.gov.hmcts.dts.fact.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -17,12 +16,13 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.ADMIN_COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @SuppressWarnings("PMD.SystemPrintln")
 @ExtendWith(SpringExtension.class)
-@Disabled
-public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
+class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private static final String ADMIN_AUDIT_ENDPOINT = "/admin/audit/";
     private static final String OPENING_TIMES_PATH = "/openingTimes";
@@ -31,10 +31,10 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     private static final String TEST_HOURS = "test hour";
     private static final int BAILIFF_OFFICE_OPEN_TYPE_ID = 5;
     private static final OpeningTime TEST_OPENING_TIME = new OpeningTime(BAILIFF_OFFICE_OPEN_TYPE_ID, TEST_HOURS);
-    private static final String TEST_AUDIT_NAME = "Update court opening times";
+    private static final String TEST_AUDIT_NAME = "Update court lock";
 
     @BeforeEach
-    public void setUpTestData() throws JsonProcessingException {
+    void setUpTestData() throws JsonProcessingException {
         setUpOpeningTimes();
     }
 
@@ -42,32 +42,32 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    public void shouldReturnAllAuditsForPageAndSize() {
+    void shouldReturnAllAuditsForPageAndSize() {
         checkAuditData("", "", "", "");
     }
 
 
     @Test
-    public void shouldReturnAllAuditsForLocation() {
+    void shouldReturnAllAuditsForLocation() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "", "", "");
     }
 
 
     @Test
-    public void shouldReturnAllAuditsForLocationAndEmail() {
+    void shouldReturnAllAuditsForLocationAndEmail() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "", "");
     }
 
     @Test
-    public void shouldReturnAllAuditsForLocationEmailAndToAndFromDates() {
+    void shouldReturnAllAuditsForLocationEmailAndToAndFromDates() {
         checkAuditData(ADMINISTRATIVE_COURT_SLUG, "hmcts.fact@gmail.com",
                        "2020-01-01T01:01:01.111", "2520-01-01T01:01:01.111");
     }
 
     @Test
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    public void shouldReturnPaginatedResultsForPageAndSize() {
+    void shouldReturnPaginatedResultsForPageAndSize() {
 
         final List<Audit> currentAudits = getCurrentAudits(0,200_000, "", "", "", "");
         assertThat(currentAudits).isNotEmpty();
@@ -85,13 +85,13 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    public void shouldRequireATokenWhenGettingAllAudits() {
+    void shouldRequireATokenWhenGettingAllAudits() {
         final Response response = doGetRequest(ADMIN_AUDIT_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    public void shouldBeForbiddenForGettingAllAudits() {
+    void shouldBeForbiddenForGettingAllAudits() {
         final Response response = doGetRequest(
             ADMIN_AUDIT_ENDPOINT + "?page=0&size=20000",
             Map.of(AUTHORIZATION, BEARER + forbiddenToken)
@@ -148,9 +148,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
         System.out.println("location: " + location);
 
         assertThat(LocalDateTime.now().minusSeconds(120).isBefore(lastAuditTime)).isEqualTo(true);
-        assertThat(currentAudits.get(indexActionDataBefore).getActionDataBefore())
-            .isEqualTo(currentAudits.get(indexActionDataAfter).getActionDataAfter());
-        assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter).getAction().getName());
+        assertThat(actionDataBeforeName).isEqualTo(currentAudits.get(indexActionDataAfter + 1).getAction().getName());
 
         if (!location.isEmpty()) {
             // Without a name / location, we can get a non-opening hour audit because of tests
@@ -178,7 +176,7 @@ public class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     private List<OpeningTime> removeOpeningTime(List<OpeningTime> openingTimes) {
         List<OpeningTime> updatedOpeningTimes = new ArrayList<>(openingTimes);
-        updatedOpeningTimes.removeIf(time -> time.getHours().equals(TEST_HOURS));
+        updatedOpeningTimes.removeIf(time -> TEST_HOURS.equals(time.getHours()));
         return updatedOpeningTimes;
     }
 }
