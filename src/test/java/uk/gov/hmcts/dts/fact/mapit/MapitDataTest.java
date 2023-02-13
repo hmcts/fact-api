@@ -14,6 +14,8 @@ import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("PMD.TooManyMethods")
+
 class MapitDataTest {
 
     private static final String COUNCIL = "council";
