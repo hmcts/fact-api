@@ -43,7 +43,6 @@ public class AdminCourtFacilityService {
         return  courtRepository.findBySlug(slug)
             .map(c -> c.getFacilities()
                 .stream()
-                .sorted(comparingInt(f -> f.getFacilityType().getOrder()))
                 .map(Facility::new)
                 .collect(toList()))
             .orElseThrow(() -> new NotFoundException(slug));
@@ -86,7 +85,6 @@ public class AdminCourtFacilityService {
             .saveAll(courtFacilitiesEntities)
             .stream()
             .map(CourtFacility::getFacility)
-            .sorted(comparingInt(f -> f.getFacilityType().getOrder()))
             .map(Facility::new)
             .collect(toList());
     }
