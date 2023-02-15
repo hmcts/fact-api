@@ -94,7 +94,7 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
             ".",
             Facility.class
         );
-        assertThat(updatedFacilities).containsExactlyElementsOf(getExpectedFacilities(facilitiesToBeUpdated));
+        assertThat(updatedFacilities).containsExactlyElementsOf(facilitiesToBeUpdated);
 
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
@@ -166,16 +166,6 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
             new Facility(TEST_FACILITY_ID_2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)
         );
         return objectMapper().writeValueAsString(facilities);
-    }
-
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private List<Facility> getExpectedFacilities(final List<Facility> facilities) {
-        final Map<Integer, FacilityType> facilityTypeMap = getFacilityTypes().stream()
-            .collect(toMap(FacilityType::getId, type -> type));
-        // Sort the facilities by the facility type sort order
-        return facilities.stream()
-            .sorted(Comparator.comparingInt(f -> facilityTypeMap.get(f.getId()).getOrder()))
-            .collect(toList());
     }
 
     private List<FacilityType> getFacilityTypes() {
