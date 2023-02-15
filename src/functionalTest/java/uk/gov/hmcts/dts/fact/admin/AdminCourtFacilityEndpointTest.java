@@ -1,13 +1,11 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
-import uk.gov.hmcts.dts.fact.model.admin.FacilityType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.*;
@@ -164,11 +162,5 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
             new Facility(TEST_FACILITY_ID_2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)
         );
         return objectMapper().writeValueAsString(facilities);
-    }
-
-    private List<FacilityType> getFacilityTypes() {
-        final Response response = doGetRequest(ADMIN_FACILITY_TYPES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-        return response.body().jsonPath().getList(".", FacilityType.class);
     }
 }
