@@ -15,8 +15,7 @@ import uk.gov.hmcts.dts.fact.services.admin.AdminRegionService;
 import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.*;
 
 @RestController
 @RequestMapping(
@@ -38,7 +37,7 @@ public class AdminRegionController {
         @ApiResponse(code = 401, message = "Unauthorized"),
         @ApiResponse(code = 403, message = "Forbidden")
     })
-    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN, FACT_VIEWER})
     public ResponseEntity<List<Region>> getAllRegions() {
         return ok(adminService.getAllRegions());
     }
