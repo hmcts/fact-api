@@ -26,8 +26,10 @@ class AdminRegionEndpointTest extends AdminFunctionalTestBase {
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
-        final List<Region> adminServiceAreas = response.body().jsonPath().getList(".", Region.class);
-        assertThat(adminServiceAreas).hasSizeGreaterThan(1);
+        final List<Region> adminRegions = response.body().jsonPath().getList(".", Region.class);
+        assertThat(adminRegions).hasSizeGreaterThan(1);
+        assertThat(adminRegions.stream()).anyMatch(r -> "North West".equals(r.getName()));
+        assertThat(adminRegions.stream()).anyMatch(c -> "England".equals(c.getCountry()));
     }
 
     @Test
