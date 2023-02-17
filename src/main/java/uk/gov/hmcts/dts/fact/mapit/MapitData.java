@@ -60,16 +60,9 @@ public class MapitData {
     }
 
     public String getRegionFromMapitData() {
-        // We will only ever have one ER, or one WAE
-        // For english regions
+        // For Welsh and English regions
         for (JsonNode mapitArea : this.areas) {
-            if ("ER".equals(mapitArea.get("type").asText())) {
-                return mapitArea.get("name").asText();
-            }
-        }
-        // For welsh regions
-        for (JsonNode mapitArea : this.areas) {
-            if ("WAE".equals(mapitArea.get("type").asText())) {
+            if ("WAE".equals(mapitArea.get("type").asText()) || "ER".equals(mapitArea.get("type").asText())) {
                 return mapitArea.get("name").asText();
             }
         }
