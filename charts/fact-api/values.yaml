@@ -7,7 +7,7 @@ java:
   cpuLimits: 1
   cpuRequests: 250m
   memoryRequests:   256Mi
-  memoryLimits: 2Gi
+  memoryLimits: 4Gi
   autoscaling:
     enabled: true
     maxReplicas: 9

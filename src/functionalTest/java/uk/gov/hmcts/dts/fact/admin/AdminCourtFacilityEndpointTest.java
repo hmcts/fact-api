@@ -1,19 +1,15 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
-import uk.gov.hmcts.dts.fact.model.admin.FacilityType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
@@ -94,7 +90,7 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
             ".",
             Facility.class
         );
-        assertThat(updatedFacilities).containsExactlyElementsOf(getExpectedFacilities(facilitiesToBeUpdated));
+        assertThat(updatedFacilities).containsExactlyElementsOf(facilitiesToBeUpdated);
 
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
@@ -166,21 +162,5 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
             new Facility(TEST_FACILITY_ID_2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)
         );
         return objectMapper().writeValueAsString(facilities);
-    }
-
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    private List<Facility> getExpectedFacilities(final List<Facility> facilities) {
-        final Map<Integer, FacilityType> facilityTypeMap = getFacilityTypes().stream()
-            .collect(toMap(FacilityType::getId, type -> type));
-        // Sort the facilities by the facility type sort order
-        return facilities.stream()
-            .sorted(Comparator.comparingInt(f -> facilityTypeMap.get(f.getId()).getOrder()))
-            .collect(toList());
-    }
-
-    private List<FacilityType> getFacilityTypes() {
-        final Response response = doGetRequest(ADMIN_FACILITY_TYPES_ENDPOINT, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-        return response.body().jsonPath().getList(".", FacilityType.class);
     }
 }
