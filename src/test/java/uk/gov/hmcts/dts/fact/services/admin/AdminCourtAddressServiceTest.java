@@ -65,6 +65,9 @@ class AdminCourtAddressServiceTest {
     private static final String VISIT_US_ADDRESS_TYPE_NAME_CY = VISIT_US_ADDRESS_TYPE_NAME + " cy";
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME_CY = WRITE_TO_US_ADDRESS_TYPE_NAME + " cy";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY = VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME + " cy";
+    private static final String REGION = "North West";
+
+    private static final String UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE = "Update court addresses and coordinates";
 
     private static final AddressType VISIT_US_ADDRESS_TYPE = new AddressType(
         VISIT_US_ADDRESS_TYPE_ID,
@@ -434,6 +437,7 @@ class AdminCourtAddressServiceTest {
         when(mapitService.getMapitData(VISIT_US_POSTCODE)).thenReturn(Optional.of(mapitData));
         when(mapitData.getLat()).thenReturn(LATITUDE);
         when(mapitData.getLon()).thenReturn(LONGITUDE);
+        when(mapitData.getRegionFromMapitData()).thenReturn(REGION);
 
         when(MOCK_COURT.isInPerson()).thenReturn(true);
 
@@ -452,7 +456,8 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService).updateCourtLatLon(COURT_SLUG, LATITUDE, LONGITUDE);
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+        verify(adminService).updateCourtRegion(COURT_SLUG, REGION);
+        verify(adminAuditService, atLeastOnce()).saveAudit(UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
                                                            EXPECTED_ADDRESSES,
                                                            results, COURT_SLUG
         );
@@ -513,7 +518,7 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
         verify(adminAuditService, atLeastOnce()).saveAudit(
-            "Update court addresses and coordinates",
+            UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
             EXPECTED_ADDRESSES,
             results,
             "court-slug"
@@ -551,7 +556,7 @@ class AdminCourtAddressServiceTest {
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).deleteAll(any());
         verify(courtSecondaryAddressTypeRepository, atMostOnce()).saveAll(any());
         verify(adminService, never()).updateCourtLatLon(eq(COURT_SLUG), anyDouble(), anyDouble());
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court addresses and coordinates",
+        verify(adminAuditService, atLeastOnce()).saveAudit(UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE,
                                                            EXPECTED_ADDRESSES,
                                                            results, COURT_SLUG
         );

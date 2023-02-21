@@ -33,7 +33,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @Service
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+@SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveParameterList"})
 public class AdminCourtAddressService {
     private final CourtRepository courtRepository;
     private final CourtAddressRepository courtAddressRepository;
@@ -78,12 +78,14 @@ public class AdminCourtAddressService {
 
     @Transactional()
     public List<CourtAddress> updateCourtAddressesAndCoordinates(final String slug, final List<CourtAddress> courtAddresses) {
-        // Update the in-person court with its primary postcode coordinates
+        // Update the in-person court with its primary postcode coordinates and region
         final List<String> postcodes = getAllPostcodesSortedByAddressType(courtAddresses);
         if (isInPersonCourt(slug) && !CollectionUtils.isEmpty(postcodes)) {
             final String primaryPostcode = postcodes.get(0);
             if (StringUtils.isNotBlank(primaryPostcode)) {
-                updateCourtLatLonUsingPrimaryPostcode(slug, primaryPostcode);
+                updateCourtLatLonAndRegionUsingPrimaryPostcode(
+                    slug,
+                    primaryPostcode);
             }
         }
 
@@ -162,10 +164,11 @@ public class AdminCourtAddressService {
         return courtEntity.isInPerson();
     }
 
-    private void updateCourtLatLonUsingPrimaryPostcode(final String slug, final String postcode) {
+    private void updateCourtLatLonAndRegionUsingPrimaryPostcode(final String slug, final String postcode) {
         final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
         if (mapitData.isPresent()) {
             adminService.updateCourtLatLon(slug, mapitData.get().getLat(), mapitData.get().getLon());
+            adminService.updateCourtRegion(slug, mapitData.get().getRegionFromMapitData());
         }
     }
 
@@ -300,4 +303,5 @@ public class AdminCourtAddressService {
                                                                        .map(CourtAddress::getId)
                                                                        .collect(toList()));
     }
+
 }

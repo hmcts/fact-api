@@ -47,7 +47,6 @@ public class CourtAddress {
     @JoinColumn(name = "county_id")
     private County county;
     private String postcode;
-
     @OneToMany
     @JoinColumn(name = "address_id")
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;

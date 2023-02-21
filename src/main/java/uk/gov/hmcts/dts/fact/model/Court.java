@@ -77,6 +77,7 @@ public class Court {
     private List<AdditionalLink> additionalLinks;
     @JsonProperty("service_centre")
     private ServiceCentre serviceCentre;
+    private Integer regionId;
 
     public Court(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
@@ -109,6 +110,7 @@ public class Court {
         this.additionalLinks = getAdditionalLink(courtEntity);
         this.serviceCentre = getServiceCentreDetails(courtEntity);
         this.commonFlag = courtEntity.getInPerson() == null ? null : courtEntity.getInPerson().getCommonPlatform();
+        this.regionId = courtEntity.getRegionId();
     }
 
     private ServiceCentre getServiceCentreDetails(final uk.gov.hmcts.dts.fact.entity.Court courtEntity) {

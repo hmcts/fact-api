@@ -68,3 +68,4 @@ WHERE Not EXISTS (SELECT 1
                   FROM public.search_courtcourttype
                   WHERE court_type_id = (select id from search_courttype where name='Family Court')
                     AND court_id = court.id);
+
