@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 
-import java.util.*;
+import java.util.Optional;
 
-import static java.util.Optional.*;
+import static java.util.Optional.ofNullable;
 
 @Data
 @AllArgsConstructor
