@@ -19,6 +19,8 @@ import static java.util.Optional.*;
 public class MapitData {
     private static final String COUNCIL = "council";
     private static final String COUNTY = "county";
+    private static final String WELSH_REGION_CODE = "WAE";
+    private static final String ENGLISH_REGION_CODE = "ER";
 
     @JsonProperty("wgs84_lat")
     Double lat;
@@ -62,7 +64,8 @@ public class MapitData {
     public String getRegionFromMapitData() {
         // For Welsh and English regions
         for (JsonNode mapitArea : this.areas) {
-            if ("WAE".equals(mapitArea.get("type").asText()) || "ER".equals(mapitArea.get("type").asText())) {
+            if (WELSH_REGION_CODE.equals(mapitArea.get("type").asText())
+                || ENGLISH_REGION_CODE.equals(mapitArea.get("type").asText())) {
                 return mapitArea.get("name").asText();
             }
         }
