@@ -67,11 +67,11 @@ class AdminCourtFacilityServiceTest {
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3,DESCRIPTION_3,DESCRIPTION_CY_3)
     );
 
-    // The expected facility results are sorted based on the sort order of the facility types and not necessary the same as the input order
+
     private static final List<uk.gov.hmcts.dts.fact.model.admin.Facility> EXPECTED_COURT_FACILITIES = Arrays.asList(
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1,DESCRIPTION_1,DESCRIPTION_CY_1),
         new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_2,DESCRIPTION_2,DESCRIPTION_CY_2),
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3,DESCRIPTION_3,DESCRIPTION_CY_3),
-        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1,DESCRIPTION_1,DESCRIPTION_CY_1)
+        new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3,DESCRIPTION_3,DESCRIPTION_CY_3)
     );
 
     @Autowired
