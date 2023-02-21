@@ -59,6 +59,7 @@ class AdminServiceTest {
     private static final String NOT_FOUND = "Not found: ";
     private static final String AUDIT_TYPE = "Create new court";
     private static final List<String> SERVICE_AREAS = Arrays.asList("Benefits", "Tax", "Money claims");
+    private static final String REGION = "North West";
 
     @Autowired
     private AdminService adminService;
@@ -252,6 +253,13 @@ class AdminServiceTest {
     void shouldUpdateCourtLatLon() {
         adminService.updateCourtLatLon(SOME_SLUG, LATITUDE, LONGITUDE);
         verify(courtRepository).updateLatLonBySlug(SOME_SLUG, LATITUDE, LONGITUDE);
+        verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void shouldUpdateCourtRegion() {
+        adminService.updateCourtRegion(SOME_SLUG, REGION);
+        verify(courtRepository).updateRegionBySlug(SOME_SLUG, REGION);
         verify(adminAuditService, never()).saveAudit(anyString(), anyString(), anyString(), anyString());
     }
 

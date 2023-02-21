@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 
 import java.util.Optional;
 
@@ -18,6 +19,9 @@ import static java.util.Optional.ofNullable;
 public class MapitData {
     private static final String COUNCIL = "council";
     private static final String COUNTY = "county";
+    private static final String WELSH_REGION_CODE = "WAE";
+    private static final String ENGLISH_REGION_CODE = "ER";
+
     @JsonProperty("wgs84_lat")
     Double lat;
     @JsonProperty("wgs84_lon")
@@ -55,5 +59,17 @@ public class MapitData {
             .map(string -> areas.get(area))
             .map(a -> a.get("name"))
             .map(JsonNode::asText);
+    }
+
+    public String getRegionFromMapitData() {
+        // For Welsh and English regions
+        for (JsonNode mapitArea : this.areas) {
+            if (WELSH_REGION_CODE.equals(mapitArea.get("type").asText())
+                || ENGLISH_REGION_CODE.equals(mapitArea.get("type").asText())) {
+                return mapitArea.get("name").asText();
+            }
+        }
+        // If we have no region at all
+        throw new NotFoundException("Could not find region for query");
     }
 }

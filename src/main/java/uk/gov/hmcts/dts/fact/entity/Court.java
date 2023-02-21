@@ -63,6 +63,7 @@ public class Court {
     private Boolean hideAols;
     @UpdateTimestamp
     private Timestamp updatedAt;
+    private Integer regionId;
 
     @ManyToMany
     @JoinTable(

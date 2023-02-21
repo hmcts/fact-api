@@ -56,5 +56,6 @@ public class CourtAddress {
                     .collect(Collectors.toList())
             );
         }
+
     }
 }
