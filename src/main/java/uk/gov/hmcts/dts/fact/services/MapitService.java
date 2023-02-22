@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
 import java.util.Optional;
 
+
 @Service
 public class MapitService {
 
@@ -65,7 +66,12 @@ public class MapitService {
                     .stream()
                     .anyMatch(la -> la.getName().equalsIgnoreCase(localAuthorityName));
             } catch (final FeignException ex) {
-                logger.warn("Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}", ex.status(), ex.getMessage(), ex);
+                logger.warn(
+                    "Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}",
+                    ex.status(),
+                    ex.getMessage(),
+                    ex
+                );
                 return false;
             }
         }

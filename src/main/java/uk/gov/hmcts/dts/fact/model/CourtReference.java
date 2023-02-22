@@ -19,6 +19,7 @@ public class CourtReference {
     @JsonProperty("updated_at")
     private String updatedAt;
     private boolean displayed;
+    private Integer region;
 
     public CourtReference(uk.gov.hmcts.dts.fact.entity.Court courtEntity) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
@@ -26,5 +27,7 @@ public class CourtReference {
         this.updatedAt = courtEntity.getUpdatedAt() == null
             ? null : new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
         this.displayed = courtEntity.getDisplayed();
+        this.region = courtEntity.getRegionId();
     }
+
 }

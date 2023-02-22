@@ -24,6 +24,7 @@ class CourtReferenceTest {
         courtEntity.setNameCy("Name in Welsh");
         courtEntity.setUpdatedAt(CURRENT_TIME);
         courtEntity.setDisplayed(true);
+        courtEntity.setRegionId(1);
     }
 
     @ParameterizedTest
@@ -39,6 +40,7 @@ class CourtReferenceTest {
         assertEquals("name-slug", court.getSlug());
         assertEquals(
             new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(CURRENT_TIME), court.getUpdatedAt());
+        assertEquals(1, court.getRegion());
 
         LocaleContextHolder.resetLocaleContext();
     }
