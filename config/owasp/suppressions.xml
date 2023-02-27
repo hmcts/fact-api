@@ -22,5 +22,6 @@
     <cve>CVE-2021-4277</cve><!-- Wait until a version exists that fixes this -->
     <cve>CVE-2022-45143</cve><!-- Wait until a version exists that fixes this -->
     <cve>CVE-2022-1471</cve><!-- Wait until a version exists that fixes this -->
+    <cve>CVE-2022-45688</cve><!-- Wait until a version exists that fixes this -->
   </suppress>
 </suppressions>
