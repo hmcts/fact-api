@@ -259,8 +259,8 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.68'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.27'
 
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.14.0-rc3'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.0-rc3'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.14.2'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.2'
   implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.14.0-rc3', ext: 'pom'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.14.0-rc3'
 
