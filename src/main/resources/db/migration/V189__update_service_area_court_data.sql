@@ -2,5 +2,5 @@
 DELETE FROM public.search_serviceareacourt
   WHERE court_id = (SELECT id
                          FROM search_court
-                         WHERE slug = 'pocock-street-tribunal-hearing-centre')
+                         WHERE slug = 'pocock-street-tribunal-hearing-centre');
 
