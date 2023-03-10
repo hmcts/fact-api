@@ -2,6 +2,19 @@ provider "azurerm" {
   features {}
 }
 
+ terraform {
+   required_providers {
+     azurerm = {
+       source  = "hashicorp/azurerm"
+       version = "3.4.0"
+     }
+     azuread = {
+       source  = "hashicorp/azuread"
+       version = "1.6.0"
+     }
+   }
+ }
+
 locals {
   vault_name = "${var.product}-${var.env}"
   resource_group_name = "${var.product}-${var.env}"
