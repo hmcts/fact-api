@@ -1,7 +1,7 @@
 #!groovy
 import uk.gov.hmcts.contino.GradleBuilder
 
-@Library('Infrastructure@disable-tf-nagger-temp') _
+@Library("Infrastructure")
 
 def type = "java"
 def product = "fact"
