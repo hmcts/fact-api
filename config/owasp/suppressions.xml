@@ -7,5 +7,6 @@
    ]]></notes>
     <cve>CVE-2022-45143</cve><!-- Wait until a version exists that fixes this -->
     <cve>CVE-2022-45688</cve><!-- Wait until a version exists that fixes this -->
+    <cve>CVE-2023-28708</cve><!-- Wait until a version exists that fixes this -->
   </suppress>
 </suppressions>
