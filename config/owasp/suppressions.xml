@@ -5,9 +5,6 @@
      Suppressing as it's a false positive (see: https://pivotal.io/security/cve-2018-1258)
      and (see: https://pivotal.io/security/cve-2021-22044)
    ]]></notes>
-
-    <cve>CVE-2020-5408</cve> <!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2022-38752</cve> <!-- Wait until a version exists that fixes this -->
     <cve>CVE-2021-43980</cve>
     <cve>CVE-2022-22976</cve>
     <cve>CVE-2022-22978</cve>
