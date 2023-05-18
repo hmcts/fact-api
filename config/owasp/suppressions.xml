@@ -5,25 +5,6 @@
      Suppressing as it's a false positive (see: https://pivotal.io/security/cve-2018-1258)
      and (see: https://pivotal.io/security/cve-2021-22044)
    ]]></notes>
-    <cve>CVE-2018-1258</cve>
-    <cve>CVE-2021-22112</cve>
-    <cve>CVE-2016-1000027</cve>
-    <cve>CVE-2020-5408</cve> <!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2022-38752</cve> <!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2021-43980</cve>
-    <cve>CVE-2022-22976</cve>
-    <cve>CVE-2022-22978</cve>
-    <cve>CVE-2022-34305</cve> <!-- 8/7/22: Upgrade to Apache Tomcat 9.0.65 or later once released  -->
-    <cve>CVE-2022-31690</cve> <!-- Current issue with resilience 1.7.1 -->
-    <cve>CVE-2022-31692</cve>
-    <cve>CVE-2021-37533</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2022-3064</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2021-4235</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2021-4277</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2022-45143</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2022-1471</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2022-45688</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2023-28708</cve><!-- Wait until a version exists that fixes this -->
-    <cve>CVE-2023-20862</cve><!-- Wait until a version exists that fixes this -->
+    <cve>CVE-2022-45688</cve><!-- Wait until a version exists that fixes this relating to jackson-core-->
   </suppress>
 </suppressions>
