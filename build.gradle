@@ -176,10 +176,6 @@ dependencyCheck {
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
-    // CVE-2018-10237 - Unbounded memory allocation
-    dependencySet(group: 'com.google.guava', version: '31.1-jre') {
-      entry 'guava'
-    }
     //CVE-2021-29425
     dependencySet(group: 'commons-io', version: '2.11.0') {
       entry 'commons-io'
@@ -266,6 +262,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.15.0'
 
   implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20220608.1'
+  implementation group: 'com.google.guava', name: 'guava', version: '32.0.1-jre'
 
   implementation group: 'org.projectlombok', name: 'lombok'
   annotationProcessor 'org.projectlombok:lombok'
