@@ -7,6 +7,6 @@
    ]]></notes>
     <cve>CVE-2022-45688</cve><!-- Wait until a version exists that fixes this relating to jackson-core-->
     <cve>CVE-2023-35116</cve><!-- Wait until a version exists that fixes this relating to jackson-databind-->
-    <cve>CVE-2023-2976 </cve><!-- Wait until a version exists that fixes this relating to guava used in launchdarkly-->
+    <cve>CVE-2023-2976</cve> <!-- Wait until a version exists that fixes this relating to guava used in launchdarkly-->
   </suppress>
 </suppressions>
