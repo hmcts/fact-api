@@ -189,7 +189,7 @@ dependencyManagement {
       entry 'snakeyaml'
     }
     // CVE-2022-31692 - CVE-2022-31690
-    dependencySet(group: 'org.springframework.security', version: '6.0.3') {
+    dependencySet(group: 'org.springframework.security', version: '6.1.2') {
       entry 'spring-security-crypto'
     }
   }
@@ -235,8 +235,8 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.4'
-  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.0.3'
-  implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.0.3'
+  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.1.2'
+  implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.1.2'
 
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
 
@@ -245,7 +245,7 @@ dependencies {
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'uk.gov.hmcts.reform', name: 'properties-volume-spring-boot-starter', version: '0.1.0'
   implementation group: 'org.flywaydb', name: 'flyway-core'
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.1'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
 
