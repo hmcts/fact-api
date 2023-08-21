@@ -88,6 +88,10 @@
     {
       "description": "<p>Video conference facilities excluding prison to court video links</p>",
       "name": "Video facilities"
+    },
+    {
+      "description": "Lanyards available on request.",
+      "name": "Hidden Disabilities Sunflower network"
     }
   ],
   "addresses": [
