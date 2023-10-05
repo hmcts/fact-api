@@ -9,4 +9,10 @@
     <cve>CVE-2023-35116</cve><!-- Wait until a version exists that fixes this relating to jackson-databind-->
     <cve>CVE-2023-34034</cve><!-- Wait until a version exists that fixes this relating to spring security-->
   </suppress>
+  <suppress>
+    <notes>False Positives
+      https://nvd.nist.gov/vuln/detail/CVE-2023-34047 affects GraphQL library, which is unused in this project.
+    </notes>
+    <cve>CVE-2023-34047</cve>
+  </suppress>
 </suppressions>
