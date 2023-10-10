@@ -28,11 +28,11 @@ class ServiceAreaRepositoryTest {
         assertThat(result).isPresent();
         final ServiceArea serviceArea = new ServiceArea(result.get());
         assertThat(serviceArea.getAreaOfLawName()).isEqualTo("Money claims");
-        assertThat(serviceArea.getServiceAreaCourts().size()).isEqualTo(4);
+        assertThat(serviceArea.getServiceAreaCourts().size()).isEqualTo(5);
         final List<ServiceAreaCourt> catchmentTypes = serviceArea.getServiceAreaCourts();
         assertThat(catchmentTypes.get(0).getCatchmentType()).isEqualTo("national");
-        assertThat(catchmentTypes.get(0).getSlug()).isEqualTo("county-court-money-claims-centre-ccmcc");
-        assertThat(catchmentTypes.get(0).getCourtName()).isEqualTo("County Court Money Claims Centre (CCMCC)");
+        assertThat(catchmentTypes.get(0).getSlug()).isEqualTo("civil-national-business-centre-cnbc");
+        assertThat(catchmentTypes.get(0).getCourtName()).isEqualTo("Civil National Business Centre (CNBC)");
     }
 
     @Test
