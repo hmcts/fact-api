@@ -5,9 +5,9 @@
      Suppressing as it's a false positive (see: https://pivotal.io/security/cve-2018-1258)
      and (see: https://pivotal.io/security/cve-2021-22044)
    ]]></notes>
-    <cve>CVE-2022-45688</cve><!-- Wait until a version exists that fixes this relating to jackson-core-->
     <cve>CVE-2023-35116</cve><!-- Wait until a version exists that fixes this relating to jackson-databind-->
     <cve>CVE-2023-34034</cve><!-- Wait until a version exists that fixes this relating to spring security-->
+    <cve>CVE-2023-5072</cve><!-- Wait until a version exists that fixes this relating to jackson-core-->
   </suppress>
   <suppress>
     <notes>False Positives
