@@ -9,11 +9,6 @@ provider "azurerm" {
   subscription_id            = var.aks_subscription_id
 }
 
-locals {
-  vault_name = "${var.product}-${var.env}"
-  resource_group_name = "${var.product}-${var.env}"
-}
-
 data "azurerm_key_vault" "fact_key_vault" {
   name = local.vault_name
   resource_group_name = local.resource_group_name
