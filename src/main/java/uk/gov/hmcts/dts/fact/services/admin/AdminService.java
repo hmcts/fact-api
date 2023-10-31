@@ -215,6 +215,7 @@ public class AdminService {
         InPerson inPerson = new InPerson();
         inPerson.setIsInPerson(!serviceCentre);
         inPerson.setAccessScheme(false);
+        inPerson.setCommonPlatform(false);
 
         // Link the search_court and search_inperson tables together through the court_id column relationship
         inPerson.setCourtId(newCourt);
