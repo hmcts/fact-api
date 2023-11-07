@@ -73,7 +73,7 @@ locals {
   resource_group_name = "${var.product}-${var.env}"
   db_host_name = "${var.product}-${var.component}-flexible-postgres-db-v15"
   db_name = var.product
-  postgresql_user = "${local.db_name}_user"
+  postgresql_user = "${var.component}_user"
 }
 
 module "postgresql" {
