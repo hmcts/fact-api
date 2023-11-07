@@ -72,8 +72,8 @@ locals {
   vault_name = "${var.product}-${var.env}"
   resource_group_name = "${var.product}-${var.env}"
   db_host_name = "${var.product}-${var.component}-flexible-postgres-db-v15"
-  db_name = replace(var.component, "-", "")
-  postgresql_user = "${local.db_name}_user"
+  db_name = var.product
+  postgresql_user = "${var.component}_user"
 }
 
 module "postgresql" {
