@@ -16,13 +16,13 @@ java:
   keyVaults:
     fact:
       secrets:
-        - name: api-POSTGRES-HOST
+        - name: api-POSTGRES-FLEXIBLE-HOST
           alias: POSTGRES_HOST
-        - name: api-POSTGRES-PASS
+        - name: api-POSTGRES-FLEXIBLE-PASS
           alias: POSTGRES_PASSWORD
-        - name: api-POSTGRES-DATABASE
+        - name: api-POSTGRES-FLEXIBLE-DATABASE
           alias: POSTGRES_DATABASE
-        - name: api-POSTGRES-USER
+        - name: api-POSTGRES-FLEXIBLE-USER
           alias: POSTGRES_USER
         - name: AppInsightsInstrumentationKey
           alias: APPINSIGHTS_INSTRUMENTATIONKEY
