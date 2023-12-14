@@ -10,6 +10,10 @@
     <cve>CVE-2023-34034</cve><!-- Wait until a version exists that fixes this relating to spring security-->
     <cve>CVE-2023-5072</cve><!-- Wait until a version exists that fixes this relating to jackson-core-->
     <cve>CVE-2023-33202</cve><!-- Wait until a version exists that fixes this relating to bouncy castle-->
+    <cve>CVE-2023-34055</cve><!-- Wait until a version exists that fixes this relating to Spring Boot server Web Observations DoS Vulnerability-->
+    <cve>CVE-2023-46589</cve><!-- Wait until a version exists that fixes this relating to Apache Tomcat-->
+    <cve>CVE-2023-6378</cve><!-- Wait until a version exists that fixes this relating to logback-->
+    <cve>CVE-2023-6481</cve><!-- Wait until a version exists that fixes this relating to logback-->
   </suppress>
   <suppress>
     <notes>False Positives
