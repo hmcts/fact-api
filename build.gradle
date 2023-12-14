@@ -180,9 +180,12 @@ dependencyManagement {
     ) {
       entry 'snakeyaml'
     }
-    // CVE-2022-31692 - CVE-2022-31690
-    dependencySet(group: 'org.springframework.security', version: '6.0.2') {
-      entry 'spring-security-crypto'
+    //CVE-2023-5072
+    dependencySet(
+      group: 'org.json',
+      version: '20231013'
+    ) {
+      entry 'json'
     }
   }
 }
