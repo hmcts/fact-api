@@ -1,6 +1,6 @@
 java:
   applicationPort: 8080
-  image: 'hmctspublic.azurecr.io/fact/fact-api:latest'
+  image: 'hmctspublic.azurecr.io/fact/api:latest'
   ingressHost: fact-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fact
   devcpuRequests: 100m
