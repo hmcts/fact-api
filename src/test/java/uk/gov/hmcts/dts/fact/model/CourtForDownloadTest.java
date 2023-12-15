@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.model;
 
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.dts.fact.entity.AddressType;

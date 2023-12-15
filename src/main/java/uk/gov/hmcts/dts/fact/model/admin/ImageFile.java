@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.model.admin;
 
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
