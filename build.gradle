@@ -145,7 +145,7 @@ sonarqube {
     property "sonar.projectName", "fact :: api"
     property "sonar.projectKey", "uk.gov.hmcts.reform:fact-api"
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
-    property ("sonar.gradle.skipCompile", true)
+    System.setProperty("sonar.gradle.skipCompile", "true")
   }
 }
 
