@@ -228,9 +228,9 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json',  version: '3.1.5'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.8'
-  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.1.5'
-  implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.1.5'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.1.0'
+  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.2.0'
+  implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.0'
 
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
 
