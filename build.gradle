@@ -132,8 +132,8 @@ pmd {
 jacocoTestReport {
   executionData(test, integration)
   reports {
-    xml.getRequired().set(true)
-    csv.getRequired().set(false)
+    xml.enabled = true
+    csv.enabled = false
     xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
 }
