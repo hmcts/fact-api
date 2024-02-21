@@ -127,7 +127,7 @@ class AdminAreasOfLawServiceTest {
 
     @Test
     void whenIdDoesNotExistGetAreaOfLawShouldThrowNotFoundException() {
-        when(areasOfLawRepository.getReferenceById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        when(areasOfLawRepository.getReferenceById(400)).thenThrow(jakarta.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> areasOfLawService
             .getAreaOfLaw(400))
             .isInstanceOf(NotFoundException.class);

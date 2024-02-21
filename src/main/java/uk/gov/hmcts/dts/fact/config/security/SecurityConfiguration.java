@@ -3,28 +3,29 @@ package uk.gov.hmcts.dts.fact.config.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests(a -> a
-                .antMatchers(HttpMethod.GET, "/admin/**").authenticated()
-                .antMatchers(HttpMethod.GET, "/courts/").authenticated()
-                .antMatchers(HttpMethod.GET, "/courts/all").authenticated()
-                .antMatchers(HttpMethod.GET, "/courts/{slug}/courtPhoto").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/*").authenticated()
-                .antMatchers(HttpMethod.POST, "/*").authenticated()
-                .antMatchers(HttpMethod.PUT, "/*").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/*").authenticated()
-                .antMatchers(HttpMethod.POST, "/*").authenticated()
-            )
-            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(HttpMethod.GET, "/admin/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/courts/").authenticated()
+                .requestMatchers(HttpMethod.GET, "/courts/all").authenticated()
+                .requestMatchers(HttpMethod.GET, "/courts/{slug}/courtPhoto").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/*").authenticated()
+                .requestMatchers(HttpMethod.POST, "/*").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/*").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/*").authenticated()
+                .requestMatchers(HttpMethod.POST, "/*").authenticated()
+                .anyRequest().permitAll()
+            ).oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        return http.build();
     }
 
     @Bean

@@ -1,6 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +40,14 @@ public class AdminCourtEmailController {
     }
 
     @GetMapping(path = "/{slug}/emails")
-    @ApiOperation("Find email addresses by slug")
+    @Operation(summary = "Find email addresses by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<Email>> getCourtEmails(@PathVariable String slug) {
         return ok(adminCourtEmailService.getCourtEmailsBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/emails")
-    @ApiOperation("Update email addresses for a provided court")
+    @Operation(summary = "Update email addresses for a provided court")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<Email>> updateCourtEmails(@PathVariable String slug,
                                                          @RequestBody List<Email> adminEmails,
@@ -57,7 +57,7 @@ public class AdminCourtEmailController {
     }
 
     @GetMapping(path = "/emailTypes")
-    @ApiOperation("Retrieve all email details for provided court")
+    @Operation(summary = "Retrieve all email details for provided court")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<EmailType>> getAllCourtEmailDescTypes() {
         return ok(adminCourtEmailService.getAllEmailTypes());

@@ -51,7 +51,7 @@ public class AdminContactTypeService {
     public ContactType getContactType(final Integer id) {
         try {
             return new ContactType(contactTypeRepository.getReferenceById(id));
-        } catch (final javax.persistence.EntityNotFoundException exception) {
+        } catch (final jakarta.persistence.EntityNotFoundException exception) {
             throw new NotFoundException(exception);
         }
     }

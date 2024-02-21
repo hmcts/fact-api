@@ -82,7 +82,7 @@ class AdminOpeningTypeServiceTest {
 
     @Test
     void whenIdDoesNotExistGetOpeningTypeShouldThrowNotFoundException() {
-        when(openingTypeRepository.getReferenceById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        when(openingTypeRepository.getReferenceById(400)).thenThrow(jakarta.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> adminOpeningTypeService
             .getOpeningType(400))
             .isInstanceOf(NotFoundException.class);

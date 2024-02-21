@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.net.URI;
 import java.util.List;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
@@ -58,7 +57,7 @@ public class AdminCourtsController {
     }
 
     @GetMapping(path = "/all")
-    @ApiOperation("Return all courts")
+    @Operation(summary = "Return all courts")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtReference>> getAllCourts() {
         return ok(adminService.getAllCourtReferences());
@@ -66,13 +65,13 @@ public class AdminCourtsController {
 
     @GetMapping(path = "/")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
-    @ApiOperation("Return court data for download")
+    @Operation(summary = "Return court data for download")
     public ResponseEntity<List<uk.gov.hmcts.dts.fact.model.CourtForDownload>> getAllCourtsForDownload() {
         return ok(adminService.getAllCourtsForDownload());
     }
 
     @PutMapping(path = "/info")
-    @ApiOperation("Update selected courts info")
+    @Operation(summary = "Update selected courts info")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Void> updateCourtsInfo(@RequestBody CourtInfoUpdate info) {
         adminService.updateMultipleCourtsInfo(info);
@@ -80,20 +79,18 @@ public class AdminCourtsController {
     }
 
     @GetMapping(path = "/{slug}/general")
-    @ApiOperation("Find court details by slug")
+    @Operation(summary = "Find court details by slug")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(adminService.getCourtBySlug(slug));
     }
 
     @PostMapping()
-    @ApiOperation("Add a new court")
-    @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = Court.class),
-        @ApiResponse(code = 401, message = UNAUTHORISED),
-        @ApiResponse(code = 403, message = FORBIDDEN),
-        @ApiResponse(code = 409, message = "Court already exists")
-    })
+    @Operation(summary = "Add a new court")
+    @ApiResponse(responseCode = "201", description = "Created")
+    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
+    @ApiResponse(responseCode = "403", description = FORBIDDEN)
+    @ApiResponse(responseCode = "409", description = "Court already exists")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
         String newCourtSlug = Utils.convertNameToSlug(newCourt.getNewCourtName());
@@ -106,12 +103,10 @@ public class AdminCourtsController {
     }
 
     @DeleteMapping("/{slug}")
-    @ApiOperation("Delete a court")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Deleted"),
-        @ApiResponse(code = 401, message = UNAUTHORISED),
-        @ApiResponse(code = 403, message = FORBIDDEN)
-    })
+    @Operation(summary = "Delete a court")
+    @ApiResponse(responseCode = "200", description = "Deleted")
+    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
+    @ApiResponse(responseCode = "403", description = FORBIDDEN)
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<String> deleteCourt(@PathVariable String slug) {
         adminService.deleteCourt(slug);
@@ -119,7 +114,7 @@ public class AdminCourtsController {
     }
 
     @PutMapping(path = "/{slug}/general")
-    @ApiOperation("Update court")
+    @Operation(summary = "Update court")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<Court> updateCourtBySlug(@PathVariable String slug,
                                                    @RequestBody Court updatedCourt,
@@ -129,26 +124,22 @@ public class AdminCourtsController {
     }
 
     @GetMapping(path = "/{slug}/courtPhoto")
-    @ApiOperation("Find the photo for a court")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class),
-        @ApiResponse(code = 401, message = UNAUTHORISED),
-        @ApiResponse(code = 403, message = FORBIDDEN),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Find the photo for a court")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
+    @ApiResponse(responseCode = "403", description = FORBIDDEN)
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<String> getCourtImageBySlug(@PathVariable String slug) {
         return ok(adminService.getCourtImage(slug));
     }
 
     @PutMapping(path = "/{slug}/courtPhoto")
-    @ApiOperation("Update the photo for a court")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class),
-        @ApiResponse(code = 401, message = UNAUTHORISED),
-        @ApiResponse(code = 403, message = FORBIDDEN),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Update the photo for a court")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
+    @ApiResponse(responseCode = "403", description = FORBIDDEN)
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug,
                                                          @RequestBody ImageFile imageFile,

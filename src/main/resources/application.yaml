@@ -33,11 +33,10 @@ spring:
   jpa:
     properties:
       hibernate:
-        globally_quoted_identifiers: true
+        globally_quoted_identifiers: 'true'
         jdbc:
           lob:
-            # silence the 'wall-of-text' - unnecessary exception throw about blob types
-            non_contextual_creation: true
+            non_contextual_creation: 'true'
     open-in-view: true
 
   security:
@@ -67,6 +66,10 @@ mapit:
 
 launchDarkly:
   sdk-key: ${LAUNCH_DARKLY_SDK_KEY:}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 
 azure:
   application-insights:

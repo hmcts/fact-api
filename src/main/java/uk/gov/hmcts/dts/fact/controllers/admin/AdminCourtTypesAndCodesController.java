@@ -1,8 +1,8 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,38 +43,32 @@ public class AdminCourtTypesAndCodesController {
     }
 
     @GetMapping(path = "/courtTypes")
-    @ApiOperation("Return all court types")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = CourtType.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-    })
+    @Operation(summary = "Return all court types")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtType>> getAllCourtTypes() {
         return ok(courtTypesAndCodesService.getAllCourtTypes());
     }
 
     @GetMapping(path = "/{slug}/courtTypesAndCodes")
-    @ApiOperation("Find a court's types, GBS code and Dx codes by slug")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = CourtTypesAndCodes.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Find a court's types, GBS code and Dx codes by slug")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtTypesAndCodes> getCourtTypesAndCodes(@PathVariable String slug) {
         return ok(courtTypesAndCodesService.getCourtTypesAndCodes(slug));
     }
 
     @PutMapping(path = "/{slug}/courtTypesAndCodes")
-    @ApiOperation("Update a court's types, GBS code and Dx codes")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = CourtTypesAndCodes.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Update a court's types, GBS code and Dx codes")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtTypesAndCodes> updateCourtTypesAndCodes(@PathVariable String slug,
                                                                        @RequestBody CourtTypesAndCodes courtTypesAndCodes,

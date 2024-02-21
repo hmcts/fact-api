@@ -35,7 +35,8 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
     List<Court> findCourtByNameStartingWithIgnoreCaseAndDisplayedOrderByNameAsc(String prefix, boolean active);
 
     @Query(nativeQuery = true,
-        value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca ON ca.court_id = c.id AND ca.address_type_id != 5881 "
+        value = "SELECT c.* FROM search_court c LEFT JOIN search_courtaddress ca ON ca.court_id = c.id AND ca"
+            + ".address_type_id != 5881 "
         + "WHERE "
         + "CASE "
         + "     WHEN :includeClosed THEN c.displayed IS NOT NULL "
@@ -88,7 +89,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
         value = "WITH split AS ( "
             + "  SELECT (string_to_array(btrim(:query),' '))[1] AS first_word"
             + ") "
-            + "SELECT *,"
+            + "SELECT c.*,"
             + "    CASE WHEN length(ca.town_name) > 0 AND (ca.town_name_cy IS NULL OR ca.town_name_cy = '') THEN levenshtein(lower(ca.town_name), lower(:query))"
             + "         WHEN length(ca.town_name_cy) > 0 AND (ca.town_name IS NULL OR ca.town_name = '') THEN levenshtein(lower(ca.town_name_cy), lower(:query))"
             + "         ELSE lEAST(levenshtein(lower(ca.town_name), lower(:query)), levenshtein(lower(ca.town_name_cy), lower(:query))) END"
@@ -127,7 +128,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
      * @return a list of courts matching the search string
      */
     @Query(nativeQuery = true,
-        value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca"
+        value = "SELECT c.* FROM search_court c LEFT JOIN search_courtaddress ca"
             + "    ON ca.court_id = c.id AND ca.address_type_id != 5881"
             + "  WHERE displayed = true AND ("
             + "    regexp_replace(c.name, '[^A-Za-z0-9]+', '', 'g') ILIKE concat('%', :query, '%')"
@@ -156,7 +157,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
      * @return a list of courts matching the input court code
      */
     @Query(nativeQuery = true,
-        value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca"
+        value = "SELECT c.* FROM search_court c LEFT JOIN search_courtaddress ca"
             + "    ON ca.court_id = c.id AND ca.address_type_id != 5881"
             + "  WHERE displayed = true AND ("
             + "    c.cci_code = :code"
@@ -171,7 +172,7 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
      * @return a list of courts matching the input postcode
      */
     @Query(nativeQuery = true,
-        value = "SELECT * FROM search_court c LEFT JOIN search_courtaddress ca"
+        value = "SELECT c.* FROM search_court c LEFT JOIN search_courtaddress ca"
             + "    ON ca.court_id = c.id AND ca.address_type_id != 5881"
             + "  WHERE displayed = true"
             + "    AND REPLACE(ca.postcode, ' ', '') = UPPER(REPLACE(:postcode, ' ', ''))"

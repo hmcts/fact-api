@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -43,12 +42,10 @@ public class AdminContactTypeController {
     }
 
     @GetMapping()
-    @ApiOperation("Return all contact types")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = ContactType.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden")
-    })
+    @Operation(summary = "Return all contact types")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<ContactType>> getAllContactTypes() {
         return ok(adminContactTypeService.getAllContactTypes());
@@ -56,53 +53,45 @@ public class AdminContactTypeController {
 
 
     @GetMapping(path = "/{id}")
-    @ApiOperation("Get contact type")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = ContactType.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Contact type not found")
-    })
+    @Operation(summary = "Get contact type")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Contact type not found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<ContactType> getContactType(@PathVariable Integer id) {
         return ok(adminContactTypeService.getContactType(id));
     }
 
     @PostMapping()
-    @ApiOperation("Create contact type")
-    @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = ContactType.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 409, message = "Contact type already exists")
-    })
+    @Operation(summary = "Create contact type")
+    @ApiResponse(responseCode = "201", description = "Created")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "409", description = "Contact type already exists")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<ContactType> createContactType(@RequestBody ContactType contactType) {
         return created(URI.create(StringUtils.EMPTY)).body(adminContactTypeService.createContactType(contactType));
     }
 
     @PutMapping()
-    @ApiOperation("Update contact type")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = ContactType.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Contact type not found")
-    })
+    @Operation(summary = "Update contact type")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Contact type not found")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<ContactType> updateContactType(@RequestBody ContactType contactType) {
         return ok(adminContactTypeService.updateContactType(contactType));
     }
 
     @DeleteMapping("/{contactTypeId}")
-    @ApiOperation("Delete contact type")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = ContactType.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Contact type not found"),
-        @ApiResponse(code = 409, message = "Contact type in use")
-    })
+    @Operation(summary = "Delete contact type")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Contact type not found")
+    @ApiResponse(responseCode = "409", description = "Contact type in use")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Integer> deleteContactType(@PathVariable Integer contactTypeId) {
         adminContactTypeService.deleteContactType(contactTypeId);

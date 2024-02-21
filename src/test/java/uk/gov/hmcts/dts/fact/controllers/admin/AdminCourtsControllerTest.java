@@ -23,7 +23,7 @@ import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import java.util.Collections;
 import java.util.List;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

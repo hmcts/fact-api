@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -11,7 +12,7 @@ import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 import uk.gov.hmcts.dts.fact.util.Action;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("PMD.TooManyMethods")
 @WebMvcTest(SearchController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class SearchControllerTest {
 
     private static final String BASE_URL = "/search";
@@ -122,10 +124,10 @@ class SearchControllerTest {
     }
 
     @Test
-    void shouldReturnInvalidPostCodeError() throws Exception {
+    void shouldReturnInvalidPostCodeError() {
         try {
             mockMvc.perform(get(BASE_URL + "/results/abc123")).andReturn();
-        } catch (NestedServletException e) {
+        } catch (Exception e) {
             assertThrows(ConstraintViolationException.class, () -> {
                 throw e.getCause();
             });

@@ -1,8 +1,8 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,13 +46,11 @@ public class AdminCourtApplicationUpdateController {
      * @return A list of the service centre's application progressions
      */
     @GetMapping(path = "/{slug}/application-progression")
-    @ApiOperation("Find application progression options by slug")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = ApplicationUpdate.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Find application progression options by slug")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<ApplicationUpdate>> getApplicationUpdates(@PathVariable String slug) {
         return ok(adminCourtApplicationUpdateService.getApplicationUpdatesBySlug(slug));
@@ -65,13 +63,11 @@ public class AdminCourtApplicationUpdateController {
      * @return A list of updated application progressions
      */
     @PutMapping(path = "/{slug}/application-progression")
-    @ApiOperation("Update application progression options for a provided service centre")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = ApplicationUpdate.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Update application progression options for a provided service centre")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<ApplicationUpdate>> updateApplicationUpdates(@PathVariable String slug,
                                                                             @RequestBody List<ApplicationUpdate> adminApplicationUpdates,
