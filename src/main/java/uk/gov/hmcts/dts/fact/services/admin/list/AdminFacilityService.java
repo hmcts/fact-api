@@ -2,8 +2,6 @@ package uk.gov.hmcts.dts.fact.services.admin.list;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
@@ -79,17 +77,10 @@ public class AdminFacilityService {
     }
 
     public void deleteFacilityType(Integer facilityTypeId) {
-        ensureFacilityTypeNotInUse(facilityTypeId);
+        FacilityType facilityType = getFacilityType(facilityTypeId);
 
-        try {
-            facilityTypeRepository.deleteById(facilityTypeId);
-        } catch (EmptyResultDataAccessException ex) {
-            log.warn("Facility Type could not be deleted because it does not exist: " + facilityTypeId);
-            throw new NotFoundException(ex);
-        } catch (DataAccessException ex) {
-            log.warn("A data access exception was thrown when trying to delete a facility type: " + facilityTypeId);
-            throw new ListItemInUseException(ex);
-        }
+        ensureFacilityTypeNotInUse(facilityType.getId());
+        facilityTypeRepository.deleteById(facilityTypeId);
     }
 
     @Transactional

@@ -2,8 +2,6 @@ package uk.gov.hmcts.dts.fact.services.admin.list;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
@@ -97,17 +95,10 @@ public class AdminAreasOfLawService {
     }
 
     public void deleteAreaOfLaw(final Integer areaOfLawId) {
-        ensureAreaOfLawIsNotInUse(areaOfLawId);
+        AreaOfLaw areaOfLaw = getAreaOfLaw(areaOfLawId);
 
-        try {
-            areasOfLawRepository.deleteById(areaOfLawId);
-        } catch (EmptyResultDataAccessException ex) {
-            log.warn("Area of Law could not be deleted because it no longer exists: " + areaOfLawId);
-            throw new NotFoundException(ex);
-        } catch (DataAccessException ex) {
-            log.warn("A data access exception was thrown when trying to delete an area of law: " + areaOfLawId);
-            throw new ListItemInUseException(ex);
-        }
+        ensureAreaOfLawIsNotInUse(areaOfLawId);
+        areasOfLawRepository.deleteById(areaOfLaw.getId());
     }
 
     private void checkIfAreaOfLawAlreadyExists(final String areaOfLawName) {

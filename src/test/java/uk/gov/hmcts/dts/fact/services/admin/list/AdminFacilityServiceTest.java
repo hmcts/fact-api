@@ -6,7 +6,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -160,6 +159,8 @@ class AdminFacilityServiceTest {
     @Test
     void shouldDeleteFacilityType() {
         when(facilityRepository.findAll()).thenReturn(Collections.emptyList());
+        when(facilityTypeRepository.findById(123)).thenReturn(
+            Optional.of(getFacilityType(123, "test", "test")));
 
         adminFacilityService.deleteFacilityType(123);
 
@@ -178,20 +179,10 @@ class AdminFacilityServiceTest {
     }
 
     @Test
-    void deleteShouldThrowListItemInUseExceptionIfFacilityTypeInUse() {
-        // Mock a foreign key constraint violation
-        final Integer id = 345;
-        final DataAccessException mockDataAccessException = mock(DataAccessException.class);
-        doThrow(mockDataAccessException).when(facilityTypeRepository).deleteById(id);
-        assertThatThrownBy(() -> adminFacilityService
-            .deleteFacilityType(id))
-            .isInstanceOf(ListItemInUseException.class);
-    }
-
-    @Test
     void deleteShouldThrowListItemInUseExceptionIfFacilityTypeUsedByFacility() {
         final Integer facilityTypeId = 100;
         final FacilityType facilityType = getFacilityType(facilityTypeId, "Parking", "Parcio");
+        when(facilityTypeRepository.findById(facilityTypeId)).thenReturn(Optional.of(facilityType));
 
         final Facility facility = new Facility();
         facility.setId(987);

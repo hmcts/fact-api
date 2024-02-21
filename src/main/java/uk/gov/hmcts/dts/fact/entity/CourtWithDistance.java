@@ -103,6 +103,11 @@ public class CourtWithDistance {
     private List<Facility> facilities;
 
     @OneToMany
+    @JoinTable(
+        name = "search_courtaddress",
+        joinColumns = @JoinColumn(name = COURT_ID),
+        inverseJoinColumns = @JoinColumn(name = "id")
+    )
     private List<CourtAddress> addresses;
 
     private String gbs;

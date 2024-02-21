@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import java.util.Collections;
 import java.util.List;
-import jakarta.validation.ConstraintViolationException;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

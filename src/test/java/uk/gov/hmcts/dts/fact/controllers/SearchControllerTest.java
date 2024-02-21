@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -8,11 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.util.NestedServletException;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 import uk.gov.hmcts.dts.fact.util.Action;
-
-import jakarta.validation.ConstraintViolationException;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
