@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.ServiceArea;
-import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.services.ServiceAreaService;
 
 import java.util.List;

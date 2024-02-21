@@ -1,14 +1,5 @@
 package uk.gov.hmcts.dts.fact.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +13,15 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;

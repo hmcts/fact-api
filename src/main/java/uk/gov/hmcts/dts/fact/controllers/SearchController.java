@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.controllers;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
@@ -21,7 +22,6 @@ import uk.gov.hmcts.dts.fact.util.Action;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.validation.constraints.Pattern;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;

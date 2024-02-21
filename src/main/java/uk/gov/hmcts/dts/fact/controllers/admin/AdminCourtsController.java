@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,6 @@ import uk.gov.hmcts.dts.fact.util.Utils;
 
 import java.net.URI;
 import java.util.List;
-import jakarta.validation.Valid;
 
 import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.noContent;
@@ -47,7 +47,9 @@ public class AdminCourtsController {
     private final AdminService adminService;
     private final AdminCourtLockService adminCourtLockService;
     private static final String FORBIDDEN = "Forbidden";
+    private static final String FORBIDDEN_CODE = "403";
     private static final String UNAUTHORISED = "Unauthorised";
+    private static final String UNAUTHORISED_CODE = "401";
 
     @Autowired
     public AdminCourtsController(final AdminService adminService,
@@ -88,8 +90,8 @@ public class AdminCourtsController {
     @PostMapping()
     @Operation(summary = "Add a new court")
     @ApiResponse(responseCode = "201", description = "Created")
-    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
-    @ApiResponse(responseCode = "403", description = FORBIDDEN)
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
+    @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
     @ApiResponse(responseCode = "409", description = "Court already exists")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Court> addNewCourt(@Valid @RequestBody NewCourt newCourt) {
@@ -105,8 +107,8 @@ public class AdminCourtsController {
     @DeleteMapping("/{slug}")
     @Operation(summary = "Delete a court")
     @ApiResponse(responseCode = "200", description = "Deleted")
-    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
-    @ApiResponse(responseCode = "403", description = FORBIDDEN)
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
+    @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<String> deleteCourt(@PathVariable String slug) {
         adminService.deleteCourt(slug);
@@ -126,8 +128,8 @@ public class AdminCourtsController {
     @GetMapping(path = "/{slug}/courtPhoto")
     @Operation(summary = "Find the photo for a court")
     @ApiResponse(responseCode = "200", description = "Successful")
-    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
-    @ApiResponse(responseCode = "403", description = FORBIDDEN)
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
+    @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
     @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<String> getCourtImageBySlug(@PathVariable String slug) {
@@ -137,8 +139,8 @@ public class AdminCourtsController {
     @PutMapping(path = "/{slug}/courtPhoto")
     @Operation(summary = "Update the photo for a court")
     @ApiResponse(responseCode = "200", description = "Successful")
-    @ApiResponse(responseCode = "401", description = UNAUTHORISED)
-    @ApiResponse(responseCode = "403", description = FORBIDDEN)
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
+    @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
     @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<String> updateCourtImageBySlug(@PathVariable String slug,

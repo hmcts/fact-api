@@ -1,12 +1,5 @@
 package uk.gov.hmcts.dts.fact.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.sql.Timestamp;
-import java.time.Instant;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +12,13 @@ import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "search_courtareaoflaw")

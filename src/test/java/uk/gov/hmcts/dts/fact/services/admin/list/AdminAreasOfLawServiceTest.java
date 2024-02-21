@@ -127,7 +127,7 @@ class AdminAreasOfLawServiceTest {
 
     @Test
     void whenIdDoesNotExistGetAreaOfLawShouldThrowNotFoundException() {
-        when(areasOfLawRepository.getReferenceById(400)).thenThrow(jakarta.persistence.EntityNotFoundException.class);
+        when(areasOfLawRepository.getReferenceById(400)).thenThrow(EntityNotFoundException.class);
         assertThatThrownBy(() -> areasOfLawService
             .getAreaOfLaw(400))
             .isInstanceOf(NotFoundException.class);
@@ -224,7 +224,7 @@ class AdminAreasOfLawServiceTest {
     @Test
     void shouldDeleteAreaOfLaw() {
         Integer areaOfLawId = 1;
-        AreaOfLaw areaOfLaw = new AreaOfLaw(1, "test");
+        AreaOfLaw areaOfLaw = new AreaOfLaw(1, "test1");
 
         when(areasOfLawRepository.getReferenceById(areaOfLawId)).thenReturn(areaOfLaw);
         when(courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(areaOfLawId)).thenReturn(Collections.emptyList());
@@ -238,7 +238,7 @@ class AdminAreasOfLawServiceTest {
     @Test
     void deleteShouldThrowListItemInUseExceptionIfAreaOfLawIsUsedByCourt() {
         Integer areaOfLawId = 100;
-        AreaOfLaw areaOfLaw = new AreaOfLaw(areaOfLawId, "test");
+        AreaOfLaw areaOfLaw = new AreaOfLaw(areaOfLawId, "test2");
 
         when(areasOfLawRepository.getReferenceById(areaOfLawId)).thenReturn(areaOfLaw);
 
@@ -257,7 +257,7 @@ class AdminAreasOfLawServiceTest {
     @Test
     void deleteShouldThrowListItemInUseExceptionIfAreaOfLawIsUsedByCourtLocalAuthority() {
         Integer areaOfLawId = 100;
-        AreaOfLaw areaOfLaw = new AreaOfLaw(areaOfLawId, "test");
+        AreaOfLaw areaOfLaw = new AreaOfLaw(areaOfLawId, "test3");
 
         when(areasOfLawRepository.getReferenceById(areaOfLawId)).thenReturn(areaOfLaw);
 
@@ -276,7 +276,7 @@ class AdminAreasOfLawServiceTest {
     @Test
     void deleteShouldThrowListItemInUseExceptionIfAreaOfLawIsUsedByServiceArea() {
         Integer areaOfLawId = 100;
-        AreaOfLaw areaOfLaw = new AreaOfLaw(areaOfLawId, "test");
+        AreaOfLaw areaOfLaw = new AreaOfLaw(areaOfLawId, "test4");
 
         when(areasOfLawRepository.getReferenceById(areaOfLawId)).thenReturn(areaOfLaw);
 

@@ -4,6 +4,8 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,8 +22,6 @@ import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.util.List;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 import static org.springframework.http.ResponseEntity.ok;
 

@@ -1,16 +1,16 @@
 package uk.gov.hmcts.dts.fact.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-import java.util.stream.Collectors;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
