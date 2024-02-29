@@ -1,6 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,14 +39,14 @@ public class AdminCourtOpeningTimeController {
     }
 
     @GetMapping(path = "/{slug}/openingTimes")
-    @ApiOperation("Find court opening times by slug")
+    @Operation(summary = "Find court opening times by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<OpeningTime>> getCourtOpeningTimes(@PathVariable String slug) {
         return ok(adminService.getCourtOpeningTimesBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/openingTimes")
-    @ApiOperation("Update court opening times")
+    @Operation(summary = "Update court opening times")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<OpeningTime>> updateCourtOpeningTimes(@PathVariable String slug,
                                                                      @RequestBody List<OpeningTime> openingTimes,

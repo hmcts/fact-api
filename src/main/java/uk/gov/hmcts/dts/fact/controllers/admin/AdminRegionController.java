@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,12 +32,10 @@ public class AdminRegionController {
 
 
     @GetMapping()
-    @ApiOperation("Retrieve all regions")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = Region.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden")
-    })
+    @Operation(summary = "Retrieve all regions")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN, FACT_VIEWER})
     public ResponseEntity<List<Region>> getAllRegions() {
         return ok(adminService.getAllRegions());

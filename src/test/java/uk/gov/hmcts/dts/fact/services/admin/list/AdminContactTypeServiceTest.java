@@ -98,7 +98,7 @@ class AdminContactTypeServiceTest {
 
     @Test
     void whenIdDoesNotExistGetContactTypeShouldThrowNotFoundException() {
-        when(contactTypeRepository.getReferenceById(400)).thenThrow(javax.persistence.EntityNotFoundException.class);
+        when(contactTypeRepository.getReferenceById(400)).thenThrow(jakarta.persistence.EntityNotFoundException.class);
         assertThatThrownBy(() -> adminContactTypeService
             .getContactType(400))
             .isInstanceOf(NotFoundException.class);

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -49,7 +50,7 @@ public class AdminOpeningTypeService {
     public OpeningType getOpeningType(final Integer id) {
         try {
             return new OpeningType(openingTypeRepository.getReferenceById(id));
-        } catch (final javax.persistence.EntityNotFoundException exception) {
+        } catch (final EntityNotFoundException exception) {
             throw new NotFoundException(exception);
         }
     }

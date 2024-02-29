@@ -1,11 +1,11 @@
 package uk.gov.hmcts.dts.fact.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 import java.util.List;
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 

@@ -1,7 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class ServiceAreasController {
     }
 
     @GetMapping(path = "/service-areas/{slug}")
-    @ApiOperation("Return a service")
+    @Operation(summary = "Return a service")
     public ResponseEntity<ServiceArea> getServiceArea(@PathVariable String slug) {
         return ok(serviceAreaService.getServiceArea(slug));
     }

@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
-    <notes><![CDATA[
-     Suppressing as it's a false positive (see: https://pivotal.io/security/cve-2018-1258)
-     and (see: https://pivotal.io/security/cve-2021-22044)
-   ]]></notes>
-    <cve>CVE-2022-45688</cve><!-- Wait until a version exists that fixes this relating to jackson-core-->
     <cve>CVE-2023-35116</cve><!-- Wait until a version exists that fixes this relating to jackson-databind-->
-    <cve>CVE-2023-34034</cve><!-- Wait until a version exists that fixes this relating to spring security-->
-    <cve>CVE-2023-5072</cve><!-- Wait until a version exists that fixes this relating to jackson-core-->
-    <cve>CVE-2023-6481</cve><!-- Wait until a version exists that fixes this relating to logback-->
-    <cve>CVE-2023-6378</cve><!-- Wait until a version exists that fixes this relating to logback-->
-    <cve>CVE-2023-34055</cve><!-- Wait until a version exists that fixes this relating to Spring Boot server Web Observations DoS Vulnerability-->
-    <cve>CVE-2023-33202</cve><!-- Wait until a version exists that fixes this relating to bouncycastle-->
-    <cve>CVE-2023-46589</cve><!-- Wait until a version exists that fixes this relating to apache tomcat-->
-  </suppress>
-  <suppress>
-    <notes>False Positives
-      https://nvd.nist.gov/vuln/detail/CVE-2023-34047 affects GraphQL library, which is unused in this project.
-    </notes>
-    <cve>CVE-2023-34047</cve>
   </suppress>
 </suppressions>

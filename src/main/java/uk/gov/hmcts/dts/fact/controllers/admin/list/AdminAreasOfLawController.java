@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -42,67 +41,57 @@ public class AdminAreasOfLawController {
     }
 
     @GetMapping()
-    @ApiOperation("Return all areas of law")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden")
-    })
+    @Operation(summary = "Return all areas of law")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<AreaOfLaw>> getAllAreasOfLaw() {
         return ok(adminAreasOfLawService.getAllAreasOfLaw());
     }
 
     @GetMapping(path = "/{id}")
-    @ApiOperation("Get area of law")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Area of Law not found")
-    })
+    @Operation(summary = "Get area of law")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Area of Law not found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<AreaOfLaw> getAreaOfLaw(@PathVariable Integer id) {
         return ok(adminAreasOfLawService.getAreaOfLaw(id));
     }
 
     @PostMapping()
-    @ApiOperation("Create area of law")
-    @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = AreaOfLaw.class),
-        @ApiResponse(code = 400, message = "Invalid Area of Law", response = String.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 409, message = "Area of Law already exists")
-    })
+    @Operation(summary = "Create area of law")
+    @ApiResponse(responseCode = "201", description = "Created")
+    @ApiResponse(responseCode = "400", description = "Invalid Area of Law")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "409", description = "Area of Law already exists")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<AreaOfLaw> createAreaOfLaw(@RequestBody AreaOfLaw areaOfLaw) {
         return created(URI.create(StringUtils.EMPTY)).body(adminAreasOfLawService.createAreaOfLaw(areaOfLaw));
     }
 
     @PutMapping()
-    @ApiOperation("Update area of law")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
-        @ApiResponse(code = 400, message = "Invalid Area of Law", response = String.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Area of Law not found")
-    })
+    @Operation(summary = "Update area of law")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "400", description = "Invalid Area of Law")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Area of Law not found")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<AreaOfLaw> updateAreaOfLaw(@RequestBody AreaOfLaw areaOfLaw) {
         return ok(adminAreasOfLawService.updateAreaOfLaw(areaOfLaw));
     }
 
     @DeleteMapping("/{areaOfLawId}")
-    @ApiOperation("Delete area of law")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Area of Law not found"),
-        @ApiResponse(code = 409, message = "Area of Law in use")
-    })
+    @Operation(summary = "Delete area of law")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Area of Law not found")
+    @ApiResponse(responseCode = "409", description = "Area of Law in use")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<Integer> deleteAreaOfLaw(@PathVariable Integer areaOfLawId) {
         adminAreasOfLawService.deleteAreaOfLaw(areaOfLawId);
