@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -59,13 +58,11 @@ public class AdminCourtPostcodeController {
      * @return A list of postcodes
      */
     @GetMapping(path = "/{slug}/postcodes")
-    @ApiOperation("Find court postcodes by slug")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = String.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Find court postcodes by slug")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<String>> getCourtPostcodes(@PathVariable String slug) {
         return ok(adminService.getCourtPostcodesBySlug(slug));
@@ -81,15 +78,13 @@ public class AdminCourtPostcodeController {
      *      If one of more input postcodes already exist in the database, return the existed postcodes and a '409' response.
      */
     @PostMapping(path = "/{slug}/postcodes")
-    @ApiOperation("Add new court postcodes")
-    @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Postcodes created", response = String.class, responseContainer = "List"),
-        @ApiResponse(code = 400, message = "Invalid postcodes", response = String.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found"),
-        @ApiResponse(code = 409, message = "Postcodes already exist", response = String.class, responseContainer = "List")
-    })
+    @Operation(summary = "Add new court postcodes")
+    @ApiResponse(responseCode = "201", description = "Postcodes created")
+    @ApiResponse(responseCode = "400", description = "Invalid postcodes")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
+    @ApiResponse(responseCode = "409", description = "Postcodes already exist")
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<String>> addCourtPostcodes(@PathVariable String slug,
                                                           @RequestBody List<String> postcodes,
@@ -113,14 +108,12 @@ public class AdminCourtPostcodeController {
      *      If one of more input postcodes do not exist in the database, return the not found postcodes and a '404' response.
      */
     @DeleteMapping(path = "/{slug}/postcodes")
-    @ApiOperation("Delete existing court postcodes")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = int.class),
-        @ApiResponse(code = 400, message = "Invalid postcodes", response = String.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Postcodes do not exist", response = String.class, responseContainer = "List")
-    })
+    @Operation(summary = "Delete existing court postcodes")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "400", description = "Invalid postcodes")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Postcodes do not exist")
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity deleteCourtPostcodes(@PathVariable String slug,
                                                @RequestBody List<String> postcodes,
@@ -147,15 +140,13 @@ public class AdminCourtPostcodeController {
      *      If one of more input postcodes already exist in the destination court, return the conflicting postcodes and a '409' response.
      */
     @PutMapping(path = "/{sourceSlug}/{destinationSlug}/postcodes")
-    @ApiOperation("Move postcodes from one court to another")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = int.class),
-        @ApiResponse(code = 400, message = "Invalid postcodes", response = String.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Postcodes do not exist", response = String.class, responseContainer = "List"),
-        @ApiResponse(code = 409, message = "Postcodes already exist", response = String.class, responseContainer = "List")
-    })
+    @Operation(summary = "Move postcodes from one court to another")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "400", description = "Invalid postcodes")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Postcodes do not exist")
+    @ApiResponse(responseCode = "409", description = "Postcodes already exist")
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<String>> movePostcodes(@PathVariable String sourceSlug,
                                                       @PathVariable String destinationSlug,

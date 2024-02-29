@@ -8,7 +8,8 @@ import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
 import java.util.List;
 
 public interface CourtWithDistanceRepository extends JpaRepository<CourtWithDistance, Integer> {
-    String SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE = "SELECT *, (point(c.lon, c.lat) <@> point(:lon, :lat)) as distance ";
+    String SELECT_POINT_C_LON_C_LAT_POINT_LON_LAT_AS_DISTANCE = "SELECT c.*, (point(c.lon, c.lat) <@> point(:lon, "
+        + ":lat)) as distance ";
     String FROM_SEARCH_COURT_AS_C = "FROM search_court as c ";
     String WHERE_C_DISPLAYED = "WHERE c.displayed ";
     String ORDER_BY_DISTANCE_C_NAME = "ORDER BY distance, c.name ";

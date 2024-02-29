@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,12 +34,10 @@ public class AdminAddressTypeController {
      * @return A list of address types
      */
     @GetMapping()
-    @ApiOperation("Retrieve all address types")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AddressType.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden")
-    })
+    @Operation(summary = "Retrieve all address types")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<AddressType>> getAllCourtAddressTypes() {
         return ok(adminService.getAllAddressTypes());

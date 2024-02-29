@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,26 +41,22 @@ public class AdminCourtAreasOfLawController {
     }
 
     @GetMapping(path = "/{slug}/courtAreasOfLaw")
-    @ApiOperation("Find the areas of law for a court")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Find the areas of law for a court")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<AreaOfLaw>> getCourtAreasOfLaw(@PathVariable String slug) {
         return ok(adminCourtAreasOfLawService.getCourtAreasOfLawBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/courtAreasOfLaw")
-    @ApiOperation("Update the areas of law for a court")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AreaOfLaw.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Update the areas of law for a court")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<AreaOfLaw>> updateCourtAreasOfLaw(@PathVariable String slug,
                                                                  @RequestBody List<AreaOfLaw> areasOfLaw,

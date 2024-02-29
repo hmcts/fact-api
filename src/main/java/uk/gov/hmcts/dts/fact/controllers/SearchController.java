@@ -1,8 +1,9 @@
 package uk.gov.hmcts.dts.fact.controllers;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
@@ -21,7 +22,6 @@ import uk.gov.hmcts.dts.fact.util.Action;
 
 import java.util.List;
 import java.util.Optional;
-import javax.validation.constraints.Pattern;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
@@ -50,11 +50,11 @@ public class SearchController {
      */
     @Deprecated(since = "1.0", forRemoval = true)
     @GetMapping(path = "/results.json")
-    @ApiOperation("Find court by postcode, address or name")
+    @Operation(summary = "Find court by postcode, address or name")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public ResponseEntity<List<CourtWithDistance>> findCourtByPostcode(
         @RequestParam Optional<String> postcode,
-        @ApiParam("Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
+        @Parameter(ref = "Area of Law") @RequestParam(name = "aol", required = false) Optional<String> areaOfLaw,
         @RequestParam(required = false, name = "q") Optional<String> query
     ) {
         if (postcode.isPresent() && areaOfLaw.isPresent()) {
@@ -76,7 +76,7 @@ public class SearchController {
     }
 
     @GetMapping(path = "/results/{postcode}")
-    @ApiOperation("Find closest courts by postcode")
+    @Operation(summary = "Find closest courts by postcode")
     @Description("Endpoint to return the 10 closest courts for a provided postcode")
     public ResponseEntity<List<CourtReferenceWithDistance>> findCourtsByPostcode(
         @Pattern(regexp =
@@ -89,12 +89,12 @@ public class SearchController {
     }
 
     @GetMapping(path = "/results")
-    @ApiOperation("Find courts by postcode and Service Area")
+    @Operation(summary = "Find courts by postcode and Service Area")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public ResponseEntity<ServiceAreaWithCourtReferencesWithDistance> findCourtsByPostcodeAndServiceArea(
         @RequestParam Optional<String> postcode,
-        @ApiParam("Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
-        @ApiParam("Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Boolean includeClosed,
+        @Parameter(ref = "Service Area Slug") @RequestParam(name = "serviceArea") Optional<String> serviceAreaSlug,
+        @Parameter(ref = "Include Closed") @RequestParam(name = "includeClosed", required = false, defaultValue = "false") Boolean includeClosed,
         @RequestParam("action") Optional<Action> action
     ) {
         if (postcode.isPresent() && serviceAreaSlug.isPresent()) {

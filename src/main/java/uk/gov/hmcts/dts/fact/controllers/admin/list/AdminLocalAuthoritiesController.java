@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,22 +40,20 @@ public class AdminLocalAuthoritiesController {
     }
 
     @GetMapping(path = "/all")
-    @ApiOperation("Return all local authorities")
+    @Operation(summary = "Return all local authorities")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     public ResponseEntity<List<LocalAuthority>> getAllLocalAuthorities() {
         return ok(adminLocalAuthorityService.getAllLocalAuthorities());
     }
 
     @PutMapping(path = "/{localAuthorityId}")
-    @ApiOperation("Update local authority")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = LocalAuthority.class),
-        @ApiResponse(code = 400, message = "Invalid Local Authority", response = String.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Local Authority not found"),
-        @ApiResponse(code = 409, message = "Local Authority already exists")
-    })
+    @Operation(summary = "Update local authority")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "400", description = "Invalid Local Authority")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Local Authority not found")
+    @ApiResponse(responseCode = "409", description = "Local Authority already exists")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<LocalAuthority> updateLocalAuthority(@PathVariable Integer localAuthorityId, @RequestBody String name) {
         if (name == null || !validationService.validateLocalAuthority(name)) {

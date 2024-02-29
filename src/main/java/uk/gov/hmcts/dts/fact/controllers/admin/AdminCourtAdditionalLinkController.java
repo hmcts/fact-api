@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,26 +40,22 @@ public class AdminCourtAdditionalLinkController {
     }
 
     @GetMapping(path = "/{slug}/additionalLinks")
-    @ApiOperation("Find court additional links by slug")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AdditionalLink.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Find court additional links by slug")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<AdditionalLink>> getCourtAdditionalLinks(@PathVariable String slug) {
         return ok(adminService.getCourtAdditionalLinksBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/additionalLinks")
-    @ApiOperation("Update court additional links")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = AdditionalLink.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found")
-    })
+    @Operation(summary = "Update court additional links")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<AdditionalLink>> updateCourtAdditionalLinks(@PathVariable String slug,
                                                                            @RequestBody List<AdditionalLink> additionalLinks,

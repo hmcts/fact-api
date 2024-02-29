@@ -1,6 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,14 +39,14 @@ public class AdminCourtContactController {
     }
 
     @GetMapping(path = "/{slug}/contacts")
-    @ApiOperation("Find court contacts by slug")
+    @Operation(summary = "Find court contacts by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<Contact>> getCourtContacts(@PathVariable String slug) {
         return ok(adminService.getCourtContactsBySlug(slug));
     }
 
     @PutMapping(path = "/{slug}/contacts")
-    @ApiOperation("Update court contacts")
+    @Operation(summary = "Update court contacts")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<Contact>> updateCourtContacts(@PathVariable String slug,
                                                              @RequestBody List<Contact> contacts,

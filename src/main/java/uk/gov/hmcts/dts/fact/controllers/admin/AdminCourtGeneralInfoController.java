@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,21 +40,19 @@ public class AdminCourtGeneralInfoController {
     }
 
     @GetMapping()
-    @ApiOperation("Retrieve court general information")
+    @Operation(summary = "Retrieve court general information")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtGeneralInfo> getCourtGeneralInfo(@PathVariable String slug) {
         return ok(adminService.getCourtGeneralInfoBySlug(slug));
     }
 
     @PutMapping()
-    @ApiOperation("Update court general information")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = CourtGeneralInfo.class),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden"),
-        @ApiResponse(code = 404, message = "Court not Found"),
-        @ApiResponse(code = 409, message = "Court already exists")
-    })
+    @Operation(summary = "Update court general information")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Court not Found")
+    @ApiResponse(responseCode = "409", description = "Court already exists")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtGeneralInfo> updateCourtGeneralInfo(@PathVariable String slug,
                                                                    @RequestBody CourtGeneralInfo generalInfo,

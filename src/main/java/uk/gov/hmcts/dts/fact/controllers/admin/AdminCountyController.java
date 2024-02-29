@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,12 +31,10 @@ public class AdminCountyController {
 
 
     @GetMapping()
-    @ApiOperation("Retrieve all counties")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = County.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden")
-    })
+    @Operation(summary = "Retrieve all counties")
+    @ApiResponse(responseCode = "200", description = "Successful", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<County>> getAllCounties() {
         return ok(adminService.getAllCounties());

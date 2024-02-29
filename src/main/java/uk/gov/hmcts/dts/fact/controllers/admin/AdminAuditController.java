@@ -1,8 +1,7 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,12 +38,10 @@ public class AdminAuditController {
     }
 
     @GetMapping(params = {"page", "size"})
-    @ApiOperation("Find all audits based on the provided parameters.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful", response = Audit.class, responseContainer = "List"),
-        @ApiResponse(code = 401, message = "Unauthorized"),
-        @ApiResponse(code = 403, message = "Forbidden")
-    })
+    @Operation(summary = "Find all audits based on the provided parameters.")
+    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Role({FACT_SUPER_ADMIN})
     public ResponseEntity<List<Audit>> getAudits(@RequestParam("page") int page,
                                                  @RequestParam("size") int size,
