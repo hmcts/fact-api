@@ -70,6 +70,9 @@ launchDarkly:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+    url: /v3/api-docs.yaml
+  api-docs:
+    version: openapi_3_1
 
 azure:
   application-insights:
