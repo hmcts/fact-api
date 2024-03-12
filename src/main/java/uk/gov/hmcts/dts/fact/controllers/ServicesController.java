@@ -26,23 +26,41 @@ public class ServicesController {
 
     private final ServiceService serviceService;
 
+    /**
+     * Construct a new ServicesController.
+     * @param serviceService the 'service' service
+     */
     @Autowired
     public ServicesController(final ServiceService serviceService) {
         this.serviceService = serviceService;
     }
 
+    /**
+     * Return all services.
+     * @return list of services
+     */
     @GetMapping(path = "/services")
     @Operation(summary = "Return all services")
     public ResponseEntity<List<Service>> getAllServices() {
         return ok(serviceService.getAllServices());
     }
 
+    /**
+     * Return a service.
+     * @param slug
+     * @return service
+     */
     @GetMapping(path = "/services/{slug}")
     @Operation(summary = "Return a service")
     public ResponseEntity<Service> getService(@PathVariable String slug) {
         return ok(serviceService.getService(slug));
     }
 
+    /**
+     * Return all service areas for a service.
+     * @param serviceSlug
+     * @return list of service areas
+     */
     @GetMapping(path = "/services/{serviceSlug}/service-areas")
     @Operation(summary = "Return all service areas for a service")
     public ResponseEntity<List<ServiceArea>> getServiceAreas(@PathVariable String serviceSlug) {

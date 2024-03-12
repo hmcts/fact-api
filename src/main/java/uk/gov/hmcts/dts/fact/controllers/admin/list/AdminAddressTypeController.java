@@ -17,6 +17,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving address types.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/addressTypes",
@@ -25,13 +28,17 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminAddressTypeController {
     private final AdminAddressTypeService adminService;
 
+    /**
+     * Constructor for the address type controller.
+     * @param adminService The service to retrieve address types
+     */
     public AdminAddressTypeController(AdminAddressTypeService adminService) {
         this.adminService = adminService;
     }
 
     /**
-     * Retrieves all address types.
-     * @return A list of address types
+     * Retrieve all address types.
+     * @return List of address types
      */
     @GetMapping()
     @Operation(summary = "Retrieve all address types")

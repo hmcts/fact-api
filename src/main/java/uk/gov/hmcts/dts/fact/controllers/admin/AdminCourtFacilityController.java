@@ -23,6 +23,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving and updating court facilities
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -32,6 +35,11 @@ public class AdminCourtFacilityController {
     private final AdminCourtFacilityService adminCourtFacilityService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtFacilityController.
+     * @param adminService the admin court facility service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtFacilityController(AdminCourtFacilityService adminService,
                                         AdminCourtLockService adminCourtLockService) {
@@ -39,6 +47,11 @@ public class AdminCourtFacilityController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Retrieves facilities for a specific court.
+     * @param slug Court slug
+     * @return A list of court facilities
+     */
     @GetMapping(path = "/{slug}/facilities")
     @Operation(summary = "Find a court's facilities by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
@@ -50,6 +63,13 @@ public class AdminCourtFacilityController {
         return ok(adminCourtFacilityService.getCourtFacilitiesBySlug(slug));
     }
 
+    /**
+     * Update facilities for a specific court.
+     * @param slug Court slug
+     * @param courtFacilities A list of court facilities
+     * @param authentication Authentication object
+     * @return A list of court facilities
+     */
     @PutMapping(path = "/{slug}/facilities")
     @Operation(summary = "Update a court's facilities")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})

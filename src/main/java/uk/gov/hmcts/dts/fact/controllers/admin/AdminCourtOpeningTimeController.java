@@ -22,6 +22,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for updating court opening times.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -31,6 +34,9 @@ public class AdminCourtOpeningTimeController {
     private final AdminCourtOpeningTimeService adminService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Constructor for the AdminCourtOpeningTimeController.
+     */
     @Autowired
     public AdminCourtOpeningTimeController(AdminCourtOpeningTimeService adminService,
                                            AdminCourtLockService adminCourtLockService) {
@@ -38,6 +44,12 @@ public class AdminCourtOpeningTimeController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Get court opening times by slug.
+     *
+     * @param slug the slug of the court
+     * @return the opening times for the court
+     */
     @GetMapping(path = "/{slug}/openingTimes")
     @Operation(summary = "Find court opening times by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
@@ -45,6 +57,13 @@ public class AdminCourtOpeningTimeController {
         return ok(adminService.getCourtOpeningTimesBySlug(slug));
     }
 
+    /**
+     * Update court opening times.
+     *
+     * @param slug         the slug of the court
+     * @param openingTimes the opening times for the court
+     * @return the updated opening times for the court
+     */
     @PutMapping(path = "/{slug}/openingTimes")
     @Operation(summary = "Update court opening times")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})

@@ -23,6 +23,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving and updating court application progressions
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -32,6 +35,11 @@ public class AdminCourtApplicationUpdateController {
     private final AdminCourtApplicationUpdateService adminCourtApplicationUpdateService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtApplicationUpdateController.
+     * @param adminService the admin court application update service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtApplicationUpdateController(AdminCourtApplicationUpdateService adminService,
                                                  AdminCourtLockService adminCourtLockService) {

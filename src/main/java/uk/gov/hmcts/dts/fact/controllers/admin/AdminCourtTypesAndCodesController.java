@@ -25,6 +25,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for updating court types and codes.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -34,6 +37,9 @@ public class AdminCourtTypesAndCodesController {
     private final AdminCourtTypesAndCodesService courtTypesAndCodesService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Constructor for the AdminCourtTypesAndCodesController.
+     */
     @Autowired
     public AdminCourtTypesAndCodesController(AdminCourtTypesAndCodesService adminService,
                                              AdminCourtLockService adminCourtLockService) {
@@ -41,6 +47,11 @@ public class AdminCourtTypesAndCodesController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Get all court types.
+     *
+     * @return all court types
+     */
     @GetMapping(path = "/courtTypes")
     @Operation(summary = "Return all court types")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -51,6 +62,12 @@ public class AdminCourtTypesAndCodesController {
         return ok(courtTypesAndCodesService.getAllCourtTypes());
     }
 
+    /**
+     * Get a court's types, GBS code and Dx codes by slug.
+     *
+     * @param slug the slug of the court
+     * @return a court's types, GBS code and Dx codes
+     */
     @GetMapping(path = "/{slug}/courtTypesAndCodes")
     @Operation(summary = "Find a court's types, GBS code and Dx codes by slug")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -62,6 +79,13 @@ public class AdminCourtTypesAndCodesController {
         return ok(courtTypesAndCodesService.getCourtTypesAndCodes(slug));
     }
 
+    /**
+     * Update a court's types, GBS code and Dx codes by slug.
+     *
+     * @param slug the slug of the court
+     * @param courtTypesAndCodes the court's types, GBS code and Dx codes
+     * @return the updated court's types, GBS code and Dx codes
+     */
     @PutMapping(path = "/{slug}/courtTypesAndCodes")
     @Operation(summary = "Update a court's types, GBS code and Dx codes")
     @ApiResponse(responseCode = "200", description = "Successful")

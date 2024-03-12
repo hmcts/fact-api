@@ -18,6 +18,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for updating region data.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/regions",
@@ -26,11 +29,18 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 public class AdminRegionController {
     private final AdminRegionService adminService;
 
+    /**
+     * Constructor for the AdminRegionController.
+     */
     public AdminRegionController(AdminRegionService adminService) {
         this.adminService = adminService;
     }
 
-
+    /**
+     * Get all regions.
+     *
+     * @return all regions
+     */
     @GetMapping()
     @Operation(summary = "Retrieve all regions")
     @ApiResponse(responseCode = "200", description = "Successful")

@@ -43,7 +43,6 @@ public class CourtsController {
 
     /**
      * Find court by name.
-     *
      * @deprecated Use {@link #findCourtByName}, path = /{slug}}
      */
     @Deprecated(since = "1.0", forRemoval = true)
@@ -52,7 +51,11 @@ public class CourtsController {
     public ResponseEntity<OldCourt> findCourtByNameDeprecated(@PathVariable String slug) {
         return ok(courtService.getCourtBySlugDeprecated(slug));
     }
-
+    /**
+     * Find courts by name, address, town or postcode
+     * @param query
+     * @return array of courts that match address or partial address
+     */
     @GetMapping
     @Operation(summary = "Find courts by name, address, town or postcode")
     public ResponseEntity<List<CourtReference>> findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
@@ -62,12 +65,22 @@ public class CourtsController {
         return ok(courtService.getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(query));
     }
 
+    /**
+     * Find court details by slug
+     * @param slug
+     * @return Court details which matches given slug
+     */
     @GetMapping(path = "/{slug}")
     @Operation(summary = "Find court details by slug")
     public ResponseEntity<Court> findCourtByName(@PathVariable String slug) {
         return ok(courtService.getCourtBySlug(slug));
     }
 
+    /**
+     * Return active courts based on a provided prefix
+     * @param prefix
+     * @return
+     */
     @GetMapping(path = "/search")
     @Operation(summary = "Return active courts based on a provided prefix")
     public ResponseEntity<List<CourtReference>> getCourtsBySearch(@RequestParam @Size(min = 1, max = 1) @NotBlank String prefix) {

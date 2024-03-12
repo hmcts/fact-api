@@ -23,11 +23,20 @@ public class ServiceAreasController {
 
     private final ServiceAreaService serviceAreaService;
 
+    /**
+     * Constructor for ServiceAreasController
+     * @param serviceAreaService
+     */
     @Autowired
     public ServiceAreasController(final ServiceAreaService serviceAreaService) {
         this.serviceAreaService = serviceAreaService;
     }
 
+    /**
+     * Get service area from court slug
+     * @param slug
+     * @return service area from court slug
+     */
     @GetMapping(path = "/service-areas/{slug}")
     @Operation(summary = "Return a service")
     public ResponseEntity<ServiceArea> getServiceArea(@PathVariable String slug) {

@@ -24,7 +24,9 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
-
+/**
+ * Controller for retrieving and updating court addresses
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -34,6 +36,11 @@ public class AdminCourtAddressController {
     private final AdminCourtAddressService adminService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtAddressController.
+     * @param adminService the admin court address service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtAddressController(AdminCourtAddressService adminService,
                                        AdminCourtLockService adminCourtLockService) {

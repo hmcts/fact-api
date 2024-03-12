@@ -18,6 +18,11 @@ public class FeatureFlagController {
         this.featureToggleService = featureToggleService;
     }
 
+    /**
+     * Return a boolean value for a feature flag from LaunchDarkly.
+     * @param flag
+     * @return boolean
+     */
     @GetMapping("/feature-flags/{flag}")
     public ResponseEntity<String> flagStatus(@PathVariable String flag) {
         boolean isEnabled = featureToggleService.isFeatureEnabled(flag);

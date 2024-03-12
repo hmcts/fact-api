@@ -24,6 +24,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for retrieving and updating court areas of law
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -33,6 +36,11 @@ public class AdminCourtAreasOfLawController {
     private final AdminCourtAreasOfLawService adminCourtAreasOfLawService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtAreasOfLawController.
+     * @param adminService the admin court areas of law service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtAreasOfLawController(AdminCourtAreasOfLawService adminService,
                                           AdminCourtLockService adminCourtLockService) {
@@ -40,6 +48,11 @@ public class AdminCourtAreasOfLawController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Retrieves areas of law for a specific court.
+     * @param slug Court slug
+     * @return A list of court areas of law
+     */
     @GetMapping(path = "/{slug}/courtAreasOfLaw")
     @Operation(summary = "Find the areas of law for a court")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -51,6 +64,12 @@ public class AdminCourtAreasOfLawController {
         return ok(adminCourtAreasOfLawService.getCourtAreasOfLawBySlug(slug));
     }
 
+    /**
+     * Update the areas of law for a court.
+     * @param slug Court slug
+     * @param areasOfLaw A list of areas of law
+     * @return A list of court areas of law
+     */
     @PutMapping(path = "/{slug}/courtAreasOfLaw")
     @Operation(summary = "Update the areas of law for a court")
     @ApiResponse(responseCode = "200", description = "Successful")

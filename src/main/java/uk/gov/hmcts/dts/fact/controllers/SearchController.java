@@ -75,6 +75,11 @@ public class SearchController {
         }
     }
 
+    /**
+     * Endpoint to return the 10 closest courts for a provided postcode
+     * @param postcode
+     * @return Array of 10 courts
+     */
     @GetMapping(path = "/results/{postcode}")
     @Operation(summary = "Find closest courts by postcode")
     @Description("Endpoint to return the 10 closest courts for a provided postcode")
@@ -88,6 +93,14 @@ public class SearchController {
         return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
     }
 
+    /**
+     *
+     * @param postcode
+     * @param serviceAreaSlug
+     * @param includeClosed
+     * @param action
+     * @return Array of courts by service area and postcode
+     */
     @GetMapping(path = "/results")
     @Operation(summary = "Find courts by postcode and Service Area")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")

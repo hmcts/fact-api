@@ -24,6 +24,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for retrieving local authorities.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/localauthorities",
@@ -33,12 +36,21 @@ public class AdminLocalAuthoritiesController {
     private final AdminLocalAuthorityService adminLocalAuthorityService;
     private final ValidationService validationService;
 
+    /**
+     * Constructor for the local authority controller.
+     * @param localAuthorityService The service to retrieve local authorities
+     * @param validationService The service to validate local authorities
+     */
     @Autowired
     public AdminLocalAuthoritiesController(AdminLocalAuthorityService localAuthorityService, ValidationService validationService) {
         this.adminLocalAuthorityService = localAuthorityService;
         this.validationService = validationService;
     }
 
+    /**
+     * Retrieve all local authorities.
+     * @return List of local authorities
+     */
     @GetMapping(path = "/all")
     @Operation(summary = "Return all local authorities")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
@@ -46,6 +58,12 @@ public class AdminLocalAuthoritiesController {
         return ok(adminLocalAuthorityService.getAllLocalAuthorities());
     }
 
+    /**
+     * Update local authority.
+     * @param localAuthorityId The id of the local authority to update
+     * @param name The new name of the local authority
+     * @return The updated local authority
+     */
     @PutMapping(path = "/{localAuthorityId}")
     @Operation(summary = "Update local authority")
     @ApiResponse(responseCode = "200", description = "Successful")

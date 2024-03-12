@@ -26,6 +26,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving contact types.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/contactTypes",
@@ -36,11 +39,19 @@ public class AdminContactTypeController {
 
     private final AdminContactTypeService adminContactTypeService;
 
+    /**
+     * Constructor for the contact type controller.
+     * @param adminContactTypeService The service to retrieve contact types
+     */
     @Autowired
     public AdminContactTypeController(AdminContactTypeService adminContactTypeService) {
         this.adminContactTypeService = adminContactTypeService;
     }
 
+    /**
+     * Retrieve all contact types.
+     * @return List of contact types
+     */
     @GetMapping()
     @Operation(summary = "Return all contact types")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -51,7 +62,11 @@ public class AdminContactTypeController {
         return ok(adminContactTypeService.getAllContactTypes());
     }
 
-
+    /**
+     * Retrieve a contact type by id.
+     * @param id The id of the contact type
+     * @return The contact type
+     */
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get contact type")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -63,6 +78,11 @@ public class AdminContactTypeController {
         return ok(adminContactTypeService.getContactType(id));
     }
 
+    /**
+     * Create a contact type.
+     * @param contactType The contact type to create
+     * @return The created contact type
+     */
     @PostMapping()
     @Operation(summary = "Create contact type")
     @ApiResponse(responseCode = "201", description = "Created")
@@ -74,6 +94,11 @@ public class AdminContactTypeController {
         return created(URI.create(StringUtils.EMPTY)).body(adminContactTypeService.createContactType(contactType));
     }
 
+    /**
+     * Update a contact type.
+     * @param contactType The contact type to update
+     * @return The updated contact type
+     */
     @PutMapping()
     @Operation(summary = "Update contact type")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -85,6 +110,11 @@ public class AdminContactTypeController {
         return ok(adminContactTypeService.updateContactType(contactType));
     }
 
+    /**
+     * Delete a contact type.
+     * @param contactTypeId The id of the contact type to delete
+     * @return The id of the deleted contact type
+     */
     @DeleteMapping("/{contactTypeId}")
     @Operation(summary = "Delete contact type")
     @ApiResponse(responseCode = "200", description = "Successful")

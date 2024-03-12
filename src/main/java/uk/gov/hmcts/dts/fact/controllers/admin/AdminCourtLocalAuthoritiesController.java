@@ -23,6 +23,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for retrieving and updating court local authorities
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -32,6 +35,11 @@ public class AdminCourtLocalAuthoritiesController {
     private final AdminCourtLocalAuthoritiesService adminCourtLocalAuthoritiesService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtLocalAuthoritiesController.
+     * @param adminService the admin court local authorities service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtLocalAuthoritiesController(AdminCourtLocalAuthoritiesService adminService,
                                                 AdminCourtLockService adminCourtLockService) {
@@ -39,7 +47,12 @@ public class AdminCourtLocalAuthoritiesController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
-    //returns local authorities for a court by passing in a court slug ,area of law and returning local authorities list
+    /**
+     * Retrieves local authorities for a specific court.
+     * @param slug Court slug
+     * @param areaOfLaw Area of law
+     * @return A list of court local authorities
+     */
     @GetMapping(path = "/{slug}/{areaOfLaw}/localAuthorities")
     @Operation(summary = "Find a courts local authorities by slug")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
@@ -47,8 +60,12 @@ public class AdminCourtLocalAuthoritiesController {
         return ok(adminCourtLocalAuthoritiesService.getCourtLocalAuthoritiesBySlugAndAreaOfLaw(slug, areaOfLaw));
     }
 
-    //updates local authorities for a court by passing in a court slug ,area of law, local authorities list and returning updated local authorities
-    // list by super admin user only
+    /**
+     * Updates local authorities for a specific court.
+     * @param slug Court slug
+     * @param areaOfLaw Area of law
+     * @param localAuthorities The updated court local authorities
+     */
     @PutMapping(path = "/{slug}/{areaOfLaw}/localAuthorities")
     @Operation(summary = "Update a courts local authorities for a area of law by super admin")
     @Role({FACT_SUPER_ADMIN})
