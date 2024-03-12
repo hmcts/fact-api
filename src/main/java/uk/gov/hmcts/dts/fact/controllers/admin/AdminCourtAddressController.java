@@ -25,7 +25,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
- * Controller for retrieving and updating court addresses
+ * Controller for retrieving and updating court addresses.
  */
 @RestController
 @RequestMapping(

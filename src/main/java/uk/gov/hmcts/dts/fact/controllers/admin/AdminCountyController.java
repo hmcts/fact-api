@@ -17,7 +17,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
- * Controller for retrieving all counties
+ * Controller for retrieving all counties.
  */
 @RestController
 @RequestMapping(
@@ -36,7 +36,7 @@ public class AdminCountyController {
     }
 
     /**
-     * Retrieve all counties
+     * Retrieve all counties.
      * @return list of counties
      */
     @GetMapping()

@@ -24,7 +24,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 /**
- * Controller for retrieving and updating court facilities
+ * Controller for retrieving and updating court facilities.
  */
 @RestController
 @RequestMapping(

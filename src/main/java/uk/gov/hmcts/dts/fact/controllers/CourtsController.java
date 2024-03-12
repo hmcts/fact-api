@@ -25,6 +25,9 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+/**
+ * Controller for retrieving courts.
+ */
 @RateLimiter(name = "default")
 @RestController
 @RequestMapping(
@@ -51,9 +54,10 @@ public class CourtsController {
     public ResponseEntity<OldCourt> findCourtByNameDeprecated(@PathVariable String slug) {
         return ok(courtService.getCourtBySlugDeprecated(slug));
     }
+
     /**
-     * Find courts by name, address, town or postcode
-     * @param query
+     * Find courts by name, address, town or postcode.
+     * @param query - name, address, town or postcode
      * @return array of courts that match address or partial address
      */
     @GetMapping
@@ -66,8 +70,8 @@ public class CourtsController {
     }
 
     /**
-     * Find court details by slug
-     * @param slug
+     * Find court details by slug.
+     * @param slug - slug of the court
      * @return Court details which matches given slug
      */
     @GetMapping(path = "/{slug}")
@@ -77,9 +81,9 @@ public class CourtsController {
     }
 
     /**
-     * Return active courts based on a provided prefix
-     * @param prefix
-     * @return
+     * Return active courts based on a provided prefix.
+     * @param prefix - prefix of the court name
+     * @return array of courts that match the prefix
      */
     @GetMapping(path = "/search")
     @Operation(summary = "Return active courts based on a provided prefix")

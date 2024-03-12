@@ -23,7 +23,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
- * Controller for retrieving and updating court additional links
+ * Controller for retrieving and updating court additional links.
  */
 @RestController
 @RequestMapping(
@@ -47,7 +47,7 @@ public class AdminCourtAdditionalLinkController {
     }
 
     /**
-     * Retrieve all additional links for a court
+     * Retrieve all additional links for a court.
      * @param slug the court slug
      * @return list of additional links
      */
@@ -63,7 +63,7 @@ public class AdminCourtAdditionalLinkController {
     }
 
     /**
-     * Update additional links for a court
+     * Update additional links for a court.
      * @param slug the court slug
      * @param additionalLinks the additional links to update
      * @param authentication the authentication object

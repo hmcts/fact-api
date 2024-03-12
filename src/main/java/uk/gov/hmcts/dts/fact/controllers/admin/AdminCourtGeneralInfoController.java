@@ -23,7 +23,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 /**
- * Controller for retrieving and updating court general information
+ * Controller for retrieving and updating court general information.
  */
 @Slf4j
 @RestController

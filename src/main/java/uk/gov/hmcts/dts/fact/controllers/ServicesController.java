@@ -17,6 +17,9 @@ import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+/**
+ * Controller for retrieving services and service areas.
+ */
 @RateLimiter(name = "default")
 @RestController
 @RequestMapping(
@@ -47,7 +50,7 @@ public class ServicesController {
 
     /**
      * Return a service.
-     * @param slug
+     * @param slug the service slug
      * @return service
      */
     @GetMapping(path = "/services/{slug}")
@@ -58,7 +61,7 @@ public class ServicesController {
 
     /**
      * Return all service areas for a service.
-     * @param serviceSlug
+     * @param serviceSlug the service slug
      * @return list of service areas
      */
     @GetMapping(path = "/services/{serviceSlug}/service-areas")

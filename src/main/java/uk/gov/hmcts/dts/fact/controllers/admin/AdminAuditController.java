@@ -42,14 +42,14 @@ public class AdminAuditController {
     }
 
     /**
-     * Find all audits based on the provided parameters.
-     * @param page
-     * @param size
-     * @param location
-     * @param email
-     * @param dateFrom
-     * @param dateTo
-     * @return list of audits
+     * Get all audits.
+     * @param page the page number
+     * @param size the page size
+     * @param location the location
+     * @param email the email
+     * @param dateFrom the date from
+     * @param dateTo the date to
+     * @return the list of audits
      */
     @GetMapping(params = {"page", "size"})
     @Operation(summary = "Find all audits based on the provided parameters.")

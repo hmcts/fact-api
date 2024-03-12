@@ -20,7 +20,7 @@ public class FeatureFlagController {
 
     /**
      * Return a boolean value for a feature flag from LaunchDarkly.
-     * @param flag
+     * @param flag the feature flag
      * @return boolean
      */
     @GetMapping("/feature-flags/{flag}")

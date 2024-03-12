@@ -14,6 +14,9 @@ import uk.gov.hmcts.dts.fact.services.ServiceAreaService;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+/**
+ * Controller for retrieving service areas.
+ */
 @RateLimiter(name = "default")
 @RestController
 @RequestMapping(
@@ -24,8 +27,8 @@ public class ServiceAreasController {
     private final ServiceAreaService serviceAreaService;
 
     /**
-     * Constructor for ServiceAreasController
-     * @param serviceAreaService
+     * Constructor for ServiceAreasController.
+     * @param serviceAreaService - the service area service
      */
     @Autowired
     public ServiceAreasController(final ServiceAreaService serviceAreaService) {
@@ -33,8 +36,8 @@ public class ServiceAreasController {
     }
 
     /**
-     * Get service area from court slug
-     * @param slug
+     * Get service area from court slug.
+     * @param slug - court slug
      * @return service area from court slug
      */
     @GetMapping(path = "/service-areas/{slug}")
