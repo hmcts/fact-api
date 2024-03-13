@@ -17,6 +17,9 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin facility type data.
+ */
 @Service
 @Slf4j
 public class AdminFacilityService {
@@ -25,6 +28,11 @@ public class AdminFacilityService {
 
     private final FacilityRepository facilityRepository;
 
+    /**
+     * Constructor for the AdminFacilityService.
+     * @param facilityTypeRepository The repository for facility type
+     * @param facilityRepository The repository for facility
+     */
     @Autowired
     public AdminFacilityService(
         final FacilityTypeRepository facilityTypeRepository, final FacilityRepository facilityRepository) {
@@ -32,6 +40,10 @@ public class AdminFacilityService {
         this.facilityRepository = facilityRepository;
     }
 
+    /**
+     * Get all facility types.
+     * @return The facility types
+     */
     public List<FacilityType> getAllFacilityTypes() {
         return facilityTypeRepository.findAll()
             .stream()
@@ -39,10 +51,20 @@ public class AdminFacilityService {
             .collect(toList());
     }
 
+    /**
+     * Get a facility type by id.
+     * @param id The id of the facility type
+     * @return The facility type
+     */
     public FacilityType getFacilityType(Integer id) {
         return new FacilityType(facilityTypeRepository.findById(id).orElseThrow(() -> new NotFoundException(id.toString())));
     }
 
+    /**
+     * Create a new facility type.
+     * @param facilityType The new facility type
+     * @return The new facility type
+     */
     public FacilityType createFacilityType(FacilityType facilityType) {
         checkIfFacilityTypeAlreadyExists(null, facilityType.getName());
 
@@ -63,6 +85,11 @@ public class AdminFacilityService {
         return new FacilityType(facilityTypeRepository.save(newFacilityType));
     }
 
+    /**
+     * Update a facility type.
+     * @param facilityType The updated facility type
+     * @return The updated facility type
+     */
     public FacilityType updateFacilityType(FacilityType facilityType) {
         uk.gov.hmcts.dts.fact.entity.FacilityType entity = facilityTypeRepository.findById(facilityType.getId())
             .orElseThrow(() -> new NotFoundException(facilityType.getId().toString()));
@@ -76,6 +103,10 @@ public class AdminFacilityService {
         return new FacilityType(facilityTypeRepository.save(entity));
     }
 
+    /**
+     * Delete a facility type.
+     * @param facilityTypeId The id of the facility type
+     */
     public void deleteFacilityType(Integer facilityTypeId) {
         FacilityType facilityType = getFacilityType(facilityTypeId);
 
@@ -83,6 +114,11 @@ public class AdminFacilityService {
         facilityTypeRepository.deleteById(facilityTypeId);
     }
 
+    /**
+     * Reorder facility types.
+     * @param idsInOrder The ids of the facility types in the new order
+     * @return The reordered facility types
+     */
     @Transactional
     public List<FacilityType> reorderFacilityTypes(List<Integer> idsInOrder) {
         for (int i = 0; i < idsInOrder.size(); i++) {
@@ -102,6 +138,11 @@ public class AdminFacilityService {
             .collect(toList());
     }
 
+    /**
+     * Check if a facility type already exists.
+     * @param originalName The original name of the facility type
+     * @param newName The new name of the facility type
+     */
     private void checkIfFacilityTypeAlreadyExists(String originalName, String newName) {
         List<FacilityType> facilityTypes = getAllFacilityTypes();
         if (originalName != null) {
@@ -113,6 +154,10 @@ public class AdminFacilityService {
         }
     }
 
+    /**
+     * Ensure a facility type is not in use.
+     * @param id The id of the facility type
+     */
     private void ensureFacilityTypeNotInUse(Integer id) {
         boolean inUse = facilityRepository
             .findAll()

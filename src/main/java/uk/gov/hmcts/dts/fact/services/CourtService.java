@@ -34,6 +34,9 @@ import static uk.gov.hmcts.dts.fact.services.validation.PostcodeValidator.isFull
 import static uk.gov.hmcts.dts.fact.util.Utils.isNorthernIrishPostcode;
 import static uk.gov.hmcts.dts.fact.util.Utils.isScottishPostcode;
 
+/**
+ * Service to get courts.
+ */
 @Service
 @Slf4j
 public class CourtService {
@@ -49,6 +52,17 @@ public class CourtService {
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
     private final FallbackProximitySearch fallbackProximitySearch;
 
+    /**
+     * Constructor for the CourtService.
+     *
+     * @param mapitService               the mapit service
+     * @param courtRepository            the repository to get courts from
+     * @param proximitySearch            the proximity search
+     * @param courtWithDistanceRepository the repository to get courts with distance from
+     * @param serviceAreaRepository      the repository to get service areas from
+     * @param serviceAreaSearchFactory   the service area search factory
+     * @param fallbackProximitySearch    the fallback proximity search
+     */
     @Autowired
     public CourtService(final MapitService mapitService,
                         final CourtRepository courtRepository,
@@ -66,6 +80,11 @@ public class CourtService {
         this.fallbackProximitySearch = fallbackProximitySearch;
     }
 
+    /**
+     * Get court by slug (depreciated).
+     *
+     * @return a court
+     */
     public OldCourt getCourtBySlugDeprecated(final String slug) {
         return courtRepository
             .findBySlug(slug)
@@ -73,6 +92,11 @@ public class CourtService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Get court by slug.
+     *
+     * @return a court
+     */
     public Court getCourtBySlug(final String slug) {
         return courtRepository
             .findBySlug(slug)
@@ -80,6 +104,11 @@ public class CourtService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Get all courts by court types.
+     *
+     * @return the list of courts
+     */
     public List<Court> getCourtsByCourtTypes(final List<String> courtTypes) {
         return courtRepository
             .findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(courtTypes)
@@ -88,6 +117,11 @@ public class CourtService {
             .collect(toList());
     }
 
+    /**
+     * Get courts by name or address or postcode or town fuzzy match.
+     *
+     * @return the list of courts
+     */
     public List<CourtReference> getCourtByNameOrAddressOrPostcodeOrTownFuzzyMatch(final String query) {
         return getCourtsFromRepository(query)
             .stream()
@@ -95,10 +129,20 @@ public class CourtService {
             .collect(toList());
     }
 
+    /**
+     * Get Court by name or address or postcode or town.
+     *
+     * @return the list of courts
+     */
     public List<CourtWithDistance> getCourtsByNameOrAddressOrPostcodeOrTown(final String query, final Boolean includeClosed) {
         return getCourtByQuery(query, includeClosed, CourtWithDistance::new);
     }
 
+    /**
+     * Get nearest courts by postcode.
+     *
+     * @return the list of courts
+     */
     public List<CourtWithDistance> getNearestCourtsByPostcode(final String postcode) {
         return mapitService.getMapitData(postcode)
             .map(value -> courtWithDistanceRepository
@@ -109,6 +153,11 @@ public class CourtService {
             .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
+    /**
+     * Get nearest courts by postcode anad area of law.
+     *
+     * @return the list of courts
+     */
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLaw(final String postcode, final String areaOfLaw, final Boolean includeClosed) {
         if (filterResultByPostcode(postcode, areaOfLaw)) {
             return emptyList();
@@ -124,6 +173,11 @@ public class CourtService {
             .orElseThrow(() -> new InvalidPostcodeException(postcode));
     }
 
+    /**
+     * Get nearest courts by postcode, area of law and local authority.
+     *
+     * @return the list of courts
+     */
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw, final Boolean includeClosed) {
         if (filterResultByPostcode(postcode, areaOfLaw)) {
             return emptyList();

@@ -9,6 +9,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Enum for audit type.
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum AuditType {
@@ -49,6 +52,12 @@ public enum AuditType {
             .forEach(t -> LOOKUP.put(t.name.toLowerCase(Locale.getDefault()), t));
     }
 
+    /**
+     * Find audit type by name.
+     *
+     * @param name the name
+     * @return the audit type
+     */
     public static String findByName(final String name) {
         final String key = name.toLowerCase(Locale.getDefault());
         if (!LOOKUP.containsKey(key)) {

@@ -13,6 +13,11 @@ public class ValidationService {
     private final PostcodeValidator mapitPostcodeValidator;
     private final LocalAuthorityValidator mapitlocalAuthorityValidator;
 
+    /**
+     * Constructor for the ValidationService.
+     * @param mapitPostcodeValidator The postcode validator
+     * @param mapitLocalAuthorityValidator The local authority validator
+     */
     @Autowired
     public ValidationService(PostcodeValidator mapitPostcodeValidator, LocalAuthorityValidator mapitLocalAuthorityValidator) {
         this.mapitPostcodeValidator = mapitPostcodeValidator;

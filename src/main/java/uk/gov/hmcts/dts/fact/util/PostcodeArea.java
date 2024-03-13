@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Utility class for validating UK postcode areas.
+ */
 @Slf4j
 public final class PostcodeArea {
     private static final String UK_POSTCODE_AREAS_FILE = "ukPostcodeAreas.json";
@@ -30,6 +33,12 @@ public final class PostcodeArea {
     private PostcodeArea() {
     }
 
+    /**
+     * Check if a string is a valid UK postcode area.
+     *
+     * @param area the area to check
+     * @return true if the area is a valid UK postcode area
+     */
     public static boolean isValidArea(final String area) {
         if (StringUtils.isBlank(area)) {
             return false;
@@ -37,6 +46,11 @@ public final class PostcodeArea {
         return area.length() < 3 && ukPostcodeAreas.contains(area.toUpperCase(Locale.getDefault()));
     }
 
+    /**
+     * Get the list of valid UK postcode areas.
+     *
+     * @return the list of valid UK postcode areas
+     */
     private static List<String> getPostcodeAreasFromResource(String resource) throws IOException {
         try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
             final String json = IOUtils.toString(inputStream, StandardCharsets.UTF_8);

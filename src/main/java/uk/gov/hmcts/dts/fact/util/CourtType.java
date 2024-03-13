@@ -13,6 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+/**
+ * Enum for court type.
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
@@ -34,14 +37,32 @@ public enum CourtType {
             .forEach(t -> LOOKUP.put(t.name.toLowerCase(Locale.getDefault()), t));
     }
 
+    /**
+     * Find court type by name.
+     *
+     * @param name the name
+     * @return the court type
+     */
     public Integer getCourtCodeFromEntity(final Court court) {
         return courtCodeFunction.apply(court);
     }
 
+    /**
+     * Set court code in entity.
+     *
+     * @param court the court
+     * @param code  the code
+     */
     public void setCourtCodeInEntity(final Court court, final Integer code) {
         courtCodeConsumer.accept(court, code);
     }
 
+    /**
+     * Find court type by name.
+     *
+     * @param name the name
+     * @return the court type
+     */
     public static CourtType findByName(final String name) {
         final String key = name.toLowerCase(Locale.getDefault());
         if (!LOOKUP.containsKey(key)) {

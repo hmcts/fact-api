@@ -9,6 +9,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Enum for action.
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum Action {
@@ -26,6 +29,12 @@ public enum Action {
             .forEach(a -> LOOKUP.put(a.name.toLowerCase(Locale.getDefault()), a));
     }
 
+    /**
+     * Find action by name.
+     *
+     * @param name the name
+     * @return the action
+     */
     public static Action findAction(final String name) {
         final String key = name.toLowerCase(Locale.getDefault());
         if (!LOOKUP.containsKey(key)) {
@@ -34,6 +43,12 @@ public enum Action {
         return LOOKUP.get(key);
     }
 
+    /**
+     * Is nearest boolean.
+     *
+     * @param action the action
+     * @return the boolean
+     */
     public static boolean isNearest(final Action action) {
         return action == findAction("nearest");
     }

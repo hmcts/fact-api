@@ -7,17 +7,28 @@ import uk.gov.hmcts.dts.fact.services.MapitService;
 
 import java.util.Objects;
 
+/**
+ * Validates local authority names.
+ */
 @Slf4j
 @Component
 public class LocalAuthorityValidator {
 
     private final MapitService mapitService;
 
+    /**
+     * Constructor for the LocalAuthorityValidator.
+     */
     @Autowired
     public LocalAuthorityValidator(MapitService mapitService) {
         this.mapitService = mapitService;
     }
 
+    /**
+     * Checks if a local authority name is valid.
+     * @param localAuthorityName the local authority name to check
+     * @return true if the local authority name is valid, false otherwise
+     */
     public boolean localAuthorityNameIsValid(final String localAuthorityName) {
         Boolean localAuthorityExists = this.mapitService.localAuthorityExists(localAuthorityName);
 

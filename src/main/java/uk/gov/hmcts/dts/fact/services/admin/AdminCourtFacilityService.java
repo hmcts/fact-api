@@ -19,6 +19,9 @@ import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court facility data.
+ */
 @Service
 public class AdminCourtFacilityService {
     private final CourtRepository courtRepository;
@@ -26,6 +29,13 @@ public class AdminCourtFacilityService {
     private final FacilityTypeRepository facilityTypeRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtFacilityService.
+     * @param courtRepository The repository for court
+     * @param courtFacilityRepository The repository for court facility
+     * @param facilityTypeRepository The repository for facility type
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtFacilityService(final CourtRepository courtRepository,
                                      final CourtFacilityRepository courtFacilityRepository,
@@ -37,6 +47,11 @@ public class AdminCourtFacilityService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court facilities by slug.
+     * @param slug The slug
+     * @return A list of facilities
+     */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public List<Facility> getCourtFacilitiesBySlug(final String slug) {
         return  courtRepository.findBySlug(slug)
@@ -47,6 +62,12 @@ public class AdminCourtFacilityService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Update court facilities.
+     * @param slug The slug
+     * @param courtFacilities The court facilities
+     * @return A list of facilities
+     */
     @Transactional()
     public List<Facility> updateCourtFacility(final String slug, final List<Facility> courtFacilities) {
 
@@ -70,6 +91,13 @@ public class AdminCourtFacilityService {
         return newFacilities;
     }
 
+    /**
+     * Save new court facilities.
+     * @param courtEntity The court entity
+     * @param courtFacilities The court facilities
+     * @param existingList The existing list
+     * @return A list of facilities
+     */
     protected List<Facility> saveCourtFacilities(final Court courtEntity, final List<Facility> courtFacilities,
                                                  final List<CourtFacility> existingList) {
 
@@ -88,6 +116,11 @@ public class AdminCourtFacilityService {
             .collect(toList());
     }
 
+    /**
+     * Construct new facility entity.
+     * @param facilities The facilities
+     * @return A list of facilities
+     */
     private List<uk.gov.hmcts.dts.fact.entity.Facility> getNewFacilityEntity(final List<Facility> facilities) {
 
         return facilities.stream()
@@ -98,12 +131,23 @@ public class AdminCourtFacilityService {
             .collect(toList());
     }
 
+    /**
+     * Construct new court facility entity.
+     * @param courtEntity The court entity
+     * @param facilities The facilities
+     * @return A list of court facilities
+     */
     private List<CourtFacility> getNewCourtFacilityEntity(final Court courtEntity, List<uk.gov.hmcts.dts.fact.entity.Facility> facilities) {
 
         return facilities.stream()
             .map(f -> new CourtFacility(courtEntity,f)).collect(toList());
     }
 
+    /**
+     * Get existing court facilities.
+     * @param courtEntity The court entity
+     * @return A list of court facilities
+     */
     private List<CourtFacility> getExistingCourtFacilities(final Court courtEntity) {
         return new ArrayList<>(courtFacilityRepository.findByCourtId(courtEntity.getId()));
     }

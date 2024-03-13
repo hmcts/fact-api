@@ -17,6 +17,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court areas of law data.
+ */
 @Service
 public class AdminCourtAreasOfLawService {
 
@@ -25,6 +28,13 @@ public class AdminCourtAreasOfLawService {
     private final AdminAuditService adminAuditService;
     private final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
 
+    /**
+     * Constructor for the AdminCourtAreasOfLawService.
+     * @param courtRepository The repository for court
+     * @param courtAreaOfLawRepository The repository for court area of law
+     * @param courtAreaOfLawSpoeRepository The repository for court area of law spoe
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtAreasOfLawService(final CourtRepository courtRepository, final CourtAreaOfLawRepository courtAreaOfLawRepository,
                                        final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository, final AdminAuditService adminAuditService) {
@@ -34,6 +44,11 @@ public class AdminCourtAreasOfLawService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court areas of law by slug.
+     * @param slug The slug
+     * @return A list of areas of law
+     */
     public List<AreaOfLaw> getCourtAreasOfLawBySlug(final String slug) {
 
         Court court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
@@ -47,6 +62,12 @@ public class AdminCourtAreasOfLawService {
             .collect(toList());
     }
 
+    /**
+     * Update court areas of law.
+     * @param slug The slug
+     * @param areasOfLaw The areas of law
+     * @return A list of areas of law
+     */
     @Transactional()
     public List<AreaOfLaw> updateAreasOfLawForCourt(final String slug, final List<AreaOfLaw> areasOfLaw) {
         final Court courtEntity = courtRepository.findBySlug(slug)
@@ -75,11 +96,22 @@ public class AdminCourtAreasOfLawService {
         return newAreaOfLawList;
     }
 
+    /**
+     * Construct new areas of law.
+     * @param areasOfLaw The areas of law
+     * @return A list of areas of law
+     */
     private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewAreasOfLaw(final List<AreaOfLaw> areasOfLaw) {
         return areasOfLaw.stream()
             .map(e -> new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(e.getId(), e.getName())).collect(toList());
     }
 
+    /**
+     * Construct new court areas of law.
+     * @param court The court
+     * @param areasOfLaw The areas of law
+     * @return A list of court areas of law
+     */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtAreaOfLaw> getNewCourtAreasOfLaw(final Court court,
                                                        final List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> areasOfLaw) {

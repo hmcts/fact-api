@@ -10,16 +10,30 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service to get service areas.
+ */
 @Service
 public class ServiceAreaService {
 
     private final ServiceAreaRepository serviceAreaRepository;
 
+    /**
+     * Constructor for the ServiceAreaService.
+     *
+     * @param serviceAreaRepository the repository to get service areas from
+     */
     @Autowired
     public ServiceAreaService(final ServiceAreaRepository serviceAreaRepository) {
         this.serviceAreaRepository = serviceAreaRepository;
     }
 
+    /**
+     * Get a service area by slug.
+     *
+     * @param slug the slug of the service area
+     * @return the service area
+     */
     public ServiceArea getServiceArea(final String slug) {
         return serviceAreaRepository
             .findBySlugIgnoreCase(slug)
@@ -27,6 +41,11 @@ public class ServiceAreaService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Get all service areas.
+     *
+     * @return the list of service areas
+     */
     public List<ServiceArea> getAllServiceAreas() {
         return serviceAreaRepository
             .findAll()

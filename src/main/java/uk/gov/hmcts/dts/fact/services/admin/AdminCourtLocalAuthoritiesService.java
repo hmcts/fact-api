@@ -16,6 +16,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court local authorities data.
+ */
 @Service
 public class AdminCourtLocalAuthoritiesService {
 
@@ -23,6 +26,12 @@ public class AdminCourtLocalAuthoritiesService {
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtLocalAuthoritiesService.
+     * @param courtRepository The repository for court
+     * @param courtLocalAuthorityAreaOfLawRepository The repository for court local authority area of law
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtLocalAuthoritiesService(final CourtRepository courtRepository,
                                              final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository,
@@ -32,6 +41,12 @@ public class AdminCourtLocalAuthoritiesService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court local authorities by slug and area of law.
+     * @param slug The slug
+     * @param areaOfLaw The area of law
+     * @return A list of local authorities
+     */
     public List<LocalAuthority> getCourtLocalAuthoritiesBySlugAndAreaOfLaw(final String slug, final String areaOfLaw) {
 
         final Court courtEntity = courtRepository.findBySlug(slug)
@@ -44,6 +59,13 @@ public class AdminCourtLocalAuthoritiesService {
                 .collect(toList());
     }
 
+    /**
+     * Update court local authorities.
+     * @param slug The slug
+     * @param areaOfLaw The area of law
+     * @param localAuthorities The local authorities
+     * @return A list of local authorities
+     */
     @Transactional(rollbackFor = {RuntimeException.class})
     public List<LocalAuthority> updateCourtLocalAuthority(final String slug, final String areaOfLaw, final List<LocalAuthority> localAuthorities) {
 
@@ -69,6 +91,14 @@ public class AdminCourtLocalAuthoritiesService {
         return updatedLocalAuthorities;
     }
 
+    /**
+     * Save new court local authorities.
+     * @param courtEntity The court entity
+     * @param areaOflaw The area of law
+     * @param localAuthorities The local authorities
+     * @param existingCourtLocalAuthorities The existing court local authorities
+     * @return A list of local authorities
+     */
     protected List<LocalAuthority> saveNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw,
                                                                 final List<LocalAuthority> localAuthorities,
                                                                 final List<CourtLocalAuthorityAreaOfLaw> existingCourtLocalAuthorities) {
@@ -85,12 +115,25 @@ public class AdminCourtLocalAuthoritiesService {
             .collect(toList());
     }
 
+    /**
+     * Get new court local authorities.
+     * @param courtEntity The court entity
+     * @param areaOflaw The area of law
+     * @param localAuthorities The local authorities
+     * @return A list of court local authorities
+     */
     private List<CourtLocalAuthorityAreaOfLaw> getNewCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw, final List<LocalAuthority> localAuthorities) {
         return localAuthorities.stream()
             .map(o -> new CourtLocalAuthorityAreaOfLaw(areaOflaw, courtEntity, new uk.gov.hmcts.dts.fact.entity.LocalAuthority(o.getId(), o.getName())))
             .collect(toList());
     }
 
+    /**
+     * Get existing court local authorities.
+     * @param courtEntity The court entity
+     * @param areaOflaw The area of law
+     * @return A list of court local authorities
+     */
     private List<CourtLocalAuthorityAreaOfLaw> getExistingCourtLocalAuthorities(final Court courtEntity, final AreaOfLaw areaOflaw) {
         return courtLocalAuthorityAreaOfLawRepository.findByCourtId(courtEntity.getId())
             .stream()

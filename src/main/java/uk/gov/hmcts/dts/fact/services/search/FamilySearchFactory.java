@@ -6,6 +6,9 @@ import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
 import java.util.Optional;
 
+/**
+ * Factory for creating the correct search for a given service area and mapit data.
+ */
 @Component
 public class FamilySearchFactory {
 
@@ -15,6 +18,12 @@ public class FamilySearchFactory {
     private final FamilyNonRegionalSearch familyNonRegionalSearch;
     private final DefaultSearch defaultSearch;
 
+    /**
+     * Constructor for the FamilySearchFactory.
+     * @param familyRegionalSearch The family regional search
+     * @param familyNonRegionalSearch The family non regional search
+     * @param defaultSearch The default search
+     */
     public FamilySearchFactory(final FamilyRegionalSearch familyRegionalSearch,
                                final FamilyNonRegionalSearch familyNonRegionalSearch,
                                final DefaultSearch defaultSearch) {
@@ -23,6 +32,12 @@ public class FamilySearchFactory {
         this.defaultSearch = defaultSearch;
     }
 
+    /**
+     * Get the correct search for a given service area and mapit data.
+     * @param serviceArea The service area
+     * @param mapitData The mapit data
+     * @return The correct search
+     */
     public Search getSearchFor(final ServiceArea serviceArea, final MapitData mapitData) {
 
         final Optional<String> localAuthorityOptional = mapitData.getLocalAuthority();

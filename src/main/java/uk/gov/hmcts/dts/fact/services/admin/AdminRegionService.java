@@ -11,14 +11,25 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Service for admin region data.
+ */
 @Service
 public class AdminRegionService {
     private final RegionRepository regionRepository;
 
+    /**
+     * Constructor for the AdminRegionService.
+     * @param regionRepository The repository for region
+     */
     public AdminRegionService(RegionRepository regionRepository) {
         this.regionRepository = regionRepository;
     }
 
+    /**
+     * Get all regions.
+     * @return The regions
+     */
     public List<Region> getAllRegions() {
         return regionRepository.findAll()
             .stream()
