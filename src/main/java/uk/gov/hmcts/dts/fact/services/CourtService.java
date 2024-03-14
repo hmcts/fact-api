@@ -82,7 +82,7 @@ public class CourtService {
 
     /**
      * Get court by slug (depreciated).
-     *
+     * @param slug The slug of the court
      * @return a court
      */
     public OldCourt getCourtBySlugDeprecated(final String slug) {
@@ -175,7 +175,9 @@ public class CourtService {
 
     /**
      * Get nearest courts by postcode, area of law and local authority.
-     *
+     * @param postcode the postcode
+     * @param areaOfLaw the area of law
+     * @param includeClosed whether to include closed courts
      * @return the list of courts
      */
     public List<CourtWithDistance> getNearestCourtsByPostcodeAndAreaOfLawAndLocalAuthority(final String postcode, final String areaOfLaw, final Boolean includeClosed) {

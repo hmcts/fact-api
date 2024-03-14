@@ -68,6 +68,7 @@ public class AdminCourtAreasOfLawController {
      * Update the areas of law for a court.
      * @param slug Court slug
      * @param areasOfLaw A list of areas of law
+     * @param authentication The authentication object
      * @return A list of court areas of law
      */
     @PutMapping(path = "/{slug}/courtAreasOfLaw")
