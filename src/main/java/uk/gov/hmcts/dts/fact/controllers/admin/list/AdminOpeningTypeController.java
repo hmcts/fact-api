@@ -26,6 +26,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving opening types.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/openingTypes",
@@ -36,12 +39,19 @@ public class AdminOpeningTypeController {
 
     private final AdminOpeningTypeService adminService;
 
+    /**
+     * Constructor for the opening type controller.
+     * @param adminService The service to retrieve opening types
+     */
     @Autowired
     public AdminOpeningTypeController(AdminOpeningTypeService adminService) {
         this.adminService = adminService;
     }
 
-
+    /**
+     * Retrieve all opening types.
+     * @return List of opening types
+     */
     @GetMapping()
     @Operation(summary = "Retrieve all opening types")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -52,6 +62,11 @@ public class AdminOpeningTypeController {
         return ok(adminService.getAllOpeningTypes());
     }
 
+    /**
+     * Retrieve an opening type by id.
+     * @param id The id of the opening type
+     * @return The opening type
+     */
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get opening type")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
@@ -62,6 +77,11 @@ public class AdminOpeningTypeController {
         return ok(adminService.getOpeningType(id));
     }
 
+    /**
+     * Create an opening type.
+     * @param openingType The opening type to create
+     * @return The created opening type
+     */
     @PostMapping()
     @Operation(summary = "Create opening type")
     @ApiResponse(responseCode = "201", description = "Created")
@@ -74,6 +94,11 @@ public class AdminOpeningTypeController {
         return created(URI.create(StringUtils.EMPTY)).body(adminService.createOpeningType(openingType));
     }
 
+    /**
+     * Update an opening type.
+     * @param openingType The opening type to update
+     * @return The updated opening type
+     */
     @PutMapping()
     @Operation(summary = "Update opening type")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -86,6 +111,11 @@ public class AdminOpeningTypeController {
         return ok(adminService.updateOpeningType(openingType));
     }
 
+    /**
+     * Delete an opening type.
+     * @param openingTypeId The id of the opening type to delete
+     * @return The id of the deleted opening type
+     */
     @DeleteMapping("/{openingTypeId}")
     @Operation(summary = "Delete opening type")
     @ApiResponse(responseCode = "200", description = "Successful")

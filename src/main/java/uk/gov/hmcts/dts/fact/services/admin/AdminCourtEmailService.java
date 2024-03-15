@@ -21,6 +21,9 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Service for admin court email data.
+ */
 @Service
 public class AdminCourtEmailService {
 
@@ -29,6 +32,13 @@ public class AdminCourtEmailService {
     private final EmailTypeRepository emailTypeRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtEmailService.
+     * @param courtRepository The repository for court
+     * @param emailRepository The repository for court email
+     * @param emailTypeRepository The repository for email type
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtEmailService(final CourtRepository courtRepository,
                                   final CourtEmailRepository emailRepository,
@@ -40,6 +50,11 @@ public class AdminCourtEmailService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court emails by slug.
+     * @param slug The slug
+     * @return A list of emails
+     */
     public List<Email> getCourtEmailsBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getCourtEmails()
@@ -50,6 +65,12 @@ public class AdminCourtEmailService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Update court emails.
+     * @param slug The slug
+     * @param emailList The email list
+     * @return A list of emails
+     */
     @Transactional()
     public List<Email> updateEmailListForCourt(final String slug, final List<Email> emailList) {
         final Court courtEntity = courtRepository.findBySlug(slug)
@@ -76,6 +97,10 @@ public class AdminCourtEmailService {
         return resultEmailList;
     }
 
+    /**
+     * Get all email types.
+     * @return A list of email types
+     */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.Email> getNewEmails(final List<Email> emailList) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.EmailType> emailTypeMap = getEmailTypeMap();
@@ -86,12 +111,22 @@ public class AdminCourtEmailService {
             )).collect(toList());
     }
 
+    /**
+     * Get a map of all email types.
+     * @return A map of email types
+     */
     private Map<Integer, uk.gov.hmcts.dts.fact.entity.EmailType> getEmailTypeMap() {
         return emailTypeRepository.findAll()
             .stream()
             .collect(toMap(uk.gov.hmcts.dts.fact.entity.EmailType::getId, type -> type));
     }
 
+    /**
+     * Construct new court emails.
+     * @param court The court
+     * @param emails The emails
+     * @return A list of court emails
+     */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtEmail> getNewCourtEmails(final Court court, final List<uk.gov.hmcts.dts.fact.entity.Email> emails) {
         final List<CourtEmail> newEmailsList = new ArrayList<>();
@@ -101,6 +136,10 @@ public class AdminCourtEmailService {
         return newEmailsList;
     }
 
+    /**
+     * Get all email types.
+     * @return A list of email types
+     */
     public List<EmailType> getAllEmailTypes() {
         return emailTypeRepository.findAll()
             .stream()

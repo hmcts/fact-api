@@ -9,6 +9,9 @@ import uk.gov.hmcts.dts.fact.entity.OpeningTime;
 
 import static java.lang.String.format;
 
+/**
+ * Utility class to format entities into strings.
+ */
 @SuppressWarnings("PMD.InsufficientStringBufferDeclaration")
 public final class ElementFormatter {
 
@@ -17,6 +20,12 @@ public final class ElementFormatter {
     private ElementFormatter() {
     }
 
+    /**
+     * Formats a contact entity into a string.
+     *
+     * @param contact the contact entity to format
+     * @return the formatted string
+     */
     public static String formatContact(final Contact contact) {
         final StringBuilder formatted = new StringBuilder(format(
             "Number: %s, Description: %s",
@@ -30,6 +39,12 @@ public final class ElementFormatter {
         return formatted.toString();
     }
 
+    /**
+     * Formats a dx code entity into a string.
+     *
+     * @param dx the dx code entity to format
+     * @return the formatted string
+     */
     public static String formatDxCode(final DxCode dx) {
         final StringBuilder formatted = new StringBuilder(format("Code: %s", dx.getCode()));
         if (StringUtils.isNotBlank(dx.getExplanation())) {
@@ -38,6 +53,12 @@ public final class ElementFormatter {
         return formatted.toString();
     }
 
+    /**
+     * Formats an email entity into a string.
+     *
+     * @param email the email entity to format
+     * @return the formatted string
+     */
     public static String formatEmail(final Email email) {
         final StringBuilder formatted = new StringBuilder(format(
             "Address: %s, Description: %s",
@@ -50,10 +71,22 @@ public final class ElementFormatter {
         return formatted.toString();
     }
 
+    /**
+     * Formats an opening time entity into a string.
+     *
+     * @param openingTime the opening time entity to format
+     * @return the formatted string
+     */
     public static String formatOpeningTime(OpeningTime openingTime) {
         return format("Description: %s, Hours: %s", openingTime.getDescription(openingTime), openingTime.getHours());
     }
 
+    /**
+     * Formats an application update entity into a string.
+     *
+     * @param applicationUpdate the application update entity to format
+     * @return the formatted string
+     */
     public static String formatApplicationUpdate(final ApplicationUpdate applicationUpdate) {
         final StringBuilder formatted = new StringBuilder(format("Type: %s, ", applicationUpdate.getType()));
         if (StringUtils.isNotBlank(applicationUpdate.getEmail())) {

@@ -22,6 +22,9 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for updating court single point of entry areas of law.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -31,6 +34,9 @@ public class AdminCourtSpoeAreasOfLawController {
     private final AdminCourtSpoeAreasOfLawService adminCourtAreasOfLawSpoeService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Constructor for the AdminCourtSpoeAreasOfLawController.
+     */
     @Autowired
     public AdminCourtSpoeAreasOfLawController(AdminCourtSpoeAreasOfLawService adminService,
                                               AdminCourtLockService adminCourtLockService) {
@@ -38,6 +44,11 @@ public class AdminCourtSpoeAreasOfLawController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Get all spoe areas of law.
+     *
+     * @return all spoe areas of law
+     */
     @GetMapping(path = "/SpoeAreasOfLaw")
     @Operation(summary = "Return all spoe areas of law")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -48,6 +59,12 @@ public class AdminCourtSpoeAreasOfLawController {
         return ok(adminCourtAreasOfLawSpoeService.getAllSpoeAreasOfLaw());
     }
 
+    /**
+     * Get spoe areas of law by slug.
+     *
+     * @param slug the slug of the court
+     * @return the spoe areas of law for the court
+     */
     @GetMapping(path = "/{slug}/SpoeAreasOfLaw")
     @Operation(summary = "Find the spoe areas of law for a court")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -59,6 +76,13 @@ public class AdminCourtSpoeAreasOfLawController {
         return ok(adminCourtAreasOfLawSpoeService.getCourtSpoeAreasOfLawBySlug(slug));
     }
 
+    /**
+     * Update spoe areas of law for a court.
+     *
+     * @param slug      the slug of the court
+     * @param areasOfLaw the spoe areas of law for the court
+     * @return the updated spoe areas of law for the court
+     */
     @PutMapping(path = "/{slug}/SpoeAreasOfLaw")
     @Operation(summary = "Update the spoe areas of law for a court")
     @ApiResponse(responseCode = "200", description = "Successful")

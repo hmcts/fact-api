@@ -27,6 +27,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for retrieving and updating court locks.
+ */
 @Validated
 @RestController
 @RequestMapping(
@@ -41,11 +44,20 @@ public class AdminCourtLockController {
     private static final String UNAUTHORISED = "Unauthorised";
     private static final String UNAUTHORISED_CODE = "401";
 
+    /**
+     * Construct a new AdminCourtLockController.
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtLockController(final AdminCourtLockService adminCourtLockService) {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Retrieves court locks for a specific court.
+     * @param slug Court slug
+     * @return A list of court locks
+     */
     @GetMapping(path = "/{slug}/lock")
     @Operation(summary = "Find court lock details by slug and username")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
@@ -55,6 +67,12 @@ public class AdminCourtLockController {
         return ok(adminCourtLockService.getCourtLocks(slug));
     }
 
+    /**
+     * Add a new lock on a court for a given user.
+     * @param slug Court slug
+     * @param courtLock The new court lock
+     * @return The new court lock
+     */
     @PostMapping("/{slug}/lock")
     @Operation(summary = "Add a new lock on a court for a given user")
     @ApiResponse(responseCode = "201", description = "Created")
@@ -68,6 +86,12 @@ public class AdminCourtLockController {
             .body(adminCourtLockService.addNewCourtLock(courtLock));
     }
 
+    /**
+     * Delete a court lock by slug and email.
+     * @param slug Court slug
+     * @param userEmail The user email
+     * @return The updated list of court locks
+     */
     @DeleteMapping("/{slug}/lock/{userEmail}")
     @Operation(summary = "Delete a court lock by slug and email")
     @ApiResponse(responseCode = "200", description = "Deleted")
@@ -79,6 +103,11 @@ public class AdminCourtLockController {
         return ok().body(adminCourtLockService.deleteCourtLock(slug, userEmail));
     }
 
+    /**
+     * Delete a court lock by email.
+     * @param userEmail The user email
+     * @return The updated list of court locks
+     */
     @DeleteMapping("/{userEmail}/lock")
     @Operation(summary = "Delete a court lock by email")
     @ApiResponse(responseCode = "200", description = "Delete a court by email")

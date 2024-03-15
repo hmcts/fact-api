@@ -22,7 +22,9 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
-
+/**
+ * Controller for retrieving and updating court additional links.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -32,6 +34,11 @@ public class AdminCourtAdditionalLinkController {
     private final AdminCourtAdditionalLinkService adminService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtAdditionalLinkController.
+     * @param adminService the admin court additional link service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtAdditionalLinkController(AdminCourtAdditionalLinkService adminService,
                                               AdminCourtLockService adminCourtLockService) {
@@ -39,6 +46,11 @@ public class AdminCourtAdditionalLinkController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Retrieve all additional links for a court.
+     * @param slug the court slug
+     * @return list of additional links
+     */
     @GetMapping(path = "/{slug}/additionalLinks")
     @Operation(summary = "Find court additional links by slug")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -50,6 +62,13 @@ public class AdminCourtAdditionalLinkController {
         return ok(adminService.getCourtAdditionalLinksBySlug(slug));
     }
 
+    /**
+     * Update additional links for a court.
+     * @param slug the court slug
+     * @param additionalLinks the additional links to update
+     * @param authentication the authentication object
+     * @return list of additional links
+     */
     @PutMapping(path = "/{slug}/additionalLinks")
     @Operation(summary = "Update court additional links")
     @ApiResponse(responseCode = "200", description = "Successful")

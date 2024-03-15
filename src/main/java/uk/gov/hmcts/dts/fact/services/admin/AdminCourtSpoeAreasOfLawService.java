@@ -17,6 +17,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court single point of entry areas of law data.
+ */
 @Service
 public class AdminCourtSpoeAreasOfLawService {
 
@@ -24,6 +27,12 @@ public class AdminCourtSpoeAreasOfLawService {
     private final AdminAuditService adminAuditService;
     private final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
 
+    /**
+     * Constructor for the AdminCourtSpoeAreasOfLawService.
+     * @param courtRepository The repository for court
+     * @param courtAreaOfLawSpoeRepository The repository for court area of law spoe
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtSpoeAreasOfLawService(final CourtRepository courtRepository, final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository, final AdminAuditService adminAuditService) {
         this.courtRepository = courtRepository;
@@ -31,6 +40,10 @@ public class AdminCourtSpoeAreasOfLawService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all single point of entry areas of law.
+     * @return The single point of entry areas of law
+     */
     public List<SpoeAreaOfLaw> getAllSpoeAreasOfLaw() {
         return courtAreaOfLawSpoeRepository.findAll()
             .stream()
@@ -39,6 +52,11 @@ public class AdminCourtSpoeAreasOfLawService {
             .collect(toList());
     }
 
+    /**
+     * Get the single point of entry areas of law for a court by slug.
+     * @param slug The slug of the court
+     * @return The single point of entry areas of law for the court
+     */
     public List<SpoeAreaOfLaw> getCourtSpoeAreasOfLawBySlug(final String slug) {
 
         Court court = courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
@@ -48,6 +66,12 @@ public class AdminCourtSpoeAreasOfLawService {
             .collect(toList());
     }
 
+    /**
+     * Update the single point of entry areas of law for a court by slug.
+     * @param slug The slug of the court
+     * @param areasOfLaw The new single point of entry areas of law
+     * @return The new single point of entry areas of law for the court
+     */
     @Transactional()
     public List<SpoeAreaOfLaw> updateSpoeAreasOfLawForCourt(final String slug, final List<SpoeAreaOfLaw> areasOfLaw) {
         checkIfSpoeAreasOfLawHasDuplicateEntries(areasOfLaw);
@@ -74,11 +98,22 @@ public class AdminCourtSpoeAreasOfLawService {
         return newSpoeAreaOfLawList;
     }
 
+    /**
+     * Get the new single point of entry areas of law.
+     * @param areasOfLaw The new single point of entry areas of law
+     * @return The new single point of entry areas of law
+     */
     private List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> getNewSpoeAreasOfLaw(final List<SpoeAreaOfLaw> areasOfLaw) {
         return areasOfLaw.stream()
             .map(e -> new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(e.getId(), e.getName())).collect(toList());
     }
 
+    /**
+     * Get the new single point of entry areas of law for a court.
+     * @param court The court
+     * @param areasOfLaw The new single point of entry areas of law
+     * @return The new single point of entry areas of law for the court
+     */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtAreaOfLawSpoe> getNewCourtSpoeAreasOfLaw(final Court court,
                                                                final List<uk.gov.hmcts.dts.fact.entity.AreaOfLaw> areasOfLaw) {
@@ -89,6 +124,10 @@ public class AdminCourtSpoeAreasOfLawService {
         return newCourtSpoeAreasOfLawList;
     }
 
+    /**
+     * Check if the single point of entry areas of law has duplicate entries.
+     * @param areasOfLaw The single point of entry areas of law
+     */
     private void checkIfSpoeAreasOfLawHasDuplicateEntries(final List<SpoeAreaOfLaw> areasOfLaw) {
 
         if (areasOfLaw.stream().distinct().count() != areasOfLaw.size()) {

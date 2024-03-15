@@ -22,6 +22,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving and updating court general information.
+ */
 @Slf4j
 @RestController
 @RequestMapping(
@@ -32,6 +35,11 @@ public class AdminCourtGeneralInfoController {
     private final AdminCourtGeneralInfoService adminService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtGeneralInfoController.
+     * @param adminService the admin court general information service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtGeneralInfoController(AdminCourtGeneralInfoService adminService,
                                            AdminCourtLockService adminCourtLockService) {
@@ -39,6 +47,11 @@ public class AdminCourtGeneralInfoController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Retrieves general information for a specific court.
+     * @param slug Court slug
+     * @return Court general information
+     */
     @GetMapping()
     @Operation(summary = "Retrieve court general information")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
@@ -46,6 +59,13 @@ public class AdminCourtGeneralInfoController {
         return ok(adminService.getCourtGeneralInfoBySlug(slug));
     }
 
+    /**
+     * Updates general information for a specific court.
+     * @param slug Court slug
+     * @param generalInfo The updated court general information
+     * @param authentication The authentication object
+     * @return The updated court general information
+     */
     @PutMapping()
     @Operation(summary = "Update court general information")
     @ApiResponse(responseCode = "200", description = "Successful")

@@ -35,6 +35,9 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court data.
+ */
 @Service
 public class AdminService {
 
@@ -47,6 +50,14 @@ public class AdminService {
     private static final String INTRO_PARAGRAPH = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
     private static final String INTRO_PARAGRAPH_CY = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.";
 
+    /**
+     * Constructor for the AdminService.
+     * @param courtRepository The repository for court
+     * @param rolesProvider The provider for roles
+     * @param adminAuditService The service for admin audit
+     * @param serviceAreaRepository The repository for service area
+     * @param areasOfLawRepository The repository for areas of law
+     */
     @Autowired
     public AdminService(final CourtRepository courtRepository,
                         final RolesProvider rolesProvider,
@@ -60,6 +71,10 @@ public class AdminService {
         this.areasOfLawRepository = areasOfLawRepository;
     }
 
+    /**
+     * Get all court references.
+     * @return The court references
+     */
     public List<CourtReference> getAllCourtReferences() {
         return courtRepository
             .findAll()
@@ -68,6 +83,10 @@ public class AdminService {
             .collect(toList());
     }
 
+    /**
+     * Get all courts for download.
+     * @return The courts for download
+     */
     public List<CourtForDownload> getAllCourtsForDownload() {
         return courtRepository
             .findAll()
@@ -77,6 +96,10 @@ public class AdminService {
             .collect(toList());
     }
 
+    /**
+     * Get court by slug.
+     * @return The court
+     */
     public Court getCourtBySlug(String slug) {
         return courtRepository
             .findBySlug(slug)
@@ -84,10 +107,20 @@ public class AdminService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Get court entity by slug.
+     * @return The court
+     */
     public uk.gov.hmcts.dts.fact.entity.Court getCourtEntityBySlug(String slug) {
         return courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Save the court.
+     * @param slug The slug of the court
+     * @param court The court
+     * @return The saved court
+     */
     public Court save(String slug, Court court) {
         uk.gov.hmcts.dts.fact.entity.Court courtEntity = getCourtEntityBySlug(slug);
         courtEntity.setAlert(court.getAlert());
@@ -133,21 +166,41 @@ public class AdminService {
         return updatedCourtModel;
     }
 
+    /**
+     * Update multiple courts info.
+     * @param info The new court info
+     */
     @Transactional
     public void updateMultipleCourtsInfo(CourtInfoUpdate info) {
         courtRepository.updateInfoForSlugs(info.getCourts(), info.getInfo(), info.getInfoCy());
     }
 
+    /**
+     * Update court lat lon.
+     * @param slug The slug of the court
+     * @param lat The new latitude
+     * @param lon The new longitude
+     */
     @Transactional
     public void updateCourtLatLon(final String slug, final Double lat, final Double lon) {
         courtRepository.updateLatLonBySlug(slug, lat, lon);
     }
 
+    /**
+     * Update court region.
+     * @param slug The slug of the court
+     * @param region The new region
+     */
     @Transactional
     public void updateCourtRegion(final String slug, final String region) {
         courtRepository.updateRegionBySlug(slug, region);
     }
 
+    /**
+     * Get court image.
+     * @param slug The slug of the court
+     * @return The court image
+     */
     public String getCourtImage(final String slug) {
         final uk.gov.hmcts.dts.fact.entity.Court court =
             courtRepository.findBySlug(slug).orElseThrow(() -> new NotFoundException(slug));
@@ -165,6 +218,16 @@ public class AdminService {
         return courtRepository.updateCourtImageBySlug(slug, imageFile);
     }
 
+    /**
+     * Add new court.
+     * @param newCourtName The new court name
+     * @param newCourtSlug The new court slug
+     * @param serviceCentre The new service centre
+     * @param lon The new longitude
+     * @param lat The new latitude
+     * @param serviceAreas The new service areas
+     * @return The new court
+     */
     @Transactional
     public Court addNewCourt(String newCourtName, String newCourtSlug, Boolean serviceCentre,
                              double lon, double lat, List<String> serviceAreas) {
@@ -231,6 +294,10 @@ public class AdminService {
         return createdCourtModel;
     }
 
+    /**
+     * Delete court.
+     * @param courtSlug The slug of the court
+     */
     @Transactional
     public void deleteCourt(String courtSlug) {
         uk.gov.hmcts.dts.fact.entity.Court court =
@@ -240,6 +307,12 @@ public class AdminService {
         courtRepository.deleteById(court.getId());
     }
 
+    /**
+     * Get display name for service area.
+     * @param areasOfLaw The areas of law
+     * @param serviceArea The service area
+     * @return The display name
+     */
     private String getDisplayName(List<AreaOfLaw> areasOfLaw, String serviceArea) {
         return areasOfLaw.stream()
             .filter(areaOfLaw -> areaOfLaw.getName().equals(serviceArea))
@@ -248,6 +321,12 @@ public class AdminService {
             .orElse(serviceArea);
     }
 
+    /**
+     * Get display name cy for service area.
+     * @param areasOfLaw The areas of law
+     * @param serviceAreaCy The service area cy
+     * @return The display name cy
+     */
     private String getDisplayNameCy(List<AreaOfLaw> areasOfLaw, String serviceAreaCy) {
         return areasOfLaw.stream()
             .filter(areaOfLaw -> areaOfLaw.getName().equals(serviceAreaCy))

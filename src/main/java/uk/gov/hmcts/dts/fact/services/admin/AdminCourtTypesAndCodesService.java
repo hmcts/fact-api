@@ -17,7 +17,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-
+/**
+ * Service for admin court types and codes data.
+ */
 @Service
 public class AdminCourtTypesAndCodesService {
     private final CourtRepository courtRepository;
@@ -25,6 +27,13 @@ public class AdminCourtTypesAndCodesService {
     private final MapCourtCode mapCourtCode;
     private final CourtDxCodesRepository courtDxCodesRepository;
 
+    /**
+     * Constructor for the AdminCourtTypesAndCodesService.
+     * @param courtRepository The repository for court
+     * @param courtTypeRepository The repository for court type
+     * @param mapCourtCode The utility for mapping court codes
+     * @param courtDxCodesRepository The repository for court dx codes
+     */
     @Autowired
     public AdminCourtTypesAndCodesService(final CourtRepository courtRepository, final CourtTypeRepository courtTypeRepository,
                                           final MapCourtCode mapCourtCode, final CourtDxCodesRepository courtDxCodesRepository) {
@@ -34,6 +43,10 @@ public class AdminCourtTypesAndCodesService {
         this.courtDxCodesRepository = courtDxCodesRepository;
     }
 
+    /**
+     * Get all court types.
+     * @return The court types
+     */
     public List<CourtType> getAllCourtTypes() {
         return  courtTypeRepository.findAll()
             .stream()
@@ -41,6 +54,11 @@ public class AdminCourtTypesAndCodesService {
             .collect(toList());
     }
 
+    /**
+     * Get the court types and codes for a court by slug.
+     * @param slug The slug of the court
+     * @return The court types and codes for the court
+     */
     public CourtTypesAndCodes getCourtTypesAndCodes(final String slug) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
@@ -48,6 +66,11 @@ public class AdminCourtTypesAndCodesService {
         return new CourtTypesAndCodes(getCourtCourtTypes(courtEntity), courtEntity.getGbs(), getCourtDxCodes(courtEntity));
     }
 
+    /**
+     * Get Court types and codes for a court.
+     * @param courtEntity The court entity
+     * @return The updated court types and codes
+     */
     private List<CourtType> getCourtCourtTypes(final Court courtEntity) {
 
         final List<CourtType> returnCourtTypes = courtEntity.getCourtTypes()
@@ -57,6 +80,11 @@ public class AdminCourtTypesAndCodesService {
         return mapCourtCode.mapCourtCodesForCourtTypeModel(returnCourtTypes, courtEntity);
     }
 
+    /**
+     * Get Court dx codes for a court.
+     * @param courtEntity The court entity
+     * @return The updated court dx codes
+     */
     public List<DxCode> getCourtDxCodes(final Court courtEntity) {
         return  courtDxCodesRepository.findByCourtId(courtEntity.getId())
             .stream()
@@ -65,6 +93,12 @@ public class AdminCourtTypesAndCodesService {
             .collect(toList());
     }
 
+    /**
+     * Update the court types and codes for a court by slug.
+     * @param slug The slug of the court
+     * @param courtTypesAndCodes The new court types and codes
+     * @return The updated court types and codes for the court
+     */
     public CourtTypesAndCodes updateCourtTypesAndCodes(final String slug, final CourtTypesAndCodes courtTypesAndCodes) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
@@ -72,6 +106,12 @@ public class AdminCourtTypesAndCodesService {
 
     }
 
+    /**
+     * Save new court types and codes for a court.
+     * @param courtEntity The court entity
+     * @param courtTypesAndCode The new court types and codes
+     * @return The updated court types and codes for the court
+     */
     protected CourtTypesAndCodes saveNewCourtTypesAndCodes(final Court courtEntity, final CourtTypesAndCodes courtTypesAndCode) {
 
         final List<uk.gov.hmcts.dts.fact.entity.CourtType> courtTypeEntities = getNewCourtCourtTypesEntity(courtTypesAndCode.getCourtTypes());
@@ -84,7 +124,13 @@ public class AdminCourtTypesAndCodesService {
         return new CourtTypesAndCodes(getCourtCourtTypes(amendedCourtEntity), amendedCourtEntity.getGbs(), getCourtDxCodes(amendedCourtEntity));
     }
 
-
+    /**
+     * Save court types and gbs codes for a court.
+     * @param courtEntity The court entity
+     * @param courtTypesAndCode The new court types and codes
+     * @param courtTypeEntity The new court type entity
+     * @return The updated court types and codes for the court
+     */
     protected Court saveCourtTypesAndGbsCodes(final Court courtEntity, final CourtTypesAndCodes courtTypesAndCode, final List<uk.gov.hmcts.dts.fact.entity.CourtType> courtTypeEntity) {
         if (courtEntity.getCourtTypes() == null) {
             courtEntity.setCourtTypes(courtTypeEntity);
@@ -107,6 +153,11 @@ public class AdminCourtTypesAndCodesService {
         return courtRepository.save(amendedCourtEntity);
     }
 
+    /**
+     * Save court dx codes for a court.
+     * @param courtEntity The court entity
+     * @param dxCodeEntities The new dx code entities
+     */
     protected void saveCourtDxCodes(final Court courtEntity, final List<uk.gov.hmcts.dts.fact.entity.DxCode> dxCodeEntities) {
         final List<CourtDxCode> existingCourtDxCodes = courtDxCodesRepository.findByCourtId(courtEntity.getId());
         //remove existing court dx codes and save updated
@@ -114,18 +165,34 @@ public class AdminCourtTypesAndCodesService {
         courtDxCodesRepository.saveAll(getNewCourtDxCodeEntity(courtEntity, dxCodeEntities));
     }
 
+    /**
+     * Get the new court types.
+     * @param courtTypes The new court types
+     * @return The new court types for the court
+     */
     private List<uk.gov.hmcts.dts.fact.entity.CourtType> getNewCourtCourtTypesEntity(final List<CourtType> courtTypes) {
         return courtTypes.stream()
             .map(o -> new uk.gov.hmcts.dts.fact.entity.CourtType(o.getId(),o.getName(),o.getSearch()))
             .collect(toList());
     }
 
+    /**
+     * Get the new court dx codes for a court.
+     * @param dxCodes The dx codes
+     * @return The new court dx codes for the court
+     */
     private List<uk.gov.hmcts.dts.fact.entity.DxCode> getNewDxCodeEntity(final List<DxCode> dxCodes) {
         return dxCodes.stream()
             .map(o -> new uk.gov.hmcts.dts.fact.entity.DxCode(o.getCode(),o.getExplanation(),o.getExplanationCy()))
             .collect(toList());
     }
 
+    /**
+     * Get the new court dx codes for a court.
+     * @param court The court
+     * @param dxCodes The dx codes
+     * @return The new court dx codes for the court
+     */
     private List<CourtDxCode> getNewCourtDxCodeEntity(final Court court, final List<uk.gov.hmcts.dts.fact.entity.DxCode> dxCodes) {
         return dxCodes.stream()
             .map(o -> new CourtDxCode(court,o))

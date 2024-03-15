@@ -22,6 +22,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving and updating court contacts.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -31,6 +34,11 @@ public class AdminCourtContactController {
     private final AdminCourtContactService adminService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Construct a new AdminCourtContactController.
+     * @param adminService the admin court contact service
+     * @param adminCourtLockService the admin court lock service
+     */
     @Autowired
     public AdminCourtContactController(AdminCourtContactService adminService,
                                        AdminCourtLockService adminCourtLockService) {
@@ -38,6 +46,11 @@ public class AdminCourtContactController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Retrieves contacts for a specific court.
+     * @param slug Court slug
+     * @return A list of court contacts
+     */
     @GetMapping(path = "/{slug}/contacts")
     @Operation(summary = "Find court contacts by slug")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
@@ -45,6 +58,13 @@ public class AdminCourtContactController {
         return ok(adminService.getCourtContactsBySlug(slug));
     }
 
+    /**
+     * Updates contacts for a specific court.
+     * @param slug Court slug
+     * @param contacts A list of court contacts
+     * @param authentication The authentication object
+     * @return A list of court contacts
+     */
     @PutMapping(path = "/{slug}/contacts")
     @Operation(summary = "Update court contacts")
     @Role({FACT_ADMIN, FACT_SUPER_ADMIN})

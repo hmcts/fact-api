@@ -10,6 +10,9 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Service for admin address type data.
+ */
 @Service
 public class AdminAddressTypeService {
     private final AddressTypeRepository addressTypeRepository;
@@ -18,6 +21,10 @@ public class AdminAddressTypeService {
         this.addressTypeRepository = addressTypeRepository;
     }
 
+    /**
+     * Get all address types.
+     * @return The address types
+     */
     public List<AddressType> getAllAddressTypes() {
         return addressTypeRepository.findAll()
             .stream()

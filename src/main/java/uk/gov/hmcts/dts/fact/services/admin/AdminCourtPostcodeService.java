@@ -22,6 +22,9 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static uk.gov.hmcts.dts.fact.util.Utils.upperCaseAndStripAllSpaces;
 
+/**
+ * Service for admin court postcode data.
+ */
 @Service
 @Slf4j
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -30,6 +33,12 @@ public class AdminCourtPostcodeService {
     private final CourtPostcodeRepository courtPostcodeRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtPostcodeService.
+     * @param courtRepository The repository for court
+     * @param courtPostcodeRepository The repository for court postcode
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtPostcodeService(final CourtRepository courtRepository,
                                      final CourtPostcodeRepository courtPostcodeRepository,
@@ -39,10 +48,20 @@ public class AdminCourtPostcodeService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Check that the postcodes for the court exist by slug.
+     * @param slug The slug of the court
+     * @return The postcodes for the court
+     */
     public void checkPostcodesExist(final String slug, final List<String> postcodes) {
         checkPostcodesExist(getCourtPostcodes(slug, postcodes), postcodes);
     }
 
+    /**
+     * Check that the postcodes for the source court exist in the database.
+     * @param sourceCourtPostcodes The source court postcodes
+     * @param postcodes The postcodes
+     */
     private void checkPostcodesExist(List<CourtPostcode> sourceCourtPostcodes, List<String> postcodes) {
         final List<String> sourcePostcodes = sourceCourtPostcodes.stream()
             .map(CourtPostcode::getPostcode)
@@ -57,6 +76,11 @@ public class AdminCourtPostcodeService {
         }
     }
 
+    /**
+     * Check that the list of postcodes do not exist for the destination court.
+     * @param destinationSlug The destination slug
+     * @param postcodes The postcodes
+     */
     public void checkPostcodesDoNotExist(final String destinationSlug, final List<String> postcodes) {
         final List<String> destPostcodes = getCourtPostcodes(destinationSlug, postcodes).stream()
             .map(CourtPostcode::getPostcode)
@@ -70,6 +94,11 @@ public class AdminCourtPostcodeService {
         }
     }
 
+    /**
+     * Get the postcodes for a court by slug.
+     * @param slug The slug of the court
+     * @return The postcodes for the court
+     */
     public List<String> getCourtPostcodesBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getCourtPostcodes()
@@ -79,6 +108,12 @@ public class AdminCourtPostcodeService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Add postcodes to a court by slug.
+     * @param slug The slug of the court
+     * @param postcodes The postcodes to add
+     * @return The postcodes added to the court
+     */
     @Transactional()
     public List<String> addCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
@@ -101,6 +136,12 @@ public class AdminCourtPostcodeService {
         return newPostcodes;
     }
 
+    /**
+     * Delete postcodes from a court by slug.
+     * @param slug The slug of the court
+     * @param postcodes The postcodes to delete
+     * @return The number of postcodes deleted
+     */
     @Transactional()
     public int deleteCourtPostcodes(final String slug, final List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
@@ -125,6 +166,13 @@ public class AdminCourtPostcodeService {
         return deletedPostcodes;
     }
 
+    /**
+     * Move postcodes from one court to another by slug.
+     * @param sourceSlug The slug of the source court
+     * @param destinationSlug The slug of the destination court
+     * @param postcodes The postcodes to move
+     * @return The postcodes moved
+     */
     @Transactional()
     public List<String> moveCourtPostcodes(String sourceSlug, String destinationSlug, List<String> postcodes) {
         // Check that the postcodes for the source court exists in the database, and retrieve the court id back
@@ -157,6 +205,12 @@ public class AdminCourtPostcodeService {
         return postcodesMoved;
     }
 
+    /**
+     * Update postcodes for a court by slug.
+     * @param slug The slug of the court
+     * @param postcodes The postcodes to update
+     * @return The updated postcodes for the court
+     */
     private boolean postcodeExists(final Court court, final String postcode) {
         return !courtPostcodeRepository.findByCourtIdAndPostcode(
             court.getId(),
@@ -164,12 +218,23 @@ public class AdminCourtPostcodeService {
         ).isEmpty();
     }
 
+    /**
+     * Create new court postcodes entity.
+     * @param court The court entity
+     * @param postcodes The postcodes to create
+     * @return The new court postcodes entity
+     */
     private List<CourtPostcode> createNewCourtPostcodesEntity(final Court court, final List<String> postcodes) {
         return postcodes.stream()
             .map(p -> new CourtPostcode(upperCaseAndStripAllSpaces(p), court))
             .collect(toList());
     }
 
+    /**
+     * Get the court entity by slug.
+     * @param slug The slug of the court
+     * @return The court entity
+     */
     private Court getCourtEntity(final String slug) {
         Optional<Court> court = courtRepository.findBySlug(slug);
         if (court.isPresent()) {
@@ -179,6 +244,12 @@ public class AdminCourtPostcodeService {
         throw new NotFoundException(slug);
     }
 
+    /**
+     * Get the court postcodes by slug and postcodes.
+     * @param slug The slug of the court
+     * @param postcodes The postcodes
+     * @return The court postcodes
+     */
     private List<CourtPostcode> getCourtPostcodes(String slug, List<String> postcodes) {
         final Court courtEntity = getCourtEntity(slug);
         final List<String> postcodesToRetrieve = postcodes.stream()

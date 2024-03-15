@@ -16,6 +16,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court application update data.
+ */
 @Service
 public class AdminCourtApplicationUpdateService {
 
@@ -23,6 +26,12 @@ public class AdminCourtApplicationUpdateService {
     private final CourtApplicationUpdateRepository applicationUpdateRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtApplicationUpdateService.
+     * @param courtRepository The repository for court
+     * @param applicationUpdateRepository The repository for court application update
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtApplicationUpdateService(final CourtRepository courtRepository,
                                               final CourtApplicationUpdateRepository applicationUpdateRepository,
@@ -32,6 +41,11 @@ public class AdminCourtApplicationUpdateService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court application updates by slug.
+     * @param slug The slug
+     * @return A list of application updates
+     */
     public List<ApplicationUpdate> getApplicationUpdatesBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getCourtApplicationUpdates()
@@ -42,6 +56,12 @@ public class AdminCourtApplicationUpdateService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Update court application updates.
+     * @param slug The slug
+     * @param applicationUpdateList The application update list
+     * @return A list of application updates
+     */
     @Transactional()
     public List<ApplicationUpdate> updateApplicationUpdates(final String slug,
                                                             final List<ApplicationUpdate> applicationUpdateList) {
@@ -72,6 +92,11 @@ public class AdminCourtApplicationUpdateService {
         return resultApplicationUpdateList;
     }
 
+    /**
+     * Construct application updates entity.
+     * @param applicationUpdateList The application updates
+     * @return A list of application updates
+     */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> getNewApplicationUpdates(
         final List<ApplicationUpdate> applicationUpdateList) {
@@ -81,6 +106,12 @@ public class AdminCourtApplicationUpdateService {
             .collect(toList());
     }
 
+    /**
+     * Construct court application updates entity.
+     * @param court The court
+     * @param applicationUpdates The application updates
+     * @return A list of court application updates
+     */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtApplicationUpdate> getNewCourtApplicationUpdates(
         final Court court, final List<uk.gov.hmcts.dts.fact.entity.ApplicationUpdate> applicationUpdates) {

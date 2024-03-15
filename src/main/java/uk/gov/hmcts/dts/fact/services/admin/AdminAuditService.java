@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service for audit data.
+ */
 @Service
 @SuppressWarnings("PMD.UseObjectForClearerAPI")
 public class AdminAuditService {
@@ -24,12 +27,27 @@ public class AdminAuditService {
     private final AuditRepository auditRepository;
     private final AuditTypeRepository auditTypeRepository;
 
+    /**
+     * Constructor for the AdminAuditService.
+     * @param auditRepository The repository for audit
+     * @param auditTypeRepository The repository for audit type
+     */
     @Autowired
     public AdminAuditService(AuditRepository auditRepository, AuditTypeRepository auditTypeRepository) {
         this.auditRepository = auditRepository;
         this.auditTypeRepository = auditTypeRepository;
     }
 
+    /**
+     * Get all audit data.
+     * @param page The page number
+     * @param size The page size
+     * @param location The location
+     * @param email The email
+     * @param dateFrom The date from
+     * @param dateTo The date to
+     * @return A list of audit data
+     */
     public List<uk.gov.hmcts.dts.fact.model.admin.Audit> getAllAuditData(int page, int size,
                                                                          Optional<String> location,
                                                                          Optional<String> email,
@@ -48,6 +66,13 @@ public class AdminAuditService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Save audit data.
+     * @param auditType The audit type
+     * @param auditDataBefore The audit data before
+     * @param auditDataAfter The audit data after
+     * @param auditLocation The audit location
+     */
     @SneakyThrows
     public void saveAudit(String auditType, Object auditDataBefore, Object auditDataAfter, String auditLocation) {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());

@@ -19,6 +19,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin areas of law data.
+ */
 @Service
 @Slf4j
 public class AdminAreasOfLawService {
@@ -29,6 +32,14 @@ public class AdminAreasOfLawService {
     private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
     private final ServiceAreaRepository serviceAreaRepository;
 
+    /**
+     * Constructor for the AdminAreasOfLawService.
+     * @param areasOfLawRepository The repository for areas of law
+     * @param courtAreaOfLawRepository The repository for court area of law
+     * @param courtLocalAuthorityAreaOfLawRepo The repository for court local authority area of law
+     * @param serviceAreaRepository The repository for service area
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminAreasOfLawService(
         final AreasOfLawRepository areasOfLawRepository,
@@ -44,6 +55,11 @@ public class AdminAreasOfLawService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get an area of law by id.
+     * @param id The id of the area of law
+     * @return The area of law
+     */
     public AreaOfLaw getAreaOfLaw(final Integer id) {
         try {
             return new AreaOfLaw(areasOfLawRepository.getReferenceById(id));
@@ -52,6 +68,10 @@ public class AdminAreasOfLawService {
         }
     }
 
+    /**
+     * Get all areas of law.
+     * @return The areas of law
+     */
     public List<AreaOfLaw> getAllAreasOfLaw() {
         return areasOfLawRepository.findAll()
             .stream()
@@ -59,6 +79,11 @@ public class AdminAreasOfLawService {
             .collect(toList());
     }
 
+    /**
+     * Update an area of law.
+     * @param updatedAreaOfLaw The updated area of law
+     * @return The updated area of law
+     */
     @Transactional
     public AreaOfLaw updateAreaOfLaw(final AreaOfLaw updatedAreaOfLaw) {
         uk.gov.hmcts.dts.fact.entity.AreaOfLaw areaOfLawEntity =
@@ -82,6 +107,11 @@ public class AdminAreasOfLawService {
         return newAreaOfLaw;
     }
 
+    /**
+     * Create an area of law.
+     * @param areaOfLaw The new area of law
+     * @return The new area of law
+     */
     @Transactional
     public AreaOfLaw createAreaOfLaw(final AreaOfLaw areaOfLaw) {
         checkIfAreaOfLawAlreadyExists(areaOfLaw.getName());
@@ -94,6 +124,10 @@ public class AdminAreasOfLawService {
         return newAreaOfLaw;
     }
 
+    /**
+     * Delete an area of law.
+     * @param areaOfLawId The id of the area of law
+     */
     public void deleteAreaOfLaw(final Integer areaOfLawId) {
         AreaOfLaw areaOfLaw = getAreaOfLaw(areaOfLawId);
 
@@ -101,18 +135,34 @@ public class AdminAreasOfLawService {
         areasOfLawRepository.deleteById(areaOfLaw.getId());
     }
 
+    /**
+     * Check if the area of law already exists.
+     * @param areaOfLawName The name of the area of law
+     * @return The areas of law for the court
+     */
     private void checkIfAreaOfLawAlreadyExists(final String areaOfLawName) {
         if (getAllAreasOfLaw().stream().anyMatch(aol -> aol.getName().equalsIgnoreCase(areaOfLawName))) {
             throw new DuplicatedListItemException("Area of Law already exists: " + areaOfLawName);
         }
     }
 
+    /**
+     * Create a new area of law entity from a model.
+     * @param areaOfLaw The area of law model
+     * @return The new area of law entity
+     */
     private uk.gov.hmcts.dts.fact.entity.AreaOfLaw createNewAreaOfLawEntityFromModel(final AreaOfLaw areaOfLaw) {
         final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity = new uk.gov.hmcts.dts.fact.entity.AreaOfLaw();
         entity.setName(areaOfLaw.getName());
         return updateEntityPropertiesFromModel(areaOfLaw, entity);
     }
 
+    /**
+     * Update an area of law entity from a model.
+     * @param areaOfLaw The area of law model
+     * @param entity The area of law entity
+     * @return The updated area of law entity
+     */
     private uk.gov.hmcts.dts.fact.entity.AreaOfLaw updateEntityPropertiesFromModel(final AreaOfLaw areaOfLaw,
                                                                                    final uk.gov.hmcts.dts.fact.entity.AreaOfLaw entity) {
         // Name is not updated because it is not editable.
@@ -128,6 +178,10 @@ public class AdminAreasOfLawService {
         return entity;
     }
 
+    /**
+     * Ensure the area of law is not in use.
+     * @param areaOfLawId The id of the area of law
+     */
     private void ensureAreaOfLawIsNotInUse(Integer areaOfLawId) {
         if (!courtAreaOfLawRepository.getCourtAreaOfLawByAreaOfLawId(areaOfLawId).isEmpty()
             || !courtLocalAuthorityAreaOfLawRepo.findByAreaOfLawId(areaOfLawId).isEmpty()

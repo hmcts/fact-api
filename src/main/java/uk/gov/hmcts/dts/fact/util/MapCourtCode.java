@@ -10,6 +10,13 @@ import java.util.List;
 @SuppressWarnings("PMD.LawOfDemeter")
 public class MapCourtCode {
 
+    /**
+     * Maps the court codes from the court entity.
+     *
+     * @param courtTypes the court types
+     * @param court      the court entity
+     * @return the court entity
+     */
     public Court mapCourtCodesForCourtEntity(final List<CourtType> courtTypes, final Court courtEntity) {
         for (final CourtType c : courtTypes) {
             final uk.gov.hmcts.dts.fact.util.CourtType courtType = uk.gov.hmcts.dts.fact.util.CourtType.findByName(c.getName());
@@ -20,6 +27,13 @@ public class MapCourtCode {
         return courtEntity;
     }
 
+    /**
+     * Maps the court codes from the court entity to the court type model.
+     *
+     * @param courtTypes the court types
+     * @param court      the court entity
+     * @return the court entity
+     */
     public List<CourtType> mapCourtCodesForCourtTypeModel(final List<CourtType> courtTypes, final Court court) {
         for (final CourtType c : courtTypes) {
             final uk.gov.hmcts.dts.fact.util.CourtType courtType = uk.gov.hmcts.dts.fact.util.CourtType.findByName(c.getName());

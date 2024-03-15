@@ -10,6 +10,11 @@ public class PostcodeExistedException extends RuntimeException {
     private static final long serialVersionUID = -687728108804146149L;
     private final List<String> invalidPostcodes = new ArrayList<>();
 
+    /**
+     * Constructor for PostcodeExistedException.
+     *
+     * @param postcodes list of postcodes
+     */
     public PostcodeExistedException(final List<String> postcodes) {
         super("Postcodes already exist: " + postcodes);
         invalidPostcodes.addAll(postcodes);

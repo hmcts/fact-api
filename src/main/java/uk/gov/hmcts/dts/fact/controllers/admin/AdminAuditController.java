@@ -32,11 +32,25 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminAuditController {
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Construct a new AdminAuditController.
+     * @param adminAuditService the admin audit service
+     */
     @Autowired
     public AdminAuditController(AdminAuditService adminAuditService) {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all audits.
+     * @param page the page number
+     * @param size the page size
+     * @param location the location
+     * @param email the email
+     * @param dateFrom the date from
+     * @param dateTo the date to
+     * @return the list of audits
+     */
     @GetMapping(params = {"page", "size"})
     @Operation(summary = "Find all audits based on the provided parameters.")
     @ApiResponse(responseCode = "200", description = "Successful")

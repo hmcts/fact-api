@@ -26,6 +26,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving areas of law.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/areasOfLaw",
@@ -35,11 +38,19 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminAreasOfLawController {
     private final AdminAreasOfLawService adminAreasOfLawService;
 
+    /**
+     * Constructor for the areas of law controller.
+     * @param adminAreasOfLawService The service to retrieve areas of law
+     */
     @Autowired
     public AdminAreasOfLawController(AdminAreasOfLawService adminAreasOfLawService) {
         this.adminAreasOfLawService = adminAreasOfLawService;
     }
 
+    /**
+     * Retrieve all areas of law.
+     * @return List of areas of law
+     */
     @GetMapping()
     @Operation(summary = "Return all areas of law")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -50,6 +61,11 @@ public class AdminAreasOfLawController {
         return ok(adminAreasOfLawService.getAllAreasOfLaw());
     }
 
+    /**
+     * Retrieve an area of law by id.
+     * @param id The id of the area of law
+     * @return The area of law
+     */
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get area of law")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -61,6 +77,11 @@ public class AdminAreasOfLawController {
         return ok(adminAreasOfLawService.getAreaOfLaw(id));
     }
 
+    /**
+     * Create an area of law.
+     * @param areaOfLaw The area of law to create
+     * @return The created area of law
+     */
     @PostMapping()
     @Operation(summary = "Create area of law")
     @ApiResponse(responseCode = "201", description = "Created")
@@ -73,6 +94,11 @@ public class AdminAreasOfLawController {
         return created(URI.create(StringUtils.EMPTY)).body(adminAreasOfLawService.createAreaOfLaw(areaOfLaw));
     }
 
+    /**
+     * Update an area of law.
+     * @param areaOfLaw The area of law to update
+     * @return The updated area of law
+     */
     @PutMapping()
     @Operation(summary = "Update area of law")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -85,6 +111,11 @@ public class AdminAreasOfLawController {
         return ok(adminAreasOfLawService.updateAreaOfLaw(areaOfLaw));
     }
 
+    /**
+     * Delete an area of law by id.
+     * @param areaOfLawId The id of the area of law
+     * @return The id of the deleted area of law
+     */
     @DeleteMapping("/{areaOfLawId}")
     @Operation(summary = "Delete area of law")
     @ApiResponse(responseCode = "200", description = "Successful")

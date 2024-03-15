@@ -18,6 +18,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for updating service area data.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/serviceAreas",
@@ -27,11 +30,19 @@ public class AdminServiceAreaController {
 
     private final ServiceAreaService serviceAreaService;
 
+    /**
+     * Constructor for the AdminServiceAreaController.
+     */
     @Autowired
     public AdminServiceAreaController(final ServiceAreaService serviceAreaService) {
         this.serviceAreaService = serviceAreaService;
     }
 
+    /**
+     * Get all service areas.
+     *
+     * @return all service areas
+     */
     @GetMapping()
     @Operation(summary = "Return all service areas")
     @ApiResponse(responseCode = "200", description = "Successful")

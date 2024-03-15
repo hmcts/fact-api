@@ -16,7 +16,9 @@ import java.util.List;
 import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
-
+/**
+ * Controller for retrieving all counties.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/counties",
@@ -25,11 +27,18 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminCountyController {
     private final AdminCountyService adminService;
 
+    /**
+     * Construct a new AdminCountyController.
+     * @param adminService the admin county service
+     */
     public AdminCountyController(AdminCountyService adminService) {
         this.adminService = adminService;
     }
 
-
+    /**
+     * Retrieve all counties.
+     * @return list of counties
+     */
     @GetMapping()
     @Operation(summary = "Retrieve all counties")
     @ApiResponse(responseCode = "200", description = "Successful", useReturnTypeSchema = true)
