@@ -36,6 +36,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for updating court data.
+ */
 @Validated
 @RestController
 @RequestMapping(
@@ -51,6 +54,9 @@ public class AdminCourtsController {
     private static final String UNAUTHORISED = "Unauthorised";
     private static final String UNAUTHORISED_CODE = "401";
 
+    /**
+     * Constructor for the AdminCourtsController.
+     */
     @Autowired
     public AdminCourtsController(final AdminService adminService,
                                  AdminCourtLockService adminCourtLockService) {
@@ -58,6 +64,11 @@ public class AdminCourtsController {
         this.adminCourtLockService = adminCourtLockService;
     }
 
+    /**
+     * Get all courts.
+     *
+     * @return the list of all courts
+     */
     @GetMapping(path = "/all")
     @Operation(summary = "Return all courts")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
@@ -65,6 +76,11 @@ public class AdminCourtsController {
         return ok(adminService.getAllCourtReferences());
     }
 
+    /**
+     * Get all courts for download.
+     *
+     * @return the list of all courts
+     */
     @GetMapping(path = "/")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     @Operation(summary = "Return court data for download")
@@ -72,6 +88,12 @@ public class AdminCourtsController {
         return ok(adminService.getAllCourtsForDownload());
     }
 
+    /**
+     * Update selected courts info.
+     *
+     * @param info the updated court info
+     * @return no content
+     */
     @PutMapping(path = "/info")
     @Operation(summary = "Update selected courts info")
     @Role({FACT_SUPER_ADMIN})
@@ -80,6 +102,12 @@ public class AdminCourtsController {
         return noContent().build();
     }
 
+    /**
+     * Find court details by slug.
+     *
+     * @param slug the slug of the court
+     * @return the court details
+     */
     @GetMapping(path = "/{slug}/general")
     @Operation(summary = "Find court details by slug")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
@@ -87,6 +115,12 @@ public class AdminCourtsController {
         return ok(adminService.getCourtBySlug(slug));
     }
 
+    /**
+     * Add a new court.
+     *
+     * @param newCourt the new court details
+     * @return the new court
+     */
     @PostMapping()
     @Operation(summary = "Add a new court")
     @ApiResponse(responseCode = "201", description = "Created")
@@ -104,6 +138,12 @@ public class AdminCourtsController {
             ));
     }
 
+    /**
+     * Delete a court.
+     *
+     * @param slug the slug of the court
+     * @return the deleted court
+     */
     @DeleteMapping("/{slug}")
     @Operation(summary = "Delete a court")
     @ApiResponse(responseCode = "200", description = "Deleted")
@@ -115,6 +155,13 @@ public class AdminCourtsController {
         return ok().body("Court with slug: " + slug + " has been deleted");
     }
 
+    /**
+     * Update court.
+     *
+     * @param slug        the slug of the court
+     * @param updatedCourt the updated court details
+     * @return the updated court
+     */
     @PutMapping(path = "/{slug}/general")
     @Operation(summary = "Update court")
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
@@ -125,6 +172,12 @@ public class AdminCourtsController {
         return ok(adminService.save(slug, updatedCourt));
     }
 
+    /**
+     * Get the photo for a court.
+     *
+     * @param slug the slug of the court
+     * @return the photo for the court
+     */
     @GetMapping(path = "/{slug}/courtPhoto")
     @Operation(summary = "Find the photo for a court")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -136,6 +189,13 @@ public class AdminCourtsController {
         return ok(adminService.getCourtImage(slug));
     }
 
+    /**
+     * Update the photo for a court.
+     *
+     * @param slug      the slug of the court
+     * @param imageFile the updated photo for the court
+     * @return the updated photo for the court
+     */
     @PutMapping(path = "/{slug}/courtPhoto")
     @Operation(summary = "Update the photo for a court")
     @ApiResponse(responseCode = "200", description = "Successful")

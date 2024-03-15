@@ -21,6 +21,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin opening type data.
+ */
 @Service
 @Slf4j
 public class AdminOpeningTypeService {
@@ -29,6 +32,12 @@ public class AdminOpeningTypeService {
     private final OpeningTypeRepository openingTypeRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminOpeningTypeService.
+     * @param openingTimeRepository The repository for opening time
+     * @param openingTypeRepository The repository for opening type
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminOpeningTypeService(final OpeningTimeRepository openingTimeRepository,
                                    final OpeningTypeRepository openingTypeRepository,
@@ -38,6 +47,10 @@ public class AdminOpeningTypeService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all opening types.
+     * @return The opening types
+     */
     public List<OpeningType> getAllOpeningTypes() {
         return openingTypeRepository.findAll()
             .stream()
@@ -46,7 +59,11 @@ public class AdminOpeningTypeService {
             .collect(toList());
     }
 
-
+    /**
+     * Get an opening type by id.
+     * @param id The id of the opening type
+     * @return The opening type
+     */
     public OpeningType getOpeningType(final Integer id) {
         try {
             return new OpeningType(openingTypeRepository.getReferenceById(id));
@@ -55,6 +72,11 @@ public class AdminOpeningTypeService {
         }
     }
 
+    /**
+     * Create a new opening type.
+     * @param openingType The new opening type
+     * @return The new opening type
+     */
     @Transactional
     public OpeningType createOpeningType(final OpeningType openingType) {
         checkIfOpeningTypeAlreadyExists(openingType.getType());
@@ -68,7 +90,11 @@ public class AdminOpeningTypeService {
         return newOpeningType;
     }
 
-
+    /**
+     * Update an opening type.
+     * @param updatedOpeningType The updated opening type
+     * @return The updated opening type
+     */
     @Transactional
     public OpeningType updateOpeningType(final OpeningType updatedOpeningType) {
         uk.gov.hmcts.dts.fact.entity.OpeningType openingTypeEntity =
@@ -91,6 +117,10 @@ public class AdminOpeningTypeService {
 
     }
 
+    /**
+     * Delete an opening type.
+     * @param openingTypeId The id of the opening type
+     */
     public void deleteOpeningType(final Integer openingTypeId) {
         checkOpeningTypeIsNotInUse(openingTypeId);
 
@@ -111,12 +141,21 @@ public class AdminOpeningTypeService {
         }
     }
 
+    /**
+     * Check if the opening type already exists.
+     * @param openingTypeName The name of the opening type
+     */
     private void checkIfOpeningTypeAlreadyExists(final String openingTypeName) {
         if (getAllOpeningTypes().stream().anyMatch(ct -> ct.getType().equalsIgnoreCase(openingTypeName))) {
             throw new DuplicatedListItemException("Opening Type already exists: " + openingTypeName);
         }
     }
 
+    /**
+     * Create a new opening type entity from a model.
+     * @param openingType The opening type model
+     * @return The new opening type entity
+     */
     private uk.gov.hmcts.dts.fact.entity.OpeningType createNewOpeningTypeEntityFromModel(final OpeningType openingType) {
         final uk.gov.hmcts.dts.fact.entity.OpeningType entity = new uk.gov.hmcts.dts.fact.entity.OpeningType();
         entity.setDescription(openingType.getType());
@@ -124,6 +163,10 @@ public class AdminOpeningTypeService {
         return entity;
     }
 
+    /**
+     * Check if the updated opening type already exists.
+     * @param updatedOpeningType The updated opening type
+     */
     private void checkIfUpdatedOpeningTypeAlreadyExists(final OpeningType updatedOpeningType) {
 
         final List<OpeningType>  contactTypes =  getAllOpeningTypes();
@@ -134,6 +177,10 @@ public class AdminOpeningTypeService {
         }
     }
 
+    /**
+     * Check if the opening type is in use.
+     * @param contactTypeId The id of the opening type
+     */
     private void checkOpeningTypeIsNotInUse(Integer contactTypeId) {
         if (!openingTimeRepository.getOpeningTimesByAdminTypeId(contactTypeId).isEmpty()) {
             throw new ListItemInUseException(contactTypeId.toString());

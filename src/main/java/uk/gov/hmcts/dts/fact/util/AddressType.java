@@ -9,6 +9,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Enum for address type.
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum AddressType {
@@ -26,6 +29,12 @@ public enum AddressType {
             .forEach(t -> LOOKUP.put(t.name.toLowerCase(Locale.getDefault()), t));
     }
 
+    /**
+     * Find address type by name.
+     *
+     * @param name the name
+     * @return the address type
+     */
     public static AddressType findByName(final String name) {
         final String key = name.toLowerCase(Locale.getDefault());
         if (!LOOKUP.containsKey(key)) {
@@ -34,6 +43,12 @@ public enum AddressType {
         return LOOKUP.get(key);
     }
 
+    /**
+     * Is court address boolean.
+     *
+     * @param name the name
+     * @return the boolean
+     */
     public static boolean isCourtAddress(final String name) {
         return findByName(name).isACourtAddress;
     }

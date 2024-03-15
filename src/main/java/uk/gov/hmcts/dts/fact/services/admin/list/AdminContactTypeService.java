@@ -20,6 +20,9 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin contact type data.
+ */
 @Service
 @Slf4j
 public class AdminContactTypeService {
@@ -29,6 +32,13 @@ public class AdminContactTypeService {
     private final EmailRepository emailRepository;
     private final EmailTypeRepository emailTypeRepository;
 
+    /**
+     * Constructor for the AdminContactTypeService.
+     * @param contactTypeRepository The repository for contact type
+     * @param contactRepository The repository for contact
+     * @param emailRepository The repository for email
+     * @param emailTypeRepository The repository for email type
+     */
     @Autowired
     public AdminContactTypeService(final ContactTypeRepository contactTypeRepository,
                                    final ContactRepository contactRepository,
@@ -40,6 +50,10 @@ public class AdminContactTypeService {
         this.emailTypeRepository = emailTypeRepository;
     }
 
+    /**
+     * Get all contact types.
+     * @return The contact types
+     */
     public List<ContactType> getAllContactTypes() {
         return contactTypeRepository.findAll()
             .stream()
@@ -48,6 +62,11 @@ public class AdminContactTypeService {
             .collect(toList());
     }
 
+    /**
+     * Get a contact type by id.
+     * @param id The id of the contact type
+     * @return The contact type
+     */
     public ContactType getContactType(final Integer id) {
         try {
             return new ContactType(contactTypeRepository.getReferenceById(id));
@@ -56,6 +75,11 @@ public class AdminContactTypeService {
         }
     }
 
+    /**
+     * Create a new contact type.
+     * @param contactType The new contact type
+     * @return The new contact type
+     */
     @Transactional
     public ContactType createContactType(final ContactType contactType) {
         checkIfContactTypeAlreadyExists(contactType.getType());
@@ -63,6 +87,11 @@ public class AdminContactTypeService {
         return new ContactType(contactTypeRepository.save(createNewContactTypeEntityFromModel(contactType)));
     }
 
+    /**
+     * Update a contact type.
+     * @param updatedContactType The updated contact type
+     * @return The updated contact type
+     */
     @Transactional
     public ContactType updateContactType(final ContactType updatedContactType) {
         uk.gov.hmcts.dts.fact.entity.ContactType contactTypeEntity =
@@ -85,6 +114,10 @@ public class AdminContactTypeService {
         return new ContactType(contactTypeRepository.save(contactTypeEntity));
     }
 
+    /**
+     * Delete a contact type.
+     * @param contactTypeId The id of the contact type
+     */
     public void deleteContactType(final Integer contactTypeId) {
 
         uk.gov.hmcts.dts.fact.entity.ContactType contactTypeEntity =
@@ -108,12 +141,20 @@ public class AdminContactTypeService {
         }
     }
 
+    /**
+     * Check if the contact type already exists.
+     * @param contactTypeName The name of the contact type
+     */
     private void checkIfContactTypeAlreadyExists(final String contactTypeName) {
         if (getAllContactTypes().stream().anyMatch(ct -> ct.getType().equalsIgnoreCase(contactTypeName))) {
             throw new DuplicatedListItemException("Contact Type already exists: " + contactTypeName);
         }
     }
 
+    /**
+     * Check if the updated contact type already exists.
+     * @param updatedContactType The updated contact type
+     */
     private void checkIfUpdatedContactTypeAlreadyExists(final ContactType updatedContactType) {
 
         final List<ContactType>  contactTypes =  getAllContactTypes();
@@ -124,6 +165,11 @@ public class AdminContactTypeService {
         }
     }
 
+    /**
+     * Create a new contact type entity from a model.
+     * @param contactType The contact type
+     * @return The new contact type entity
+     */
     private uk.gov.hmcts.dts.fact.entity.ContactType createNewContactTypeEntityFromModel(final ContactType contactType) {
         final uk.gov.hmcts.dts.fact.entity.ContactType entity = new uk.gov.hmcts.dts.fact.entity.ContactType();
         entity.setDescription(contactType.getType());
@@ -131,12 +177,20 @@ public class AdminContactTypeService {
         return entity;
     }
 
+    /**
+     * Check if the contact type is in use.
+     * @param contactTypeId The id of the contact type
+     */
     private void checkContactTypeIsNotInUse(Integer contactTypeId) {
         if (!contactRepository.getContactsByAdminTypeId(contactTypeId).isEmpty()) {
             throw new ListItemInUseException(contactTypeId.toString());
         }
     }
 
+    /**
+     * Check if the email type is in use.
+     * @param emailTypeId The id of the email type
+     */
     private void checkEmailTypeIsNotInUse(Integer emailTypeId) {
         if (!emailRepository.getEmailsByAdminTypeId(emailTypeId).isEmpty()) {
             throw new ListItemInUseException(emailTypeId.toString());

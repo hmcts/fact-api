@@ -10,6 +10,9 @@ import uk.gov.hmcts.dts.fact.util.PostcodeArea;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Validates postcodes.
+ */
 @Slf4j
 @Component
 public class PostcodeValidator {
@@ -23,15 +26,28 @@ public class PostcodeValidator {
     private static final String PARTIAL_POSTCODE_EDGECASE = "(^[A-Za-z][0-9]{1,2}[A-Za-z][0-9]?$)|"
         + "(^[A-Za-z]{2}([0-9]{1}[A-Za-z][0-9]?)$)";
 
+    /**
+     * Constructor for the PostcodeValidator.
+     */
     @Autowired
     public PostcodeValidator(MapitService mapitService) {
         this.mapitService = mapitService;
     }
 
+    /**
+     * Checks if a postcode is valid.
+     * @param postcode the postcode to check
+     * @return true if the full postcode matches, false otherwise
+     */
     public static boolean isFullPostcodeFormat(final String postcode) {
         return postcode.matches(FULL_POSTCODE);
     }
 
+    /**
+     * Checks if a postcode data exists.
+     * @param postcode the postcode to check
+     * @return true if the postcode exists, false otherwise
+     */
     public boolean postcodeDataExists(final String postcode) {
 
         if (StringUtils.isBlank(postcode)) {

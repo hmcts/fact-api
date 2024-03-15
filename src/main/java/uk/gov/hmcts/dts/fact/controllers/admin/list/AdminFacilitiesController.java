@@ -26,6 +26,9 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Controller for retrieving facility types.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/facilities",
@@ -35,11 +38,19 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminFacilitiesController {
     private final AdminFacilityService adminFacilityService;
 
+    /**
+     * Constructor for the facility type controller.
+     * @param adminFacilityService The service to retrieve facility types
+     */
     @Autowired
     public AdminFacilitiesController(AdminFacilityService adminFacilityService) {
         this.adminFacilityService = adminFacilityService;
     }
 
+    /**
+     * Retrieve all facility types.
+     * @return List of facility types
+     */
     @GetMapping(path = "")
     @Operation(summary = "Return all facility types")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -50,6 +61,11 @@ public class AdminFacilitiesController {
         return ok(adminFacilityService.getAllFacilityTypes());
     }
 
+    /**
+     * Retrieve a facility type.
+     * @param id The id of the facility type
+     * @return The facility type
+     */
     @GetMapping(path = "/{id}")
     @Operation(summary = "Get facility type")
     @ApiResponse(responseCode = "200", description = "Successful")
@@ -61,6 +77,11 @@ public class AdminFacilitiesController {
         return ok(adminFacilityService.getFacilityType(id));
     }
 
+    /**
+     * Create a new facility type.
+     * @param facilityType The facility type to create
+     * @return The created facility type
+     */
     @PostMapping(path = "")
     @Operation(summary = "Create new facility type")
     @Role({FACT_SUPER_ADMIN})
@@ -72,6 +93,11 @@ public class AdminFacilitiesController {
         return created(URI.create(StringUtils.EMPTY)).body(adminFacilityService.createFacilityType(facilityType));
     }
 
+    /**
+     * Update a facility type.
+     * @param facilityType The facility type to update
+     * @return The updated facility type
+     */
     @PutMapping(path = "")
     @Operation(summary = "Update facility type")
     @Role({FACT_SUPER_ADMIN})
@@ -84,6 +110,11 @@ public class AdminFacilitiesController {
         return ok(adminFacilityService.updateFacilityType(facilityType));
     }
 
+    /**
+     * Reorder facility types.
+     * @param orderedFacilityTypeIds The ordered list of facility type ids
+     * @return The reordered facility types
+     */
     @PutMapping(path = "/reorder")
     @Operation(summary = "Reorder facility types")
     @Role({FACT_SUPER_ADMIN})
@@ -95,6 +126,11 @@ public class AdminFacilitiesController {
         return ok(adminFacilityService.reorderFacilityTypes(orderedFacilityTypeIds));
     }
 
+    /**
+     * Delete a facility type.
+     * @param facilityTypeId The id of the facility type to delete
+     * @return The id of the deleted facility type
+     */
     @DeleteMapping("/{facilityTypeId}")
     @Operation(summary = "Delete facility type")
     @ApiResponse(responseCode = "200", description = "Successful")

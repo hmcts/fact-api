@@ -16,12 +16,21 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court additional link data.
+ */
 @Service
 public class AdminCourtAdditionalLinkService {
     private final CourtRepository courtRepository;
     private final CourtAdditionalLinkRepository courtAdditionalLinkRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtAdditionalLinkService.
+     * @param courtRepository The repository for court
+     * @param courtAdditionalLinkRepository The repository for court additional link
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtAdditionalLinkService(final CourtRepository courtRepository,
                                            final CourtAdditionalLinkRepository courtAdditionalLinkRepository,
@@ -31,6 +40,11 @@ public class AdminCourtAdditionalLinkService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court additional links by slug.
+     * @param slug The slug
+     * @return A list of additional links
+     */
     public List<AdditionalLink> getCourtAdditionalLinksBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getCourtAdditionalLinks()
@@ -41,6 +55,12 @@ public class AdminCourtAdditionalLinkService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Update court additional links.
+     * @param slug The slug
+     * @param additionalLinks The additional links
+     * @return A list of additional links
+     */
     @Transactional
     public List<AdditionalLink> updateCourtAdditionalLinks(final String slug, final List<AdditionalLink> additionalLinks) {
         final Court courtEntity = courtRepository.findBySlug(slug)
@@ -64,6 +84,12 @@ public class AdminCourtAdditionalLinkService {
         return newLinks;
     }
 
+    /**
+     * Construct court additional links entity.
+     * @param courtEntity The court entity
+     * @param additionalLinks The additional links
+     * @return A list of court additional links
+     */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtAdditionalLink> constructCourtAdditionalLinksEntity(final Court courtEntity, final List<AdditionalLink> additionalLinks) {
         final List<CourtAdditionalLink> courtAdditionalLinks = new ArrayList<>();

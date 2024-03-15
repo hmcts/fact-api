@@ -21,6 +21,9 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Service for admin court contact data.
+ */
 @Service
 public class AdminCourtContactService {
     private final CourtRepository courtRepository;
@@ -28,6 +31,13 @@ public class AdminCourtContactService {
     private final ContactTypeRepository contactTypeRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtContactService.
+     * @param courtRepository The repository for court
+     * @param courtContactRepository The repository for court contact
+     * @param contactTypeRepository The repository for contact type
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtContactService(final CourtRepository courtRepository,
                                     final CourtContactRepository courtContactRepository,
@@ -39,6 +49,11 @@ public class AdminCourtContactService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court contacts by slug.
+     * @param slug The slug
+     * @return A list of contacts
+     */
     public List<Contact> getCourtContactsBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getCourtContacts()
@@ -49,6 +64,12 @@ public class AdminCourtContactService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Update court contacts.
+     * @param slug The slug
+     * @param contacts The contacts
+     * @return A list of contacts
+     */
     @Transactional()
     public List<Contact> updateCourtContacts(final String slug, final List<Contact> contacts) {
         final Court courtEntity = courtRepository.findBySlug(slug)
@@ -62,6 +83,10 @@ public class AdminCourtContactService {
         return newContactList;
     }
 
+    /**
+     * Get all court contact types.
+     * @return A list of contact types
+     */
     public List<ContactType> getAllCourtContactTypes() {
         return contactTypeRepository.findAll()
             .stream()
@@ -70,6 +95,10 @@ public class AdminCourtContactService {
             .collect(toList());
     }
 
+    /**
+     * Get a map of all court contact types.
+     * @return A map of contact types
+     */
     private List<Contact> saveNewCourtContacts(final Court courtEntity, final List<Contact> contacts) {
         final List<uk.gov.hmcts.dts.fact.entity.Contact> newContacts = getNewContacts(contacts);
         List<CourtContact> newCourtContacts = getNewCourtContacts(courtEntity, newContacts);
@@ -84,6 +113,11 @@ public class AdminCourtContactService {
             .collect(toList());
     }
 
+    /**
+     * Construct new contacts.
+     * @param contacts The contacts
+     * @return A list of contacts
+     */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<uk.gov.hmcts.dts.fact.entity.Contact> getNewContacts(final List<Contact> contacts) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> contactTypeMap = getContactTypeMap();
@@ -96,12 +130,22 @@ public class AdminCourtContactService {
             .collect(toList());
     }
 
+    /**
+     * Get a map of all court contact types.
+     * @return A map of contact types
+     */
     private Map<Integer, uk.gov.hmcts.dts.fact.entity.ContactType> getContactTypeMap() {
         return contactTypeRepository.findAll()
             .stream()
             .collect(toMap(uk.gov.hmcts.dts.fact.entity.ContactType::getId, type -> type));
     }
 
+    /**
+     * Construct new court contacts.
+     * @param court The court
+     * @param contacts The contacts
+     * @return A list of court contacts
+     */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<CourtContact> getNewCourtContacts(final Court court, final List<uk.gov.hmcts.dts.fact.entity.Contact> contacts) {
         final List<CourtContact> courtContacts = new ArrayList<>();

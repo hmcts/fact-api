@@ -16,6 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service for admin court lock data.
+ */
 @Service
 @Slf4j
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -24,6 +27,11 @@ public class AdminCourtLockService {
     private final AdminAuditService adminAuditService;
     private static final int LOCK_AMOUNT_PER_COURT = 1;
 
+    /**
+     * Constructor for the AdminCourtLockService.
+     * @param courtLockRepository The repository for court lock
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtLockService(final CourtLockRepository courtLockRepository,
                                  final AdminAuditService adminAuditService) {

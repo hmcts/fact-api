@@ -31,6 +31,9 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 
+/**
+ * Controller for updating court postcodes.
+ */
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -42,6 +45,9 @@ public class AdminCourtPostcodeController {
     private final ValidationService validationService;
     private final AdminCourtLockService adminCourtLockService;
 
+    /**
+     * Constructor for the AdminCourtPostcodeController.
+     */
     @Autowired
     public AdminCourtPostcodeController(AdminCourtPostcodeService adminService,
                                         ValidationService validationService,

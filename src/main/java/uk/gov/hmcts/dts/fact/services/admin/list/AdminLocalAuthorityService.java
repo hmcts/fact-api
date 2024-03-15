@@ -15,12 +15,20 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin local authority data.
+ */
 @Service
 public class AdminLocalAuthorityService {
 
     private final LocalAuthorityRepository localAuthorityRepository;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminLocalAuthorityService.
+     * @param localAuthorityRepository The repository for local authority
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminLocalAuthorityService(final LocalAuthorityRepository localAuthorityRepository,
                                       final AdminAuditService adminAuditService) {
@@ -28,6 +36,10 @@ public class AdminLocalAuthorityService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all local authorities.
+     * @return The local authorities
+     */
     public List<LocalAuthority> getAllLocalAuthorities() {
         return localAuthorityRepository.findAll()
             .stream()
@@ -35,6 +47,12 @@ public class AdminLocalAuthorityService {
             .collect(toList());
     }
 
+    /**
+     * Update a local authority by id.
+     * @param localAuthorityId The id of the local authority to update
+     * @param name The new name of the local authority
+     * @return The local authority
+     */
     @Transactional
     public LocalAuthority updateLocalAuthority(final Integer localAuthorityId, final String name) {
 
@@ -60,6 +78,12 @@ public class AdminLocalAuthorityService {
         return newLocalAuthority;
     }
 
+    /**
+     * Check if a local authority already exists.
+     * @param localAuthorityId The id of the local authority
+     * @param localAuthorityName The name of the local authority
+     * @throws DuplicatedListItemException if the local authority already exists
+     */
     private void checkIfLocalAuthorityAlreadyExists(final Integer localAuthorityId, final String localAuthorityName) {
         List<uk.gov.hmcts.dts.fact.entity.LocalAuthority> existingLocalAuthorities = localAuthorityRepository.findByName(localAuthorityName);
 

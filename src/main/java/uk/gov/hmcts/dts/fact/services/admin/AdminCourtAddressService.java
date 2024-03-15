@@ -32,6 +32,9 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Service for admin court address data.
+ */
 @Service
 @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.ExcessiveParameterList"})
 public class AdminCourtAddressService {
@@ -45,6 +48,18 @@ public class AdminCourtAddressService {
     private final ValidationService validationService;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtAddressService.
+     * @param courtRepository The repository for court
+     * @param courtAddressRepository The repository for court address
+     * @param courtSecondaryAddressTypeRepository The repository for court secondary address type
+     * @param addressTypeService The service for address type
+     * @param countyService The service for county
+     * @param adminService The service for admin
+     * @param mapitService The service for mapit
+     * @param validationService The service for validation
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtAddressService(final CourtRepository courtRepository,
                                     final CourtAddressRepository courtAddressRepository,
@@ -66,6 +81,11 @@ public class AdminCourtAddressService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court addresses by slug.
+     * @param slug The slug
+     * @return A list of court addresses
+     */
     public List<CourtAddress> getCourtAddressesBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(c -> c.getAddresses()
@@ -76,6 +96,12 @@ public class AdminCourtAddressService {
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Update court addresses and coordinates.
+     * @param slug The slug
+     * @param courtAddresses The court addresses
+     * @return A list of court addresses
+     */
     @Transactional()
     public List<CourtAddress> updateCourtAddressesAndCoordinates(final String slug, final List<CourtAddress> courtAddresses) {
         // Update the in-person court with its primary postcode coordinates and region
@@ -128,6 +154,11 @@ public class AdminCourtAddressService {
         return updatedAddresses;
     }
 
+    /**
+     * Validate court address postcodes.
+     * @param courtAddresses The court addresses
+     * @return A list of postcodes
+     */
     public List<String> validateCourtAddressPostcodes(final List<CourtAddress> courtAddresses) {
         if (!CollectionUtils.isEmpty(courtAddresses)) {
             final List<String> allPostcodes = getAllPostcodesSortedByAddressType(courtAddresses);
@@ -139,6 +170,11 @@ public class AdminCourtAddressService {
         return emptyList();
     }
 
+    /**
+     * Get all postcodes sorted by address type.
+     * @param courtAddresses The court addresses
+     * @return A list of postcodes
+     */
     private List<String> getAllPostcodesSortedByAddressType(final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
         return courtAddresses.stream()
@@ -151,6 +187,12 @@ public class AdminCourtAddressService {
             .collect(toList());
     }
 
+    /**
+     * Get address type from id.
+     * @param map The map
+     * @param addressTypeId The address type id
+     * @return The address type
+     */
     private String getAddressTypeFromId(final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> map, final Integer addressTypeId) {
         if (!map.containsKey(addressTypeId)) {
             throw new IllegalArgumentException("Unknown address type ID: " + addressTypeId);
@@ -158,12 +200,22 @@ public class AdminCourtAddressService {
         return map.get(addressTypeId).getName();
     }
 
+    /**
+     * Check if the court is an in-person court.
+     * @param slug The slug
+     * @return A boolean indicating if the court is an in-person court
+     */
     private boolean isInPersonCourt(final String slug) {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException(slug));
         return courtEntity.isInPerson();
     }
 
+    /**
+     * Update court lat lon and region using primary postcode.
+     * @param slug The slug
+     * @param postcode The postcode
+     */
     private void updateCourtLatLonAndRegionUsingPrimaryPostcode(final String slug, final String postcode) {
         final Optional<MapitData> mapitData = mapitService.getMapitData(postcode);
         if (mapitData.isPresent()) {
@@ -172,6 +224,12 @@ public class AdminCourtAddressService {
         }
     }
 
+    /**
+     * Construct court addresses entity.
+     * @param court The court
+     * @param courtAddresses The court addresses
+     * @return A list of court addresses
+     */
     @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private List<uk.gov.hmcts.dts.fact.entity.CourtAddress> constructCourtAddressesEntity(final Court court, final List<CourtAddress> courtAddresses) {
         final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> addressTypeMap = addressTypeService.getAddressTypeMap();
@@ -234,6 +292,11 @@ public class AdminCourtAddressService {
         return courtSecondaryAddressTypeList;
     }
 
+    /**
+     * Construct area of law.
+     * @param areaOfLaw The area of law
+     * @return The area of law
+     */
     private AreaOfLaw constructAreaOfLaw(uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw areaOfLaw) {
         return new AreaOfLaw(areaOfLaw.getId(),
                              areaOfLaw.getName(),
@@ -248,6 +311,11 @@ public class AdminCourtAddressService {
         );
     }
 
+    /**
+     * Construct court type.
+     * @param courtType The court type
+     * @return The court type
+     */
     private CourtType constructCourtType(uk.gov.hmcts.dts.fact.model.admin.CourtType courtType) {
         return new CourtType(
             courtType.getId(),
@@ -288,6 +356,10 @@ public class AdminCourtAddressService {
         return responseList;
     }
 
+    /**
+     * Delete existing secondary address types.
+     * @param slug The slug
+     */
     private void deleteExistingSecondaryAddressTypes(String slug) {
         List<Integer> secondaryTypesToRemove = getCourtAddressesBySlug(slug)
             .stream()

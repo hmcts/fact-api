@@ -10,19 +10,33 @@ import uk.gov.hmcts.dts.fact.mapit.MapitData;
 
 import java.util.Optional;
 
-
+/**
+ * Service to get mapit data.
+ */
 @Service
 public class MapitService {
 
     private final Logger logger;
     private final MapitClient mapitClient;
 
+    /**
+     * Constructor for the MapitService.
+     *
+     * @param logger the logger
+     * @param mapitClient the client to get mapit data from
+     */
     @Autowired
     public MapitService(final Logger logger, final MapitClient mapitClient) {
         this.logger = logger;
         this.mapitClient = mapitClient;
     }
 
+    /**
+     * Get mapit data for a postcode.
+     *
+     * @param postcode the postcode to get mapit data for
+     * @return the mapit data
+     */
     public Optional<MapitData> getMapitData(final String postcode) {
 
         if (!postcode.isBlank()) {
@@ -40,6 +54,12 @@ public class MapitService {
         return Optional.empty();
     }
 
+    /**
+     * Get mapit data for a partial postcode.
+     *
+     * @param postcode the partial postcode to get mapit data for
+     * @return the mapit data
+     */
     public Optional<MapitData> getMapitDataWithPartial(final String postcode) {
 
         if (!StringUtils.isBlank(postcode)) {
@@ -57,6 +77,12 @@ public class MapitService {
         return Optional.empty();
     }
 
+    /**
+     * Check if a local authority exists.
+     *
+     * @param localAuthorityName the name of the local authority
+     * @return true if the local authority exists, false otherwise
+     */
     public Boolean localAuthorityExists(final String localAuthorityName) {
 
         if (StringUtils.isNotBlank(localAuthorityName)) {
@@ -75,7 +101,6 @@ public class MapitService {
                 return false;
             }
         }
-
         return false;
     }
 }

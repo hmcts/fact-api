@@ -17,12 +17,21 @@ import uk.gov.hmcts.dts.fact.util.Utils;
 
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
+/**
+ * Service for admin court general info data.
+ */
 @Service
 public class AdminCourtGeneralInfoService {
     private final CourtRepository courtRepository;
     private final RolesProvider rolesProvider;
     private final AdminAuditService adminAuditService;
 
+    /**
+     * Constructor for the AdminCourtGeneralInfoService.
+     * @param courtRepository The repository for court
+     * @param rolesProvider The service for roles provider
+     * @param adminAuditService The service for admin audit
+     */
     @Autowired
     public AdminCourtGeneralInfoService(final CourtRepository courtRepository, final RolesProvider rolesProvider,
                                         final AdminAuditService adminAuditService) {
@@ -31,12 +40,23 @@ public class AdminCourtGeneralInfoService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get court general info by slug.
+     * @param slug The slug
+     * @return The court general info
+     */
     public CourtGeneralInfo getCourtGeneralInfoBySlug(final String slug) {
         return courtRepository.findBySlug(slug)
             .map(CourtGeneralInfo::new)
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
+    /**
+     * Update court general info.
+     * @param slug The slug
+     * @param generalInfo The general info
+     * @return The updated court general info
+     */
     @Transactional()
     public CourtGeneralInfo updateCourtGeneralInfo(final String slug, final CourtGeneralInfo generalInfo) {
         final Court courtEntity = courtRepository.findBySlug(slug)
