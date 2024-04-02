@@ -216,7 +216,7 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'properties-volume-spring-boot-starter', version: '0.1.0'
   implementation group: 'org.flywaydb', name: 'flyway-core'
 
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.1'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.2'
 
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
 
