@@ -1,0 +1,6 @@
+{
+  "connectionString": "${file:/mnt/secrets/fact/APP_INSIGHTS_CONNECTION_STRING}",
+  "role": {
+    "name": "fact-api"
+  }
+}

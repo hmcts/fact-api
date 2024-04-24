@@ -74,10 +74,6 @@ springdoc:
   api-docs:
     version: openapi_3_1
 
-azure:
-  application-insights:
-    instrumentation-key: ${APPINSIGHTS_INSTRUMENTATIONKEY:00000000-0000-0000-0000-000000000000}
-
 resilience4j:
   ratelimiter:
     instances:
