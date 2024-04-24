@@ -24,11 +24,11 @@ java:
           alias: POSTGRES_DATABASE
         - name: api-POSTGRES-USER
           alias: POSTGRES_USER
-        - name: AppInsightsInstrumentationKey
-          alias: APPINSIGHTS_INSTRUMENTATIONKEY
         - name: mapit-key
           alias: MAPIT_KEY
         - name: launchdarkly-sdk-key
           alias: LAUNCH_DARKLY_SDK_KEY
+        - name: app-insights-connection-string
+          alias: APP_INSIGHTS_CONNECTION_STRING
   environment:
     OAUTH_PROVIDER_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
