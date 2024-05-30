@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public interface CourtRepository extends JpaRepository<Court, Integer> {
+
+    Optional<Court> findCourtByIdAndDisplayedIsTrue(int id);
     Optional<Court> findBySlug(String slug);
 
     List<Court> findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(List<String> courtTypes);

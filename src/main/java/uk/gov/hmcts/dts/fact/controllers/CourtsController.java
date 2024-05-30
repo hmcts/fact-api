@@ -108,4 +108,30 @@ public class CourtsController {
     public ResponseEntity<List<Court>> findByCourtTypes(@PathVariable List<String> courtTypes) {
         return ok(courtService.getCourtsByCourtTypes(courtTypes));
     }
+
+    /**
+     * Find Court by historical court name.
+     * This endpoint can be used to search historical court names to get current court info.
+     * @input a search string
+     * @return a court reference.
+     * @path /court-history/search
+     */
+    @GetMapping(path = "/court-history/search")
+    @Operation(summary = "Return court based on a provided prefix search of court histories")
+    public ResponseEntity<CourtReference> getCourtByCourtHistoryPrefixSearch(@RequestParam(name = "q") @NotBlank String query) {
+        return ok(courtService.getCourtByCourtHistoryPrefixSearch(query));
+    }
+
+    /**
+     * Find Court by historical court name.
+     * This endpoint can be used to search historical court names to get current court info.
+     * @input a search string
+     * @return a court reference.
+     * @path /court-history/fuzz
+     */
+    @GetMapping(path = "/court-history/fuzz")
+    @Operation(summary = "Return court based on a provided prefix search of court histories")
+    public ResponseEntity<CourtReference> getCourtByCourtHistoryFuzzyMatchSearch(@RequestParam(name = "q") @NotBlank String query) {
+        return ok(courtService.getCourtByCourtHistoryFuzzyMatchSearch(query));
+    }
 }

@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.dts.fact.entity.CourtHistory;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
+import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
@@ -52,6 +54,8 @@ public class CourtService {
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
     private final FallbackProximitySearch fallbackProximitySearch;
 
+    private final CourtHistoryRepository courtHistoryRepository;
+
     /**
      * Constructor for the CourtService.
      *
@@ -62,6 +66,7 @@ public class CourtService {
      * @param serviceAreaRepository      the repository to get service areas from
      * @param serviceAreaSearchFactory   the service area search factory
      * @param fallbackProximitySearch    the fallback proximity search
+     * @param courtHistoryRepository the repository for getting court histories
      */
     @Autowired
     public CourtService(final MapitService mapitService,
@@ -70,7 +75,8 @@ public class CourtService {
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
                         final ServiceAreaSearchFactory serviceAreaSearchFactory,
-                        final FallbackProximitySearch fallbackProximitySearch) {
+                        final FallbackProximitySearch fallbackProximitySearch,
+                        final CourtHistoryRepository courtHistoryRepository) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
         this.proximitySearch = proximitySearch;
@@ -78,6 +84,7 @@ public class CourtService {
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
         this.fallbackProximitySearch = fallbackProximitySearch;
+        this.courtHistoryRepository = courtHistoryRepository;
     }
 
     /**
@@ -327,5 +334,33 @@ public class CourtService {
         // Only allow courts not in Northern Ireland or Glasglow court for Northern Ireland postcode and Immigration area of law
         return c -> !isNorthernIrishPostcode(postcode)
             || IMMIGRATION_AREA_OF_LAW.equalsIgnoreCase(areaOfLaw) && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE);
+    }
+
+    public CourtReference getCourtByCourtHistoryPrefixSearch(String prefix) {
+        CourtReference courtReference = new CourtReference();
+        List<CourtHistory> courtHistories = courtHistoryRepository.findCourtByCourtNameStartingWithIgnoreCaseOrderByCourtNameAsc(prefix);
+
+        if(!courtHistories.isEmpty())
+        {
+            courtReference = courtRepository.findById(courtHistories.get(0).getSearchCourtId())
+                .map(CourtReference::new)
+                .orElse(null);
+        }
+
+        return courtReference;
+    }
+
+    public CourtReference getCourtByCourtHistoryFuzzyMatchSearch(String query) {
+        CourtReference courtReference = new CourtReference();
+        List<CourtHistory> courtHistories = courtHistoryRepository.findCourtByNameFuzzyMatch(query);
+
+        if(!courtHistories.isEmpty())
+        {
+            courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(courtHistories.get(0).getSearchCourtId())
+                .map(CourtReference::new)
+                .orElse(courtReference);
+        }
+
+        return courtReference;
     }
 }
