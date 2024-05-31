@@ -25,12 +25,16 @@ public class CourtHistory {
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
+    @JsonProperty("court_name_cy")
+    private String courtNameCy;
+
     public CourtHistory(uk.gov.hmcts.dts.fact.entity.CourtHistory courtHistory) {
         this.id = courtHistory.getId();
         this.searchCourtId = courtHistory.getSearchCourtId();
         this.courtName = courtHistory.getCourtName();
         this.updatedAt = courtHistory.getUpdatedAt();
         this.createdAt = courtHistory.getCreatedAt();
+        this.courtNameCy = courtHistory.getCourtNameCy();
     }
 
 }

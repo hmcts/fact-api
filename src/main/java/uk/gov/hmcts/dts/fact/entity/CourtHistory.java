@@ -39,11 +39,15 @@ public class CourtHistory {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "court_name_cy")
+    private String courtNameCy;
+
 
     public CourtHistory(uk.gov.hmcts.dts.fact.model.admin.CourtHistory courtHistory) {
         this.searchCourtId = courtHistory.getSearchCourtId();
         this.courtName = courtHistory.getCourtName();
         this.updatedAt = LocalDateTime.now(ZoneOffset.UTC);
         this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
+        this.courtNameCy = courtHistory.getCourtNameCy();
     }
 }
