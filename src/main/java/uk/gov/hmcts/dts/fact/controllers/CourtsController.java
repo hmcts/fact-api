@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithHistoricalName;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
@@ -109,18 +110,18 @@ public class CourtsController {
         return ok(courtService.getCourtsByCourtTypes(courtTypes));
     }
 
-    /**
-     * Find Court by historical court name.
-     * This endpoint can be used to search historical court names to get current court info.
-     * @input a search string
-     * @return a court reference.
-     * @path /court-history/search
-     */
-    @GetMapping(path = "/court-history/search")
-    @Operation(summary = "Return court based on a provided prefix search of court histories")
-    public ResponseEntity<CourtReference> getCourtByCourtHistoryPrefixSearch(@RequestParam(name = "q") @NotBlank String query) {
-        return ok(courtService.getCourtByCourtHistoryPrefixSearch(query));
-    }
+//    /**
+//     * Find Court by historical court name.
+//     * This endpoint can be used to search historical court names to get current court info.
+//     * @input a search string
+//     * @return a court reference.
+//     * @path /court-history/search
+//     */
+//    @GetMapping(path = "/court-history/search")
+//    @Operation(summary = "Return court based on a provided prefix search of court histories")
+//    public ResponseEntity<CourtReference> getCourtByCourtHistoryPrefixSearch(@RequestParam(name = "q") @NotBlank String query) {
+//        return ok(courtService.getCourtByCourtHistoryPrefixSearch(query));
+//    }
 
     /**
      * Find Court by historical court name.
@@ -133,5 +134,18 @@ public class CourtsController {
     @Operation(summary = "Return court based on a provided prefix search of court histories")
     public ResponseEntity<CourtReference> getCourtByCourtHistoryFuzzyMatchSearch(@RequestParam(name = "q") @NotBlank String query) {
         return ok(courtService.getCourtByCourtHistoryFuzzyMatchSearch(query));
+    }
+
+    /**
+     * Find Court by historical court name.
+     * This endpoint can be used to search historical court names to get current court info.
+     * @input a search string
+     * @return a court reference.
+     * @path /court-history/fuzz
+     */
+    @GetMapping(path = "/court-history/search")
+    @Operation(summary = "Return court based on a provided name search of court histories")
+    public ResponseEntity<CourtReferenceWithHistoricalName> getCourtByCourtHistoryNameSearch(@RequestParam(name = "q") @NotBlank String query) {
+        return ok(courtService.getCourtByCourtHistoryName(query));
     }
 }

@@ -8,10 +8,7 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
-import uk.gov.hmcts.dts.fact.model.Court;
-import uk.gov.hmcts.dts.fact.model.CourtReference;
-import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
-import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
+import uk.gov.hmcts.dts.fact.model.*;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
@@ -358,6 +355,20 @@ public class CourtService {
         {
             courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(courtHistories.get(0).getSearchCourtId())
                 .map(CourtReference::new)
+                .orElse(courtReference);
+        }
+
+        return courtReference;
+    }
+
+    public CourtReferenceWithHistoricalName getCourtByCourtHistoryName(String query) {
+        CourtReferenceWithHistoricalName courtReference = new CourtReferenceWithHistoricalName();
+        List<CourtHistory> courtHistories = courtHistoryRepository.findAllByCourtNameIgnoreCase(query);
+
+        if(!courtHistories.isEmpty())
+        {
+            courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(courtHistories.get(0).getSearchCourtId())
+                .map(newCourt -> new CourtReferenceWithHistoricalName(newCourt, courtHistories.get(0)))
                 .orElse(courtReference);
         }
 
