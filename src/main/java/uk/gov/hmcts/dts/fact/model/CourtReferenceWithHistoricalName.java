@@ -30,6 +30,6 @@ public class CourtReferenceWithHistoricalName {
             ? null : new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH).format(courtEntity.getUpdatedAt());
         this.displayed = courtEntity.getDisplayed();
         this.region = courtEntity.getRegionId();
-        this.historicalName = chooseString(courtHistory.getCourtName(), courtHistory.getCourtNameCy());
+        this.historicalName = chooseString(courtHistory.getCourtNameCy(), courtHistory.getCourtName());
     }
 }
