@@ -341,4 +341,20 @@ class CourtRepositoryTest {
         softly.assertThat(result.get().getLon()).isEqualTo(expectedLon);
         softly.assertAll();
     }
+
+    @Test
+    void shouldFindActiveCourtById() {
+        assertThat(courtRepository.findCourtByIdAndDisplayedIsTrue(1479547))
+            .isPresent()
+            .get()
+            .isInstanceOf(Court.class)
+            .extracting("id", "displayed")
+            .contains(1479547, true);
+    }
+
+    @Test
+    void shouldNotFindCourtByIdIfCourtNotActive() {
+        assertThat(courtRepository.findCourtByIdAndDisplayedIsTrue(1479802))
+            .isNotPresent();
+    }
 }
