@@ -333,34 +333,12 @@ public class CourtService {
             || IMMIGRATION_AREA_OF_LAW.equalsIgnoreCase(areaOfLaw) && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE);
     }
 
-    public CourtReference getCourtByCourtHistoryPrefixSearch(String prefix) {
-        CourtReference courtReference = new CourtReference();
-        List<CourtHistory> courtHistories = courtHistoryRepository.findCourtByCourtNameStartingWithIgnoreCaseOrderByCourtNameAsc(prefix);
-
-        if(!courtHistories.isEmpty())
-        {
-            courtReference = courtRepository.findById(courtHistories.get(0).getSearchCourtId())
-                .map(CourtReference::new)
-                .orElse(null);
-        }
-
-        return courtReference;
-    }
-
-    public CourtReference getCourtByCourtHistoryFuzzyMatchSearch(String query) {
-        CourtReference courtReference = new CourtReference();
-        List<CourtHistory> courtHistories = courtHistoryRepository.findCourtByNameFuzzyMatch(query);
-
-        if(!courtHistories.isEmpty())
-        {
-            courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(courtHistories.get(0).getSearchCourtId())
-                .map(CourtReference::new)
-                .orElse(courtReference);
-        }
-
-        return courtReference;
-    }
-
+    /**
+     * Get a court by old court name.
+     *
+     * @param query old court name
+     * @return CourtReferenceWithHistoricalName - current court info and old court name
+     */
     public CourtReferenceWithHistoricalName getCourtByCourtHistoryName(String query) {
         CourtReferenceWithHistoricalName courtReference = new CourtReferenceWithHistoricalName();
         List<CourtHistory> courtHistories = courtHistoryRepository.findAllByCourtNameIgnoreCase(query);

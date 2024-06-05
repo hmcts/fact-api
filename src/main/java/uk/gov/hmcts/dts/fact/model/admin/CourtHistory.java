@@ -37,4 +37,15 @@ public class CourtHistory {
         this.courtNameCy = courtHistory.getCourtNameCy();
     }
 
+    @Override
+    public String toString() {
+        return "CourtHistory{" +
+            "id=" + id +
+            ", searchCourtId=" + searchCourtId +
+            ", courtName='" + courtName + '\'' +
+            ", updatedAt=" + updatedAt +
+            ", createdAt=" + createdAt +
+            ", courtNameCy='" + courtNameCy + '\'' +
+            '}';
+    }
 }

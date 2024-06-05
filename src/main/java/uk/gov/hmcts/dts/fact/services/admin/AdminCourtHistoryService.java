@@ -29,6 +29,11 @@ public class AdminCourtHistoryService {
         this.adminAuditService = adminAuditService;
     }
 
+    /**
+     * Get all court histories.
+     *
+     * @return List<CourtHistory> list of all court histories
+     */
     public List<CourtHistory> getAllCourtHistory() {
         return courtHistoryRepository.findAll()
             .stream()
@@ -36,12 +41,24 @@ public class AdminCourtHistoryService {
             .toList();
     }
 
+    /**
+     * Get a specific court using ID.
+     *
+     * @param courtHistoryId ID of a court history
+     * @return CourtHistory a specific court history
+     */
     public CourtHistory getCourtHistoryById(Integer courtHistoryId) {
         return courtHistoryRepository.findById(courtHistoryId)
             .map(CourtHistory::new)
             .orElseThrow(() -> new NotFoundException("Court History with ID: " + courtHistoryId));
     }
 
+    /**
+     * Get all the court histories of a specific court using a search court ID.
+     *
+     * @param courtId ID of a court
+     * @return List<CourtHistory> list of the court histories of a specific court
+     */
     public List<CourtHistory> getCourtHistoryByCourtId(Integer courtId) {
         return courtHistoryRepository.findAllBySearchCourtId(courtId)
             .stream()
@@ -49,6 +66,12 @@ public class AdminCourtHistoryService {
             .toList();
     }
 
+    /**
+     * Get all the court histories matching the court name.
+     *
+     * @param courtName an old court name
+     * @return List<CourtHistory> list of court histories with matching name
+     */
     public List<CourtHistory> getCourtHistoryByCourtName(String courtName) {
         return courtHistoryRepository.findAllByCourtName(courtName)
             .stream()
@@ -56,6 +79,12 @@ public class AdminCourtHistoryService {
             .toList();
     }
 
+    /**
+     * Add a court history.
+     * Also saves audit info of the court history creation.
+     * @param courtHistory old court info
+     * @return CourtHistory the new court history that has been added
+     */
     public CourtHistory addCourtHistory(CourtHistory courtHistory) {
 
         CourtHistory courtHistoryModel = new CourtHistory(courtHistoryRepository.save(new uk.gov.hmcts.dts.fact.entity.CourtHistory(courtHistory)));
@@ -63,6 +92,12 @@ public class AdminCourtHistoryService {
         return courtHistoryModel;
     }
 
+    /**
+     * Update an existing court history.
+     * Also saves audit info of the court history that has been updated.
+     * @param courtHistory updated court info of an existing court history
+     * @return CourtHistory the court history that has been updated
+     */
     public CourtHistory updateCourtHistory(CourtHistory courtHistory) {
         uk.gov.hmcts.dts.fact.entity.CourtHistory courtHistoryEntity =
             courtHistoryRepository.findById(courtHistory.getId()).orElseThrow(
@@ -79,6 +114,12 @@ public class AdminCourtHistoryService {
         return courtHistoryModel;
     }
 
+    /**
+     * Delete a court history.
+     * Also saves audit info of the court history that has been deleted.
+     * @param courtHistoryId ID of court history to be deleted
+     * @return CourtHistory the court history that has been deleted
+     */
     @Transactional
     public CourtHistory deleteCourtHistoryById(Integer courtHistoryId) {
         CourtHistory courtHistoryToDelete = getCourtHistoryById(courtHistoryId);
@@ -87,6 +128,12 @@ public class AdminCourtHistoryService {
         return courtHistoryToDelete;
     }
 
+    /**
+     * Delete the court histories of a specific court.
+     * Also saves audit info of the court histories that has been deleted.
+     * @param courtId ID of court whose histories should be deleted
+     * @return CourtHistory the court history that has been deleted
+     */
     @Transactional
     public List<CourtHistory> deleteCourtHistoriesByCourtId(Integer courtId) {
         List<CourtHistory> courtHistoryList = courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(courtId)
