@@ -110,41 +110,18 @@ public class CourtsController {
         return ok(courtService.getCourtsByCourtTypes(courtTypes));
     }
 
-//    /**
-//     * Find Court by historical court name.
-//     * This endpoint can be used to search historical court names to get current court info.
-//     * @input a search string
-//     * @return a court reference.
-//     * @path /court-history/search
-//     */
-//    @GetMapping(path = "/court-history/search")
-//    @Operation(summary = "Return court based on a provided prefix search of court histories")
-//    public ResponseEntity<CourtReference> getCourtByCourtHistoryPrefixSearch(@RequestParam(name = "q") @NotBlank String query) {
-//        return ok(courtService.getCourtByCourtHistoryPrefixSearch(query));
-//    }
-
     /**
      * Find Court by historical court name.
-     * This endpoint can be used to search historical court names to get current court info.
+     * This endpoint can be used to search historical court names to get current court info. If the historical name exists, then the current court information e.g.
+     * name, slug etc. are returned. The search ignores upper/lowercase but the words must match name exactly.
      * @input a search string
-     * @return a court reference.
-     * @path /court-history/fuzz
-     */
-    @GetMapping(path = "/court-history/fuzz")
-    @Operation(summary = "Return court based on a provided prefix search of court histories")
-    public ResponseEntity<CourtReference> getCourtByCourtHistoryFuzzyMatchSearch(@RequestParam(name = "q") @NotBlank String query) {
-        return ok(courtService.getCourtByCourtHistoryFuzzyMatchSearch(query));
-    }
-
-    /**
-     * Find Court by historical court name.
-     * This endpoint can be used to search historical court names to get current court info.
-     * @input a search string
-     * @return a court reference.
-     * @path /court-history/fuzz
+     * @return CourtReferenceWithHistoricalName - the current court info including the historical court name.
+     * @path /court-history/search
      */
     @GetMapping(path = "/court-history/search")
-    @Operation(summary = "Return court based on a provided name search of court histories")
+    @ApiResponse(responseCode = "200", description = "Successful - returns empty CourtReferenceWithHistoricalName if no Court History Found")
+    @ApiResponse(responseCode = "404", description = "Court History Found but No corresponding Court found")
+    @Operation(summary = "Return active court based a search of old court names")
     public ResponseEntity<CourtReferenceWithHistoricalName> getCourtByCourtHistoryNameSearch(@RequestParam(name = "q") @NotBlank String query) {
         return ok(courtService.getCourtByCourtHistoryName(query));
     }
