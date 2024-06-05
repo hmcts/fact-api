@@ -1,7 +1,8 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.BeforeAll;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -13,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.CourtHistory;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
-import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
 
 import java.time.LocalDateTime;
@@ -40,9 +40,13 @@ class AdminCourtHistoryServiceTest {
     @Captor
     ArgumentCaptor<CourtHistory> courtHistoryCaptor;
 
+    @Captor
+    ArgumentCaptor<Integer> IdCaptor;
+
+
     private static List<CourtHistory> mockCourtHistories;
     private static final String EXP_EXCEPTION_MSG_PREFIX = "Not found: Court History with ID: ";
-    private static final int COURT_HISTORY_ID = 132732;
+    private static final int DONT_EXIST_COURT_HISTORY_ID = 132732;
     private static final int COURT_ID = 2122;
 
     private static CourtHistory courtHistory1;
@@ -51,24 +55,22 @@ class AdminCourtHistoryServiceTest {
     private static CourtHistory courtHistory4;
 
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         mockCourtHistories = new ArrayList<>();
         courtHistory1 = new CourtHistory(
             1, 11, "fakeCourt1", LocalDateTime.parse("2024-02-03T10:15:30"),
-            LocalDateTime.parse("2007-12-03T10:15:30"));
+            LocalDateTime.parse("2007-12-03T10:15:30"), null);
         courtHistory2 = new CourtHistory(
-            2, 11332423, "fakeCourt2", null,
-            null);
+            2, 11332423, "fakeCourt2", null, null, null);
         courtHistory3 = new CourtHistory(
             3, 11, "fakeCourt3", LocalDateTime.parse("2024-02-03T10:15:30"),
-            LocalDateTime.parse("2023-12-03T11:15:30"));
+            LocalDateTime.parse("2023-12-03T11:15:30"), "");
         courtHistory4 = new CourtHistory(
-            4, 11, "fakeCourt3", LocalDateTime.parse("2024-02-03T10:15:30"),
-            LocalDateTime.parse("2024-03-03T10:15:30"));
+            4, 11, "fakeCourt4", LocalDateTime.parse("2024-02-03T10:15:30"),
+            LocalDateTime.parse("2024-03-03T10:15:30"), "Llys y Goron");
 
         mockCourtHistories.add(courtHistory1);
-        mockCourtHistories.add(courtHistory2);
         mockCourtHistories.add(courtHistory3);
         mockCourtHistories.add(courtHistory4);
     }
@@ -77,16 +79,16 @@ class AdminCourtHistoryServiceTest {
     void shouldReturnAllCourtNamesHistories() {
         when(courtHistoryRepository.findAll()).thenReturn(mockCourtHistories);
 
-        assertThat(adminCourtHistoryService.getAllCourtHistory()).hasSize(mockCourtHistories.size());
+        assertThat(adminCourtHistoryService.getAllCourtHistory()).hasSize(3);
     }
 
     @Test
-    void shouldThrowExceptionWhenCourtNotFound() throws NotFoundException {
-        when(courtHistoryRepository.findById(COURT_HISTORY_ID)).thenReturn(Optional.empty());
+    void shouldNotRetrieveANonExistentCourt() throws NotFoundException {
+        when(courtHistoryRepository.findById(DONT_EXIST_COURT_HISTORY_ID)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> adminCourtHistoryService.getCourtHistoryById(COURT_HISTORY_ID))
+        assertThatThrownBy(() -> adminCourtHistoryService.getCourtHistoryById(DONT_EXIST_COURT_HISTORY_ID))
             .isInstanceOf(NotFoundException.class)
-            .hasMessage(EXP_EXCEPTION_MSG_PREFIX + COURT_HISTORY_ID);
+            .hasMessage(EXP_EXCEPTION_MSG_PREFIX + DONT_EXIST_COURT_HISTORY_ID);
     }
 
     @Test
@@ -133,15 +135,19 @@ class AdminCourtHistoryServiceTest {
 
     @Test
     void shouldBeAbleToUpdateExistingCourtHistory() {
-        CourtHistory updatedCourtHistory3 = new CourtHistory(
+        CourtHistory existingCourtHistory = new CourtHistory(
+            3, 11, "IAmCalledThis", LocalDateTime.parse("2024-02-03T10:15:30"),
+            LocalDateTime.parse("2023-12-03T11:15:30"), "Cymru");
+        CourtHistory updatedCourtHistory = new CourtHistory(
             3, 11, "IWantToBeCalledThisNow", LocalDateTime.parse("2024-02-03T10:15:30"),
-            LocalDateTime.parse("2023-12-03T11:15:30"));
-        uk.gov.hmcts.dts.fact.model.admin.CourtHistory updatedCourtHistory3Model =
-            new uk.gov.hmcts.dts.fact.model.admin.CourtHistory(updatedCourtHistory3);
-        when(courtHistoryRepository.findById(updatedCourtHistory3Model.getId())).thenReturn(Optional.ofNullable(courtHistory3));
-        when(courtHistoryRepository.save(any(CourtHistory.class))).thenReturn(courtHistory3);
+            LocalDateTime.parse("2023-12-03T11:15:30"), "Cymru");
+        uk.gov.hmcts.dts.fact.model.admin.CourtHistory updatedCourtHistoryModel =
+            new uk.gov.hmcts.dts.fact.model.admin.CourtHistory(updatedCourtHistory);
 
-        assertThat(adminCourtHistoryService.updateCourtHistory(updatedCourtHistory3Model))
+        when(courtHistoryRepository.findById(updatedCourtHistoryModel.getId())).thenReturn(Optional.of(existingCourtHistory));
+        when(courtHistoryRepository.save(any(CourtHistory.class))).thenReturn(existingCourtHistory);
+
+        assertThat(adminCourtHistoryService.updateCourtHistory(updatedCourtHistoryModel))
             .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtHistory.class);
 
         verify(adminAuditService).saveAudit(eq("Update court history"), isA(uk.gov.hmcts.dts.fact.model.admin.CourtHistory.class), isNull(),
@@ -152,5 +158,42 @@ class AdminCourtHistoryServiceTest {
         assertThat(courtHistoryCaptor.getValue().getSearchCourtId()).isEqualTo(11);
         assertThat(courtHistoryCaptor.getValue().getId()).isEqualTo(3);
         assertThat(courtHistoryCaptor.getValue().getCreatedAt()).isEqualTo(LocalDateTime.parse("2023-12-03T11:15:30"));
+    }
+
+    @Test
+    void shouldBeAbleToDeleteCourtHistory() {
+        when(courtHistoryRepository.findById(1)).thenReturn(Optional.ofNullable(courtHistory1));
+        when(courtHistoryRepository.save(courtHistory1)).thenReturn(courtHistory1);
+        assertThat(adminCourtHistoryService.deleteCourtHistoryById(1))
+            .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtHistory.class);
+
+        verify(courtHistoryRepository).deleteById(IdCaptor.capture());
+        verify(adminAuditService).saveAudit(eq("Delete court history"), any(), isNull(), eq(courtHistory1.getCourtName()));
+        assertThat((IdCaptor.getValue())).isEqualTo(1);
+    }
+
+    @Test
+    void shouldNotBeAbleToDeleteCourtHistoryThatDoesNotExist() {
+        when(courtHistoryRepository.findById(DONT_EXIST_COURT_HISTORY_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> adminCourtHistoryService.deleteCourtHistoryById(DONT_EXIST_COURT_HISTORY_ID))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(EXP_EXCEPTION_MSG_PREFIX + DONT_EXIST_COURT_HISTORY_ID);
+
+        verify(courtHistoryRepository, never()).deleteById(any());
+        verify(adminAuditService, never()).saveAudit(any(), any(), any(), any());
+    }
+
+    @Test
+    void shouldBeAbleToDeleteAllTheCourtHistoryOfACourt() {
+        when(courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(11)).thenReturn(mockCourtHistories);
+
+        assertThat(adminCourtHistoryService.deleteCourtHistoriesByCourtId(11))
+            .isInstanceOf(List.class)
+            .hasSize(3)
+            .extracting("courtName")
+            .contains("fakeCourt1","fakeCourt3", "fakeCourt4");
+
+        verify(adminAuditService).saveAudit(eq("Delete court history"), any(), isNull(), isA(String.class));
     }
 }
