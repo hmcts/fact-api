@@ -367,9 +367,13 @@ public class CourtService {
 
         if(!courtHistories.isEmpty())
         {
-            courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(courtHistories.get(0).getSearchCourtId())
+            int searchCourtId = courtHistories.get(0).getSearchCourtId();
+            courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(searchCourtId)
                 .map(newCourt -> new CourtReferenceWithHistoricalName(newCourt, courtHistories.get(0)))
-                .orElse(courtReference);
+                .orElseGet(() -> {
+                    log.error(String.format("Court History with ID: %d does not have a corresponding active court", searchCourtId));
+                    throw new NotFoundException(String.format("Court History with ID: %d does not have a corresponding active court", searchCourtId));
+                });
         }
 
         return courtReference;
