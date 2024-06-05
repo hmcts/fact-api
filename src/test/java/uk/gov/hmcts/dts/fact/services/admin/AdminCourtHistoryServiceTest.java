@@ -114,6 +114,8 @@ class AdminCourtHistoryServiceTest {
         when(courtHistoryRepository.save(any(CourtHistory.class))).thenReturn(courtHistory1);
         assertThat(adminCourtHistoryService.addCourtHistory(courtHistoryToSave))
             .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtHistory.class);
+        verify(adminAuditService, times(1)).saveAudit("Create court history",
+                                                      courtHistoryToSave, null, courtHistoryToSave.getCourtName());
     }
 
     @Test
@@ -126,7 +128,7 @@ class AdminCourtHistoryServiceTest {
             .isInstanceOf(NotFoundException.class)
             .hasMessage(EXP_EXCEPTION_MSG_PREFIX + iDontExist.getId());
         verify(courtHistoryRepository, never()).save(any());
-
+        verify(adminAuditService, never()).saveAudit(any(), any(), any(), any());
     }
 
     @Test
@@ -142,6 +144,8 @@ class AdminCourtHistoryServiceTest {
         assertThat(adminCourtHistoryService.updateCourtHistory(updatedCourtHistory3Model))
             .isInstanceOf(uk.gov.hmcts.dts.fact.model.admin.CourtHistory.class);
 
+        verify(adminAuditService).saveAudit(eq("Update court history"), isA(uk.gov.hmcts.dts.fact.model.admin.CourtHistory.class), isNull(),
+                                            eq(updatedCourtHistoryModel.getCourtName()));
         verify(courtHistoryRepository).save(courtHistoryCaptor.capture());
 
         assertThat(courtHistoryCaptor.getValue().getCourtName()).isEqualTo("IWantToBeCalledThisNow");

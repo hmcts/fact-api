@@ -41,7 +41,10 @@ public enum AuditType {
     UPDATE_COURT_APPLICATION_UPDATES_LIST("Update court application updates list"),
     CREATE_COURT_LOCK("Create court lock"),
     UPDATE_COURT_LOCK("Update court lock"),
-    DELETE_COURT_LOCK("Delete court lock");
+    DELETE_COURT_LOCK("Delete court lock"),
+    CREATE_COURT_HISTORY("Create court history"),
+    UPDATE_COURT_HISTORY("Update court history"),
+    DELETE_COURT_HISTORY("Delete court history");
 
     private final String name;
 

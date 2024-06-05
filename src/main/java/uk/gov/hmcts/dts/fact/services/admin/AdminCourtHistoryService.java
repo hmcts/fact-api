@@ -21,9 +21,12 @@ public class AdminCourtHistoryService {
 
     private final CourtHistoryRepository courtHistoryRepository;
 
+    private final AdminAuditService adminAuditService;
+
     @Autowired
-    public AdminCourtHistoryService(CourtHistoryRepository courtHistoryRepository) {
+    public AdminCourtHistoryService(CourtHistoryRepository courtHistoryRepository, AdminAuditService adminAuditService) {
         this.courtHistoryRepository = courtHistoryRepository;
+        this.adminAuditService = adminAuditService;
     }
 
     public List<CourtHistory> getAllCourtHistory() {
@@ -54,9 +57,10 @@ public class AdminCourtHistoryService {
     }
 
     public CourtHistory addCourtHistory(CourtHistory courtHistory) {
-        return new CourtHistory(
-            courtHistoryRepository.save(new uk.gov.hmcts.dts.fact.entity.CourtHistory(courtHistory))
-        );
+
+        CourtHistory courtHistoryModel = new CourtHistory(courtHistoryRepository.save(new uk.gov.hmcts.dts.fact.entity.CourtHistory(courtHistory)));
+        adminAuditService.saveAudit("Create court history", courtHistoryModel, null, courtHistoryModel.getCourtName());
+        return courtHistoryModel;
     }
 
     public CourtHistory updateCourtHistory(CourtHistory courtHistory) {
@@ -69,21 +73,30 @@ public class AdminCourtHistoryService {
         courtHistoryEntity.setCourtName(courtHistory.getCourtName());
         courtHistoryEntity.setUpdatedAt(LocalDateTime.now(ZoneOffset.UTC));
 
-        return new CourtHistory(courtHistoryRepository.save(courtHistoryEntity));
+        CourtHistory courtHistoryModel = new CourtHistory(courtHistoryRepository.save(courtHistoryEntity));
+
+        adminAuditService.saveAudit("Update court history", courtHistoryModel, null, courtHistoryModel.getCourtName());
+        return courtHistoryModel;
     }
 
     @Transactional
     public CourtHistory deleteCourtHistoryById(Integer courtHistoryId) {
         CourtHistory courtHistoryToDelete = getCourtHistoryById(courtHistoryId);
         courtHistoryRepository.deleteById(courtHistoryToDelete.getId());
+        adminAuditService.saveAudit("Delete court history", courtHistoryToDelete, null, courtHistoryToDelete.getCourtName());
         return courtHistoryToDelete;
     }
 
     @Transactional
     public List<CourtHistory> deleteCourtHistoriesByCourtId(Integer courtId) {
-        return courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(courtId)
+        List<CourtHistory> courtHistoryList = courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(courtId)
             .stream()
             .map(CourtHistory::new)
             .toList();
+
+        adminAuditService.saveAudit("Delete court history", courtHistoryList,
+                                    null, courtHistoryList.toString());
+
+        return courtHistoryList;
     }
 }
