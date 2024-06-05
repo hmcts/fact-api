@@ -16,6 +16,7 @@ import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
@@ -47,6 +48,8 @@ public class AdminService {
     private final ServiceAreaRepository serviceAreaRepository;
     private final AreasOfLawRepository areasOfLawRepository;
 
+    private final CourtHistoryRepository courtHistoryRepository;
+
     private static final String INTRO_PARAGRAPH = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
     private static final String INTRO_PARAGRAPH_CY = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.";
 
@@ -63,12 +66,14 @@ public class AdminService {
                         final RolesProvider rolesProvider,
                         final AdminAuditService adminAuditService,
                         final ServiceAreaRepository serviceAreaRepository,
-                        final AreasOfLawRepository areasOfLawRepository) {
+                        final AreasOfLawRepository areasOfLawRepository,
+                        CourtHistoryRepository courtHistoryRepository) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
         this.adminAuditService = adminAuditService;
         this.serviceAreaRepository = serviceAreaRepository;
         this.areasOfLawRepository = areasOfLawRepository;
+        this.courtHistoryRepository = courtHistoryRepository;
     }
 
     /**
@@ -302,8 +307,10 @@ public class AdminService {
     public void deleteCourt(String courtSlug) {
         uk.gov.hmcts.dts.fact.entity.Court court =
             courtRepository.findBySlug(courtSlug).orElseThrow(() -> new NotFoundException(courtSlug));
+
         adminAuditService.saveAudit(AuditType.findByName("Delete existing court"), new Court(court),
                                     null, courtSlug);
+        courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(court.getId());
         courtRepository.deleteById(court.getId());
     }
 
