@@ -10,6 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import static uk.gov.hmcts.dts.fact.util.Utils.chooseString;
+
+/**
+ * {@link CourtReference CourtReference.class} but with a field for the old name.
+ * of a court
+ */
 @Getter
 @NoArgsConstructor
 @JsonPropertyOrder({"name", "slug", "updated_at"})

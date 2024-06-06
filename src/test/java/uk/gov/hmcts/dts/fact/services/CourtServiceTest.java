@@ -33,7 +33,6 @@ import uk.gov.hmcts.dts.fact.util.Action;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -71,18 +70,19 @@ class CourtServiceTest {
     private static final List<String> COURT_TYPE_LIST = asList("Family Court", "Tribunal");
 
     private static final Court FAKE_CURRENT_COURT = new Court();
+    private static final String FAKE_COURT_NAME1 = "fakeCourt1";
 
-    private static final List<CourtHistory> FAKE_COURT_HISTORIES = Arrays.asList(
+    private static final List<CourtHistory> FAKE_COURT_HISTORIES = asList(
         new CourtHistory(
-            1, 11, "fakeCourt1", LocalDateTime.parse("2024-02-03T10:15:30"),
+            1, 11, FAKE_COURT_NAME1, LocalDateTime.parse("2024-02-03T10:15:30"),
             LocalDateTime.parse("2007-12-03T10:15:30"), null),
         new CourtHistory(
-            2, 11, "fakeCourt1", null, null, null),
+            2, 11, FAKE_COURT_NAME1, null, null, null),
         new CourtHistory(
-            3, 11, "fakeCourt1", LocalDateTime.parse("2024-02-03T10:15:30"),
+            3, 11, FAKE_COURT_NAME1, LocalDateTime.parse("2024-02-03T10:15:30"),
             LocalDateTime.parse("2023-12-03T11:15:30"), ""),
         new CourtHistory(
-            4, 11, "fakeCourt1", LocalDateTime.parse("2024-02-03T10:15:30"),
+            4, 11, FAKE_COURT_NAME1, LocalDateTime.parse("2024-02-03T10:15:30"),
             LocalDateTime.parse("2024-03-03T10:15:30"), "Llys y Goron")
     );
 
@@ -740,29 +740,29 @@ class CourtServiceTest {
         FAKE_CURRENT_COURT.setRegionId(9);
         FAKE_CURRENT_COURT.setUpdatedAt(Timestamp.valueOf("2024-03-03 10:15:30"));
 
-        when(courtHistoryRepository.findAllByCourtNameIgnoreCase("fakeCourt1")).thenReturn(FAKE_COURT_HISTORIES);
+        when(courtHistoryRepository.findAllByCourtNameIgnoreCase(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
         when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
 
-        assertThat(courtService.getCourtByCourtHistoryName("fakeCourt1"))
+        assertThat(courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
             .isInstanceOf(CourtReferenceWithHistoricalName.class)
             .extracting("name", "slug", "historicalName", "displayed", "region")
-            .contains("fakeCurrentCourt1", "fake-current-court-1", "fakeCourt1", true, 9);
+            .contains("fakeCurrentCourt1", "fake-current-court-1", FAKE_COURT_NAME1, true, 9);
     }
 
     @Test
     void shouldThrowExceptionWhenThereIsCourtHistoryButNoCourt() {
 
-        when(courtHistoryRepository.findAllByCourtNameIgnoreCase("fakeCourt1")).thenReturn(FAKE_COURT_HISTORIES);
-        when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(Optional.empty());
+        when(courtHistoryRepository.findAllByCourtNameIgnoreCase(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
+        when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(empty());
 
-        assertThatThrownBy(() -> courtService.getCourtByCourtHistoryName("fakeCourt1"))
+        assertThatThrownBy(() -> courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
             .isInstanceOf(NotFoundException.class)
             .hasMessage("Not found: Court History with ID: 11 does not have a corresponding active court");
     }
 
     @Test
     void shouldReturnEmptyCourtWhenCourtHistoryNotFound() {
-        assertThat(courtService.getCourtByCourtHistoryName("fakeCourt1"))
+        assertThat(courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
             .isInstanceOf(CourtReferenceWithHistoricalName.class)
             .extracting("name", "slug", "historicalName", "displayed", "region")
             .contains(null, null, null, false, null);

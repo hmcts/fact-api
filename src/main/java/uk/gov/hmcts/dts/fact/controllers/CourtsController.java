@@ -115,7 +115,7 @@ public class CourtsController {
      * This endpoint can be used to search historical court names to get current court info. If the historical name exists, then the current court information e.g.
      * name, slug etc. are returned. The search ignores upper/lowercase but the words must match name exactly.
      * @input a search string
-     * @return CourtReferenceWithHistoricalName - the current court info including the historical court name.
+     * @return {@link CourtReferenceWithHistoricalName CourtReferenceWithHistoricalName.class} the current court info including the historical court name.
      * @path /court-history/search
      */
     @GetMapping(path = "/court-history/search")

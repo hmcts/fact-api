@@ -6,6 +6,9 @@ import uk.gov.hmcts.dts.fact.entity.CourtHistory;
 
 import java.util.List;
 
+/**
+ * Repository for accessing CourtHistory data.
+ */
 public interface CourtHistoryRepository extends JpaRepository<CourtHistory, Integer> {
 
     List<CourtHistory> findAllBySearchCourtId(Integer searchCourtId);

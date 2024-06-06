@@ -300,7 +300,7 @@ public class AdminService {
     }
 
     /**
-     * Delete court.
+     * Delete court and its history.
      * @param courtSlug The slug of the court
      */
     @Transactional

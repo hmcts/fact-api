@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtHistoryService;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.net.URI;
 import java.util.List;
@@ -38,6 +37,10 @@ public class AdminCourtHistoryController {
     private final AdminCourtHistoryService adminCourtHistoryService;
 
     private static final String UNAUTHORISED_CODE = "401";
+    private static final String SUCCESS_CODE = "200";
+    private static final String NOT_FOUND_CODE = "404";
+
+    private static final String UNAUTHORISED_USER = "Unauthorised user";
 
     @Autowired
     public AdminCourtHistoryController(final AdminCourtHistoryService adminCourtHistoryService) {
@@ -47,11 +50,12 @@ public class AdminCourtHistoryController {
     /**
      * Get all court histories.
      * This endpoint can be used to get all the court histories that exist.
-     * @return List<CourtHistory> - a list of all the coyrt histories.
+     * @return {@link List} of {@link CourtHistory} a list of all the coyrt histories.
      */
     @GetMapping
     @Operation(summary = "Get all court histories")
-    @ApiResponse(responseCode = "200", description = "Successful")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<CourtHistory>> getAllCourtHistory() {
         return ok(adminCourtHistoryService.getAllCourtHistory());
@@ -66,8 +70,9 @@ public class AdminCourtHistoryController {
      */
     @GetMapping("/{courtHistoryId}")
     @Operation(summary = "Get a court history")
-    @ApiResponse(responseCode = "200", description = "Successful - Court History Found")
-    @ApiResponse(responseCode = "404", description = "Court History Not Found")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Court History Found")
+    @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court History Not Found")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<CourtHistory> getCourtHistoryById(@PathVariable Integer courtHistoryId) {
         return ok(adminCourtHistoryService.getCourtHistoryById(courtHistoryId));
@@ -78,11 +83,12 @@ public class AdminCourtHistoryController {
      * This endpoint can be used to get all the court histories associated with a specific active court.
      * @input a court ID
      * @path /admin/courts/history/id/{courtId}
-     * @return List<CourtHistory>> - a list of a court's coyrt histories.
+     * @return {@link List} of {@link CourtHistory} a list of a court's coyrt histories.
      */
     @GetMapping("/id/{courtId}")
     @Operation(summary = "Get all court histories of a court")
-    @ApiResponse(responseCode = "200", description = "Successful - Will return an empty response when no Court matches ID")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Will return an empty response when no Court matches ID")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<CourtHistory>> getCourtHistoryByCourtId(@PathVariable Integer courtId) {
         return ok(adminCourtHistoryService.getCourtHistoryByCourtId(courtId));
@@ -92,11 +98,12 @@ public class AdminCourtHistoryController {
      * Get a court history by its court name.
      * This endpoint can be used to get all the court histories that exist.
      * @path /admin/courts/history/name/{courtName}
-     * @return List<CourtHistory> - a list of all the coyrt histories that have that name.
+     * @return {@link List} of {@link CourtHistory} a list of all the coyrt histories that have that name.
      */
     @GetMapping("/name/{courtName}")
     @Operation(summary = "Get a court history using a historical court name")
-    @ApiResponse(responseCode = "200", description = "Successful - Will return an empty response when no Court matches name")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Will return an empty response when no Court matches name")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<CourtHistory>> getCourtHistoryByCourtName(@PathVariable String courtName) {
         return ok(adminCourtHistoryService.getCourtHistoryByCourtName(courtName));
@@ -107,11 +114,12 @@ public class AdminCourtHistoryController {
      * This endpoint can be used to add a new court history.
      * @path /admin/courts/history
      * @body an existing court history
-     * @return List<CourtHistory> - the court history created.
+     * @return {@link List} of {@link CourtHistory} the court history created.
      */
     @PostMapping
     @Operation(summary = "Add a new court history")
     @ApiResponse(responseCode = "201", description = "Successfully created court")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<CourtHistory> addCourtHistory(@Valid @RequestBody CourtHistory courtHistory) {
         return created(URI.create("/admin/courts/history"))
@@ -123,12 +131,13 @@ public class AdminCourtHistoryController {
      * This endpoint can be used to get all the court histories that exist.
      * @path /admin/courts/history
      * @body a court history (search_court_id, court_name etc.)
-     * @return CourtHistory - the court history that was updated.
+     * @return CourtHistory the court history that was updated.
      */
     @PutMapping
     @Operation(summary = "Change an existing court history")
-    @ApiResponse(responseCode = "200", description = "Successfully updated court")
-    @ApiResponse(responseCode = "404", description = "Court History Not Found")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfully updated court")
+    @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court History Not Found")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<CourtHistory> updateCourtHistory(@Valid @RequestBody CourtHistory courtHistory) {
         return ok(adminCourtHistoryService.updateCourtHistory(courtHistory));
@@ -139,12 +148,13 @@ public class AdminCourtHistoryController {
      * This endpoint can be used to delete a specific court history by its ID.
      * @path /admin/courts/history/{courtHistoryId}
      * @input a court history ID
-     * @return CourtHistory - the court history that was deleted.
+     * @return CourtHistory the court history that was deleted.
      */
     @DeleteMapping("/{courtHistoryId}")
     @Operation(summary = "Delete a Court History")
-    @ApiResponse(responseCode = "200", description = "Successfuly deleted court history")
-    @ApiResponse(responseCode = "404", description = "Court History Not Found")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfuly deleted court history")
+    @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court History Not Found")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<CourtHistory> deleteByCourtHistoryId(@PathVariable Integer courtHistoryId) {
         return ok(adminCourtHistoryService.deleteCourtHistoryById(courtHistoryId));
@@ -155,10 +165,11 @@ public class AdminCourtHistoryController {
      * This endpoint can be used to delete the court histories by a specific court.
      * @path /admin/courts/history/id/{courtId}
      * @input a court ID
-     * @return List<CourtHistory> - a list of deleted court histories.
+     * @return {@link List} of {@link CourtHistory} a list of deleted court histories.
      */
     @DeleteMapping("/id/{courtId}")
-    @ApiResponse(responseCode = "200", description = "Successfuly deleted court histories")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfuly deleted court histories")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Operation(summary = "Delete the court histories of a specific court")
     @Role(FACT_SUPER_ADMIN)
     public ResponseEntity<List<CourtHistory>> deleteCourtHistoriesByCourtId(@PathVariable Integer courtId) {

@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Model that represents CourtHistory.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,15 +40,21 @@ public class CourtHistory {
         this.courtNameCy = courtHistory.getCourtNameCy();
     }
 
+    /**
+     * Overrides toString() method.
+     * String representation of the CourtHistory object fields.
+     *
+     * @return String the object fields and values of CourtHistory as String
+     */
     @Override
     public String toString() {
-        return "CourtHistory{" +
-            "id=" + id +
-            ", searchCourtId=" + searchCourtId +
-            ", courtName='" + courtName + '\'' +
-            ", updatedAt=" + updatedAt +
-            ", createdAt=" + createdAt +
-            ", courtNameCy='" + courtNameCy + '\'' +
-            '}';
+        return "CourtHistory{"
+            + "id=" + id
+            + ", searchCourtId=" + searchCourtId
+            + ", courtName='" + courtName + '\''
+            + ", updatedAt=" + updatedAt
+            + ", createdAt=" + createdAt
+            + ", courtNameCy='" + courtNameCy + '\''
+            + '}';
     }
 }

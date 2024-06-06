@@ -321,7 +321,6 @@ public class CourtService {
         return courts;
     }
 
-
     private boolean filterResultByPostcode(final String postcode, final String areaOfLaw) {
         return isScottishPostcode(postcode)
             || isNorthernIrishPostcode(postcode) && !IMMIGRATION_AREA_OF_LAW.equalsIgnoreCase(areaOfLaw);
@@ -334,17 +333,17 @@ public class CourtService {
     }
 
     /**
-     * Get a court by old court name.
-     *
+     * Get a court by its old name.
+     * Searches through the court history. If one is found matching the query, then the
+     * search court id is used to fetch the current court info
      * @param query old court name
-     * @return CourtReferenceWithHistoricalName - current court info and old court name
+     * @return CourtReferenceWithHistoricalName empty or has current court info and old court name
      */
     public CourtReferenceWithHistoricalName getCourtByCourtHistoryName(String query) {
         CourtReferenceWithHistoricalName courtReference = new CourtReferenceWithHistoricalName();
         List<CourtHistory> courtHistories = courtHistoryRepository.findAllByCourtNameIgnoreCase(query);
 
-        if(!courtHistories.isEmpty())
-        {
+        if (!courtHistories.isEmpty()) {
             int searchCourtId = courtHistories.get(0).getSearchCourtId();
             courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(searchCourtId)
                 .map(newCourt -> new CourtReferenceWithHistoricalName(newCourt, courtHistories.get(0)))

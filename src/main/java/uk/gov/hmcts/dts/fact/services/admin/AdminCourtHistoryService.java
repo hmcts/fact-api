@@ -32,7 +32,7 @@ public class AdminCourtHistoryService {
     /**
      * Get all court histories.
      *
-     * @return List<CourtHistory> list of all court histories
+     * @return {@link List} of {@link CourtHistory} list of all court histories
      */
     public List<CourtHistory> getAllCourtHistory() {
         return courtHistoryRepository.findAll()
@@ -42,7 +42,7 @@ public class AdminCourtHistoryService {
     }
 
     /**
-     * Get a specific court using ID.
+     * Get a specific court history using ID.
      *
      * @param courtHistoryId ID of a court history
      * @return CourtHistory a specific court history
@@ -57,7 +57,7 @@ public class AdminCourtHistoryService {
      * Get all the court histories of a specific court using a search court ID.
      *
      * @param courtId ID of a court
-     * @return List<CourtHistory> list of the court histories of a specific court
+     * @return {@link List} of {@link CourtHistory} list of the court histories of a specific court
      */
     public List<CourtHistory> getCourtHistoryByCourtId(Integer courtId) {
         return courtHistoryRepository.findAllBySearchCourtId(courtId)
@@ -70,7 +70,7 @@ public class AdminCourtHistoryService {
      * Get all the court histories matching the court name.
      *
      * @param courtName an old court name
-     * @return List<CourtHistory> list of court histories with matching name
+     * @return {@link List} of {@link CourtHistory} list of court histories with matching name
      */
     public List<CourtHistory> getCourtHistoryByCourtName(String courtName) {
         return courtHistoryRepository.findAllByCourtName(courtName)
@@ -130,7 +130,7 @@ public class AdminCourtHistoryService {
 
     /**
      * Delete the court histories of a specific court.
-     * Also saves audit info of the court histories that has been deleted.
+     * Also saves audit info of the court histories that have been deleted.
      * @param courtId ID of court whose histories should be deleted
      * @return CourtHistory the court history that has been deleted
      */

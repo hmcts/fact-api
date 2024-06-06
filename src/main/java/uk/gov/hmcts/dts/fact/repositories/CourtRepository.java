@@ -9,10 +9,16 @@ import uk.gov.hmcts.dts.fact.entity.Court;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.TooManyMethods"})
 public interface CourtRepository extends JpaRepository<Court, Integer> {
 
+    /**
+     * Get an active (displayed = true) court using ID.
+     * @param id a search court id
+     * @return Optional a court if one is found
+     */
     Optional<Court> findCourtByIdAndDisplayedIsTrue(int id);
+
     Optional<Court> findBySlug(String slug);
 
     List<Court> findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(List<String> courtTypes);

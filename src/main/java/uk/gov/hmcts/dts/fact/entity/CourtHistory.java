@@ -15,6 +15,9 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+/**
+ * Entity representation of CourtHistory.
+ */
 @Entity
 @Table(name = "admin_court_history")
 @Getter
