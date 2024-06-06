@@ -332,29 +332,6 @@ public class CourtService {
             || IMMIGRATION_AREA_OF_LAW.equalsIgnoreCase(areaOfLaw) && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE);
     }
 
-    /**
-     * Get a court by its old name.
-     * Searches through the court history. If one is found matching the query, then the
-     * search court id is used to fetch the current court info
-     * @param query old court name
-     * @return CourtReferenceWithHistoricalName empty or has current court info and old court name
-     */
-    public CourtReferenceWithHistoricalName getCourtByCourtHistoryName1(String query) {
-        CourtReferenceWithHistoricalName courtReference = new CourtReferenceWithHistoricalName();
-        List<CourtHistory> courtHistories = courtHistoryRepository.findAllByCourtNameIgnoreCase(query);
-
-        if (!courtHistories.isEmpty()) {
-            int searchCourtId = courtHistories.get(0).getSearchCourtId();
-            courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(searchCourtId)
-                .map(newCourt -> new CourtReferenceWithHistoricalName(newCourt, courtHistories.get(0)))
-                .orElseThrow(() ->
-                        new NotFoundException(String.format("Court History with ID: %d does not have a corresponding active court", searchCourtId))
-                );
-        }
-
-        return courtReference;
-    }
-
     public Optional<CourtReferenceWithHistoricalName> getCourtByCourtHistoryName(String query) {
         return courtHistoryRepository.findAllByCourtNameIgnoreCase(query)
             .stream()
