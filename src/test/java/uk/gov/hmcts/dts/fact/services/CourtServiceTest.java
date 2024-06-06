@@ -743,7 +743,9 @@ class CourtServiceTest {
         when(courtHistoryRepository.findAllByCourtNameIgnoreCase(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
         when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
 
+
         assertThat(courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
+            .get()
             .isInstanceOf(CourtReferenceWithHistoricalName.class)
             .extracting("name", "slug", "historicalName", "displayed", "region")
             .contains("fakeCurrentCourt1", "fake-current-court-1", FAKE_COURT_NAME1, true, 9);
@@ -764,6 +766,7 @@ class CourtServiceTest {
     void shouldReturnEmptyCourtWhenCourtHistoryNotFound() {
         assertThat(courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
             .isInstanceOf(CourtReferenceWithHistoricalName.class)
+            .get()
             .extracting("name", "slug", "historicalName", "displayed", "region")
             .contains(null, null, null, false, null);
     }

@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static java.nio.file.Files.readAllBytes;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -166,7 +167,7 @@ class CourtsControllerTest {
         final String courtInfoJson = OBJECT_MAPPER.writeValueAsString(courtInfo);
 
         when(courtService.getCourtByCourtHistoryName("fakeOldCourtName"))
-            .thenReturn(courtInfo);
+            .thenReturn(Optional.of(courtInfo));
 
         mockMvc.perform(get(URL + SEARCH_BY_COURT_HISTORY_NAME + "?q=fakeOldCourtName"))
             .andExpect(status().isOk())

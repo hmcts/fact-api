@@ -339,7 +339,7 @@ public class CourtService {
      * @param query old court name
      * @return CourtReferenceWithHistoricalName empty or has current court info and old court name
      */
-    public CourtReferenceWithHistoricalName getCourtByCourtHistoryName(String query) {
+    public CourtReferenceWithHistoricalName getCourtByCourtHistoryName1(String query) {
         CourtReferenceWithHistoricalName courtReference = new CourtReferenceWithHistoricalName();
         List<CourtHistory> courtHistories = courtHistoryRepository.findAllByCourtNameIgnoreCase(query);
 
@@ -347,12 +347,20 @@ public class CourtService {
             int searchCourtId = courtHistories.get(0).getSearchCourtId();
             courtReference = courtRepository.findCourtByIdAndDisplayedIsTrue(searchCourtId)
                 .map(newCourt -> new CourtReferenceWithHistoricalName(newCourt, courtHistories.get(0)))
-                .orElseGet(() -> {
-                    log.error(String.format("Court History with ID: %d does not have a corresponding active court", searchCourtId));
-                    throw new NotFoundException(String.format("Court History with ID: %d does not have a corresponding active court", searchCourtId));
-                });
+                .orElseThrow( () ->
+                        new NotFoundException(String.format("Court History with ID: %d does not have a corresponding active court", searchCourtId))
+                );
         }
 
         return courtReference;
+    }
+
+    public Optional<CourtReferenceWithHistoricalName> getCourtByCourtHistoryName(String query) {
+        return courtHistoryRepository.findAllByCourtNameIgnoreCase(query)
+            .stream()
+            .findFirst()
+            .map(history -> courtRepository.findCourtByIdAndDisplayedIsTrue(history.getSearchCourtId())
+                .map(court -> new CourtReferenceWithHistoricalName(court, history))
+                .orElseThrow(() -> new NotFoundException("Court History with ID: " + history.getSearchCourtId() + " does not have a corresponding active court")));
     }
 }
