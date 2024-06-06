@@ -121,7 +121,8 @@ public class CourtsController {
      * @path /court-history/search
      */
     @GetMapping(path = "/court-history/search")
-    @ApiResponse(responseCode = "200", description = "Successful - returns empty CourtReferenceWithHistoricalName if no Court History Found")
+    @ApiResponse(responseCode = "200", description = "Successful - returns empty CourtReferenceWithHistoricalName")
+    @ApiResponse(responseCode = "204", description = "Successful - but no history found, so returns no content")
     @ApiResponse(responseCode = "404", description = "Court History Found but No corresponding Court found")
     @Operation(summary = "Return active court based a search of old court names")
     public ResponseEntity<CourtReferenceWithHistoricalName> getCourtByCourtHistoryNameSearch(@RequestParam(name = "q") @NotBlank String query) {
