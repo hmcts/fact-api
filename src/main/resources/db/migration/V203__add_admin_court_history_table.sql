@@ -6,7 +6,8 @@ CREATE TABLE public.admin_court_history (
   search_court_id integer NOT NULL,
   court_name character varying(255) NOT NULL,
   updated_at timestamp NOT NULL,
-  created_at timestamp NOT NULL
+  created_at timestamp NOT NULL,
+  court_name_cy character varying(255)
 );
 
 CREATE SEQUENCE public.admin_court_history_id_seq
