@@ -765,9 +765,6 @@ class CourtServiceTest {
     @Test
     void shouldReturnEmptyCourtWhenCourtHistoryNotFound() {
         assertThat(courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
-            .isInstanceOf(CourtReferenceWithHistoricalName.class)
-            .get()
-            .extracting("name", "slug", "historicalName", "displayed", "region")
-            .contains(null, null, null, false, null);
+            .isEmpty();
     }
 }
