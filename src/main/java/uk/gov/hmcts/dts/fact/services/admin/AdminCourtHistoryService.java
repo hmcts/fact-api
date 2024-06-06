@@ -104,7 +104,6 @@ public class AdminCourtHistoryService {
                 () -> new NotFoundException("Court History with ID: " + courtHistory.getId()));
 
         // Only properties that can/should be updated.
-        courtHistoryEntity.setSearchCourtId(courtHistory.getSearchCourtId());
         courtHistoryEntity.setCourtName(courtHistory.getCourtName());
         courtHistoryEntity.setUpdatedAt(LocalDateTime.now(ZoneOffset.UTC));
 
