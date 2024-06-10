@@ -335,8 +335,15 @@ public class CourtService {
             || IMMIGRATION_AREA_OF_LAW.equalsIgnoreCase(areaOfLaw) && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE);
     }
 
+    /**
+     * Gets new court into + historical name from a historical name search query
+     * Searches old court names. If one is found, then the method will try and fetch the corresponding active
+     * court info.
+     * @param query
+     * @return CourtReferenceWithHistoricalName court info including one of its old court names
+     */
     public Optional<CourtReferenceWithHistoricalName> getCourtByCourtHistoryName(String query) {
-        return courtHistoryRepository.findAllByCourtNameIgnoreCase(query)
+        return courtHistoryRepository.findAllByCourtNameIgnoreCaseOrderByUpdatedAtDesc(query)
             .stream()
             .findFirst()
             .map(history -> courtRepository.findCourtByIdAndDisplayedIsTrue(history.getSearchCourtId())

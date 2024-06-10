@@ -740,7 +740,7 @@ class CourtServiceTest {
         FAKE_CURRENT_COURT.setRegionId(9);
         FAKE_CURRENT_COURT.setUpdatedAt(Timestamp.valueOf("2024-03-03 10:15:30"));
 
-        when(courtHistoryRepository.findAllByCourtNameIgnoreCase(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
+        when(courtHistoryRepository.findAllByCourtNameIgnoreCaseOrderByUpdatedAtDesc(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
         when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
 
 
@@ -754,7 +754,7 @@ class CourtServiceTest {
     @Test
     void shouldThrowExceptionWhenThereIsCourtHistoryButNoCourt() {
 
-        when(courtHistoryRepository.findAllByCourtNameIgnoreCase(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
+        when(courtHistoryRepository.findAllByCourtNameIgnoreCaseOrderByUpdatedAtDesc(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
         when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(empty());
 
         assertThatThrownBy(() -> courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))

@@ -15,7 +15,7 @@ public interface CourtHistoryRepository extends JpaRepository<CourtHistory, Inte
 
     List<CourtHistory> findAllByCourtName(String courtName);
 
-    List<CourtHistory> findAllByCourtNameIgnoreCase(String courtName);
+    List<CourtHistory> findAllByCourtNameIgnoreCaseOrderByUpdatedAtDesc(String courtName);
 
     List<CourtHistory> deleteCourtHistoriesBySearchCourtId(Integer searchCourtId);
 }
