@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
 import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -20,12 +22,14 @@ import java.util.List;
 public class AdminCourtHistoryService {
 
     private final CourtHistoryRepository courtHistoryRepository;
+    private final CourtRepository courtRepository;
 
     private final AdminAuditService adminAuditService;
 
     @Autowired
-    public AdminCourtHistoryService(CourtHistoryRepository courtHistoryRepository, AdminAuditService adminAuditService) {
+    public AdminCourtHistoryService(CourtHistoryRepository courtHistoryRepository, CourtRepository courtRepository, AdminAuditService adminAuditService) {
         this.courtHistoryRepository = courtHistoryRepository;
+        this.courtRepository = courtRepository;
         this.adminAuditService = adminAuditService;
     }
 
@@ -144,5 +148,35 @@ public class AdminCourtHistoryService {
                                     null, courtHistoryList.toString());
 
         return courtHistoryList;
+    }
+
+    /**
+     * Update court histories of a specific court by slug.
+     * Deletes the existing court histories and replaces them with the given court histories
+     * @param slug
+     * @param courtHistories court histories to replace current ones with
+     * @return the courts updated court histories
+     */
+    @Transactional
+    public List<CourtHistory> updateCourtHistoriesBySlug(final String slug, final List<CourtHistory> courtHistories) {
+        final Court courtEntity = courtRepository.findBySlug(slug)
+            .orElseThrow(() -> new NotFoundException(slug));
+
+        List<uk.gov.hmcts.dts.fact.entity.CourtHistory> updatedCourtHistories =
+            courtHistories.stream().map(uk.gov.hmcts.dts.fact.entity.CourtHistory::new)
+                .toList();
+
+        updatedCourtHistories.forEach(courtHistory -> courtHistory.setSearchCourtId(courtEntity.getId()));
+
+        List<uk.gov.hmcts.dts.fact.entity.CourtHistory> beforeUpdateCourtHistories = courtHistoryRepository.findAllBySearchCourtId(courtEntity.getId());
+        //delete court's existing histories
+        courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(courtEntity.getId());
+
+        adminAuditService.saveAudit("Update court history", beforeUpdateCourtHistories, updatedCourtHistories, courtEntity.getName());
+
+        //save court's new court histories
+        return courtHistoryRepository.saveAll(updatedCourtHistories).stream()
+            .map(CourtHistory::new)
+            .toList();
     }
 }

@@ -144,6 +144,24 @@ public class AdminCourtHistoryController {
     }
 
     /**
+     * Replaces the court histories of a court with the given ones.
+     * This endpoint will delete all the court histories of a court and replace them with
+     * the supplied histories
+     * @param slug the slug of the court whose histories are to be changed
+     * @param courtHistoryList a list of court histories that the court should now have
+     * @return the updated list of court histories for the given court
+     */
+    @PutMapping("/{slug}")
+    @Operation(summary = "Replace the court histories of a given court")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfully updated court")
+    @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court Not Found")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
+    @Role(FACT_SUPER_ADMIN)
+    public ResponseEntity<List<CourtHistory>> updateCourtHistories(@PathVariable String slug, @Valid @RequestBody List<CourtHistory> courtHistoryList) {
+        return ok(adminCourtHistoryService.updateCourtHistoriesBySlug(slug, courtHistoryList));
+    }
+
+    /**
      * Delete a court history by ID.
      * This endpoint can be used to delete a specific court history by its ID.
      * @path /admin/courts/history/{courtHistoryId}

@@ -10,12 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtHistory;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,16 +38,23 @@ class AdminCourtHistoryServiceTest {
     private CourtHistoryRepository courtHistoryRepository;
 
     @MockBean
+    private CourtRepository courtRepository;
+
+    @MockBean
     private AdminAuditService adminAuditService;
 
     @Captor
     ArgumentCaptor<CourtHistory> courtHistoryCaptor;
 
     @Captor
+    ArgumentCaptor<List<CourtHistory>> courtHistoriesCaptor;
+
+    @Captor
     ArgumentCaptor<Integer> idCaptor;
 
 
     private static List<CourtHistory> mockCourtHistories;
+    private static final Court FAKE_CURRENT_COURT = new Court();
     private static final String EXP_EXCEPTION_MSG_PREFIX = "Not found: Court History with ID: ";
     private static final int DONT_EXIST_COURT_HISTORY_ID = 132732;
     private static final int COURT_ID = 2122;
@@ -196,5 +206,37 @@ class AdminCourtHistoryServiceTest {
             .contains("fakeCourt1","fakeCourt3", "fakeCourt4");
 
         verify(adminAuditService).saveAudit(eq("Delete court history"), any(), isNull(), isA(String.class));
+    }
+
+    @Test
+    void shouldBeAbleToReplaceAllTheCourtHistoryOfACourt() {
+        final String COURT_SLUG = "i-want-new-history";
+        List<uk.gov.hmcts.dts.fact.model.admin.CourtHistory> modelUpdatedCourtHistories = List.of(new uk.gov.hmcts.dts.fact.model.admin.CourtHistory(
+                80, null, "IAmCalledThis", LocalDateTime.parse("2024-02-03T10:15:30"),
+                LocalDateTime.parse("2023-12-03T11:15:30"), "Cymru"));
+        List<CourtHistory> updatedCourtHistories = List.of(new CourtHistory(
+            80, null, "IWantToBeCalledThisNow", null,
+            null, "Cymru"));
+
+        FAKE_CURRENT_COURT.setSlug(COURT_SLUG);
+        FAKE_CURRENT_COURT.setId(11);
+        FAKE_CURRENT_COURT.setName("New Court");
+
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
+        when(courtHistoryRepository.saveAll(any())).thenReturn(updatedCourtHistories);
+
+        assertThat(adminCourtHistoryService.updateCourtHistoriesBySlug(COURT_SLUG, modelUpdatedCourtHistories))
+            .hasSize(1);
+
+        verify(courtHistoryRepository, times(1)).saveAll(courtHistoriesCaptor.capture());
+        verify(courtHistoryRepository, times(1)).findAllBySearchCourtId(11);
+        verify(courtHistoryRepository, times(1)).deleteCourtHistoriesBySearchCourtId(11);
+        verify(adminAuditService, times(1)).saveAudit(eq("Update court history"), any(), any(), eq("New Court"));
+
+        assertThat(courtHistoriesCaptor.getValue())
+            .isInstanceOf(List.class)
+            .hasSize(1)
+            .extracting("searchCourtId")
+            .contains(11);
     }
 }

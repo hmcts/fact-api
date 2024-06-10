@@ -29,6 +29,7 @@ class AdminCourtHistoryControllerTest {
     public static final String PATH = "/admin/courts/history";
     private static final String DATE = "2024-02-03T10:15:30";
     private static final String FAKE_COURT_NAME1 = "fakeCourt1";
+    private static final String FAKE_COURT_SLUG = "fake-court-slug";
     private static final List<CourtHistory> FAKE_COURT_HISTORIES = Arrays.asList(
         new CourtHistory(
                 1, 11, FAKE_COURT_NAME1, LocalDateTime.parse(DATE),
@@ -198,5 +199,22 @@ class AdminCourtHistoryControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoryJson));
+    }
+
+    @Test
+    void shouldBeAbleToUpdateCourtHistoriesOfaGivenCourt() throws Exception {
+        when(adminCourtHistoryService.updateCourtHistoriesBySlug(FAKE_COURT_SLUG, FAKE_COURT_HISTORIES)).thenReturn(FAKE_COURT_HISTORIES);
+
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+
+        mockMvc.perform(put(PATH + "/" + FAKE_COURT_SLUG)
+                            .content(courtHistoryJson)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andReturn();
     }
 }
