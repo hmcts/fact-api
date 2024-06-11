@@ -162,22 +162,23 @@ public class AdminCourtHistoryService {
         final Court courtEntity = courtRepository.findBySlug(slug)
             .orElseThrow(() -> new NotFoundException("Court cannot be found. Slug: " + slug));
 
-        List<uk.gov.hmcts.dts.fact.entity.CourtHistory> updatedCourtHistories =
+        List<uk.gov.hmcts.dts.fact.entity.CourtHistory> inputCourtHistories =
             courtHistories.stream().map(uk.gov.hmcts.dts.fact.entity.CourtHistory::new)
                 .toList();
 
-        updatedCourtHistories.forEach(courtHistory -> courtHistory.setSearchCourtId(courtEntity.getId()));
+        inputCourtHistories.forEach(courtHistory -> courtHistory.setSearchCourtId(courtEntity.getId()));
 
         List<uk.gov.hmcts.dts.fact.entity.CourtHistory> beforeUpdateCourtHistories = courtHistoryRepository.findAllBySearchCourtId(courtEntity.getId());
         //delete court's existing histories
         courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(courtEntity.getId());
 
-        adminAuditService.saveAudit("Update court history", beforeUpdateCourtHistories, updatedCourtHistories, courtEntity.getName());
-
-        //save court's new court histories
-        return courtHistoryRepository.saveAll(updatedCourtHistories).stream()
+        List<CourtHistory> newCourtHistoryList = courtHistoryRepository.saveAll(inputCourtHistories).stream()
             .map(CourtHistory::new)
             .toList();
+
+        adminAuditService.saveAudit("Update court history", beforeUpdateCourtHistories, newCourtHistoryList, courtEntity.getName());
+        //save court's new court histories
+        return newCourtHistoryList;
     }
 
     @Transactional
