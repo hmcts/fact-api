@@ -56,8 +56,10 @@ class AdminCourtHistoryServiceTest {
     private static List<CourtHistory> mockCourtHistories;
     private static final Court FAKE_CURRENT_COURT = new Court();
     private static final String EXP_EXCEPTION_MSG_PREFIX = "Not found: Court History with ID: ";
+    private static final String NON_FOUND_COURT_MSG_PREFIX = "Not found: Court cannot be found. Slug: ";
     private static final int DONT_EXIST_COURT_HISTORY_ID = 132732;
     private static final int COURT_ID = 2122;
+    private static final String COURT_SLUG = "i-am-a-slug";
     private static final String DATE1 = "2007-12-03T10:15:30";
     private static final String DATE2 = "2024-02-03T10:15:30";
     private static final String FAKE_COURT_NAME1 = "fakeCourt1";
@@ -108,6 +110,24 @@ class AdminCourtHistoryServiceTest {
 
         assertThat(adminCourtHistoryService.getCourtHistoryByCourtId(COURT_ID))
             .hasSize(mockCourtHistories.size());
+    }
+
+    @Test
+    void shouldGetAllTheCourtNameHistoriesOfGivenCourtByItsSlug() {
+        FAKE_CURRENT_COURT.setId(COURT_ID);
+        FAKE_CURRENT_COURT.setSlug(COURT_SLUG);
+        when(courtHistoryRepository.findAllBySearchCourtId(COURT_ID)).thenReturn(mockCourtHistories);
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
+
+        assertThat(adminCourtHistoryService.getCourtHistoryByCourtId(COURT_ID))
+            .hasSize(mockCourtHistories.size());
+    }
+
+    @Test
+    void shouldNotRetrieveCourtHistoriesOfNonExistentCourt() {
+        assertThatThrownBy(() -> adminCourtHistoryService.getCourtHistoryByCourtSlug("i-dont-exist"))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage(NON_FOUND_COURT_MSG_PREFIX + "i-dont-exist");
     }
 
     @Test

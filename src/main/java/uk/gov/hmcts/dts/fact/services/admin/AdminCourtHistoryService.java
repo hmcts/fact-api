@@ -160,7 +160,7 @@ public class AdminCourtHistoryService {
     @Transactional
     public List<CourtHistory> updateCourtHistoriesBySlug(final String slug, final List<CourtHistory> courtHistories) {
         final Court courtEntity = courtRepository.findBySlug(slug)
-            .orElseThrow(() -> new NotFoundException(slug));
+            .orElseThrow(() -> new NotFoundException("Court cannot be found. Slug: " + slug));
 
         List<uk.gov.hmcts.dts.fact.entity.CourtHistory> updatedCourtHistories =
             courtHistories.stream().map(uk.gov.hmcts.dts.fact.entity.CourtHistory::new)
@@ -176,6 +176,16 @@ public class AdminCourtHistoryService {
 
         //save court's new court histories
         return courtHistoryRepository.saveAll(updatedCourtHistories).stream()
+            .map(CourtHistory::new)
+            .toList();
+    }
+
+    @Transactional
+    public List<CourtHistory> getCourtHistoryByCourtSlug(final String slug) {
+        final Court courtEntity = courtRepository.findBySlug(slug)
+            .orElseThrow(() -> new NotFoundException("Court cannot be found. Slug: " + slug));
+
+        return courtHistoryRepository.findAllBySearchCourtId(courtEntity.getId()).stream()
             .map(CourtHistory::new)
             .toList();
     }

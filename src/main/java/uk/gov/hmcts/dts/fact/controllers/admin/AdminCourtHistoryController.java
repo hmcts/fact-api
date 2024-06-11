@@ -95,6 +95,23 @@ public class AdminCourtHistoryController {
     }
 
     /**
+     * Get court histories with a court slug.
+     * This endpoint can be used to get all the court histories associated with a specific active court
+     * using the court's slug.
+     * @input a slug
+     * @path /admin/courts/history/{slug}
+     * @return {@link List} of {@link CourtHistory} a list of a court's coyrt histories.
+     */
+    @GetMapping("/slug/{slug}")
+    @Operation(summary = "Get all court histories of a court")
+    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Will return an empty response when no Court matches ID")
+    @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
+    @Role(FACT_SUPER_ADMIN)
+    public ResponseEntity<List<CourtHistory>> getCourtHistoryByCourtSlug(@PathVariable String slug) {
+        return ok(adminCourtHistoryService.getCourtHistoryByCourtSlug(slug));
+    }
+
+    /**
      * Get a court history by its court name.
      * This endpoint can be used to get all the court histories that exist.
      * @path /admin/courts/history/name/{courtName}
