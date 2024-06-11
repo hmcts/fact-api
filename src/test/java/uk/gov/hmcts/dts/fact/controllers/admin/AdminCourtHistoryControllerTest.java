@@ -225,7 +225,7 @@ class AdminCourtHistoryControllerTest {
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
 
-        mockMvc.perform(put(PATH + "/" + FAKE_COURT_SLUG)
+        mockMvc.perform(put(PATH + "/" + FAKE_COURT_SLUG + PATH_SUFFIX)
                             .content(courtHistoryJson)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
