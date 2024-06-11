@@ -139,13 +139,14 @@ public class AdminCourtHistoryService {
      */
     @Transactional
     public List<CourtHistory> deleteCourtHistoriesByCourtId(Integer courtId) {
+        Court court = courtRepository.findCourtById(courtId).orElseThrow(() -> new NotFoundException("Court not found: " + courtId));;
         List<CourtHistory> courtHistoryList = courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(courtId)
             .stream()
             .map(CourtHistory::new)
             .toList();
 
         adminAuditService.saveAudit("Delete court history", courtHistoryList,
-                                    null, courtHistoryList.toString());
+                                    null, court.getSlug());
 
         return courtHistoryList;
     }
