@@ -29,7 +29,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 @Validated
 @RestController
 @RequestMapping(
-    path = "/admin/courts/history",
+    path = "/admin/courts",
     produces = {MediaType.APPLICATION_JSON_VALUE}
 )
 public class AdminCourtHistoryController {
@@ -41,6 +41,7 @@ public class AdminCourtHistoryController {
     private static final String NOT_FOUND_CODE = "404";
 
     private static final String UNAUTHORISED_USER = "Unauthorised user";
+    private static final String PATH_SUFFIX = "/history";
 
     @Autowired
     public AdminCourtHistoryController(final AdminCourtHistoryService adminCourtHistoryService) {
@@ -50,9 +51,10 @@ public class AdminCourtHistoryController {
     /**
      * Get all court histories.
      * This endpoint can be used to get all the court histories that exist.
+     * @path /history
      * @return {@link List} of {@link CourtHistory} a list of all the coyrt histories.
      */
-    @GetMapping
+    @GetMapping(PATH_SUFFIX)
     @Operation(summary = "Get all court histories")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
@@ -63,12 +65,12 @@ public class AdminCourtHistoryController {
 
     /**
      * Get a court history by ID.
-     * This endpoint can be used to get a specific court history with its ID.
-     * @path /admin/courts/history/{courtHistoryId}
+     * This endpoint can be used to get a specific court history with its court history ID.
+     * @path /admin/courts/id/{courtHistoryId}/history
      * @input an ID
      * @return CourtHistory - a specific court history.
      */
-    @GetMapping("/{courtHistoryId}")
+    @GetMapping("id/{courtHistoryId}" + PATH_SUFFIX)
     @Operation(summary = "Get a court history")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Court History Found")
     @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court History Not Found")
@@ -82,10 +84,10 @@ public class AdminCourtHistoryController {
      * Get a court history with a court ID.
      * This endpoint can be used to get all the court histories associated with a specific active court.
      * @input a court ID
-     * @path /admin/courts/history/id/{courtId}
+     * @path /admin/courts/court-id/{courtId}/history
      * @return {@link List} of {@link CourtHistory} a list of a court's coyrt histories.
      */
-    @GetMapping("/id/{courtId}")
+    @GetMapping("/court-id/{courtId}" + PATH_SUFFIX)
     @Operation(summary = "Get all court histories of a court")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Will return an empty response when no Court matches ID")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
@@ -96,13 +98,13 @@ public class AdminCourtHistoryController {
 
     /**
      * Get court histories with a court slug.
-     * This endpoint can be used to get all the court histories associated with a specific active court
+     * This endpoint can be used to get all the court histories associated with a specific court
      * using the court's slug.
      * @input a slug
-     * @path /admin/courts/history/{slug}
+     * @path /admin/courts/{slug}/history
      * @return {@link List} of {@link CourtHistory} a list of a court's coyrt histories.
      */
-    @GetMapping("/slug/{slug}")
+    @GetMapping("/{slug}" + PATH_SUFFIX)
     @Operation(summary = "Get all court histories of a court")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Will return an empty response when no Court matches ID")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
@@ -114,10 +116,10 @@ public class AdminCourtHistoryController {
     /**
      * Get a court history by its court name.
      * This endpoint can be used to get all the court histories that exist.
-     * @path /admin/courts/history/name/{courtName}
+     * @path /admin/courts/name/{courtName/history}
      * @return {@link List} of {@link CourtHistory} a list of all the coyrt histories that have that name.
      */
-    @GetMapping("/name/{courtName}")
+    @GetMapping("/name/{courtName}" + PATH_SUFFIX)
     @Operation(summary = "Get a court history using a historical court name")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successful - Will return an empty response when no Court matches name")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
@@ -133,7 +135,7 @@ public class AdminCourtHistoryController {
      * @body an existing court history
      * @return {@link List} of {@link CourtHistory} the court history created.
      */
-    @PostMapping
+    @PostMapping(PATH_SUFFIX)
     @Operation(summary = "Add a new court history")
     @ApiResponse(responseCode = "201", description = "Successfully created court")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
@@ -145,12 +147,12 @@ public class AdminCourtHistoryController {
 
     /**
      * Update a court history.
-     * This endpoint can be used to get all the court histories that exist.
+     * This endpoint can be used to update a single court history.
      * @path /admin/courts/history
      * @body a court history (search_court_id, court_name etc.)
      * @return CourtHistory the court history that was updated.
      */
-    @PutMapping
+    @PutMapping(PATH_SUFFIX)
     @Operation(summary = "Change an existing court history")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfully updated court")
     @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court History Not Found")
@@ -168,7 +170,7 @@ public class AdminCourtHistoryController {
      * @param courtHistoryList a list of court histories that the court should now have
      * @return the updated list of court histories for the given court
      */
-    @PutMapping("/{slug}")
+    @PutMapping("/{slug}" + PATH_SUFFIX)
     @Operation(summary = "Replace the court histories of a given court")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfully updated court")
     @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court Not Found")
@@ -181,11 +183,11 @@ public class AdminCourtHistoryController {
     /**
      * Delete a court history by ID.
      * This endpoint can be used to delete a specific court history by its ID.
-     * @path /admin/courts/history/{courtHistoryId}
+     * @path /admin/courts/id/{courtHistoryId}/history
      * @input a court history ID
      * @return CourtHistory the court history that was deleted.
      */
-    @DeleteMapping("/{courtHistoryId}")
+    @DeleteMapping("/id/{courtHistoryId}" + PATH_SUFFIX)
     @Operation(summary = "Delete a Court History")
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfuly deleted court history")
     @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court History Not Found")
@@ -198,11 +200,11 @@ public class AdminCourtHistoryController {
     /**
      * Delete court histories by court ID.
      * This endpoint can be used to delete the court histories by a specific court.
-     * @path /admin/courts/history/id/{courtId}
+     * @path /admin/courts/court-id/{courtId}/history
      * @input a court ID
      * @return {@link List} of {@link CourtHistory} a list of deleted court histories.
      */
-    @DeleteMapping("/id/{courtId}")
+    @DeleteMapping("/court-id/{courtId}" + PATH_SUFFIX)
     @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfuly deleted court histories")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Operation(summary = "Delete the court histories of a specific court")

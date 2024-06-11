@@ -26,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 class AdminCourtHistoryControllerTest {
 
-    public static final String PATH = "/admin/courts/history";
+    public static final String PATH = "/admin/courts";
+    private static final String PATH_SUFFIX = "/history";
     private static final String DATE = "2024-02-03T10:15:30";
     private static final String FAKE_COURT_NAME1 = "fakeCourt1";
     private static final String FAKE_COURT_SLUG = "fake-court-slug";
@@ -64,7 +65,7 @@ class AdminCourtHistoryControllerTest {
         OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         final String courtHistoriesJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
-        mockMvc.perform(get(PATH))
+        mockMvc.perform(get(PATH + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoriesJson));
@@ -78,7 +79,7 @@ class AdminCourtHistoryControllerTest {
         OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
-        mockMvc.perform(get(PATH + "/slug/i-am-a-slug"))
+        mockMvc.perform(get(PATH + "/i-am-a-slug" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoryJson));
@@ -92,7 +93,7 @@ class AdminCourtHistoryControllerTest {
         OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORY);
-        mockMvc.perform(get(PATH + "/4"))
+        mockMvc.perform(get(PATH + "/id/4" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoryJson));
@@ -102,7 +103,7 @@ class AdminCourtHistoryControllerTest {
     void shouldNotRetrieveNonExistentCourtHistory() throws Exception {
         when(adminCourtHistoryService.getCourtHistoryById(13)).thenThrow(new NotFoundException("Court History with ID: " + 13));
 
-        mockMvc.perform(get(PATH + "/13"))
+        mockMvc.perform(get(PATH + "id/13" + PATH_SUFFIX))
             .andExpect(status().isNotFound());
     }
 
@@ -114,7 +115,7 @@ class AdminCourtHistoryControllerTest {
         OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
-        mockMvc.perform(get(PATH + "/id/12"))
+        mockMvc.perform(get(PATH + "/court-id/12" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoryJson));
@@ -128,7 +129,7 @@ class AdminCourtHistoryControllerTest {
         OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
-        mockMvc.perform(get(PATH + "/name/fakeCourt1"))
+        mockMvc.perform(get(PATH + "/name/fakeCourt1" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoryJson));
@@ -147,7 +148,7 @@ class AdminCourtHistoryControllerTest {
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(newFakeCourtHistory);
 
-        mockMvc.perform(post(PATH + "/")
+        mockMvc.perform(post(PATH + "/" + PATH_SUFFIX)
                             .content(courtHistoryJson)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -156,7 +157,7 @@ class AdminCourtHistoryControllerTest {
     }
 
     @Test
-    void shouldUpdateCourtHistory() throws Exception {
+    void shouldUpdateOneCourtHistory() throws Exception {
         CourtHistory updatedCourtHistory = new CourtHistory(1, 21, "fakeCourt2",
                                                             LocalDateTime.parse(DATE),
                                                             LocalDateTime.parse(DATE),
@@ -168,7 +169,7 @@ class AdminCourtHistoryControllerTest {
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(updatedCourtHistory);
 
-        mockMvc.perform(put(PATH + "/")
+        mockMvc.perform(put(PATH + PATH_SUFFIX)
                             .content(courtHistoryJson)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -185,7 +186,7 @@ class AdminCourtHistoryControllerTest {
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORY);
 
-        mockMvc.perform(delete(PATH + "/" + 4))
+        mockMvc.perform(delete(PATH + "/id/" + 4 + PATH_SUFFIX))
                             .andExpect(status().isOk())
                             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                             .andExpect(content().string(courtHistoryJson));
@@ -209,7 +210,7 @@ class AdminCourtHistoryControllerTest {
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
 
-        mockMvc.perform(delete(PATH + "/id/" + 11))
+        mockMvc.perform(delete(PATH + "/court-id/" + 11 + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoryJson));
