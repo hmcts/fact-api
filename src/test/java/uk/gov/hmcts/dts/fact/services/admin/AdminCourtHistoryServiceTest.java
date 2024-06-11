@@ -217,7 +217,9 @@ class AdminCourtHistoryServiceTest {
 
     @Test
     void shouldBeAbleToDeleteAllTheCourtHistoryOfACourt() {
+        FAKE_CURRENT_COURT.setSlug("court");
         when(courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(11)).thenReturn(mockCourtHistories);
+        when(courtRepository.findCourtById(11)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
 
         assertThat(adminCourtHistoryService.deleteCourtHistoriesByCourtId(11))
             .isInstanceOf(List.class)
@@ -225,7 +227,7 @@ class AdminCourtHistoryServiceTest {
             .extracting("courtName")
             .contains("fakeCourt1","fakeCourt3", "fakeCourt4");
 
-        verify(adminAuditService).saveAudit(eq("Delete court history"), any(), isNull(), isA(String.class));
+        verify(adminAuditService).saveAudit(eq("Delete court history"), any(), isNull(), eq("court"));
     }
 
     @Test
