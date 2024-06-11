@@ -21,6 +21,8 @@ public interface CourtRepository extends JpaRepository<Court, Integer> {
 
     Optional<Court> findBySlug(String slug);
 
+    Optional<Court> findCourtById(int id);
+
     List<Court> findByCourtTypesSearchIgnoreCaseInAndDisplayedIsTrueOrderByName(List<String> courtTypes);
 
     @Modifying(clearAutomatically = true)
