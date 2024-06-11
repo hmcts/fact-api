@@ -71,6 +71,20 @@ class AdminCourtHistoryControllerTest {
     }
 
     @Test
+    void shouldRetrieveACourtHistoryBySlug() throws Exception {
+        when(adminCourtHistoryService.getCourtHistoryByCourtSlug("i-am-a-slug")).thenReturn(FAKE_COURT_HISTORIES);
+
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+        mockMvc.perform(get(PATH + "/slug/i-am-a-slug"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().string(courtHistoryJson));
+    }
+
+    @Test
     void shouldRetrieveACourtHistoryById() throws Exception {
         when(adminCourtHistoryService.getCourtHistoryById(4)).thenReturn(FAKE_COURT_HISTORY);
 
