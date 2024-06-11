@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @WebMvcTest(AdminCourtHistoryController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -76,7 +76,7 @@ class AdminCourtHistoryControllerTest {
 
     @BeforeEach
     public void setUpMvc() {
-        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context, TEST_USER);
+        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_SUPER_ADMIN, context, TEST_USER);
     }
     @Test
     void shouldRetrieveAllCourtHistories() throws Exception {
@@ -169,6 +169,7 @@ class AdminCourtHistoryControllerTest {
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(newFakeCourtHistory);
 
         mockMvc.perform(post(PATH + "/" + PATH_SUFFIX)
+                            .with(csrf())
                             .content(courtHistoryJson)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -190,6 +191,7 @@ class AdminCourtHistoryControllerTest {
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(updatedCourtHistory);
 
         mockMvc.perform(put(PATH + PATH_SUFFIX)
+                            .with(csrf())
                             .content(courtHistoryJson)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -206,7 +208,7 @@ class AdminCourtHistoryControllerTest {
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORY);
 
-        mockMvc.perform(delete(PATH + "/id/" + 4 + PATH_SUFFIX))
+        mockMvc.perform(delete(PATH + "/id/" + 4 + PATH_SUFFIX).with(csrf()))
                             .andExpect(status().isOk())
                             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                             .andExpect(content().string(courtHistoryJson));
@@ -217,7 +219,7 @@ class AdminCourtHistoryControllerTest {
     void shouldNotBeAbleToDeleteACourtThatDoesNotExist() throws Exception {
         when(adminCourtHistoryService.deleteCourtHistoryById(13)).thenThrow(new NotFoundException("Court History with ID: " + 13));
 
-        mockMvc.perform(delete(PATH + "/13"))
+        mockMvc.perform(delete(PATH + "/13").with(csrf()))
             .andExpect(status().isNotFound());
     }
 
@@ -230,7 +232,7 @@ class AdminCourtHistoryControllerTest {
 
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
 
-        mockMvc.perform(delete(PATH + "/court-id/" + 11 + PATH_SUFFIX))
+        mockMvc.perform(delete(PATH + "/court-id/" + 11 + PATH_SUFFIX).with(csrf()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().string(courtHistoryJson));
