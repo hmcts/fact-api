@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.controllers.admin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,17 +11,24 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtHistoryService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
+import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
 
 @WebMvcTest(AdminCourtHistoryController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -31,6 +39,9 @@ class AdminCourtHistoryControllerTest {
     private static final String DATE = "2024-02-03T10:15:30";
     private static final String FAKE_COURT_NAME1 = "fakeCourt1";
     private static final String FAKE_COURT_SLUG = "fake-court-slug";
+
+    private static final String TEST_USER = "test@test.com";
+
     private static final List<CourtHistory> FAKE_COURT_HISTORIES = Arrays.asList(
         new CourtHistory(
                 1, 11, FAKE_COURT_NAME1, LocalDateTime.parse(DATE),
@@ -54,10 +65,19 @@ class AdminCourtHistoryControllerTest {
     @Autowired
     private transient MockMvc mockMvc;
 
+    @Autowired
+    private WebApplicationContext context;
+
     @MockBean
     AdminCourtHistoryService adminCourtHistoryService;
 
+    @MockBean
+    AdminCourtLockService adminCourtLockService;
 
+    @BeforeEach
+    public void setUpMvc() {
+        mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_ADMIN, context, TEST_USER);
+    }
     @Test
     void shouldRetrieveAllCourtHistories() throws Exception {
         when(adminCourtHistoryService.getAllCourtHistory()).thenReturn(FAKE_COURT_HISTORIES);
@@ -226,10 +246,13 @@ class AdminCourtHistoryControllerTest {
         final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
 
         mockMvc.perform(put(PATH + "/" + FAKE_COURT_SLUG + PATH_SUFFIX)
+                            .with(csrf())
                             .content(courtHistoryJson)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andReturn();
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(FAKE_COURT_SLUG, TEST_USER);
     }
 }

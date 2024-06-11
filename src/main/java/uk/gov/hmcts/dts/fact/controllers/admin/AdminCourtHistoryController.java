@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtHistoryService;
+import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.net.URI;
 import java.util.List;
@@ -35,6 +37,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 public class AdminCourtHistoryController {
 
     private final AdminCourtHistoryService adminCourtHistoryService;
+    private final AdminCourtLockService adminCourtLockService;
 
     private static final String UNAUTHORISED_CODE = "401";
     private static final String SUCCESS_CODE = "200";
@@ -44,8 +47,9 @@ public class AdminCourtHistoryController {
     private static final String PATH_SUFFIX = "/history";
 
     @Autowired
-    public AdminCourtHistoryController(final AdminCourtHistoryService adminCourtHistoryService) {
+    public AdminCourtHistoryController(final AdminCourtHistoryService adminCourtHistoryService, AdminCourtLockService adminCourtLockService) {
         this.adminCourtHistoryService = adminCourtHistoryService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     /**
@@ -166,6 +170,7 @@ public class AdminCourtHistoryController {
      * Replaces the court histories of a court with the given ones.
      * This endpoint will delete all the court histories of a court and replace them with
      * the supplied histories
+     * @path /admin/courts/{slug}/history
      * @param slug the slug of the court whose histories are to be changed
      * @param courtHistoryList a list of court histories that the court should now have
      * @return the updated list of court histories for the given court
@@ -176,7 +181,9 @@ public class AdminCourtHistoryController {
     @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court Not Found")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)
-    public ResponseEntity<List<CourtHistory>> updateCourtHistories(@PathVariable String slug, @Valid @RequestBody List<CourtHistory> courtHistoryList) {
+    public ResponseEntity<List<CourtHistory>> updateCourtHistories(@PathVariable String slug, @Valid @RequestBody List<CourtHistory> courtHistoryList,
+                                                                   Authentication authentication) {
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
         return ok(adminCourtHistoryService.updateCourtHistoriesBySlug(slug, courtHistoryList));
     }
 
