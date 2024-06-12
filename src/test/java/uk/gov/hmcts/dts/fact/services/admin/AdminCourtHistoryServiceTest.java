@@ -18,7 +18,6 @@ import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -232,22 +231,22 @@ class AdminCourtHistoryServiceTest {
 
     @Test
     void shouldBeAbleToReplaceAllTheCourtHistoryOfACourt() {
-        final String COURT_SLUG = "i-want-new-history";
-        List<uk.gov.hmcts.dts.fact.model.admin.CourtHistory> modelUpdatedCourtHistories = List.of(new uk.gov.hmcts.dts.fact.model.admin.CourtHistory(
+        final String courtSlug = "i-want-new-history";
+        final List<uk.gov.hmcts.dts.fact.model.admin.CourtHistory> modelUpdatedCourtHistories = List.of(new uk.gov.hmcts.dts.fact.model.admin.CourtHistory(
                 80, null, "IAmCalledThis", LocalDateTime.parse("2024-02-03T10:15:30"),
                 LocalDateTime.parse("2023-12-03T11:15:30"), "Cymru"));
-        List<CourtHistory> updatedCourtHistories = List.of(new CourtHistory(
+        final List<CourtHistory> updatedCourtHistories = List.of(new CourtHistory(
             80, null, "IWantToBeCalledThisNow", null,
             null, "Cymru"));
 
-        FAKE_CURRENT_COURT.setSlug(COURT_SLUG);
+        FAKE_CURRENT_COURT.setSlug(courtSlug);
         FAKE_CURRENT_COURT.setId(11);
         FAKE_CURRENT_COURT.setName("New Court");
 
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
+        when(courtRepository.findBySlug(courtSlug)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
         when(courtHistoryRepository.saveAll(any())).thenReturn(updatedCourtHistories);
 
-        assertThat(adminCourtHistoryService.updateCourtHistoriesBySlug(COURT_SLUG, modelUpdatedCourtHistories))
+        assertThat(adminCourtHistoryService.updateCourtHistoriesBySlug(courtSlug, modelUpdatedCourtHistories))
             .hasSize(1);
 
         verify(courtHistoryRepository, times(1)).saveAll(courtHistoriesCaptor.capture());

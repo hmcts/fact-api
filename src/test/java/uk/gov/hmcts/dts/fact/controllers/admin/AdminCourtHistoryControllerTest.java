@@ -78,6 +78,7 @@ class AdminCourtHistoryControllerTest {
     public void setUpMvc() {
         mockMvc = new MvcSecurityUtil().getMockMvcSecurityConfig(FACT_SUPER_ADMIN, context, TEST_USER);
     }
+
     @Test
     void shouldRetrieveAllCourtHistories() throws Exception {
         when(adminCourtHistoryService.getAllCourtHistory()).thenReturn(FAKE_COURT_HISTORIES);

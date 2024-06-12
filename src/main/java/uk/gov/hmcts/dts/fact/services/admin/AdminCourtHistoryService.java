@@ -154,7 +154,7 @@ public class AdminCourtHistoryService {
     /**
      * Update court histories of a specific court by slug.
      * Deletes the existing court histories and replaces them with the given court histories
-     * @param slug
+     * @param slug court slug
      * @param courtHistories court histories to replace current ones with
      * @return the courts updated court histories
      */

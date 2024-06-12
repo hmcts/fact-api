@@ -120,7 +120,7 @@ public class AdminCourtHistoryController {
     /**
      * Get a court history by its court name.
      * This endpoint can be used to get all the court histories that exist.
-     * @path /admin/courts/name/{courtName/history}
+     * @path /admin/courts/name/{courtName}/history
      * @return {@link List} of {@link CourtHistory} a list of all the coyrt histories that have that name.
      */
     @GetMapping("/name/{courtName}" + PATH_SUFFIX)
@@ -177,7 +177,7 @@ public class AdminCourtHistoryController {
      */
     @PutMapping("/{slug}" + PATH_SUFFIX)
     @Operation(summary = "Replace the court histories of a given court")
-    @ApiResponse(responseCode = SUCCESS_CODE, description = "Successfully updated court")
+    @ApiResponse(responseCode = "201", description = "Successfully updated court")
     @ApiResponse(responseCode = NOT_FOUND_CODE, description = "Court Not Found")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED_USER)
     @Role(FACT_SUPER_ADMIN)

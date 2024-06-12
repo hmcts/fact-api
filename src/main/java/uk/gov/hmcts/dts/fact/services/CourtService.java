@@ -339,7 +339,7 @@ public class CourtService {
      * Gets new court into + historical name from a historical name search query
      * Searches old court names. If one is found, then the method will try and fetch the corresponding active
      * court info.
-     * @param query
+     * @param query historical name search
      * @return CourtReferenceWithHistoricalName court info including one of its old court names
      */
     public Optional<CourtReferenceWithHistoricalName> getCourtByCourtHistoryName(String query) {
