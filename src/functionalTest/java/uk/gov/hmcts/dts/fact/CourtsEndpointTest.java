@@ -1,13 +1,21 @@
 package uk.gov.hmcts.dts.fact;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithHistoricalName;
+import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
-import uk.gov.hmcts.dts.fact.util.FunctionalTestBase;
+import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +24,15 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpHeaders.ACCEPT_LANGUAGE;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.*;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.ADMIN_COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.UseUnderscoresInNumericLiterals"})
 @ExtendWith({SpringExtension.class})
-class CourtsEndpointTest extends FunctionalTestBase {
+class CourtsEndpointTest extends AdminFunctionalTestBase {
 
     private static final String AYLESBURY_MAGISTRATES_COURT_AND_FAMILY_COURT
         = "aylesbury-magistrates-court-and-family-court";
@@ -34,6 +45,18 @@ class CourtsEndpointTest extends FunctionalTestBase {
     private static final String COURT_SEARCH_BY_COURT_TYPES_ENDPOINT = "/courts/court-types/";
 
     protected static final String CARDIFF_SOCIAL_SECURITY_AND_CHILD_SUPPORT_TRIBUNAL = "cardiff-social-security-and-child-support-tribunal";
+
+    private static final String COURT_SEARCH_BY_COURT_HISTORY_NAME = "/courts/court-history/";
+
+    private static final String COURT_HISTORY_DELETE_PATH = ADMIN_COURTS_ENDPOINT +  "court-id/";
+
+
+    private static final String COURT_HISTORY_PATH = ADMIN_COURTS_ENDPOINT + "history";
+
+    private static final int TEST_SEARCH_COURT_ID = 1479944;
+    private static final String  TEST_SEARCH_COURT_NAME = "fakeCourt1";
+
+
 
     @Test
     void shouldRetrieveCourtDetail() {
@@ -56,6 +79,8 @@ class CourtsEndpointTest extends FunctionalTestBase {
         assertThat(courts.get(0).getName()).isEqualTo(name);
         assertThat(courts.get(0).getSlug()).isEqualTo(slug);
     }
+
+
 
     @Test
     void shouldRetrieveCourtReferenceByFullQuery() {
@@ -213,5 +238,89 @@ class CourtsEndpointTest extends FunctionalTestBase {
     void shouldReturnNotFoundForEmptyCourtTypes() {
         final var response = doGetRequest(COURT_SEARCH_BY_COURT_TYPES_ENDPOINT);
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRetrieveCurrentCourtByHistoricalCourtName() throws JsonProcessingException {
+        final String name = "Edinburgh Employment Tribunal";
+
+        // Creating  court history
+        Response response1 = createCourtHistory();
+
+        assertThat(response1.statusCode()).isEqualTo(CREATED.value());
+
+        final var response = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
+
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final List<CourtHistory> courtHistory = response.body().jsonPath().getList(".", CourtHistory.class);
+        assertThat(courtHistory).hasSizeLessThanOrEqualTo(1);
+
+        final var historyNameResponse = doGetRequest(COURT_SEARCH_BY_COURT_HISTORY_NAME + "search?q=fakeCourt1");
+        assertThat(historyNameResponse.statusCode()).isEqualTo(OK.value());
+
+        final CourtReferenceWithHistoricalName court = historyNameResponse.as(CourtReferenceWithHistoricalName.class);
+
+        assertThat(court).extracting("name","historicalName").contains(name,"fakeCourt1");
+
+        assertThat(court.getName()).isEqualTo(name);
+        assertThat(court.getHistoricalName()).isEqualTo("fakeCourt1");
+
+        cleanUp();
+
+    }
+
+    @Test
+    void shouldReturnNoContentsForNonExistingCourtHistoricalName() throws JsonProcessingException {
+
+        // Creating  court history
+        Response response1 = createCourtHistory();
+
+        assertThat(response1.statusCode()).isEqualTo(CREATED.value());
+        final var response = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
+
+        assertThat(response.statusCode()).isEqualTo(OK.value());
+
+        final var historyNameResponse = doGetRequest(COURT_SEARCH_BY_COURT_HISTORY_NAME + "search?q=testCourt");
+        assertThat(historyNameResponse.statusCode()).isEqualTo(204);
+
+        cleanUp();
+
+    }
+
+    private Response createCourtHistory() throws JsonProcessingException {
+
+        final CourtHistory courtHistory = new CourtHistory(null, TEST_SEARCH_COURT_ID, TEST_SEARCH_COURT_NAME,
+                                                           LocalDateTime.parse("2024-02-03T10:15:30"),
+                                                           LocalDateTime.parse("2007-12-03T10:15:30"), "court-name-cy");
+        final ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        String newCourtHistoryJson = mapper.writeValueAsString(courtHistory);
+
+        return doPostRequest(
+            COURT_HISTORY_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            newCourtHistoryJson
+        );
+
+    }
+
+    void cleanUp() {
+        final var deleteResponse = doDeleteRequest(
+            COURT_HISTORY_DELETE_PATH + TEST_SEARCH_COURT_ID + "/history",
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),""
+        );
+
+        assertThat(deleteResponse.statusCode()).isEqualTo(OK.value());
+
+
+        final var cleanupResponse = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
+        assertThat(cleanupResponse.statusCode()).isEqualTo(OK.value());
+
+        final List<CourtHistory> cleanCourtHistory = cleanupResponse.body().jsonPath().getList(".", CourtHistory.class);
+        assertThat(cleanCourtHistory).isEmpty();
+
     }
 }
