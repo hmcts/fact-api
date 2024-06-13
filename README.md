@@ -4,6 +4,12 @@
 
 API for the find a court or tribunal service..
 
+
+## Prerequisites
+
+- [JDK 17](https://www.oracle.com/java)
+- Project requires Spring Boot v3.x to be present
+
 ## Building and deploying the application.
 
 ### Building the application
@@ -82,6 +88,40 @@ docker image rm <image-id>
 ```
 
 There is no need to remove postgres and java or similar core images.
+
+## Troubleshooting
+
+### Environment Variables
+
+If you encounter any issues, please ensure that you have the correct environment variables set. Please refer to one of the developers for the correct API keys.
+
+This service does use LaunchDarkly for feature flags, so you will need to have the correct API key set in your environment variables.
+```
+LAUNCH_DARKLY_SDK_KEY = "test_launch_darkly_sdk_key"
+```
+
+This service also uses Mapit for geolocation, so you may need to have the correct API key set in your environment variables.
+Although using a Mapit key is optional since you'll by default use the public Mapit key, it is recommended to use the subscription key
+when running heavy codecept functional tests to avoid rate limiting.
+
+```
+MAPIT_KEY = "subscription_mapit_key"
+```
+
+### Database
+
+If you are having issues with Docker, please ensure that you have the correct version installed. This service uses Docker Compose, so you will need to have that installed as well.
+There are some commands you can use to resolve database related issues
+First you can try to restart the database container by running the following commands.
+```
+  docker-compose down -v
+  docker-compose up -d fact-database
+```
+Then you can check if the container is running by running the logs command.
+```
+  docker-compose logs
+```
+Then try restarting the application to build the api.
 
 ## License
 
