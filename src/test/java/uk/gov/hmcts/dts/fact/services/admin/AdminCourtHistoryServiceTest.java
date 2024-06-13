@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtHistoryService.class)
-@SuppressWarnings({"PMD.UseUnderscoresInNumericLiterals"})
+@SuppressWarnings({"PMD.UseUnderscoresInNumericLiterals", "PMD.TooManyMethods"})
 class AdminCourtHistoryServiceTest {
 
     @Autowired
@@ -61,7 +61,10 @@ class AdminCourtHistoryServiceTest {
     private static final String COURT_SLUG = "i-am-a-slug";
     private static final String DATE1 = "2007-12-03T10:15:30";
     private static final String DATE2 = "2024-02-03T10:15:30";
+    private static final String DATE3 = "2023-12-03T11:15:30";
     private static final String FAKE_COURT_NAME1 = "fakeCourt1";
+
+    private static final String CYMRU = "Cymru";
 
     private static CourtHistory courtHistory1;
     private static CourtHistory courtHistory2;
@@ -166,11 +169,11 @@ class AdminCourtHistoryServiceTest {
     @Test
     void shouldBeAbleToUpdateExistingCourtHistory() {
         CourtHistory existingCourtHistory = new CourtHistory(
-            3, 11, "IAmCalledThis", LocalDateTime.parse("2024-02-03T10:15:30"),
-            LocalDateTime.parse("2023-12-03T11:15:30"), "Cymru");
+            3, 11, "IAmCalledThis", LocalDateTime.parse(DATE2),
+            LocalDateTime.parse(DATE3), CYMRU);
         CourtHistory updatedCourtHistory = new CourtHistory(
-            3, 11, "IWantToBeCalledThisNow", LocalDateTime.parse("2024-02-03T10:15:30"),
-            LocalDateTime.parse("2023-12-03T11:15:30"), "Cymru");
+            3, 11, "IWantToBeCalledThisNow", LocalDateTime.parse(DATE2),
+            LocalDateTime.parse(DATE3), CYMRU);
         uk.gov.hmcts.dts.fact.model.admin.CourtHistory updatedCourtHistoryModel =
             new uk.gov.hmcts.dts.fact.model.admin.CourtHistory(updatedCourtHistory);
 
@@ -187,7 +190,7 @@ class AdminCourtHistoryServiceTest {
         assertThat(courtHistoryCaptor.getValue().getCourtName()).isEqualTo("IWantToBeCalledThisNow");
         assertThat(courtHistoryCaptor.getValue().getSearchCourtId()).isEqualTo(11);
         assertThat(courtHistoryCaptor.getValue().getId()).isEqualTo(3);
-        assertThat(courtHistoryCaptor.getValue().getCreatedAt()).isEqualTo(LocalDateTime.parse("2023-12-03T11:15:30"));
+        assertThat(courtHistoryCaptor.getValue().getCreatedAt()).isEqualTo(LocalDateTime.parse(DATE3));
     }
 
     @Test
@@ -233,11 +236,11 @@ class AdminCourtHistoryServiceTest {
     void shouldBeAbleToReplaceAllTheCourtHistoryOfACourt() {
         final String courtSlug = "i-want-new-history";
         final List<uk.gov.hmcts.dts.fact.model.admin.CourtHistory> modelUpdatedCourtHistories = List.of(new uk.gov.hmcts.dts.fact.model.admin.CourtHistory(
-                80, null, "IAmCalledThis", LocalDateTime.parse("2024-02-03T10:15:30"),
-                LocalDateTime.parse("2023-12-03T11:15:30"), "Cymru"));
+                80, null, "IAmCalledThis", LocalDateTime.parse(DATE2),
+                LocalDateTime.parse(DATE3), CYMRU));
         final List<CourtHistory> updatedCourtHistories = List.of(new CourtHistory(
             80, null, "IWantToBeCalledThisNow", null,
-            null, "Cymru"));
+            null, CYMRU));
 
         FAKE_CURRENT_COURT.setSlug(courtSlug);
         FAKE_CURRENT_COURT.setId(11);
