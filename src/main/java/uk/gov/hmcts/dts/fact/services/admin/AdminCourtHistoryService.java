@@ -139,7 +139,7 @@ public class AdminCourtHistoryService {
      */
     @Transactional
     public List<CourtHistory> deleteCourtHistoriesByCourtId(Integer courtId) {
-        Court court = courtRepository.findCourtById(courtId).orElseThrow(() -> new NotFoundException("Court not found: " + courtId));;
+        Court court = courtRepository.findCourtById(courtId).orElseThrow(() -> new NotFoundException("Court not found: " + courtId));
         List<CourtHistory> courtHistoryList = courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(courtId)
             .stream()
             .map(CourtHistory::new)

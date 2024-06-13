@@ -23,8 +23,9 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
 @ExtendWith(SpringExtension.class)
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.UseUnderscoresInNumericLiterals"})
-public class AdminCourtHistoryEndpointTest extends AdminFunctionalTestBase {
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.UseUnderscoresInNumericLiterals", "PMD.TestClassWithoutTestCases"})
+ class AdminCourtHistoryEndpointTest extends AdminFunctionalTestBase {
+
     private static final String COURT_HISTORY_PATH = ADMIN_COURTS_ENDPOINT + "history";
     private static final String COURT_HISTORY_SEARCH_COURT_NAME_PATH = ADMIN_COURTS_ENDPOINT + "name/";
     private static final String COURT_HISTORY_DELETE_PATH = ADMIN_COURTS_ENDPOINT +  "court-id/";
@@ -270,7 +271,7 @@ public class AdminCourtHistoryEndpointTest extends AdminFunctionalTestBase {
         return MAPPER.writeValueAsString(courtHistory);
     }
 
-    void cleanUp() {
+    private void cleanUp() {
         final var deleteResponse = doDeleteRequest(
             COURT_HISTORY_DELETE_PATH + TEST_SEARCH_COURT_ID + "/history",
             Map.of(AUTHORIZATION, BEARER + superAdminToken),""

@@ -307,7 +307,7 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
 
     }
 
-    void cleanUp() {
+    private void cleanUp() {
         final var deleteResponse = doDeleteRequest(
             COURT_HISTORY_DELETE_PATH + TEST_SEARCH_COURT_ID + "/history",
             Map.of(AUTHORIZATION, BEARER + superAdminToken),""
