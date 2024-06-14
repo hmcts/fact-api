@@ -246,11 +246,9 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
 
         // Creating  court history
         Response response1 = createCourtHistory();
-
         assertThat(response1.statusCode()).isEqualTo(CREATED.value());
 
         final var response = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
-
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtHistory> courtHistory = response.body().jsonPath().getList(".", CourtHistory.class);
@@ -260,14 +258,12 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
         assertThat(historyNameResponse.statusCode()).isEqualTo(OK.value());
 
         final CourtReferenceWithHistoricalName court = historyNameResponse.as(CourtReferenceWithHistoricalName.class);
-
         assertThat(court).extracting("name","historicalName").contains(name,"fakeCourt1");
 
         assertThat(court.getName()).isEqualTo(name);
         assertThat(court.getHistoricalName()).isEqualTo("fakeCourt1");
 
         cleanUp();
-
     }
 
     @Test
@@ -275,17 +271,15 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
 
         // Creating  court history
         Response response1 = createCourtHistory();
-
         assertThat(response1.statusCode()).isEqualTo(CREATED.value());
-        final var response = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
 
+        final var response = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final var historyNameResponse = doGetRequest(COURT_SEARCH_BY_COURT_HISTORY_NAME + "search?q=testCourt");
         assertThat(historyNameResponse.statusCode()).isEqualTo(204);
 
         cleanUp();
-
     }
 
     private Response createCourtHistory() throws JsonProcessingException {
@@ -315,12 +309,10 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
 
         assertThat(deleteResponse.statusCode()).isEqualTo(OK.value());
 
-
         final var cleanupResponse = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         assertThat(cleanupResponse.statusCode()).isEqualTo(OK.value());
 
         final List<CourtHistory> cleanCourtHistory = cleanupResponse.body().jsonPath().getList(".", CourtHistory.class);
         assertThat(cleanCourtHistory).isEmpty();
-
     }
 }

@@ -25,7 +25,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 @ExtendWith(SpringExtension.class)
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.UseUnderscoresInNumericLiterals", "PMD.TestClassWithoutTestCases"})
  class AdminCourtHistoryEndpointTest extends AdminFunctionalTestBase {
-
     private static final String COURT_HISTORY_PATH = ADMIN_COURTS_ENDPOINT + "history";
     private static final String COURT_HISTORY_SEARCH_COURT_NAME_PATH = ADMIN_COURTS_ENDPOINT + "name/";
     private static final String COURT_HISTORY_DELETE_PATH = ADMIN_COURTS_ENDPOINT +  "court-id/";
@@ -37,18 +36,15 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
     @BeforeAll
     static void initialise() {
-
         MAPPER.registerModule(new JavaTimeModule());
         MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
     }
 
-    /************************************************************* Get Request Tests. ***************************************************************/
 
+    // Get Request Tests
 
     @Test
     void shouldGetAllCourtHistory() throws JsonProcessingException {
-
         // Creating first court history
         Response response1 = createCourtHistory();
 
@@ -58,18 +54,13 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
         Response response2 = createCourtHistory();
 
         assertThat(response2.statusCode()).isEqualTo(CREATED.value());
-
         final var response = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
-
         assertThat(response.statusCode()).isEqualTo(OK.value());
-
         final List<CourtHistory> courtHistory = response.body().jsonPath().getList(".", CourtHistory.class);
         assertThat(courtHistory).hasSizeGreaterThanOrEqualTo(1);
 
         // clean up step
-
         cleanUp();
-
     }
 
     @Test
@@ -87,10 +78,8 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
 
-
     @Test
     void shouldGetAllCourtHistoryBySlug() throws JsonProcessingException {
-
         // Creating  court history
         Response response1 = createCourtHistory();
 
@@ -104,42 +93,30 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
         assertThat(courtHistory).hasSizeGreaterThanOrEqualTo(1);
 
         // clean up step
-
         cleanUp();
-
-
     }
-
 
     @Test
     void shouldGetAllCourtHistoryByHistoryName() throws JsonProcessingException {
-
         // Creating  court history
         Response response1 = createCourtHistory();
 
         assertThat(response1.statusCode()).isEqualTo(CREATED.value());
-
         final var response = doGetRequest(COURT_HISTORY_SEARCH_COURT_NAME_PATH + TEST_SEARCH_COURT_NAME + "/history", Map.of(AUTHORIZATION, BEARER + superAdminToken));
-
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtHistory> courtHistory = response.body().jsonPath().getList(".", CourtHistory.class);
         assertThat(courtHistory).hasSize(1).extracting("courtName").contains("fakeCourt1");
 
-
         // clean up step
-
         cleanUp();
-
-
     }
 
 
-    /************************************************************* Update Request Tests. ***************************************************************/
+    // Update Request Tests.
 
     @Test
     void shouldUpdateCourtHistory() throws JsonProcessingException {
-
         // Creating  court history
         Response response = createCourtHistory();
 
@@ -166,15 +143,12 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
 
         assertThat(response.statusCode()).isEqualTo(201);
 
-
         final List<CourtHistory> updatedCourtHistory = updateResponse.body().jsonPath().getList(".", CourtHistory.class);
         assertThat(updatedCourtHistory).hasSize(1).extracting("courtName").contains("test-name");
         assertThat(updatedCourtHistory).hasSize(1).extracting("courtNameCy").contains("test-name-cy");
 
         // clean up step
-
         cleanUp();
-
     }
 
     @Test
@@ -207,7 +181,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
     }
 
 
-    /************************************************************* Delete Request Tests. ***************************************************************/
+    // Delete Request Tests
 
     @Test
     void adminShouldBeForbiddenForDeletingCourtHistory()  {
@@ -218,7 +192,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
             ""
         );
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
-
     }
 
     @Test
@@ -237,20 +210,18 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
             COURT_HISTORY_PATH + 1,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             ""
-
         );
         assertThat(response.statusCode()).isEqualTo(NOT_FOUND.value());
-
     }
 
-    /************************************************************* Shared utility methods. ***************************************************************/
+
+    // Shared utility methods
 
     private Response createCourtHistory() throws JsonProcessingException {
 
         final CourtHistory courtHistory = new CourtHistory(null, TEST_SEARCH_COURT_ID, TEST_SEARCH_COURT_NAME,
                                                            LocalDateTime.parse("2024-02-03T10:15:30"),
                                                            LocalDateTime.parse("2007-12-03T10:15:30"), "court-name-cy");
-
         String newCourtHistoryJson = MAPPER.writeValueAsString(courtHistory);
 
         return doPostRequest(
@@ -258,7 +229,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             newCourtHistoryJson
         );
-
     }
 
     private static String getTestCourtHistories() throws JsonProcessingException {
@@ -267,7 +237,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
                              LocalDateTime.parse("2024-02-03T10:15:30"),
                              LocalDateTime.parse("2007-12-03T10:15:30"), "court-name-cy")
         );
-
         return MAPPER.writeValueAsString(courtHistory);
     }
 
@@ -278,14 +247,10 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
         );
 
         assertThat(deleteResponse.statusCode()).isEqualTo(OK.value());
-
-
         final var cleanupResponse = doGetRequest(COURT_HISTORY_PATH, Map.of(AUTHORIZATION, BEARER + superAdminToken));
         assertThat(cleanupResponse.statusCode()).isEqualTo(OK.value());
 
         final List<CourtHistory> cleanCourtHistory = cleanupResponse.body().jsonPath().getList(".", CourtHistory.class);
         assertThat(cleanCourtHistory).isEmpty();
-
     }
-
 }
