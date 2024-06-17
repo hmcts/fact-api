@@ -10,9 +10,11 @@ import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithHistoricalName;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
+import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
@@ -52,6 +54,8 @@ public class CourtService {
     private final ServiceAreaSearchFactory serviceAreaSearchFactory;
     private final FallbackProximitySearch fallbackProximitySearch;
 
+    private final CourtHistoryRepository courtHistoryRepository;
+
     /**
      * Constructor for the CourtService.
      *
@@ -62,6 +66,7 @@ public class CourtService {
      * @param serviceAreaRepository      the repository to get service areas from
      * @param serviceAreaSearchFactory   the service area search factory
      * @param fallbackProximitySearch    the fallback proximity search
+     * @param courtHistoryRepository the repository for getting court histories
      */
     @Autowired
     public CourtService(final MapitService mapitService,
@@ -70,7 +75,8 @@ public class CourtService {
                         final CourtWithDistanceRepository courtWithDistanceRepository,
                         final ServiceAreaRepository serviceAreaRepository,
                         final ServiceAreaSearchFactory serviceAreaSearchFactory,
-                        final FallbackProximitySearch fallbackProximitySearch) {
+                        final FallbackProximitySearch fallbackProximitySearch,
+                        final CourtHistoryRepository courtHistoryRepository) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
         this.proximitySearch = proximitySearch;
@@ -78,6 +84,7 @@ public class CourtService {
         this.serviceAreaRepository = serviceAreaRepository;
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
         this.fallbackProximitySearch = fallbackProximitySearch;
+        this.courtHistoryRepository = courtHistoryRepository;
     }
 
     /**
@@ -317,7 +324,6 @@ public class CourtService {
         return courts;
     }
 
-
     private boolean filterResultByPostcode(final String postcode, final String areaOfLaw) {
         return isScottishPostcode(postcode)
             || isNorthernIrishPostcode(postcode) && !IMMIGRATION_AREA_OF_LAW.equalsIgnoreCase(areaOfLaw);
@@ -327,5 +333,21 @@ public class CourtService {
         // Only allow courts not in Northern Ireland or Glasglow court for Northern Ireland postcode and Immigration area of law
         return c -> !isNorthernIrishPostcode(postcode)
             || IMMIGRATION_AREA_OF_LAW.equalsIgnoreCase(areaOfLaw) && c.getName().contains(GLASGOW_TRIBUNAL_CENTRE);
+    }
+
+    /**
+     * Gets new court into + historical name from a historical name search query
+     * Searches old court names. If one is found, then the method will try and fetch the corresponding active
+     * court info.
+     * @param query historical name search
+     * @return CourtReferenceWithHistoricalName court info including one of its old court names
+     */
+    public Optional<CourtReferenceWithHistoricalName> getCourtByCourtHistoryName(String query) {
+        return courtHistoryRepository.findAllByCourtNameIgnoreCaseOrderByUpdatedAtDesc(query)
+            .stream()
+            .findFirst()
+            .map(history -> courtRepository.findCourtByIdAndDisplayedIsTrue(history.getSearchCourtId())
+                .map(court -> new CourtReferenceWithHistoricalName(court, history))
+                .orElseThrow(() -> new NotFoundException("Court History with ID: " + history.getSearchCourtId() + " does not have a corresponding active court")));
     }
 }

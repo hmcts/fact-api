@@ -5,27 +5,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
-import uk.gov.hmcts.dts.fact.entity.Contact;
-import uk.gov.hmcts.dts.fact.entity.ContactType;
-import uk.gov.hmcts.dts.fact.entity.Court;
-import uk.gov.hmcts.dts.fact.entity.CourtContact;
-import uk.gov.hmcts.dts.fact.entity.CourtOpeningTime;
-import uk.gov.hmcts.dts.fact.entity.OpeningTime;
-import uk.gov.hmcts.dts.fact.entity.OpeningType;
-import uk.gov.hmcts.dts.fact.entity.ServiceArea;
+import uk.gov.hmcts.dts.fact.entity.*;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithHistoricalName;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
+import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtWithDistanceRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
@@ -35,6 +30,8 @@ import uk.gov.hmcts.dts.fact.services.search.Search;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 import uk.gov.hmcts.dts.fact.util.Action;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,19 +42,10 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.anyDouble;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CourtService.class)
@@ -80,6 +68,23 @@ class CourtServiceTest {
     private static final String TEST_TYPE_IN_SEARCH_TABLE = "Test type in search table";
     private static final String TEST_TYPE_IN_ADMIN_TABLE = "Test type in admin table";
     private static final List<String> COURT_TYPE_LIST = asList("Family Court", "Tribunal");
+
+    private static final Court FAKE_CURRENT_COURT = new Court();
+    private static final String FAKE_COURT_NAME1 = "fakeCourt1";
+
+    private static final List<CourtHistory> FAKE_COURT_HISTORIES = asList(
+        new CourtHistory(
+            1, 11, FAKE_COURT_NAME1, LocalDateTime.parse("2024-02-03T10:15:30"),
+            LocalDateTime.parse("2007-12-03T10:15:30"), null),
+        new CourtHistory(
+            2, 11, FAKE_COURT_NAME1, null, null, null),
+        new CourtHistory(
+            3, 11, FAKE_COURT_NAME1, LocalDateTime.parse("2024-02-03T10:15:30"),
+            LocalDateTime.parse("2023-12-03T11:15:30"), ""),
+        new CourtHistory(
+            4, 11, FAKE_COURT_NAME1, LocalDateTime.parse("2024-02-03T10:15:30"),
+            LocalDateTime.parse("2024-03-03T10:15:30"), "Llys y Goron")
+    );
 
     @Autowired
     private CourtService courtService;
@@ -116,6 +121,9 @@ class CourtServiceTest {
 
     @MockBean
     private Court court;
+
+    @MockBean
+    private CourtHistoryRepository courtHistoryRepository;
 
     @Test
     void shouldThrowSlugNotFoundException() {
@@ -722,4 +730,41 @@ class CourtServiceTest {
         assertThat(results.getCourts().get(0)).isInstanceOf(CourtReferenceWithDistance.class);
     }
 
+    @Test
+    void shouldBeAbleToGetCourtByHistoricalCourtName() {
+
+        FAKE_CURRENT_COURT.setId(11);
+        FAKE_CURRENT_COURT.setName("fakeCurrentCourt1");
+        FAKE_CURRENT_COURT.setSlug("fake-current-court-1");
+        FAKE_CURRENT_COURT.setDisplayed(true);
+        FAKE_CURRENT_COURT.setRegionId(9);
+        FAKE_CURRENT_COURT.setUpdatedAt(Timestamp.valueOf("2024-03-03 10:15:30"));
+
+        when(courtHistoryRepository.findAllByCourtNameIgnoreCaseOrderByUpdatedAtDesc(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
+        when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(Optional.of(FAKE_CURRENT_COURT));
+
+
+        assertThat(courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
+            .get()
+            .isInstanceOf(CourtReferenceWithHistoricalName.class)
+            .extracting("name", "slug", "historicalName", "displayed", "region")
+            .contains("fakeCurrentCourt1", "fake-current-court-1", FAKE_COURT_NAME1, true, 9);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenThereIsCourtHistoryButNoCourt() {
+
+        when(courtHistoryRepository.findAllByCourtNameIgnoreCaseOrderByUpdatedAtDesc(FAKE_COURT_NAME1)).thenReturn(FAKE_COURT_HISTORIES);
+        when(courtRepository.findCourtByIdAndDisplayedIsTrue(11)).thenReturn(empty());
+
+        assertThatThrownBy(() -> courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
+            .isInstanceOf(NotFoundException.class)
+            .hasMessage("Not found: Court History with ID: 11 does not have a corresponding active court");
+    }
+
+    @Test
+    void shouldReturnEmptyCourtWhenCourtHistoryNotFound() {
+        assertThat(courtService.getCourtByCourtHistoryName(FAKE_COURT_NAME1))
+            .isEmpty();
+    }
 }
