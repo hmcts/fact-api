@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
+import uk.gov.hmcts.dts.fact.model.CourtReferenceWithHistoricalName;
 import uk.gov.hmcts.dts.fact.model.deprecated.OldCourt;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 
 import java.util.List;
 
+import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
@@ -107,5 +109,23 @@ public class CourtsController {
         + "crown,tribunal,county")
     public ResponseEntity<List<Court>> findByCourtTypes(@PathVariable List<String> courtTypes) {
         return ok(courtService.getCourtsByCourtTypes(courtTypes));
+    }
+
+    /**
+     * Find Court by historical court name.
+     * This endpoint can be used to search historical court names to get current court info. If the historical name exists, then the current court information e.g.
+     * name, slug etc. are returned. The search ignores upper/lowercase but the words must match name exactly.
+     *
+     * @return {@link CourtReferenceWithHistoricalName CourtReferenceWithHistoricalName.class} the current court info including the historical court name.
+     * @input a search string
+     * @path /court-history/search
+     */
+    @GetMapping(path = "/court-history/search")
+    @ApiResponse(responseCode = "200", description = "Successful - returns empty CourtReferenceWithHistoricalName")
+    @ApiResponse(responseCode = "204", description = "Successful - but no history found, so returns no content")
+    @ApiResponse(responseCode = "404", description = "Court History Found but No corresponding Court found")
+    @Operation(summary = "Return active court based a search of old court names")
+    public ResponseEntity<CourtReferenceWithHistoricalName> getCourtByCourtHistoryNameSearch(@RequestParam(name = "q") @NotBlank String query) {
+        return courtService.getCourtByCourtHistoryName(query).map(ResponseEntity::ok).orElseGet(() -> noContent().build());
     }
 }
