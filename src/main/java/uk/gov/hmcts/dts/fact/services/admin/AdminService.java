@@ -30,7 +30,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
@@ -251,7 +250,7 @@ public class AdminService {
         newCourt.setServiceAreas(serviceAreaList);
         courtRepository.save(newCourt);
 
-        if (Objects.equals(Boolean.TRUE, serviceCentre)) {
+        if (Boolean.TRUE.equals(serviceCentre)) {
             List<String> serviceAreasCy = serviceAreaList.stream().map(ServiceArea::getNameCy).collect(toList());
             List<AreaOfLaw> areasOfLawList = areasOfLawRepository.findAllByNameIn(serviceAreas).orElse(Collections.emptyList());
             List<String> serviceAreaDisplayNames = new ArrayList<>();
