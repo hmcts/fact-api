@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.UseUnderscoresInNumericLiterals"})
 class CourtRepositoryTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -340,5 +340,21 @@ class CourtRepositoryTest {
         softly.assertThat(result.get().getLon()).isNotEqualTo(lon);
         softly.assertThat(result.get().getLon()).isEqualTo(expectedLon);
         softly.assertAll();
+    }
+
+    @Test
+    void shouldFindActiveCourtById() {
+        assertThat(courtRepository.findCourtByIdAndDisplayedIsTrue(1479547))
+            .isPresent()
+            .get()
+            .isInstanceOf(Court.class)
+            .extracting("id", "displayed")
+            .contains(1479547, true);
+    }
+
+    @Test
+    void shouldNotFindCourtByIdIfCourtNotActive() {
+        assertThat(courtRepository.findCourtByIdAndDisplayedIsTrue(1479802))
+            .isNotPresent();
     }
 }

@@ -19,6 +19,7 @@ import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 
@@ -75,6 +76,9 @@ class AdminServiceTest {
 
     @MockBean
     private RolesProvider rolesProvider;
+
+    @MockBean
+    private CourtHistoryRepository courtHistoryRepository;
 
     @MockBean
     private AdminAuditService adminAuditService;
@@ -313,6 +317,7 @@ class AdminServiceTest {
                                             any(uk.gov.hmcts.dts.fact.model.admin.Court.class),
                                             any(), anyString()
         );
+        verify(courtHistoryRepository).deleteCourtHistoriesBySearchCourtId(courtEntity.getId());
     }
 
     @Test
@@ -322,6 +327,7 @@ class AdminServiceTest {
         assertThatThrownBy(() -> adminService.deleteCourt(SOME_SLUG))
             .isInstanceOf(NotFoundException.class)
             .hasMessage(NOT_FOUND + notFoundSlugError);
+        verify(courtHistoryRepository, never()).deleteCourtHistoriesBySearchCourtId(any());
     }
 
     @Test
