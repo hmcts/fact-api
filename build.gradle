@@ -16,7 +16,7 @@ version = '0.0.1'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -144,7 +144,6 @@ sonarqube {
   properties {
     property "sonar.projectName", "fact :: api"
     property "sonar.projectKey", "uk.gov.hmcts.reform:fact-api"
-    property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
   }
 }
 
