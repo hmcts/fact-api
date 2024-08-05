@@ -1,4 +1,4 @@
-  variable "product" {
+variable "product" {
   default = "fact"
 }
 
@@ -16,7 +16,7 @@ variable "subscription" {}
 
 
 variable "common_tags" {
-  type = map
+  type = map(any)
 }
 
 variable "tenant_id" {}
@@ -26,7 +26,7 @@ variable "ilbIp" {
 }
 
 variable "jenkins_AAD_objectId" {
-  type = string
+  type        = string
   description = "(Required) The Azure AD object ID of a user, service principal or security group in the Azure Active Directory tenant for the vault. The object ID must be unique for the list of access policies."
 }
 
