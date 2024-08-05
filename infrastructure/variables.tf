@@ -1,4 +1,4 @@
-variable "product" {
+  variable "product" {
   default = "fact"
 }
 

@@ -3,7 +3,7 @@ plugins {
   id 'checkstyle'
   id 'pmd'
   id 'jacoco'
-  id 'io.spring.dependency-management' version '1.1.4'
+  id 'io.spring.dependency-management' version '1.1.6'
   id 'org.springframework.boot' version '3.2.4'
   id 'org.owasp.dependencycheck' version '9.0.8'
   id 'com.github.ben-manes.versions' version '0.51.0'
@@ -182,7 +182,7 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.10.2',
+  junit           : '5.10.3',
   junitPlatform   : '1.10.2',
   reformLogging   : '5.1.7',
   springBoot      : springBoot.class.package.implementationVersion
@@ -223,7 +223,7 @@ dependencies {
 
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
   implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20240325.1'
-  implementation group: 'com.google.guava', name: 'guava', version: '33.1.0-jre'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.2.1-jre'
 
   implementation group: 'org.projectlombok', name: 'lombok'
 
@@ -231,7 +231,7 @@ dependencies {
 
   implementation group: 'io.github.resilience4j', name: 'resilience4j-spring-boot3', version: '2.2.0'
 
-  testImplementation 'com.github.hmcts:fortify-client:1.3.0:all'
+  testImplementation 'com.github.hmcts:fortify-client:1.4.3:all'
   testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.2.4'
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
