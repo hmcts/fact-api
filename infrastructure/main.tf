@@ -10,12 +10,12 @@ provider "azurerm" {
 }
 
 data "azurerm_key_vault" "fact_key_vault" {
-  name = local.vault_name
+  name                = local.vault_name
   resource_group_name = local.resource_group_name
 }
 
 data "azurerm_key_vault_secret" "launch_darkly_sdk_key" {
-  name = "launchdarkly-sdk-key"
+  name         = "launchdarkly-sdk-key"
   key_vault_id = data.azurerm_key_vault.fact_key_vault.id
 }
 
@@ -24,11 +24,11 @@ provider "vault" {
 }
 
 locals {
-  vault_name = "${var.product}-${var.env}"
+  vault_name          = "${var.product}-${var.env}"
   resource_group_name = "${var.product}-${var.env}"
-  db_host_name = "${var.product}-${var.component}-flexible-postgres-db-v15"
-  db_name = var.product
-  postgresql_user = "${var.component}_user"
+  db_host_name        = "${var.product}-${var.component}-flexible-postgres-db-v15"
+  db_name             = var.product
+  postgresql_user     = "${var.component}_user"
 }
 
 module "postgresql" {
@@ -52,6 +52,6 @@ module "postgresql" {
   business_area = "cft"
   pgsql_version = "15"
 
-  admin_user_object_id = var.jenkins_AAD_objectId
+  admin_user_object_id           = var.jenkins_AAD_objectId
   force_user_permissions_trigger = "1"
 }
