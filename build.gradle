@@ -184,7 +184,7 @@ repositories {
 def versions = [
   junit           : '5.10.3',
   junitPlatform   : '1.10.3',
-  reformLogging   : '6.1.6',
+  reformLogging   : '5.1.7',
   springBoot      : springBoot.class.package.implementationVersion
 ]
 
@@ -209,8 +209,8 @@ dependencies {
 
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
 
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformLogging
+  implementation group: 'com.github.hmcts', name: 'logging', version: versions.reformLogging
+  implementation group: 'com.github.hmcts', name: 'logging-appinsights', version: versions.reformLogging
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.flywaydb', name: 'flyway-core'
 
