@@ -184,7 +184,7 @@ repositories {
 def versions = [
   junit           : '5.10.3',
   junitPlatform   : '1.10.3',
-  reformLogging   : '5.1.7',
+  reformLogging   : '6.0.1',
   springBoot      : springBoot.class.package.implementationVersion
 ]
 
@@ -209,8 +209,8 @@ dependencies {
 
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
 
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformLogging
-  implementation group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformLogging
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.flywaydb', name: 'flyway-core'
 
@@ -226,6 +226,8 @@ dependencies {
   implementation group: 'com.google.guava', name: 'guava', version: '33.2.1-jre'
 
   implementation group: 'org.projectlombok', name: 'lombok'
+
+  implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
 
   annotationProcessor 'org.projectlombok:lombok'
 
