@@ -1,14 +1,25 @@
+buildscript {
+  ext {
+    flywayVersion = '10.17.3'
+    postgresqlVersion = '42.7.4'
+  }
+  dependencies {
+    classpath("org.postgresql:postgresql:$postgresqlVersion") // must be compatible with flyway version
+    classpath("org.flywaydb:flyway-database-postgresql:$flywayVersion") // flyway dependency/plugin versions must always match
+  }
+}
+
 plugins {
   id 'application'
   id 'checkstyle'
   id 'pmd'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.1.6'
-  id 'org.springframework.boot' version '3.2.4'
+  id 'org.springframework.boot' version '3.3.4'
   id 'org.owasp.dependencycheck' version '9.0.8'
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'org.sonarqube' version '5.0.0.4638'
-  id 'org.flywaydb.flyway' version '9.22.3'
+  id 'org.flywaydb.flyway' version "$flywayVersion"
 }
 
 group = 'uk.gov.hmcts.dts'
@@ -185,7 +196,9 @@ def versions = [
   junit           : '5.10.3',
   junitPlatform   : '1.10.3',
   reformLogging   : '6.0.1',
-  springBoot      : springBoot.class.package.implementationVersion
+  springBoot      : springBoot.class.package.implementationVersion,
+  flyway          : "$flywayVersion",
+  postgresql      : "$postgresqlVersion"
 ]
 
 ext.libraries = [
@@ -212,9 +225,9 @@ dependencies {
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformLogging
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
-  implementation group: 'org.flywaydb', name: 'flyway-core'
 
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.3'
+  implementation group: 'org.postgresql', name: 'postgresql', version: versions.postgresql
+  implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
 
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
 
@@ -257,6 +270,8 @@ dependencies {
   smokeTestImplementation sourceSets.main.runtimeClasspath
   smokeTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
   smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured'
+
+  runtimeOnly group: 'org.flywaydb', name: 'flyway-database-postgresql', version: versions.flyway
 }
 
 mainClassName = 'uk.gov.hmcts.dts.fact.Application'
