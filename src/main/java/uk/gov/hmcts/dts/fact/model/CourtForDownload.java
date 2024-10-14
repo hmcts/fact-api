@@ -113,8 +113,14 @@ public class CourtForDownload {
     }
 
     private String formatAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
+
+        //if epim is blank then don't show anything else show it with brackets around it to distinguish from address.
+        String epimId = (courtAddress.getEpimId() != null && !courtAddress.getEpimId().isBlank()) ?
+            " (" + courtAddress.getEpimId() + ")" : Objects.requireNonNullElse(courtAddress.getEpimId(), "");
+
+
         return format(
-            "%s: %s, %s, %s, %s",
+            "%s: %s, %s, %s%s",
             courtAddress.getAddressType().getName(),
             courtAddress.getAddress()
                 .lines()
@@ -123,7 +129,7 @@ public class CourtForDownload {
                 .collect(joining(", ")),
             courtAddress.getTownName(),
             courtAddress.getPostcode(),
-            Objects.requireNonNullElse(courtAddress.getEpimId(), "")
+            epimId
         );
     }
 }
