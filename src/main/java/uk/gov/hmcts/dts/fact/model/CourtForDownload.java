@@ -19,6 +19,7 @@ import uk.gov.hmcts.dts.fact.entity.util.ElementFormatter;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -113,7 +114,7 @@ public class CourtForDownload {
 
     private String formatAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
         return format(
-            "%s: %s, %s, %s",
+            "%s: %s, %s, %s, %s",
             courtAddress.getAddressType().getName(),
             courtAddress.getAddress()
                 .lines()
@@ -121,7 +122,8 @@ public class CourtForDownload {
                 .map(s -> s.replace("\t", ""))
                 .collect(joining(", ")),
             courtAddress.getTownName(),
-            courtAddress.getPostcode()
+            courtAddress.getPostcode(),
+            Objects.requireNonNullElse(courtAddress.getEpimId(), "")
         );
     }
 }
