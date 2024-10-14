@@ -25,6 +25,8 @@ public class CourtAddress {
     private String townName;
     private String county;
     private String postcode;
+    @JsonProperty("epim_id")
+    private String epimId;
     private String description;
     @JsonProperty("fields_of_law")
     private CourtSecondaryAddressType courtSecondaryAddressType;
@@ -38,6 +40,7 @@ public class CourtAddress {
         this.townName = chooseString(courtAddress.getTownNameCy(), courtAddress.getTownName());
         this.county = courtAddress.getCounty() == null ? "" : courtAddress.getCounty().getName();
         this.postcode = courtAddress.getPostcode();
+        this.epimId = courtAddress.getEpimId();
 
         if (!Objects.isNull(courtAddress.getCourtSecondaryAddressType())
             && !courtAddress.getCourtSecondaryAddressType().isEmpty()) {
