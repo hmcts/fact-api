@@ -156,7 +156,7 @@ class AdminCourtAddressServiceTest {
     private static final Integer SORT_ORDER_1 = 0;
     private static final Integer SORT_ORDER_2 = 1;
     private static final Integer SORT_ORDER_3 = 2;
-
+    private static final String EPIM_ID = "epim_id";
     private static final int ADDRESS_COUNT = 3;
     private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
         1,
@@ -168,7 +168,8 @@ class AdminCourtAddressServiceTest {
         COUNTY_ID,
         WRITE_TO_US_POSTCODE,
         COURT_SECONDARY_ADDRESS_TYPE_LIST,
-        SORT_ORDER_2
+        SORT_ORDER_2,
+        EPIM_ID
     );
     private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(
         2,
@@ -180,7 +181,8 @@ class AdminCourtAddressServiceTest {
         COUNTY_ID,
         VISIT_US_POSTCODE,
         COURT_SECONDARY_ADDRESS_TYPE_LIST_2,
-        SORT_ORDER_1
+        SORT_ORDER_1,
+        EPIM_ID
     );
     private static final CourtAddress NO_SECONDARY_COURT_TYPE_ADDRESS = new CourtAddress(
         3,
@@ -192,7 +194,8 @@ class AdminCourtAddressServiceTest {
         COUNTY_ID,
         VISIT_OR_CONTACT_US_POSTCODE,
         COURT_SECONDARY_ADDRESS_TYPE_LIST_3,
-        SORT_ORDER_3
+        SORT_ORDER_3,
+        EPIM_ID
     );
     private static final List<CourtAddress> EXPECTED_ADDRESSES = asList(
         WRITE_TO_US_ADDRESS, VISIT_US_ADDRESS, NO_SECONDARY_COURT_TYPE_ADDRESS);
@@ -208,7 +211,8 @@ class AdminCourtAddressServiceTest {
             null,
             COUNTY,
             WRITE_TO_US_POSTCODE,
-            SORT_ORDER_2
+            SORT_ORDER_2,
+            EPIM_ID
         ),
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(
             MOCK_COURT,
@@ -219,7 +223,8 @@ class AdminCourtAddressServiceTest {
             null,
             COUNTY,
             VISIT_US_POSTCODE,
-            SORT_ORDER_1
+            SORT_ORDER_1,
+            EPIM_ID
         ),
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(
             MOCK_COURT,
@@ -230,7 +235,8 @@ class AdminCourtAddressServiceTest {
             null,
             COUNTY,
             VISIT_OR_CONTACT_US_POSTCODE,
-            SORT_ORDER_3
+            SORT_ORDER_3,
+            EPIM_ID
         )
     );
 
@@ -340,7 +346,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                5
+                5,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -351,7 +358,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                0
+                0,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -362,7 +370,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                1
+                1,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -373,7 +382,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                3
+                3,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -384,7 +394,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                4
+                4,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -395,7 +406,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                2
+                2,
+                ""
             )
         );
         when(MOCK_COURT.getAddresses()).thenReturn(courtAddresses);
@@ -618,7 +630,8 @@ class AdminCourtAddressServiceTest {
     void validateCourtPostcodesShouldReturnInvalidPartialPostcode() {
         final List<CourtAddress> testAddresses = singletonList(
             new CourtAddress(1, WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1,
-                             null, COUNTY_ID, PARTIAL_POSTCODE, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1
+                             null, COUNTY_ID, PARTIAL_POSTCODE, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1,
+                             EPIM_ID
             )
         );
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
@@ -639,7 +652,8 @@ class AdminCourtAddressServiceTest {
     void validateCourtPostcodesShouldNotUpdateCoordinatesForAddressWithMissingPostcode() {
         final List<CourtAddress> testAddresses =
             singletonList(new CourtAddress(1, VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1,
-                                           TEST_TOWN1, null, COUNTY_ID, "", COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1
+                                           TEST_TOWN1, null, COUNTY_ID, "", COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1,
+                                           EPIM_ID
             ));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(testAddresses)).isEmpty();
