@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.model;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -114,8 +115,9 @@ public class CourtForDownload {
 
     private String formatAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
 
-        //if epim is blank then don't show anything else show it with brackets around it to distinguish from address.
-        String epimId = (courtAddress.getEpimId() != null && !courtAddress.getEpimId().isBlank())
+        //if epim is blank then don't show anything else show it with brackets around it
+        //to distinguish from address lines in csv download
+        String epimId = (StringUtils.isNotBlank(courtAddress.getEpimId()))
             ? " (" + courtAddress.getEpimId() + ")" : Objects.requireNonNullElse(courtAddress.getEpimId(), "");
 
 
