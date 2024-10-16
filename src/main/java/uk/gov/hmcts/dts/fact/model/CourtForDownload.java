@@ -2,7 +2,7 @@ package uk.gov.hmcts.dts.fact.model;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.microsoft.applicationinsights.boot.dependencies.apachecommons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
