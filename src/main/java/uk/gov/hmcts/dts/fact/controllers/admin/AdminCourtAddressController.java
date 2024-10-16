@@ -70,7 +70,7 @@ public class AdminCourtAddressController {
      * @param slug Court slug
      * @param courtAddresses a list of court addresses to be updated
      * @return A list of updated court addresses.
-     * If one of more input address postcodes or epim ids are invalid, return them with a '400' response.
+     *     If one of more input address postcodes or epim ids are invalid, return them with a '400' response.
      */
     @PutMapping(path = "/{slug}/addresses")
     @Operation(summary = "Update addresses for a provided court")
