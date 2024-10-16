@@ -65,7 +65,7 @@ public class GlobalControllerExceptionHandler {
      * @throws JsonProcessingException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(InvalidEpimIdException.class)
-    ResponseEntity<String> InvalidEpimIdExceptionHandler(final InvalidEpimIdException ex) throws JsonProcessingException {
+    ResponseEntity<String> invalidEpimIdExceptionHandler(final InvalidEpimIdException ex) throws JsonProcessingException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
