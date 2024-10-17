@@ -84,6 +84,11 @@ class AdminCourtAddressControllerTest {
 
     private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
         new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID),
+        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID)
+    );
+
+    private static final List<CourtAddress> COURT_ADDRESSES_WITH_BAD_EPIM = Arrays.asList(
+        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID),
         new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID2)
     );
 
@@ -185,8 +190,8 @@ class AdminCourtAddressControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidEpimId() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES)).thenReturn(singletonList(EPIM_ID2));
+        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(emptyList());
+        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(singletonList(EPIM_ID2));
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .with(csrf())
                             .content(courtAddressesJson)
@@ -195,7 +200,7 @@ class AdminCourtAddressControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(content().json(JSON_EPIM_ID2));
 
-        verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
+        verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES_WITH_BAD_EPIM);
         verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 }
