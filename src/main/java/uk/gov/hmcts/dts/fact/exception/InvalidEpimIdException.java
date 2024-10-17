@@ -9,7 +9,7 @@ import java.util.List;
 public class InvalidEpimIdException extends RuntimeException {
 
     private static final long serialVersionUID = 1580364997241986088L;
-    private List<String> invalidEpimIds = new ArrayList<>();
+    private final List<String> invalidEpimIds = new ArrayList<>();
 
     /**
      * Constructs a new invalid epim id exception with the specified detail message.

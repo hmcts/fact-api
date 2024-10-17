@@ -156,7 +156,8 @@ class AdminCourtAddressServiceTest {
     private static final Integer SORT_ORDER_1 = 0;
     private static final Integer SORT_ORDER_2 = 1;
     private static final Integer SORT_ORDER_3 = 2;
-    private static final String EPIM_ID = "epim_id";
+    private static final String EPIM_ID = "epim-id";
+    private static final String BAD_EPIM = "bad epim-id";
     private static final int ADDRESS_COUNT = 3;
     private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
         1,
@@ -197,8 +198,28 @@ class AdminCourtAddressServiceTest {
         SORT_ORDER_3,
         EPIM_ID
     );
+    private static final CourtAddress BAD_EPIM_ADDRESS = new CourtAddress(
+        1,
+        WRITE_TO_US_ADDRESS_TYPE_ID,
+        TEST_ADDRESS1,
+        TEST_ADDRESS_CY1,
+        TEST_TOWN1,
+        null,
+        COUNTY_ID,
+        WRITE_TO_US_POSTCODE,
+        COURT_SECONDARY_ADDRESS_TYPE_LIST,
+        SORT_ORDER_2,
+        BAD_EPIM
+    );
+
     private static final List<CourtAddress> EXPECTED_ADDRESSES = asList(
         WRITE_TO_US_ADDRESS, VISIT_US_ADDRESS, NO_SECONDARY_COURT_TYPE_ADDRESS);
+
+    private static final List<CourtAddress> ADDRESSES_WITH_BAD_EPIM = asList(
+        WRITE_TO_US_ADDRESS,
+        BAD_EPIM_ADDRESS,
+        NO_SECONDARY_COURT_TYPE_ADDRESS
+    );
 
     private static final Court MOCK_COURT = mock(Court.class);
     private static final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> COURT_ADDRESSES_ENTITY = asList(
@@ -658,5 +679,31 @@ class AdminCourtAddressServiceTest {
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(testAddresses)).isEmpty();
         verifyNoInteractions(validationService);
+    }
+
+    @Test
+    void validateCourtEpimIdReturnsNothingForValidEpimId() {
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(
+            emptyList());
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+
+        assertThat(adminCourtAddressService.validateCourtAddressEpimIds(EXPECTED_ADDRESSES)).isEmpty();
+    }
+
+    @Test
+    void validateCourtEpimIdShouldReturnNothingForEmptyAddress() {
+        assertThat(adminCourtAddressService.validateCourtAddressEpimIds(emptyList())).isEmpty();
+        verifyNoInteractions(validationService);
+    }
+
+    @Test
+    void validateCourtEpimIdShouldReturnAllInvalidEpimIds() {
+        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
+        when(validationService.validateEpimIds(ADDRESSES_WITH_BAD_EPIM))
+            .thenReturn(asList(BAD_EPIM));
+
+        assertThat(adminCourtAddressService.validateCourtAddressEpimIds(ADDRESSES_WITH_BAD_EPIM))
+            .containsExactly(BAD_EPIM);
     }
 }
