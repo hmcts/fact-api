@@ -6,6 +6,7 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -73,6 +74,6 @@ public class ValidationService {
                 return epimId == null || !pattern.matcher(epimId).matches();
             })
             .map(CourtAddress::getEpimId)
-            .collect(toList());
+            .collect(Collectors.toList());
     }
 }
