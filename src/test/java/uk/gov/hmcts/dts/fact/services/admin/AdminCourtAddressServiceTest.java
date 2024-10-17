@@ -159,7 +159,7 @@ class AdminCourtAddressServiceTest {
     private static final String EPIM_ID = "epim-id";
     private static final String BAD_EPIM = "bad epim-id";
     private static final int ADDRESS_COUNT = 3;
-    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
+    protected static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
         1,
         WRITE_TO_US_ADDRESS_TYPE_ID,
         TEST_ADDRESS1,
