@@ -73,6 +73,6 @@ public class ValidationService {
                 return epimId == null || !pattern.matcher(epimId).matches();
             })
             .map(CourtAddress::getEpimId)
-            .toList();
+            .collect(toList());
     }
 }
