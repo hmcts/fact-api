@@ -111,7 +111,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
         final List<CourtAddress> updatedCourtAddress =
-            response.body().jsonPath().getList("addresses", CourtAddress.class);
+            response.body().jsonPath().getList(".", CourtAddress.class);
         expectedCourtAddress.get(0).setId(updatedCourtAddress.get(0).getId());
         Integer updatedId = updatedCourtAddress.get(1).getId();
         expectedCourtAddress.get(1).setId(updatedId);
@@ -212,7 +212,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),
             updatedJson
         );
-        final List<CourtAddress> updatedCourtAddresses = response.body().jsonPath().getList("addresses", CourtAddress.class);
+        final List<CourtAddress> updatedCourtAddresses = response.body().jsonPath().getList(".", CourtAddress.class);
         assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedCourtAddresses.get(0).getPostcode()).isEqualTo(POSTCODE_VALID);
 
