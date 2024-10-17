@@ -56,7 +56,7 @@ class AdminCourtAddressControllerTest {
     private static final Integer COUNTY = 1;
     private static final Integer SORT_ORDER = 0;
     private static final String EPIM_ID = "epim-id";
-    private static final String EPIM_ID2 = "epim-id with spaces and exclamation which is bad!";
+    private static final String EPIM_ID2 = "TEST-EPIMY1!!!!";
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
     private static final String JSON_POSTCODE2 = String.format(MESSAGE, POSTCODE2);
@@ -94,6 +94,8 @@ class AdminCourtAddressControllerTest {
 
     private static String courtAddressesJson;
 
+    private static String courtAddressesJsonBadEpim;
+
     @Autowired
     private transient MockMvc mockMvc;
 
@@ -114,6 +116,7 @@ class AdminCourtAddressControllerTest {
     @BeforeAll
     static void setUp() throws JsonProcessingException {
         courtAddressesJson = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES);
+        courtAddressesJsonBadEpim = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES_WITH_BAD_EPIM);
     }
 
     @Test
@@ -191,10 +194,10 @@ class AdminCourtAddressControllerTest {
     @Test
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidEpimId() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(singletonList(EPIM_ID2));
+        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(List.of(EPIM_ID2));
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .with(csrf())
-                            .content(courtAddressesJson)
+                            .content(courtAddressesJsonBadEpim)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
