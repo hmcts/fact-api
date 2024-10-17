@@ -65,7 +65,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private static final Integer SORT_ORDER_1 = 0;
     private static final Integer SORT_ORDER_2 = 1;
-    private static final String EPIM_ID = "epim_id";
+    private static final String EPIM_ID = "epim-id";
 
 
     /************************************************************* Get Request Tests. ***************************************************************/
