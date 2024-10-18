@@ -89,7 +89,7 @@ public class AdminCourtAddressController {
             throw new InvalidPostcodeException(invalidPostcodes);
         }
 
-        // Validate epim IDs
+        // Validate epim IDs (nulls are ignored)
         final List<String> invalidEpimIds = adminService.validateCourtAddressEpimIds(courtAddresses);
         if (!CollectionUtils.isEmpty(invalidEpimIds)) {
             throw new InvalidEpimIdException(invalidEpimIds);

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
@@ -68,11 +69,9 @@ public class ValidationService {
         Pattern pattern = Pattern.compile(epimIdPattern);
 
         return courtAddresses.stream()
-            .filter(courtAddress -> {
-                String epimId = courtAddress.getEpimId();
-                return epimId == null || !pattern.matcher(epimId).matches();
-            })
-            .map(CourtAddress::getEpimId)
-            .collect(toList());
+            .map(CourtAddress::getEpimId)    // Extract epimId
+            .filter(Objects::nonNull)        // Filter out null epimIds
+            .filter(epimId -> !pattern.matcher(epimId).matches())  // Check pattern mismatch
+            .collect(toList());              // Collect in
     }
 }
