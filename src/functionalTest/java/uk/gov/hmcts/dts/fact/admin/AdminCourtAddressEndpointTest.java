@@ -65,7 +65,6 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     private static final Integer SORT_ORDER_1 = 0;
     private static final Integer SORT_ORDER_2 = 1;
-    private static final String EPIM_ID = "epim-id";
 
 
     /************************************************************* Get Request Tests. ***************************************************************/
@@ -258,8 +257,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             COUNTY_ID,
             TEST_POSTCODE,
             COURT_SECONDARY_ADDRESS_TYPE_LIST,
-            SORT_ORDER_2,
-            EPIM_ID
+            SORT_ORDER_2
         ));
         return updatedCourtAddress;
     }
@@ -282,8 +280,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 COUNTY_ID,
                 POSTCODE_VALID,
                 COURT_SECONDARY_ADDRESS_TYPE_LIST,
-                SORT_ORDER_1,
-                EPIM_ID
+                SORT_ORDER_1
             ),
             new CourtAddress(
                 null,
@@ -295,8 +292,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
                 COUNTY_ID,
                 POSTCODES_INVALID,
                 COURT_SECONDARY_ADDRESS_TYPE_LIST,
-                SORT_ORDER_2,
-                EPIM_ID
+                SORT_ORDER_2
             )
         );
     }

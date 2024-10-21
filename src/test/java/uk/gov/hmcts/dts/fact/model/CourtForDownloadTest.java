@@ -118,7 +118,7 @@ class CourtForDownloadTest {
         assertEquals("Name", court.getName());
         assertEquals("open", court.getOpen());
         assertEquals(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(currentTime), court.getUpdated());
-        assertEquals("Write to us: Address, Town, Postcode", court.getAddresses(), "");
+        assertEquals("Write to us: Address, Town, Postcode", court.getAddresses());
         assertEquals("Area of law one, Area of law two", court.getAreasOfLaw());
         assertEquals("court type one, court type two", court.getCourtTypes());
         assertEquals(111, court.getCrownCourtCode());
