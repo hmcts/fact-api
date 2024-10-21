@@ -2,11 +2,8 @@ package uk.gov.hmcts.dts.fact.services.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 
@@ -56,22 +53,5 @@ public class ValidationService {
      */
     public boolean validateLocalAuthority(final String localAuthorityName) {
         return mapitlocalAuthorityValidator.localAuthorityNameIsValid(localAuthorityName);
-    }
-
-    /**
-     * Validates that the given court addresses have valid epim ids.
-     * @param courtAddresses The court addresses
-     * @return A list of strings which indicate which epim ids are invalid
-     */
-    public List<String> validateEpimIds(List<CourtAddress> courtAddresses) {
-        //alphanumeric and dashes only
-        String epimIdPattern = "^[a-zA-Z0-9-]+$";
-        Pattern pattern = Pattern.compile(epimIdPattern);
-
-        return courtAddresses.stream()
-            .map(CourtAddress::getEpimId)    // Extract epimId
-            .filter(Objects::nonNull)        // Filter out null epimIds
-            .filter(epimId -> !pattern.matcher(epimId).matches())  // Check pattern mismatch
-            .collect(toList());              // Collect in
     }
 }

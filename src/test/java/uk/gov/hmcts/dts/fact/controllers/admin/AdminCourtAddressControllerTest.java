@@ -55,12 +55,9 @@ class AdminCourtAddressControllerTest {
     private static final String POSTCODE2 = "second postcode";
     private static final Integer COUNTY = 1;
     private static final Integer SORT_ORDER = 0;
-    private static final String EPIM_ID = "epim-id";
-    private static final String EPIM_ID2 = "TEST-EPIMY1!!!!";
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
     private static final String JSON_POSTCODE2 = String.format(MESSAGE, POSTCODE2);
-    private static final String JSON_EPIM_ID2 = String.format(MESSAGE, EPIM_ID2);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -83,18 +80,11 @@ class AdminCourtAddressControllerTest {
     );
 
     private static final List<CourtAddress> COURT_ADDRESSES = Arrays.asList(
-        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID),
-        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID)
-    );
-
-    private static final List<CourtAddress> COURT_ADDRESSES_WITH_BAD_EPIM = Arrays.asList(
-        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID),
-        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID2)
+        new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER),
+        new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER)
     );
 
     private static String courtAddressesJson;
-
-    private static String courtAddressesJsonBadEpim;
 
     @Autowired
     private transient MockMvc mockMvc;
@@ -116,7 +106,6 @@ class AdminCourtAddressControllerTest {
     @BeforeAll
     static void setUp() throws JsonProcessingException {
         courtAddressesJson = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES);
-        courtAddressesJsonBadEpim = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES_WITH_BAD_EPIM);
     }
 
     @Test
@@ -140,7 +129,6 @@ class AdminCourtAddressControllerTest {
     @Test
     void shouldUpdateCourtAddresses() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES)).thenReturn(emptyList());
         when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
@@ -157,7 +145,6 @@ class AdminCourtAddressControllerTest {
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForUnknownCourtSlug() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES)).thenReturn(emptyList());
         when(adminService.updateCourtAddressesAndCoordinates(
             TEST_SLUG,
             COURT_ADDRESSES
@@ -178,7 +165,6 @@ class AdminCourtAddressControllerTest {
     @Test
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidPostcode() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
-        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES)).thenReturn(emptyList());
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .with(csrf())
                             .content(courtAddressesJson)
@@ -188,22 +174,6 @@ class AdminCourtAddressControllerTest {
             .andExpect(content().json(JSON_POSTCODE2));
 
         verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
-        verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidEpimId() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimIds(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(List.of(EPIM_ID2));
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
-                            .with(csrf())
-                            .content(courtAddressesJsonBadEpim)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().json(JSON_EPIM_ID2));
-
-        verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES_WITH_BAD_EPIM);
         verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 }

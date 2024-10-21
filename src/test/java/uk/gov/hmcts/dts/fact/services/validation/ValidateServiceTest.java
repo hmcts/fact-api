@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,37 +28,6 @@ class ValidateServiceTest {
 
     @Autowired
     private ValidationService validationService;
-
-    private static final String BAD_EPIM_ID = "BAD EPIM!";
-    private static final String GOOD_EPIM_ID = "GOOD-EPIM";
-    private static final CourtAddress BAD_EPIM_ADDRESS = new CourtAddress(
-        1,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        BAD_EPIM_ID
-    );
-    private static final CourtAddress GOOD_EPIM_ADDRESS = new CourtAddress(
-        1,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        GOOD_EPIM_ID
-    );
-
-    private static final List<String> RETURN_BAD_EPIM = asList(BAD_EPIM_ID);
 
     @Test
     void testValidatePostcodesSuccess() {
@@ -120,15 +87,4 @@ class ValidateServiceTest {
         when(localAuthorityValidator.localAuthorityNameIsValid(any())).thenReturn(false);
         assertThat(validationService.validateLocalAuthority("Brmgham Council")).isFalse();
     }
-
-    @Test
-    void testValidateEpimIdsIsValid() {
-        assertThat(validationService.validateEpimIds(asList(GOOD_EPIM_ADDRESS))).isEqualTo(asList());
-    }
-
-    @Test
-    void testValidateEpimIdsIsInvalid() {
-        assertThat(validationService.validateEpimIds(asList(BAD_EPIM_ADDRESS))).isEqualTo(RETURN_BAD_EPIM);
-    }
-
 }
