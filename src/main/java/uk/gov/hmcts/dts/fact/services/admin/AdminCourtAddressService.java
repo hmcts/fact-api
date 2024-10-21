@@ -238,14 +238,16 @@ public class AdminCourtAddressService {
         final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> courtAddressArrayList = new ArrayList<>();
         for (int i = 0; i < courtAddresses.size(); i++) {
             courtAddressArrayList.add(new uk.gov.hmcts.dts.fact.entity.CourtAddress(court,
-                                                                              addressTypeMap.get(courtAddresses.get(i).getAddressTypeId()),
-                                                                              courtAddresses.get(i).getAddressLines(),
-                                                                              courtAddresses.get(i).getAddressLinesCy(),
-                                                                              courtAddresses.get(i).getTownName(),
-                                                                              courtAddresses.get(i).getTownNameCy(),
-                                                                              countyMap.get(courtAddresses.get(i).getCountyId()),
-                                                                              courtAddresses.get(i).getPostcode(),
-                                                                              i));
+                  addressTypeMap.get(courtAddresses.get(i).getAddressTypeId()),
+                  courtAddresses.get(i).getAddressLines(),
+                  courtAddresses.get(i).getAddressLinesCy(),
+                  courtAddresses.get(i).getTownName(),
+                  courtAddresses.get(i).getTownNameCy(),
+                  countyMap.get(courtAddresses.get(i).getCountyId()),
+                  courtAddresses.get(i).getPostcode(),
+                  i,
+                  courtAddresses.get(i).getEpimId())
+            );
         }
         return courtAddressArrayList;
     }
@@ -376,4 +378,10 @@ public class AdminCourtAddressService {
                                                                        .collect(toList()));
     }
 
+    public List<String> validateCourtAddressEpimIds(List<CourtAddress> courtAddresses) {
+        if (!CollectionUtils.isEmpty(courtAddresses)) {
+            return validationService.validateEpimIds(courtAddresses);
+        }
+        return emptyList();
+    }
 }
