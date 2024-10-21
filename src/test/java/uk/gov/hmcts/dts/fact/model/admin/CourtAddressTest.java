@@ -18,8 +18,9 @@ class CourtAddressTest {
     private static final Integer ADDRESS_ID = 1;
     private static final Integer ADDRESS_TYPE_ID = 10;
     private static final Integer COUNTY_ID = 1;
+
     private static final Integer SORT_ORDER = 0;
-    private static final String EPIM_ID = "epim_id";
+
     private static final Court COURT_ENTITY = new Court();
 
     @Test
@@ -36,8 +37,7 @@ class CourtAddressTest {
                 TOWN_NAME_CY,
                 county,
                 POSTCODE,
-                SORT_ORDER,
-                EPIM_ID
+                SORT_ORDER
             );
         entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
@@ -67,8 +67,7 @@ class CourtAddressTest {
             TOWN_NAME_CY,
             county,
             POSTCODE,
-            SORT_ORDER,
-            EPIM_ID
+            SORT_ORDER
         );
         entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
@@ -99,8 +98,7 @@ class CourtAddressTest {
             TOWN_NAME_CY,
             null,
             POSTCODE,
-            SORT_ORDER,
-            EPIM_ID
+            SORT_ORDER
         );
         entity.setId(ADDRESS_ID);
         final CourtAddress result = new CourtAddress(entity);
