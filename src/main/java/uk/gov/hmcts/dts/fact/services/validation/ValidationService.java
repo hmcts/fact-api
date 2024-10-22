@@ -64,8 +64,8 @@ public class ValidationService {
      * @return A list of strings which indicate which epim ids are invalid
      */
     public List<String> validateEpimIds(List<CourtAddress> courtAddresses) {
-        //alphanumeric and dashes only
-        String epimIdPattern = "^[a-zA-Z0-9-]+$";
+        //alphanumeric and dashes only up to 30
+        String epimIdPattern = "^[a-zA-Z0-9-]{0,30}$";
         Pattern pattern = Pattern.compile(epimIdPattern);
 
         return courtAddresses.stream()
