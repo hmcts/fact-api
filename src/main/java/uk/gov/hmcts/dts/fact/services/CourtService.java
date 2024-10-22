@@ -1,5 +1,8 @@
 package uk.gov.hmcts.dts.fact.services;
 
+import com.nimbusds.jose.shaded.gson.JsonArray;
+import com.nimbusds.jose.shaded.gson.JsonObject;
+import com.nimbusds.jose.shaded.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,11 @@ import uk.gov.hmcts.dts.fact.services.search.ProximitySearch;
 import uk.gov.hmcts.dts.fact.services.search.ServiceAreaSearchFactory;
 import uk.gov.hmcts.dts.fact.util.Action;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -224,11 +232,63 @@ public class CourtService {
             return emptyList(); // Return empty so the frontend logic can be invoked
         }
 
+        // We've got the current data!
         List<CourtReferenceWithDistance> courtReferences = convert(proximitySearch.searchWith(optionalMapitData.get()));
-        log.debug("Found {} nearest courts for postcode {}: {}",
-                  courtReferences.size(), postcode, Arrays.stream(courtReferences.toArray()).toArray()
-        );
-        return courtReferences;
+
+        List<CourtReferenceWithDistance> updateList = new ArrayList<>();
+        for (int i = 0; i < courtReferences.size(); i++) {
+            CourtReferenceWithDistance courtReference = courtReferences.get(i);
+
+            // Get the court lat/long
+            uk.gov.hmcts.dts.fact.entity.Court foundCourt = courtRepository.findBySlug(courtReference.getSlug()).get();
+
+
+            // Now call the test API to do some cool tings
+
+            //TODO http://127.0.0.1:5000/route/v1/driving/-0.714010,51.526780;-1.3337146763956031,52.084541372776926
+
+            String formattedUrl = String.format("http://127.0.0.1:5000/route/v1/driving/%s,%s;%s,%s",
+                    optionalMapitData.get().getLon(), optionalMapitData.get().getLat(), foundCourt.getLon(),
+                    foundCourt.getLat());
+
+            try {
+                // Create HttpClient
+                HttpClient client = HttpClient.newHttpClient();
+
+                // Build the request
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(formattedUrl))
+                        .GET()  // For a GET request, replace with POST, PUT, DELETE etc. if needed
+                        .build();
+
+                // Send the request and handle the response
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                // Parse the JSON response using Gson
+                JsonObject jsonResponse = JsonParser.parseString(response.body()).getAsJsonObject();
+
+                // Navigate the JSON structure and extract the distance
+                JsonArray routesArray = jsonResponse.getAsJsonArray("routes");
+                JsonObject firstRoute = routesArray.get(0).getAsJsonObject();
+                JsonArray legsArray = firstRoute.getAsJsonArray("legs");
+                JsonObject firstLeg = legsArray.get(0).getAsJsonObject();
+
+                // Extract the distance
+                double distance = firstLeg.get("distance").getAsDouble();
+
+                courtReference.setDistanceByCar(metersToMiles(distance));
+
+                updateList.add(courtReference);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+//        log.debug("Found {} nearest courts for postcode {}: {}",
+//                  courtReferences.size(), postcode, Arrays.stream(courtReferences.toArray()).toArray()
+//        );
+        return updateList;
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode,
@@ -349,5 +409,10 @@ public class CourtService {
             .map(history -> courtRepository.findCourtByIdAndDisplayedIsTrue(history.getSearchCourtId())
                 .map(court -> new CourtReferenceWithHistoricalName(court, history))
                 .orElseThrow(() -> new NotFoundException("Court History with ID: " + history.getSearchCourtId() + " does not have a corresponding active court")));
+    }
+
+    public static double metersToMiles(double meters) {
+        final double METER_TO_MILE_CONVERSION = 1609.34;
+        return meters / METER_TO_MILE_CONVERSION;
     }
 }
