@@ -245,7 +245,6 @@ public class CourtService {
 
             // Now call the test API to do some cool tings
 
-            //TODO http://127.0.0.1:5000/route/v1/driving/-0.714010,51.526780;-1.3337146763956031,52.084541372776926
 
             String formattedUrl = String.format("http://127.0.0.1:5000/route/v1/driving/%s,%s;%s,%s",
                     optionalMapitData.get().getLon(), optionalMapitData.get().getLat(), foundCourt.getLon(),
