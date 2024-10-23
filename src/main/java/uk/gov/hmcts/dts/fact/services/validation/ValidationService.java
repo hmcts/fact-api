@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
