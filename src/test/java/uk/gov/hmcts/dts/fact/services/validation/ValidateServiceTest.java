@@ -60,8 +60,6 @@ class ValidateServiceTest {
         GOOD_EPIM_ID
     );
 
-    private static final List<String> RETURN_BAD_EPIM = asList(BAD_EPIM_ID);
-
     @Test
     void testValidatePostcodesSuccess() {
         // Expect no strings to be returned if all checks have passed
@@ -123,12 +121,12 @@ class ValidateServiceTest {
 
     @Test
     void testValidateEpimIdsIsValid() {
-        assertThat(validationService.validateEpimIds(asList(GOOD_EPIM_ADDRESS))).isEqualTo(asList());
+        assertThat(validationService.validateEpimIds(asList(GOOD_EPIM_ADDRESS))).isEqualTo(null);
     }
 
     @Test
     void testValidateEpimIdsIsInvalid() {
-        assertThat(validationService.validateEpimIds(asList(BAD_EPIM_ADDRESS))).isEqualTo(RETURN_BAD_EPIM);
+        assertThat(validationService.validateEpimIds(asList(BAD_EPIM_ADDRESS))).isEqualTo(BAD_EPIM_ID);
     }
 
 }

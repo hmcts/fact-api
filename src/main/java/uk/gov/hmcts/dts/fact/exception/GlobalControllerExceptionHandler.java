@@ -69,11 +69,7 @@ public class GlobalControllerExceptionHandler {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
-        if (ex.getInvalidEpimIds().isEmpty()) {
-            error.put(MESSAGE, ex.getMessage());
-        } else {
-            error.put(MESSAGE, String.join(",",ex.getInvalidEpimIds()));
-        }
+        error.put(MESSAGE, ex.getMessage());
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 

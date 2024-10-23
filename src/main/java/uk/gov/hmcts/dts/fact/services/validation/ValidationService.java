@@ -59,19 +59,21 @@ public class ValidationService {
     }
 
     /**
-     * Validates that the given court addresses have valid epim ids.
-     * @param courtAddresses The court addresses
-     * @return A list of strings which indicate which epim ids are invalid
+     * Validates that the given epimId is alphanumeric and contains dashes only.
+     * @param courtAddresses A list of court addresses
+     * @return The epimId if it fails the regex, otherwise null
      */
-    public List<String> validateEpimIds(List<CourtAddress> courtAddresses) {
+    public String validateEpimIds(List<CourtAddress> courtAddresses) {
         //alphanumeric and dashes only up to 30
         String epimIdPattern = "^[a-zA-Z0-9-]{0,30}$";
         Pattern pattern = Pattern.compile(epimIdPattern);
+        String epimId = courtAddresses.get(0).getEpimId();
 
-        return courtAddresses.stream()
-            .map(CourtAddress::getEpimId)    // Extract epimId
-            .filter(Objects::nonNull)        // Filter out null epimIds
-            .filter(epimId -> !pattern.matcher(epimId).matches())  // Check pattern mismatch
-            .collect(toList());              // Collect in
+        // Check if epimId is not null and doesn't match the pattern
+        if (epimId != null && !pattern.matcher(epimId).matches()) {
+            return epimId;  // Return the epimId if it fails the regex
+        }
+
+        return null;  // Return null if it passes validation
     }
 }

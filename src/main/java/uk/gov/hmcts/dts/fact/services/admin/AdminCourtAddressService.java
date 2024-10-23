@@ -378,10 +378,15 @@ public class AdminCourtAddressService {
                                                                        .collect(toList()));
     }
 
-    public List<String> validateCourtAddressEpimIds(List<CourtAddress> courtAddresses) {
+    /**
+    * Validate court address epim ids.
+    * @param courtAddresses The court addresses
+    * @return epim id if invalid else null
+     */
+    public String validateCourtAddressEpimId(List<CourtAddress> courtAddresses) {
         if (!CollectionUtils.isEmpty(courtAddresses)) {
             return validationService.validateEpimIds(courtAddresses);
         }
-        return emptyList();
+        return null;
     }
 }
