@@ -53,8 +53,11 @@ public class CourtAddress {
 
     private Integer sortOrder;
 
+    private String epimId;
+
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,
-                        final String townName, final String townNameCy, final County county, final String postcode, final Integer sortOrder) {
+                        final String townName, final String townNameCy, final County county, final String postcode, final Integer sortOrder,
+                        final String epimId) {
         this.court = court;
         this.addressType = addressType;
         this.address = CollectionUtils.isEmpty(addressLines) ? "" : convertAddressLines(addressLines);
@@ -64,6 +67,7 @@ public class CourtAddress {
         this.county = county;
         this.postcode = postcode;
         this.sortOrder = sortOrder;
+        this.epimId = epimId;
     }
 
     private String convertAddressLines(final List<String> addressLines) {
