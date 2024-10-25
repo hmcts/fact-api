@@ -10,9 +10,9 @@ public class InvalidEpimIdException extends RuntimeException {
     /**
      * Constructs a new invalid epim id exception with the specified detail message.
      *
-     * @param epimIds list of epim ids
+     * @param epimId list of epim ids
      */
-    public InvalidEpimIdException(final String epimIds) {
-        super("Invalid epimId: " + epimIds);
+    public InvalidEpimIdException(final String epimId) {
+        super("Invalid epimId: " + epimId);
     }
 }

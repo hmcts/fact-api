@@ -680,30 +680,4 @@ class AdminCourtAddressServiceTest {
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(testAddresses)).isEmpty();
         verifyNoInteractions(validationService);
     }
-
-    @Test
-    void validateCourtEpimIdReturnsNothingForValidEpimId() {
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateFullPostcodes(asList(VISIT_US_POSTCODE, WRITE_TO_US_POSTCODE))).thenReturn(
-            emptyList());
-        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
-
-        assertThat(adminCourtAddressService.validateCourtAddressEpimId(EXPECTED_ADDRESSES)).isNull();
-    }
-
-    @Test
-    void validateCourtEpimIdShouldReturnNothingForEmptyAddress() {
-        assertThat(adminCourtAddressService.validateCourtAddressEpimId(emptyList())).isNull();
-        verifyNoInteractions(validationService);
-    }
-
-    @Test
-    void validateCourtEpimIdShouldReturnAllInvalidEpimIds() {
-        when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
-        when(validationService.validateEpimIds(ADDRESSES_WITH_BAD_EPIM))
-            .thenReturn(BAD_EPIM);
-
-        assertThat(adminCourtAddressService.validateCourtAddressEpimId(ADDRESSES_WITH_BAD_EPIM))
-            .isEqualTo(BAD_EPIM);
-    }
 }

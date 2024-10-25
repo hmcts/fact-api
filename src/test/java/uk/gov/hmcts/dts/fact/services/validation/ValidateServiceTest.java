@@ -6,13 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -121,12 +123,19 @@ class ValidateServiceTest {
 
     @Test
     void testValidateEpimIdsIsValid() {
-        assertThat(validationService.validateEpimIds(asList(GOOD_EPIM_ADDRESS))).isEqualTo(null);
+        assertDoesNotThrow(() -> {
+            List<CourtAddress> addresses = Collections.singletonList(GOOD_EPIM_ADDRESS);
+            validationService.validateEpimIds(addresses);
+        });
+
     }
 
     @Test
     void testValidateEpimIdsIsInvalid() {
-        assertThat(validationService.validateEpimIds(asList(BAD_EPIM_ADDRESS))).isEqualTo(BAD_EPIM_ID);
+        assertThrows(InvalidEpimIdException.class, () -> {
+            List<CourtAddress> addresses = Collections.singletonList(BAD_EPIM_ADDRESS);
+            validationService.validateEpimIds(addresses);
+        });
     }
 
 }

@@ -160,14 +160,10 @@ public class AdminCourtAddressService {
      * @return A list of postcodes
      */
     public List<String> validateCourtAddressPostcodes(final List<CourtAddress> courtAddresses) {
-        if (!CollectionUtils.isEmpty(courtAddresses)) {
-            final List<String> allPostcodes = getAllPostcodesSortedByAddressType(courtAddresses);
-
-            if (!CollectionUtils.isEmpty(allPostcodes)) {
-                return validationService.validateFullPostcodes(allPostcodes);
-            }
-        }
-        return emptyList();
+        final List<String> allPostcodes = getAllPostcodesSortedByAddressType(courtAddresses);
+        return !CollectionUtils.isEmpty(allPostcodes)
+            ? validationService.validateFullPostcodes(allPostcodes)
+            : emptyList();
     }
 
     /**
@@ -383,10 +379,7 @@ public class AdminCourtAddressService {
     * @param courtAddresses The court addresses
     * @return epim id if invalid else null
      */
-    public String validateCourtAddressEpimId(List<CourtAddress> courtAddresses) {
-        if (!CollectionUtils.isEmpty(courtAddresses)) {
-            return validationService.validateEpimIds(courtAddresses);
-        }
-        return null;
+    public void validateCourtAddressEpimId(List<CourtAddress> courtAddresses) {
+        validationService.validateEpimIds(courtAddresses);
     }
 }

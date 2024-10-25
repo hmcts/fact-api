@@ -2,6 +2,7 @@ package uk.gov.hmcts.dts.fact.services.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class ValidationService {
 
     private final PostcodeValidator mapitPostcodeValidator;
     private final LocalAuthorityValidator mapitlocalAuthorityValidator;
+    private static final Pattern EPIM_ID_PATTERN = Pattern.compile("^[a-zA-Z0-9-]{0,30}$");
 
     /**
      * Constructor for the ValidationService.
@@ -58,21 +60,15 @@ public class ValidationService {
     }
 
     /**
-     * Validates that the given epimId is alphanumeric and contains dashes only.
+     * Validates that the given epimId is alphanumeric and contains dashes only (to 30 chars).
      * @param courtAddresses A list of court addresses
-     * @return The epimId if it fails the regex, otherwise null
+     * @return The epimId if it fails the regex, otherwise InvalidEpimIdException
      */
-    public String validateEpimIds(List<CourtAddress> courtAddresses) {
-        //alphanumeric and dashes only up to 30
-        String epimIdPattern = "^[a-zA-Z0-9-]{0,30}$";
-        Pattern pattern = Pattern.compile(epimIdPattern);
-        String epimId = courtAddresses.get(0).getEpimId();
+    public void validateEpimIds(List<CourtAddress> courtAddresses) {
+        String epimId = courtAddresses.get(0).getEpimId(); // only primary address has epim id
 
-        // Check if epimId is not null and doesn't match the pattern
-        if (epimId != null && !pattern.matcher(epimId).matches()) {
-            return epimId;  // Return the epimId if it fails the regex
+        if (epimId != null && !EPIM_ID_PATTERN.matcher(epimId).matches()) {
+            throw new InvalidEpimIdException(epimId);
         }
-
-        return null;  // Return null if it passes validation
     }
 }

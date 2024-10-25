@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
@@ -83,16 +82,17 @@ public class AdminCourtAddressController {
     public ResponseEntity<List<CourtAddress>> updateCourtAddresses(@PathVariable String slug,
                                                                    @RequestBody List<CourtAddress> courtAddresses,
                                                                    Authentication authentication) {
-        // Validate postcodes
-        final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(courtAddresses);
-        if (!CollectionUtils.isEmpty(invalidPostcodes)) {
-            throw new InvalidPostcodeException(invalidPostcodes);
-        }
 
-        // Validate epim ID (null is ignored)
-        final String invalidEpimId = adminService.validateCourtAddressEpimId(courtAddresses);
-        if (invalidEpimId != null) {
-            throw new InvalidEpimIdException(invalidEpimId);
+        if (!CollectionUtils.isEmpty(courtAddresses)) {
+            // Validate postcodes
+            final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(courtAddresses);
+            if (!CollectionUtils.isEmpty(invalidPostcodes)) {
+                throw new InvalidPostcodeException(invalidPostcodes);
+            }
+
+            // Validate epim ID (null is ignored)
+            adminService.validateCourtAddressEpimId(courtAddresses);
+
         }
 
         adminCourtLockService.updateCourtLock(slug, authentication.getName());

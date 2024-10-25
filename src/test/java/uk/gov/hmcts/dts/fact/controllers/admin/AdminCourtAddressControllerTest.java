@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
+import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
@@ -27,10 +28,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -141,7 +139,6 @@ class AdminCourtAddressControllerTest {
     @Test
     void shouldUpdateCourtAddresses() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimId(COURT_ADDRESSES)).thenReturn(null);
         when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
 
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
@@ -152,13 +149,13 @@ class AdminCourtAddressControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(courtAddressesJson));
 
+        verify(adminService).validateCourtAddressEpimId(COURT_ADDRESSES);
         verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test
     void shouldReturnNotFoundWhenUpdatingAddressesForUnknownCourtSlug() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimId(COURT_ADDRESSES)).thenReturn(null);
         when(adminService.updateCourtAddressesAndCoordinates(
             TEST_SLUG,
             COURT_ADDRESSES
@@ -173,13 +170,13 @@ class AdminCourtAddressControllerTest {
         resultActions
             .andExpect(status().isNotFound())
             .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
+        verify(adminService).validateCourtAddressEpimId(COURT_ADDRESSES);
         verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
     }
 
     @Test
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidPostcode() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
-        when(adminService.validateCourtAddressEpimId(COURT_ADDRESSES)).thenReturn(null);
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .with(csrf())
                             .content(courtAddressesJson)
@@ -188,6 +185,7 @@ class AdminCourtAddressControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(content().json(JSON_POSTCODE2));
 
+        verify(adminService, never()).validateCourtAddressEpimId(COURT_ADDRESSES);
         verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
         verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
     }
@@ -195,15 +193,15 @@ class AdminCourtAddressControllerTest {
     @Test
     void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidEpimId() throws Exception {
         when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(emptyList());
-        when(adminService.validateCourtAddressEpimId(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(EPIM_ID2);
+        doThrow(mock(InvalidEpimIdException.class)).when(adminService).validateCourtAddressEpimId(COURT_ADDRESSES_WITH_BAD_EPIM);
         mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
                             .with(csrf())
                             .content(courtAddressesJsonBadEpim)
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().json(JSON_EPIM_ID2));
+            .andExpect(status().isBadRequest());
 
+        verify(adminService).validateCourtAddressEpimId(COURT_ADDRESSES_WITH_BAD_EPIM);
         verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES_WITH_BAD_EPIM);
         verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
     }
