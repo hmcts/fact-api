@@ -7,11 +7,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
@@ -34,19 +38,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyDouble;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtAddressService.class)
@@ -66,6 +63,7 @@ class AdminCourtAddressServiceTest {
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME_CY = WRITE_TO_US_ADDRESS_TYPE_NAME + " cy";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY = VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME + " cy";
     private static final String REGION = "North West";
+    private static final String TEST_USER = "test@test.com";
 
     private static final String UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE = "Update court addresses and coordinates";
 
@@ -221,6 +219,8 @@ class AdminCourtAddressServiceTest {
         NO_SECONDARY_COURT_TYPE_ADDRESS
     );
 
+    Authentication mockAuthentication = mock(Authentication.class);
+    private static final String MOCK_AUTH_USER = "test@test.com";
     private static final Court MOCK_COURT = mock(Court.class);
     private static final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> COURT_ADDRESSES_ENTITY = asList(
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(
@@ -265,9 +265,13 @@ class AdminCourtAddressServiceTest {
     private static final Double LONGITUDE = 2.0;
 
     private static final String NOT_FOUND = "Not found: ";
+    private static final String BAD_POSTCODE = "E@ 2LQ";
 
     @Autowired
     private AdminCourtAddressService adminCourtAddressService;
+
+    @MockBean
+    private AdminCourtLockService adminCourtLockService;
 
     @MockBean
     private CourtRepository courtRepository;
@@ -682,8 +686,41 @@ class AdminCourtAddressServiceTest {
     }
 
     @Test
-    void shouldCallValidateEpimIds() {
-        adminCourtAddressService.validateCourtAddressEpimId(ADDRESSES_WITH_BAD_EPIM);
-        verify(validationService).validateEpimIds(ADDRESSES_WITH_BAD_EPIM);
+    void shouldValidateAndSaveAddresses() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(VISIT_US_ADDRESS))).thenReturn(List.of());
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+
+        assertDoesNotThrow(() -> {
+            adminCourtAddressService.validateAndSaveAddresses(asList(VISIT_US_ADDRESS), COURT_SLUG, mockAuthentication);
+        });
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(COURT_SLUG, TEST_USER);
     }
+
+    @Test
+    void shouldNotValidateAndSaveAddressesWithBadPostcode() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(VISIT_US_ADDRESS))).thenReturn(List.of(BAD_POSTCODE));
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+
+        InvalidPostcodeException exception = assertThrows(
+            InvalidPostcodeException.class,
+            () -> adminCourtAddressService.validateAndSaveAddresses(asList(VISIT_US_ADDRESS), COURT_SLUG, mockAuthentication)
+        );
+
+        assertEquals(asList(BAD_POSTCODE), exception.getInvalidPostcodes());
+        verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
+
+    @Test
+    void shouldValidateAndNotSaveAddressesWithBadEpim() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(BAD_EPIM_ADDRESS))).thenReturn(List.of());
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+
+        doThrow(mock(InvalidEpimIdException.class)).when(validationService).validateEpimIds(asList(BAD_EPIM_ADDRESS));
+        verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
+
 }

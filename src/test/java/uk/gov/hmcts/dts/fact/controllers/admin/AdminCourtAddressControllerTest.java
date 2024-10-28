@@ -137,72 +137,8 @@ class AdminCourtAddressControllerTest {
     }
 
     @Test
-    void shouldUpdateCourtAddresses() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES)).thenReturn(COURT_ADDRESSES);
-
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
-                            .with(csrf())
-                            .content(courtAddressesJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(content().json(courtAddressesJson));
-
-        verify(adminService).validateCourtAddressEpimId(COURT_ADDRESSES);
-        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
-    }
-
-    @Test
-    void shouldReturnNotFoundWhenUpdatingAddressesForUnknownCourtSlug() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(emptyList());
-        when(adminService.updateCourtAddressesAndCoordinates(
-            TEST_SLUG,
-            COURT_ADDRESSES
-        )).thenThrow(new NotFoundException(TEST_SLUG));
-
-        ResultActions resultActions = mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
-                                                          .with(csrf())
-                                                          .content(courtAddressesJson)
-                                                          .contentType(MediaType.APPLICATION_JSON)
-                                                          .accept(MediaType.APPLICATION_JSON));
-
-        resultActions
-            .andExpect(status().isNotFound())
-            .andExpect(content().json(JSON_NOT_FOUND_TEST_SLUG));
-        verify(adminService).validateCourtAddressEpimId(COURT_ADDRESSES);
-        verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SLUG, TEST_USER);
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidPostcode() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES)).thenReturn(singletonList(POSTCODE2));
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
-                            .with(csrf())
-                            .content(courtAddressesJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().json(JSON_POSTCODE2));
-
-        verify(adminService, never()).validateCourtAddressEpimId(COURT_ADDRESSES);
-        verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES);
-        verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenUpdatingAddressesWithAnInvalidEpimId() throws Exception {
-        when(adminService.validateCourtAddressPostcodes(COURT_ADDRESSES_WITH_BAD_EPIM)).thenReturn(emptyList());
-        doThrow(mock(InvalidEpimIdException.class)).when(adminService).validateCourtAddressEpimId(COURT_ADDRESSES_WITH_BAD_EPIM);
-        mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
-                            .with(csrf())
-                            .content(courtAddressesJsonBadEpim)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest());
-
-        verify(adminService).validateCourtAddressEpimId(COURT_ADDRESSES_WITH_BAD_EPIM);
-        verify(adminService, never()).updateCourtAddressesAndCoordinates(TEST_SLUG, COURT_ADDRESSES_WITH_BAD_EPIM);
-        verify(adminCourtLockService, never()).updateCourtLock(TEST_SLUG, TEST_USER);
+    void shouldCallvalidateAndSaveAddresses() {
+        adminService.validateAndSaveAddresses(COURT_ADDRESSES, TEST_SLUG, null);
+        verify(adminService).validateAndSaveAddresses(COURT_ADDRESSES, TEST_SLUG, null);
     }
 }

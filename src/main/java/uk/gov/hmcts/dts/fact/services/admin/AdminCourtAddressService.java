@@ -2,6 +2,8 @@ package uk.gov.hmcts.dts.fact.services.admin;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -10,6 +12,7 @@ import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtSecondaryAddressType;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
@@ -31,6 +34,7 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * Service for admin court address data.
@@ -47,18 +51,21 @@ public class AdminCourtAddressService {
     private final MapitService mapitService;
     private final ValidationService validationService;
     private final AdminAuditService adminAuditService;
+    private final AdminCourtLockService adminCourtLockService;
 
     /**
      * Constructor for the AdminCourtAddressService.
-     * @param courtRepository The repository for court
-     * @param courtAddressRepository The repository for court address
+     *
+     * @param courtRepository                     The repository for court
+     * @param courtAddressRepository              The repository for court address
      * @param courtSecondaryAddressTypeRepository The repository for court secondary address type
-     * @param addressTypeService The service for address type
-     * @param countyService The service for county
-     * @param adminService The service for admin
-     * @param mapitService The service for mapit
-     * @param validationService The service for validation
-     * @param adminAuditService The service for admin audit
+     * @param addressTypeService                  The service for address type
+     * @param countyService                       The service for county
+     * @param adminService                        The service for admin
+     * @param mapitService                        The service for mapit
+     * @param validationService                   The service for validation
+     * @param adminAuditService                   The service for admin audit
+     * @param adminCourtLockService               The service for admin court locking
      */
     @Autowired
     public AdminCourtAddressService(final CourtRepository courtRepository,
@@ -69,7 +76,7 @@ public class AdminCourtAddressService {
                                     final AdminService adminService,
                                     final MapitService mapitService,
                                     final ValidationService validationService,
-                                    final AdminAuditService adminAuditService) {
+                                    final AdminAuditService adminAuditService, AdminCourtLockService adminCourtLockService) {
         this.courtRepository = courtRepository;
         this.courtAddressRepository = courtAddressRepository;
         this.courtSecondaryAddressTypeRepository = courtSecondaryAddressTypeRepository;
@@ -79,6 +86,7 @@ public class AdminCourtAddressService {
         this.mapitService = mapitService;
         this.validationService = validationService;
         this.adminAuditService = adminAuditService;
+        this.adminCourtLockService = adminCourtLockService;
     }
 
     /**
@@ -374,12 +382,30 @@ public class AdminCourtAddressService {
                                                                        .collect(toList()));
     }
 
+
+
     /**
-    * Validate court address epim ids.
-    * @param courtAddresses The court addresses
-    * @return epim id if invalid else null
+     * Validate and save addresses.
+     * @param courtAddresses The court addresses
+     * @param slug The slug
+     * @param authentication The authentication
+     * @return A ResponseEntity of a list of court addresses
      */
-    public void validateCourtAddressEpimId(List<CourtAddress> courtAddresses) {
-        validationService.validateEpimIds(courtAddresses);
+    public ResponseEntity<List<CourtAddress>> validateAndSaveAddresses(
+        List<CourtAddress> courtAddresses, String slug, Authentication authentication) {
+        if (!CollectionUtils.isEmpty(courtAddresses)) {
+            // Validate postcodes
+            final List<String> invalidPostcodes = this.validateCourtAddressPostcodes(courtAddresses);
+            if (!CollectionUtils.isEmpty(invalidPostcodes)) {
+                throw new InvalidPostcodeException(invalidPostcodes);
+            }
+
+            // Validate epim ID (null is ignored)
+            validationService.validateEpimIds(courtAddresses);
+
+        }
+
+        adminCourtLockService.updateCourtLock(slug, authentication.getName());
+        return ok(this.updateCourtAddressesAndCoordinates(slug, courtAddresses));
     }
 }

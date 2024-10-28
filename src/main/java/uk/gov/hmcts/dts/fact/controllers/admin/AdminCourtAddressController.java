@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.config.security.Role;
-import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
@@ -82,21 +80,7 @@ public class AdminCourtAddressController {
     public ResponseEntity<List<CourtAddress>> updateCourtAddresses(@PathVariable String slug,
                                                                    @RequestBody List<CourtAddress> courtAddresses,
                                                                    Authentication authentication) {
-
-        if (!CollectionUtils.isEmpty(courtAddresses)) {
-            // Validate postcodes
-            final List<String> invalidPostcodes = adminService.validateCourtAddressPostcodes(courtAddresses);
-            if (!CollectionUtils.isEmpty(invalidPostcodes)) {
-                throw new InvalidPostcodeException(invalidPostcodes);
-            }
-
-            // Validate epim ID (null is ignored)
-            adminService.validateCourtAddressEpimId(courtAddresses);
-
-        }
-
-        adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(adminService.updateCourtAddressesAndCoordinates(slug, courtAddresses));
+        return adminService.validateAndSaveAddresses(courtAddresses, slug, authentication);
     }
 
 }
