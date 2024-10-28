@@ -680,4 +680,10 @@ class AdminCourtAddressServiceTest {
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(testAddresses)).isEmpty();
         verifyNoInteractions(validationService);
     }
+
+    @Test
+    void shouldCallValidateEpimIds() {
+        adminCourtAddressService.validateCourtAddressEpimId(ADDRESSES_WITH_BAD_EPIM);
+        verify(validationService).validateEpimIds(ADDRESSES_WITH_BAD_EPIM);
+    }
 }
