@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.config.security.Role;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
-import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 
 import java.util.List;
 
@@ -32,18 +31,14 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 )
 public class AdminCourtAddressController {
     private final AdminCourtAddressService adminService;
-    private final AdminCourtLockService adminCourtLockService;
 
     /**
      * Construct a new AdminCourtAddressController.
      * @param adminService the admin court address service
-     * @param adminCourtLockService the admin court lock service
      */
     @Autowired
-    public AdminCourtAddressController(AdminCourtAddressService adminService,
-                                       AdminCourtLockService adminCourtLockService) {
+    public AdminCourtAddressController(AdminCourtAddressService adminService) {
         this.adminService = adminService;
-        this.adminCourtLockService = adminCourtLockService;
     }
 
     /**

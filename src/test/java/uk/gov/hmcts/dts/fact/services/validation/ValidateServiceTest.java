@@ -123,19 +123,16 @@ class ValidateServiceTest {
 
     @Test
     void testValidateEpimIdsIsValid() {
-        assertDoesNotThrow(() -> {
-            List<CourtAddress> addresses = Collections.singletonList(GOOD_EPIM_ADDRESS);
-            validationService.validateEpimIds(addresses);
-        });
-
+        assertDoesNotThrow(() ->
+            validationService.validateEpimIds(Collections.singletonList(GOOD_EPIM_ADDRESS))
+        );
     }
 
     @Test
     void testValidateEpimIdsIsInvalid() {
-        assertThrows(InvalidEpimIdException.class, () -> {
-            List<CourtAddress> addresses = Collections.singletonList(BAD_EPIM_ADDRESS);
-            validationService.validateEpimIds(addresses);
-        });
+        assertThrows(InvalidEpimIdException.class, () ->
+            validationService.validateEpimIds(Collections.singletonList(BAD_EPIM_ADDRESS))
+        );
     }
 
 }

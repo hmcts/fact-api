@@ -84,8 +84,6 @@ class AdminCourtAddressControllerTest {
 
     private static String courtAddressesJson;
 
-    private static String courtAddressesJsonBadEpim;
-
     @Autowired
     private transient MockMvc mockMvc;
 
@@ -106,7 +104,6 @@ class AdminCourtAddressControllerTest {
     @BeforeAll
     static void setUp() throws JsonProcessingException {
         courtAddressesJson = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES);
-        courtAddressesJsonBadEpim = OBJECT_MAPPER.writeValueAsString(COURT_ADDRESSES_WITH_BAD_EPIM);
     }
 
     @Test
