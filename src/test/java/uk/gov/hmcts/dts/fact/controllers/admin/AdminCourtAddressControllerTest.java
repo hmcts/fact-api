@@ -23,6 +23,7 @@ import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,10 +52,6 @@ class AdminCourtAddressControllerTest {
     private static final String EPIM_ID2 = "TEST-EPIMY1!!!!";
     private static final String MESSAGE = "{\"message\":\"%s\"}";
     private static final String JSON_NOT_FOUND_TEST_SLUG = String.format(MESSAGE, NOT_FOUND + TEST_SLUG);
-    private static final String JSON_POSTCODE2 = String.format(MESSAGE, POSTCODE2);
-    private static final String INVALID_EPIM = "Invalid epimId: ";
-    private static final String JSON_EPIM_ID2 = String.format(MESSAGE, INVALID_EPIM + EPIM_ID2);
-
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private static final CourtSecondaryAddressType COURT_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
@@ -134,5 +131,11 @@ class AdminCourtAddressControllerTest {
     void shouldCallvalidateAndSaveAddresses() {
         adminService.validateAndSaveAddresses(COURT_ADDRESSES, TEST_SLUG, null);
         verify(adminService).validateAndSaveAddresses(COURT_ADDRESSES, TEST_SLUG, null);
+    }
+
+    @Test
+    void shouldCallvalidateAndSaveAddressesWithNoAddressesPassedIn() {
+        adminService.validateAndSaveAddresses(emptyList(), TEST_SLUG, null);
+        verify(adminService).validateAndSaveAddresses(emptyList(), TEST_SLUG, null);
     }
 }

@@ -167,6 +167,7 @@ class AdminCourtAddressServiceTest {
     private static final Integer SORT_ORDER_3 = 2;
     private static final String EPIM_ID = "epim-id";
     private static final String BAD_EPIM = "bad epim-id";
+    private static final String INVALID_EPIM_MESSAGE = "Invalid epimId: ";
     private static final int ADDRESS_COUNT = 3;
     protected static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
         1,
@@ -220,15 +221,22 @@ class AdminCourtAddressServiceTest {
         SORT_ORDER_2,
         BAD_EPIM
     );
+    private static final CourtAddress NULL_EPIM_ADDRESS = new CourtAddress(
+        1,
+        WRITE_TO_US_ADDRESS_TYPE_ID,
+        TEST_ADDRESS1,
+        TEST_ADDRESS_CY1,
+        TEST_TOWN1,
+        null,
+        COUNTY_ID,
+        WRITE_TO_US_POSTCODE,
+        COURT_SECONDARY_ADDRESS_TYPE_LIST,
+        SORT_ORDER_2,
+        null
+    );
 
     private static final List<CourtAddress> EXPECTED_ADDRESSES = asList(
         WRITE_TO_US_ADDRESS, VISIT_US_ADDRESS, NO_SECONDARY_COURT_TYPE_ADDRESS);
-
-    private static final List<CourtAddress> ADDRESSES_WITH_BAD_EPIM = asList(
-        WRITE_TO_US_ADDRESS,
-        BAD_EPIM_ADDRESS,
-        NO_SECONDARY_COURT_TYPE_ADDRESS
-    );
 
     Authentication mockAuthentication = mock(Authentication.class);
     private static final String MOCK_AUTH_USER = "test@test.com";
@@ -729,9 +737,28 @@ class AdminCourtAddressServiceTest {
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
         when(adminCourtAddressService.validateCourtAddressPostcodes(asList(BAD_EPIM_ADDRESS))).thenReturn(List.of());
         when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+        doThrow(new InvalidEpimIdException(BAD_EPIM)).when(validationService).validateEpimIds(asList(BAD_EPIM_ADDRESS));
 
-        doThrow(mock(InvalidEpimIdException.class)).when(validationService).validateEpimIds(asList(BAD_EPIM_ADDRESS));
+        InvalidEpimIdException exception = assertThrows(
+            InvalidEpimIdException.class,
+            () -> validationService.validateEpimIds(asList(BAD_EPIM_ADDRESS))
+        );
+        assertEquals((INVALID_EPIM_MESSAGE + BAD_EPIM), exception.getMessage());
         verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
     }
 
+    @Test
+    void shouldValidateAndNotSaveAddressesWithNullEpim() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(NULL_EPIM_ADDRESS))).thenReturn(List.of());
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+        doThrow(new InvalidEpimIdException("null")).when(validationService).validateEpimIds(asList(NULL_EPIM_ADDRESS));
+
+        InvalidEpimIdException exception = assertThrows(
+            InvalidEpimIdException.class,
+            () -> validationService.validateEpimIds(asList(NULL_EPIM_ADDRESS))
+        );
+        assertEquals((INVALID_EPIM_MESSAGE + "null"), exception.getMessage());
+        verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
 }
