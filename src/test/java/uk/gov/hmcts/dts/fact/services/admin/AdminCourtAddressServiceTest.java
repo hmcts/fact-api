@@ -1,7 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -32,7 +28,6 @@ import uk.gov.hmcts.dts.fact.services.MapitService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,8 +55,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ContextConfiguration(classes = AdminCourtAddressService.class)
@@ -175,7 +168,6 @@ class AdminCourtAddressServiceTest {
     private static final String EPIM_ID = "epim-id";
     private static final String BAD_EPIM = "bad epim-id";
     private static final String INVALID_EPIM_MESSAGE = "Invalid epimId: ";
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private static final int ADDRESS_COUNT = 3;
     protected static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
         1,
@@ -768,23 +760,5 @@ class AdminCourtAddressServiceTest {
         );
         assertEquals((INVALID_EPIM_MESSAGE + "null"), exception.getMessage());
         verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
-    }
-
-    @Test
-    void testInvalidEpimIdExceptionHandler() throws JsonProcessingException {
-        String errorMessage = INVALID_EPIM_MESSAGE + BAD_EPIM;
-        InvalidEpimIdException exception = new InvalidEpimIdException(errorMessage);
-        HttpHeaders expectedHeaders = new HttpHeaders();
-        expectedHeaders.set(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE);
-
-        HashMap<String, String> error = new HashMap<>();
-        error.put("message", exception.getMessage());
-        String expectedBody = objectMapper.writeValueAsString(error);
-
-        ResponseEntity<String> response = new ResponseEntity<>(expectedBody, expectedHeaders, BAD_REQUEST);
-
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals(APPLICATION_JSON_VALUE, response.getHeaders().getContentType().toString());
-        assertEquals(expectedBody, response.getBody());
     }
 }
