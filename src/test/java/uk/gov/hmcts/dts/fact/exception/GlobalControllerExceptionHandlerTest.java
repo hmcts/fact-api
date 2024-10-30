@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -21,7 +20,8 @@ class GlobalControllerExceptionHandlerTest {
     private ObjectMapper objectMapper;
 
     private static final String EPIM_ERROR = "invalid-epim-id!!";
-    private static final String EPIM_ERROR_MESSAGE = "Invalid epimId: "+EPIM_ERROR;
+    private static final String EPIM_ERROR_MESSAGE = "Invalid epimId: " + EPIM_ERROR;
+
     @BeforeEach
     void setUp() {
         exceptionHandler = new GlobalControllerExceptionHandler();
