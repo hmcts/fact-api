@@ -7,12 +7,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
+import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
+import uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType;
+import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,32 +38,54 @@ class ValidateServiceTest {
     @Autowired
     private ValidationService validationService;
 
+    private static final List<String> TEST_ADDRESS_LINES = singletonList("1 High Street");
+    private static final String TEST_TOWN = "London";
+    private static final String TEST_POSTCODE = "NW1 8AF";
+    private static final List<AreaOfLaw> COURT_SECONDARY_ADDRESS_AREAS_OF_LAW = asList(
+        new AreaOfLaw(
+            new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+                34_257, "Civil partnership"), false),
+        new AreaOfLaw(new uk.gov.hmcts.dts.fact.entity.AreaOfLaw(
+            34_248, "Adoption"), false)
+    );
+    private static final List<CourtType> COURT_SECONDARY_ADDRESS_COURT_TYPES = asList(
+        new CourtType(
+            new uk.gov.hmcts.dts.fact.entity.CourtType(11_417, "Family Court", "Family")
+        ),
+        new CourtType(
+            new uk.gov.hmcts.dts.fact.entity.CourtType(11_418, "Tribunal","Search")
+        )
+    );
+    private static final CourtSecondaryAddressType TEST_SECONDARY_ADDRESS_TYPE_LIST = new CourtSecondaryAddressType(
+        COURT_SECONDARY_ADDRESS_AREAS_OF_LAW,
+        COURT_SECONDARY_ADDRESS_COURT_TYPES
+    );
     private static final String BAD_EPIM_ID = "BAD EPIM!";
     private static final String GOOD_EPIM_ID = "GOOD-EPIM";
     private static final CourtAddress BAD_EPIM_ADDRESS = new CourtAddress(
         1,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
+        5581,
+        TEST_ADDRESS_LINES,
+        TEST_ADDRESS_LINES,
+        TEST_TOWN,
+        TEST_TOWN,
+        1,
+        TEST_POSTCODE,
+        TEST_SECONDARY_ADDRESS_TYPE_LIST,
+        1,
         BAD_EPIM_ID
     );
     private static final CourtAddress GOOD_EPIM_ADDRESS = new CourtAddress(
         1,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
+        5581,
+        TEST_ADDRESS_LINES,
+        TEST_ADDRESS_LINES,
+        TEST_TOWN,
+        TEST_TOWN,
+        1,
+        TEST_POSTCODE,
+        TEST_SECONDARY_ADDRESS_TYPE_LIST,
+        1,
         GOOD_EPIM_ID
     );
 
