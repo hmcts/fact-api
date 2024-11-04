@@ -127,7 +127,7 @@ task smoke(type: Test) {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '10.17.0'
+  toolVersion = '10.7.0'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
 
