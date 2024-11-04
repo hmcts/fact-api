@@ -8,7 +8,7 @@ API for the find a court or tribunal service..
 ## Prerequisites
 
 - [JDK 17](https://www.oracle.com/java)
-- Project requires Spring Boot v3.x to be present
+- Project requires Spring Boot v3.x to be present.
 
 ## Building and deploying the application.
 
