@@ -56,6 +56,24 @@ public class GlobalControllerExceptionHandler {
         return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
     }
 
+
+    /**
+     * Handles InvalidEpimIdException.
+     *
+     * @param ex the exception
+     * @return the response entity
+     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     */
+    @ExceptionHandler(InvalidEpimIdException.class)
+    ResponseEntity<String> invalidEpimIdExceptionHandler(final InvalidEpimIdException ex) throws JsonProcessingException {
+        HashMap<String, String> error = new HashMap<>();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
+        error.put(MESSAGE, ex.getMessage());
+        return new ResponseEntity<>(new ObjectMapper().writeValueAsString(error), responseHeaders, HttpStatus.BAD_REQUEST);
+    }
+
+
     /**
      * Handles LockExistsException.
      *
