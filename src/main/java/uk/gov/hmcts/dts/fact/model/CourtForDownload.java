@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtApplicationUpdate;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
@@ -19,6 +20,7 @@ import uk.gov.hmcts.dts.fact.entity.util.ElementFormatter;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -112,8 +114,15 @@ public class CourtForDownload {
     }
 
     private String formatAddress(uk.gov.hmcts.dts.fact.entity.CourtAddress courtAddress) {
+
+        //if epim is blank then don't show anything else show it with brackets around it
+        //to distinguish from address lines in csv download
+        String epimId = (StringUtils.isNotBlank(courtAddress.getEpimId()))
+            ? " (" + courtAddress.getEpimId() + ")" : Objects.requireNonNullElse(courtAddress.getEpimId(), "");
+
+
         return format(
-            "%s: %s, %s, %s",
+            "%s: %s, %s, %s%s",
             courtAddress.getAddressType().getName(),
             courtAddress.getAddress()
                 .lines()
@@ -121,7 +130,8 @@ public class CourtForDownload {
                 .map(s -> s.replace("\t", ""))
                 .collect(joining(", ")),
             courtAddress.getTownName(),
-            courtAddress.getPostcode()
+            courtAddress.getPostcode(),
+            epimId
         );
     }
 }
