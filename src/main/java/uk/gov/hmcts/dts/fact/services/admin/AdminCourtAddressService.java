@@ -392,6 +392,7 @@ public class AdminCourtAddressService {
      * @param authentication The authentication
      * @return A ResponseEntity of a list of court addresses
      */
+    @Transactional
     public ResponseEntity<List<CourtAddress>> validateAndSaveAddresses(
         List<CourtAddress> courtAddresses, String slug, Authentication authentication) {
         if (!CollectionUtils.isEmpty(courtAddresses)) {
