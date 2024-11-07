@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -17,19 +19,22 @@ import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 import uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtAddressService;
-import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.util.MvcSecurityUtil;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_ADMIN;
+import static uk.gov.hmcts.dts.fact.util.TestHelper.getResourceAsJson;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 @WebMvcTest(AdminCourtAddressController.class)
@@ -81,6 +86,7 @@ class AdminCourtAddressControllerTest {
         new CourtAddress(1, 1, ADDRESS1, null, TOWN_NAME1, null, COUNTY, POSTCODE1, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID),
         new CourtAddress(2, 1, ADDRESS2, null, TOWN_NAME2, null, COUNTY, POSTCODE2, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER, EPIM_ID2)
     );
+    private static final String TEST_ADDRESSES_FILE = "courtAddresses.json";
 
     private static String courtAddressesJson;
 
@@ -89,9 +95,6 @@ class AdminCourtAddressControllerTest {
 
     @MockBean
     private AdminCourtAddressService adminService;
-
-    @MockBean
-    private AdminCourtLockService adminCourtLockService;
 
     @Autowired
     private WebApplicationContext context;
@@ -134,5 +137,21 @@ class AdminCourtAddressControllerTest {
     void shouldCallvalidateAndSaveAddressesWithNoAddressesPassedIn() {
         adminService.validateAndSaveAddresses(emptyList(), TEST_SLUG, null);
         verify(adminService).validateAndSaveAddresses(emptyList(), TEST_SLUG, null);
+    }
+
+    @Test
+    void updateAddressShouldReturnUpdatedAddress() throws Exception {
+        final String expectedJson = getResourceAsJson(TEST_ADDRESSES_FILE);
+        final List<CourtAddress> courtAddresses = asList(OBJECT_MAPPER.readValue(expectedJson, CourtAddress[].class));
+
+        when(adminService.validateAndSaveAddresses(COURT_ADDRESSES, TEST_SLUG, null))
+            .thenReturn(ResponseEntity.ok(courtAddresses));
+
+        mockMvc.perform(put(BASE_PATH + TEST_SLUG + ADDRESSES_PATH)
+                            .with(csrf())
+                            .content(expectedJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 }

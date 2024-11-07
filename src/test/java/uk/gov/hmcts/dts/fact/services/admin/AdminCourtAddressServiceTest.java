@@ -28,6 +28,7 @@ import uk.gov.hmcts.dts.fact.services.MapitService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -760,5 +761,18 @@ class AdminCourtAddressServiceTest {
         );
         assertEquals((INVALID_EPIM_MESSAGE + "null"), exception.getMessage());
         verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenAddressTypeIdDoesNotExist() {
+        // Setup a map without the expected address type ID
+        Map<Integer, AddressType> addressTypeMap = new HashMap<>();
+        Integer missingAddressTypeId = 999;  // ID that does not exist in the map
+
+        // Verify that an IllegalArgumentException is thrown for a missing addressTypeId
+        assertThrows(IllegalArgumentException.class, () ->
+                         adminCourtAddressService.getAddressTypeFromId(addressTypeMap, missingAddressTypeId),
+                     "Unknown address type ID: " + missingAddressTypeId
+        );
     }
 }

@@ -198,7 +198,7 @@ public class AdminCourtAddressService {
      * @param addressTypeId The address type id
      * @return The address type
      */
-    private String getAddressTypeFromId(final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> map, final Integer addressTypeId) {
+    String getAddressTypeFromId(final Map<Integer, uk.gov.hmcts.dts.fact.entity.AddressType> map, final Integer addressTypeId) {
         if (!map.containsKey(addressTypeId)) {
             throw new IllegalArgumentException("Unknown address type ID: " + addressTypeId);
         }
