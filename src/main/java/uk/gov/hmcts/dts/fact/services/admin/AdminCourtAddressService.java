@@ -34,6 +34,7 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
@@ -100,7 +101,7 @@ public class AdminCourtAddressService {
                 .stream()
                 .map(CourtAddress::new)
                 .sorted(Comparator.comparingInt(CourtAddress::getSortOrder))
-                .collect(toList()))
+                .collect(toUnmodifiableList()))
             .orElseThrow(() -> new NotFoundException(slug));
     }
 
@@ -152,7 +153,7 @@ public class AdminCourtAddressService {
                                                                       .stream()
                                                                       .map(CourtAddress::new)
                                                                       .sorted(Comparator.comparingInt(CourtAddress::getSortOrder))
-                                                                      .collect(toList()), courtSecondaryAddressType);
+                                                                      .collect(toUnmodifiableList()), courtSecondaryAddressType);
 
         adminAuditService.saveAudit(
             AuditType.findByName("Update court addresses and coordinates"),
@@ -188,7 +189,7 @@ public class AdminCourtAddressService {
             )) ? 0 : 1))
             .map(CourtAddress::getPostcode)
             .filter(StringUtils::isNotBlank)
-            .collect(toList());
+            .collect(toUnmodifiableList());
     }
 
     /**
@@ -349,13 +350,13 @@ public class AdminCourtAddressService {
                 .filter(ca -> !Objects.isNull(ca.getAreaOfLaw()))
                 .filter(ca -> ca.getAddress().getId().equals(responseList.get(finalI).getId()))
                 .map(a -> new uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw(a.getAreaOfLaw()))
-                .collect(toList());
+                .collect(toUnmodifiableList());
             List<uk.gov.hmcts.dts.fact.model.admin.CourtType> courtTypeList = courtSecondaryAddressType
                 .stream()
                 .filter(ca -> !Objects.isNull(ca.getCourtType()))
                 .filter(ca -> ca.getAddress().getId().equals(responseList.get(finalI).getId()))
                 .map(a -> new uk.gov.hmcts.dts.fact.model.admin.CourtType(a.getCourtType()))
-                .collect(toList());
+                .collect(toUnmodifiableList());
             responseList.get(i).setCourtSecondaryAddressType(
                 new uk.gov.hmcts.dts.fact.model.admin.CourtSecondaryAddressType(areaOfLawList, courtTypeList));
         }
@@ -391,6 +392,7 @@ public class AdminCourtAddressService {
      * @param authentication The authentication
      * @return A ResponseEntity of a list of court addresses
      */
+    @Transactional
     public ResponseEntity<List<CourtAddress>> validateAndSaveAddresses(
         List<CourtAddress> courtAddresses, String slug, Authentication authentication) {
         if (!CollectionUtils.isEmpty(courtAddresses)) {
@@ -406,6 +408,11 @@ public class AdminCourtAddressService {
         }
 
         adminCourtLockService.updateCourtLock(slug, authentication.getName());
-        return ok(this.updateCourtAddressesAndCoordinates(slug, courtAddresses));
+        try {
+            List<CourtAddress> updatedAddresses = this.updateCourtAddressesAndCoordinates(slug, courtAddresses);
+            return ok(updatedAddresses);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update court addresses and coordinates", e);
+        }
     }
 }
