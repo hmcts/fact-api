@@ -1,0 +1,38 @@
+[
+  {
+    "type_id": "5882",
+    "address_lines": [
+      "Priory Courts",
+      "33 Bull Street"
+    ],
+    "address_lines_cy": [
+      ""
+    ],
+    "town": "Birmingham",
+    "town_cy": "",
+    "county_id": "45",
+    "postcode": "B4 6DS",
+    "epim_id": "some-epim-id",
+    "fields_of_law": {
+      "areas_of_law": [],
+      "courts": []
+    }
+  },
+  {
+    "type_id": "5881",
+    "address_lines": [
+      "1 made up street"
+    ],
+    "address_lines_cy": [
+      ""
+    ],
+    "town": "ipswich",
+    "town_cy": "",
+    "county_id": "40",
+    "postcode": "IP12DU",
+    "fields_of_law": {
+      "areas_of_law": [],
+      "courts": []
+    }
+  }
+]
