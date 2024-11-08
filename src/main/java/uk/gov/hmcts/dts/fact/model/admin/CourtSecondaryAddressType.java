@@ -25,4 +25,8 @@ public class CourtSecondaryAddressType {
         this.areaOfLawList = areasOfLawList;
         this.courtTypesList = courtTypesList;
     }
+
+    public CourtSecondaryAddressType() {
+
+    }
 }
