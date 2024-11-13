@@ -73,7 +73,7 @@ public class Court {
     )
     private List<AreaOfLaw> areasOfLaw;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
         name = "search_courtareaoflawspoe",
         joinColumns = @JoinColumn(name = COURT_ID),
@@ -117,7 +117,7 @@ public class Court {
     )
     private List<Facility> facilities;
 
-    @OneToMany(mappedBy = COURT_STRING)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = COURT_STRING)
     @OrderBy("sort_order")
     private List<CourtAddress> addresses;
 
@@ -137,7 +137,7 @@ public class Court {
     )
     private List<ServiceArea> serviceAreas;
 
-    @OneToMany(mappedBy = COURT_STRING)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = COURT_STRING)
     private List<ServiceAreaCourt> serviceAreaCourts;
 
     @OneToMany(mappedBy = COURT_STRING, orphanRemoval = true)
