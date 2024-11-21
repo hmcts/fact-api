@@ -20,10 +20,10 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/courts/").authenticated()
                 .requestMatchers(HttpMethod.GET, "/courts/all").authenticated()
                 .requestMatchers(HttpMethod.GET, "/courts/{slug}/courtPhoto").authenticated()
-                //.requestMatchers(HttpMethod.DELETE, "/*").anonymous()
+                .requestMatchers(HttpMethod.DELETE, "/*").authenticated()
                 .requestMatchers(HttpMethod.POST, "/*").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/*").authenticated()
-                //.requestMatchers(HttpMethod.DELETE, "/*").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/*").authenticated()
                 .requestMatchers(HttpMethod.POST, "/*").authenticated()
                 .anyRequest().permitAll()
             ).oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())).csrf(AbstractHttpConfigurer::disable);
