@@ -149,7 +149,7 @@ public class AdminCourtsController {
     @ApiResponse(responseCode = "200", description = "Deleted")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
     @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
-    @Role({FACT_SUPER_ADMIN})
+    //@Role({FACT_SUPER_ADMIN})
     public ResponseEntity<String> deleteCourt(@PathVariable String slug) {
         adminService.deleteCourt(slug);
         return ok().body("Court with slug: " + slug + " has been deleted");
