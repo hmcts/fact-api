@@ -117,7 +117,7 @@ public class Court {
     )
     private List<Facility> facilities;
 
-    @OneToMany(mappedBy = COURT_STRING)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = COURT_STRING)
     @OrderBy("sort_order")
     private List<CourtAddress> addresses;
 

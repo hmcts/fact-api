@@ -10,4 +10,6 @@ public interface CourtLocalAuthorityAreaOfLawRepository extends JpaRepository<Co
     List<CourtLocalAuthorityAreaOfLaw> findByCourtId(Integer courtId);
 
     List<CourtLocalAuthorityAreaOfLaw> findByAreaOfLawId(Integer areaOfLawId);
+
+    List<CourtLocalAuthorityAreaOfLaw> deleteByCourtId(Integer courtId);
 }
