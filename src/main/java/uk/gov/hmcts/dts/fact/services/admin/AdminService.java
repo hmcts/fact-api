@@ -17,6 +17,7 @@ import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtHistoryRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.util.AuditType;
@@ -49,6 +50,8 @@ public class AdminService {
 
     private final CourtHistoryRepository courtHistoryRepository;
 
+    private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
+
     private static final String INTRO_PARAGRAPH = "This location services all of England and Wales for {serviceArea}. We do not provide an in-person service.";
     private static final String INTRO_PARAGRAPH_CY = "Mae’r lleoliad hwn yn gwasanaethu Cymru a Lloegr i gyd ar gyfer {serviceArea}. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.";
 
@@ -66,13 +69,15 @@ public class AdminService {
                         final AdminAuditService adminAuditService,
                         final ServiceAreaRepository serviceAreaRepository,
                         final AreasOfLawRepository areasOfLawRepository,
-                        CourtHistoryRepository courtHistoryRepository) {
+                        CourtHistoryRepository courtHistoryRepository,
+                        CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository) {
         this.courtRepository = courtRepository;
         this.rolesProvider = rolesProvider;
         this.adminAuditService = adminAuditService;
         this.serviceAreaRepository = serviceAreaRepository;
         this.areasOfLawRepository = areasOfLawRepository;
         this.courtHistoryRepository = courtHistoryRepository;
+        this.courtLocalAuthorityAreaOfLawRepository = courtLocalAuthorityAreaOfLawRepository;
     }
 
     /**
@@ -310,6 +315,7 @@ public class AdminService {
         adminAuditService.saveAudit(AuditType.findByName("Delete existing court"), new Court(court),
                                     null, courtSlug);
         courtHistoryRepository.deleteCourtHistoriesBySearchCourtId(court.getId());
+        courtLocalAuthorityAreaOfLawRepository.deleteByCourtId(court.getId());
         courtRepository.deleteById(court.getId());
     }
 
