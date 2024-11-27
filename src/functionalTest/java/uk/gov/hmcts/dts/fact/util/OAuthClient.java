@@ -49,7 +49,9 @@ public class OAuthClient {
         return generateClientToken(wrongRoleUser, password);
     }
 
-    public String getViewerToken() { return generateClientToken(viewerUser, password); }
+    public String getViewerToken() {
+        return generateClientToken(viewerUser, password);
+    }
 
     public String generateClientToken(String userName, String password) {
         String code = generateClientCode(userName, password);
