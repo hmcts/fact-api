@@ -30,7 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 
 @Validated
-@RateLimiter(name = "relaxed")
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",

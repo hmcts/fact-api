@@ -26,7 +26,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
  * Controller for updating court opening times.
  */
-@RateLimiter(name = "relaxed")
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",

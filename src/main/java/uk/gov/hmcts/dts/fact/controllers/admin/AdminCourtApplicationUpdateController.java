@@ -27,7 +27,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
  * Controller for retrieving and updating court application progressions.
  */
-@RateLimiter(name = "relaxed")
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",

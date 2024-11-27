@@ -28,7 +28,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 /**
  * Controller for retrieving and updating court areas of law.
  */
-@RateLimiter(name = "relaxed")
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",

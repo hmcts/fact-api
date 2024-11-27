@@ -21,7 +21,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
  * Controller for retrieving address types.
  */
-@RateLimiter(name = "relaxed")
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/addressTypes",
