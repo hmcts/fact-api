@@ -28,7 +28,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 /**
  * Controller for retrieving local authorities.
  */
-@RateLimiter(name = "default")
+@RateLimiter(name = "relaxed")
 @RestController
 @RequestMapping(
     path = "/admin/localauthorities",

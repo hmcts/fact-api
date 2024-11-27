@@ -20,7 +20,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
  * Controller for retrieving all counties.
  */
-@RateLimiter(name = "default")
+@RateLimiter(name = "relaxed")
 @RestController
 @RequestMapping(
     path = "/admin/counties",

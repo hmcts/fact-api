@@ -26,7 +26,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
  * Controller for retrieving and updating court contacts.
  */
-@RateLimiter(name = "default")
+@RateLimiter(name = "relaxed")
 @RestController
 @RequestMapping(
     path = "/admin/courts",

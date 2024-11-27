@@ -22,7 +22,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 /**
  * Controller for updating region data.
  */
-@RateLimiter(name = "default")
+@RateLimiter(name = "relaxed")
 @RestController
 @RequestMapping(
     path = "/admin/regions",
