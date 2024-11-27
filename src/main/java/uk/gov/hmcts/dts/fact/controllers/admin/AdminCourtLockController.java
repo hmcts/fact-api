@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -31,6 +32,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
  * Controller for retrieving and updating court locks.
  */
 @Validated
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",
