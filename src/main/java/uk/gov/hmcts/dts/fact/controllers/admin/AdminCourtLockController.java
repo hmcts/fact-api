@@ -81,7 +81,7 @@ public class AdminCourtLockController {
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
     @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
     @ApiResponse(responseCode = "409", description = "Court lock already exists")
-    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtLock> addNewCourtLock(@PathVariable String slug,
                                                      @Valid @RequestBody CourtLock courtLock) {
         return created(URI.create("/admin/courts/" + slug + "/lock"))

@@ -34,6 +34,9 @@ public class OAuthClient {
     @Value("${OAUTH_WRONG_ROLE_USER:hmcts.wrong.fact@gmail.com}")
     private String wrongRoleUser;
 
+    @Value("$OAUTH_VIEWER_USER")
+    private String viewerUser;
+
     public String getToken() {
         return generateClientToken(username, password);
     }
@@ -45,6 +48,8 @@ public class OAuthClient {
     public String getNobodyToken() {
         return generateClientToken(wrongRoleUser, password);
     }
+
+    public String getViewerToken() { return generateClientToken(viewerUser, password); }
 
     public String generateClientToken(String userName, String password) {
         String code = generateClientCode(userName, password);

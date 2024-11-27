@@ -101,6 +101,18 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
+    void shouldNotCreateCourtLockForViewer() throws JsonProcessingException {
+        final CourtLock expectedCourtLock = createCourtLock();
+        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+
+        final Response response = doPostRequest(
+            BARNSLEY_LAW_COURT_LOCK_PATH,
+            Map.of(AUTHORIZATION, BEARER + viewerToken), newCourtLockJson
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
     void shouldRequireATokenWhenCreatingCourtLock() throws JsonProcessingException {
         final CourtLock expectedCourtLock = createCourtLock();
         final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
