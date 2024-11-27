@@ -34,7 +34,7 @@ public class OAuthClient {
     @Value("${OAUTH_WRONG_ROLE_USER:hmcts.wrong.fact@gmail.com}")
     private String wrongRoleUser;
 
-    @Value("$OAUTH_VIEWER_USER")
+    @Value("${OAUTH_VIEWER_USER}")
     private String viewerUser;
 
     public String getToken() {
