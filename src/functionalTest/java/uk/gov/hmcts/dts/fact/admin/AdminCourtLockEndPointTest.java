@@ -127,12 +127,10 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(CREATED.value());
         final CourtLock createdCourtLock = response.as(CourtLock.class);
         assertThat(createdCourtLock.getUserEmail()).isEqualTo(expectedCourtLock.getUserEmail());
-        System.out.println("TOKEN: " + viewerToken);
         final var deleteResponse = doDeleteRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH + createdCourtLock.getUserEmail(),
             Map.of(AUTHORIZATION, BEARER + viewerToken),""
         );
-        System.out.println("CODE: " + deleteResponse.statusCode());
 
         assertThat(deleteResponse.statusCode()).isEqualTo(FORBIDDEN.value());
 
