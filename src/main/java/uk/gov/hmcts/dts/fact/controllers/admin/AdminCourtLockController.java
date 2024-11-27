@@ -99,7 +99,7 @@ public class AdminCourtLockController {
     @ApiResponse(responseCode = "200", description = "Deleted")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
     @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
-    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtLock>> deleteCourtLockBySlugAndEmail(@PathVariable String slug,
                                                                          @PathVariable String userEmail) {
         return ok().body(adminCourtLockService.deleteCourtLock(slug, userEmail));
