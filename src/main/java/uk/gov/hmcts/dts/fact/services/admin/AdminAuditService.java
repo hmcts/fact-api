@@ -13,6 +13,8 @@ import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +41,7 @@ public class AdminAuditService {
     }
 
     /**
-     * Get all audit data.
+     * Get all audit data. Creation time will be returned as GMT/BST instead of UTC.
      * @param page The page number
      * @param size The page size
      * @param location The location
@@ -62,7 +64,16 @@ public class AdminAuditService {
 
         return auditPage
             .stream()
-            .map(uk.gov.hmcts.dts.fact.model.admin.Audit::new)
+            .map(audit -> {
+                // Convert UTC LocalDateTime to ZonedDateTime for Europe/London
+                ZonedDateTime creationTimeInUK = audit.getCreationTime()
+                    .atZone(ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.of("Europe/London")); // show as GMT/BST
+                // Map to the DTO, adjusting the creation time
+                uk.gov.hmcts.dts.fact.model.admin.Audit dto = new uk.gov.hmcts.dts.fact.model.admin.Audit(audit);
+                dto.setCreationTime(creationTimeInUK.toLocalDateTime()); // Update creation time
+                return dto;
+            })
             .collect(Collectors.toList());
     }
 
