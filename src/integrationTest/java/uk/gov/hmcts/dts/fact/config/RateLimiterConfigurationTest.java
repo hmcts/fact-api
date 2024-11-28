@@ -33,7 +33,7 @@ public class RateLimiterConfigurationTest {
         assertThat(defaultRateLimiter.getRateLimiterConfig().getLimitRefreshPeriod())
             .isEqualTo(Duration.ofSeconds(1));
         assertThat(defaultRateLimiter.getRateLimiterConfig().getTimeoutDuration())
-            .isEqualTo(Duration.ofSeconds(1));
+            .isEqualTo(Duration.ofSeconds(3));
     }
 
 }
