@@ -19,6 +19,7 @@ import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,12 +52,20 @@ class AdminAuditServiceTest {
 
     @BeforeAll
     static void beforeAll() {
+        ZoneId utcZone = ZoneId.of("Europe/London");
+
         AUDIT_DATA.add(new Audit("Test String", new AuditType(1, "test"),
-                               "data before", "data after",
-                               "some court", LocalDateTime.of(1000, 10, 10, 10, 10)));
+                                 "data before", "data after",
+                                 "some court", LocalDateTime.of(2024, 11, 10, 10, 10, 10)
+                                     .atZone(utcZone)
+                                     .toLocalDateTime()));
+
         AUDIT_DATA.add(new Audit("Test String 2", new AuditType(1, "test 2"),
-                               "data before 2", "data after 2",
-                               "some court", LocalDateTime.of(1000, 10, 10, 10, 10)));
+                                 "data before 2", "data after 2",
+                                 "some court", LocalDateTime.of(2024, 11, 10, 10, 10, 10)
+                                     .atZone(utcZone)
+                                     .toLocalDateTime()));
+
         AUDIT_DATA.get(0).setId(0);
         AUDIT_DATA.get(1).setId(1);
     }
