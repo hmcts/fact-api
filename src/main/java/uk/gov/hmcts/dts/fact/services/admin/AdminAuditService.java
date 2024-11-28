@@ -66,12 +66,12 @@ public class AdminAuditService {
             .stream()
             .map(audit -> {
                 // Convert UTC LocalDateTime to ZonedDateTime for Europe/London
-                ZonedDateTime creationTimeInUK = audit.getCreationTime()
+                ZonedDateTime creationTimeInUk = audit.getCreationTime()
                     .atZone(ZoneId.of("UTC"))
                     .withZoneSameInstant(ZoneId.of("Europe/London")); // show as GMT/BST
                 // Map to the DTO, adjusting the creation time
                 uk.gov.hmcts.dts.fact.model.admin.Audit dto = new uk.gov.hmcts.dts.fact.model.admin.Audit(audit);
-                dto.setCreationTime(creationTimeInUK.toLocalDateTime()); // Update creation time
+                dto.setCreationTime(creationTimeInUk.toLocalDateTime()); // Update creation time
                 return dto;
             })
             .collect(Collectors.toList());
