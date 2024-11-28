@@ -73,4 +73,4 @@ resilience4j:
       default:
           limitForPeriod: 15
           limitRefreshPeriod: 1s
-          timeoutDuration: 0
+          timeoutDuration: 1s
