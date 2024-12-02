@@ -3,8 +3,6 @@ package uk.gov.hmcts.dts.fact.services.admin;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,7 +20,6 @@ import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -110,23 +107,22 @@ class AdminAuditServiceTest {
         assertThat(results.get(1)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(1)));
     }
 
-    @ParameterizedTest
-    @CsvSource({
-        "2024-06-21T14:30:10, Europe/London, true", // BST case
-        "2024-12-21T14:30:10, Europe/London, false" // Non-BST (UTC) case
-    })
-    void shouldHandleBritishSummerTime(String inputDateTime, String zoneId, boolean isInBst) {
+    @Test
+    void shouldHandleBritishSummerTimeCorrectly() {
+        String inputDateTime = "2024-06-21T13:30:10"; // will save as UTC as usual
         // Parse the input date-time and apply the zone
         LocalDateTime localDateTime = LocalDateTime.parse(inputDateTime);
-        ZoneId londonZone = ZoneId.of(zoneId);
-        ZonedDateTime zonedDateTime = localDateTime.atZone(londonZone);
+
+        // Convert to UTC for storage then once pulling it out it should come back as BST
+        LocalDateTime utcDateTime = localDateTime.atZone(ZoneId.of("UTC")).toLocalDateTime();
 
         Audit audit = new Audit("Test", new AuditType(2, "Type"),
                                 "before", "after",
-                                "some court", zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+                                "some court", utcDateTime);
         audit.setId(1);
         when(auditRepository.findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
-            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of(audit)));
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10)))
+            .thenReturn(new PageImpl<>(List.of(audit)));
         final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
             adminAuditService.getAllAuditData(0, 10,
                                               Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
@@ -134,15 +130,38 @@ class AdminAuditServiceTest {
         verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
             TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10));
 
-        // Perform the assertion dynamically based on BST or UTC
-        if (isInBst) {
-            assertThat(results.get(0).getCreationTime()).isEqualTo(zonedDateTime.toLocalDateTime());
-        } else {
-            assertThat(results.get(0).getCreationTime())
-                .isEqualTo(zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
-        }
+        assertThat(utcDateTime.toString()).isEqualTo("2024-06-21T13:30:10"); //will save as UTC
+        // Assert that the stored UTC time is 1 hour behind the original BST time
+        assertThat(results.get(0).getCreationTime().toString()).isEqualTo("2024-06-21T14:30:10"); //as BST
     }
 
+    @Test
+    void shouldHandleGreenwichMeanTimeCorrectly() {
+        String inputDateTime = "2024-12-21T14:30:10"; // will save as UTC as usual
+        // Parse the input date-time and apply the zone
+        LocalDateTime localDateTime = LocalDateTime.parse(inputDateTime);
+
+        // Convert to UTC for storage then once pulling it out it should come back as GMT
+        LocalDateTime utcDateTime = localDateTime.atZone(ZoneId.of("UTC")).toLocalDateTime();
+
+        Audit audit = new Audit("Test", new AuditType(2, "Type"),
+                                "before", "after",
+                                "some court", utcDateTime);
+        audit.setId(1);
+        when(auditRepository.findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10)))
+            .thenReturn(new PageImpl<>(List.of(audit)));
+        final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
+            adminAuditService.getAllAuditData(0, 10,
+                                              Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
+                                              Optional.empty(), Optional.empty());
+        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10));
+
+        assertThat(utcDateTime.toString()).isEqualTo("2024-12-21T14:30:10"); //will save as UTC
+        // Assert that the stored UTC time is 1 hour behind the original BST time
+        assertThat(results.get(0).getCreationTime().toString()).isEqualTo("2024-12-21T14:30:10"); //as GMT
+    }
 
     @Test
     void shouldSaveAudit() {
