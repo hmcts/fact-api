@@ -20,6 +20,7 @@ import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -106,6 +107,39 @@ class AdminAuditServiceTest {
         assertThat(results.get(0)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(0)));
         assertThat(results.get(1)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(1)));
     }
+
+    @Test
+    void shouldHandleBritishSummerTime() {
+        // Set the test date (21st June 2024)
+        ZoneId londonZone = ZoneId.of("Europe/London");
+        ZonedDateTime bstZonedDateTime = ZonedDateTime.of(2024, 6, 21, 14, 30, 10, 0, londonZone);
+
+        // See if we're currently in BST
+        boolean currentlyInBST = londonZone.getRules().isDaylightSavings(bstZonedDateTime.toInstant());
+
+        Audit bstAudit = new Audit("BST Test", new AuditType(2, "BST"),
+                                   "before BST", "after BST",
+                                   "some court", bstZonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+        bstAudit.setId(3);
+        when(auditRepository.findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of(bstAudit)));
+        final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
+            adminAuditService.getAllAuditData(0, 10,
+                                              Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
+                                              Optional.empty(), Optional.empty());
+        verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10));
+
+        // Perform the assertion dynamically based on BST or UTC because BST tests won't work unless we're in BST
+        if (currentlyInBST) {
+            assertThat(results.get(0).getCreationTime())
+                .isEqualTo(bstZonedDateTime.toLocalDateTime());
+        } else {
+            assertThat(results.get(0).getCreationTime())
+                .isEqualTo(bstZonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+        }
+    }
+
 
     @Test
     void shouldSaveAudit() {
