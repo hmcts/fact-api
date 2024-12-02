@@ -3,6 +3,8 @@ package uk.gov.hmcts.dts.fact.services.admin;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -108,18 +110,23 @@ class AdminAuditServiceTest {
         assertThat(results.get(1)).isEqualTo(new uk.gov.hmcts.dts.fact.model.admin.Audit(AUDIT_DATA.get(1)));
     }
 
-    @Test
-    void shouldHandleBritishSummerTime() {
-        // Set the test date (21st June 2024)
-        ZoneId londonZone = ZoneId.of("Europe/London");
-        ZonedDateTime bstZonedDateTime = ZonedDateTime.of(2024, 6, 21, 14, 30, 10, 0, londonZone);
+    @ParameterizedTest
+    @CsvSource({
+        "2024-06-21T14:30:10, Europe/London, true", // BST case
+        "2024-12-21T14:30:10, Europe/London, false" // Non-BST (UTC) case
+    })
+    void shouldHandleBritishSummerTime(String inputDateTime, String zoneId, boolean isInBst) {
+        // Parse the input date-time and apply the zone
+        LocalDateTime localDateTime = LocalDateTime.parse(inputDateTime);
+        ZoneId londonZone = ZoneId.of(zoneId);
+        ZonedDateTime zonedDateTime = localDateTime.atZone(londonZone);
 
-        Audit bstAudit = new Audit("BST Test", new AuditType(2, "BST"),
-                                   "before BST", "after BST",
-                                   "some court", bstZonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
-        bstAudit.setId(3);
+        Audit audit = new Audit("Test", new AuditType(2, "Type"),
+                                "before", "after",
+                                "some court", zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+        audit.setId(1);
         when(auditRepository.findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
-            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of(bstAudit)));
+            TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of(audit)));
         final List<uk.gov.hmcts.dts.fact.model.admin.Audit> results =
             adminAuditService.getAllAuditData(0, 10,
                                               Optional.of(TEST_LOCATION), Optional.of(TEST_EMAIL),
@@ -127,15 +134,12 @@ class AdminAuditServiceTest {
         verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
             TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10));
 
-        // See if we're currently in BST
-        boolean currentlyInBst = londonZone.getRules().isDaylightSavings(bstZonedDateTime.toInstant());
-        // Perform the assertion dynamically based on BST or UTC because BST tests won't work unless we're in BST
-        if (currentlyInBst) {
-            assertThat(results.get(0).getCreationTime())
-                .isEqualTo(bstZonedDateTime.toLocalDateTime());
+        // Perform the assertion dynamically based on BST or UTC
+        if (isInBst) {
+            assertThat(results.get(0).getCreationTime()).isEqualTo(zonedDateTime.toLocalDateTime());
         } else {
             assertThat(results.get(0).getCreationTime())
-                .isEqualTo(bstZonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
+                .isEqualTo(zonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
         }
     }
 
