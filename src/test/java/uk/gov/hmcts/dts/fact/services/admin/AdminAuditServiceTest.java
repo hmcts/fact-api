@@ -114,9 +114,6 @@ class AdminAuditServiceTest {
         ZoneId londonZone = ZoneId.of("Europe/London");
         ZonedDateTime bstZonedDateTime = ZonedDateTime.of(2024, 6, 21, 14, 30, 10, 0, londonZone);
 
-        // See if we're currently in BST
-        boolean currentlyInBST = londonZone.getRules().isDaylightSavings(bstZonedDateTime.toInstant());
-
         Audit bstAudit = new Audit("BST Test", new AuditType(2, "BST"),
                                    "before BST", "after BST",
                                    "some court", bstZonedDateTime.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime());
@@ -130,8 +127,10 @@ class AdminAuditServiceTest {
         verify(auditRepository, atLeastOnce()).findAllByLocationContainingAndUserEmailContainingOrderByCreationTimeDesc(
             TEST_LOCATION, TEST_EMAIL, PageRequest.of(0, 10));
 
+        // See if we're currently in BST
+        boolean currentlyInBst = londonZone.getRules().isDaylightSavings(bstZonedDateTime.toInstant());
         // Perform the assertion dynamically based on BST or UTC because BST tests won't work unless we're in BST
-        if (currentlyInBST) {
+        if (currentlyInBst) {
             assertThat(results.get(0).getCreationTime())
                 .isEqualTo(bstZonedDateTime.toLocalDateTime());
         } else {
