@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
  * Controller for retrieving and updating court additional links.
  */
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",

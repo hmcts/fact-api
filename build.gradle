@@ -101,6 +101,7 @@ task functional(type: Test) {
       systemProperty 'OAUTH_USER', getVaultSecret('oauth-user')
       systemProperty 'OAUTH_USER_PASSWORD', getVaultSecret('oauth-user-password')
       systemProperty 'OAUTH_SUPER_USER', getVaultSecret('oauth-super-user')
+      systemProperty 'OAUTH_VIEWER_USER', getVaultSecret('oauth-viewer-user')
     }
   }
 

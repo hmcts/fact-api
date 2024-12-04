@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin.list;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_SUPER_ADMIN;
 /**
  * Controller for retrieving address types.
  */
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/addressTypes",

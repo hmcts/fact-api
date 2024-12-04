@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +35,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 /**
  * Controller for updating court postcodes.
  */
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",
