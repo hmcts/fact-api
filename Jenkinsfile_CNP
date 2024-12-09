@@ -15,6 +15,7 @@ def secrets = [
     secret("oauth-user", "OAUTH_USER"),
     secret("oauth-user-password", "OAUTH_USER_PASSWORD"),
     secret("oauth-super-user", "OAUTH_SUPER_USER"),
+    secret("oauth-viewer-user", "OAUTH_VIEWER_USER"),
     secret("mapit-key", "MAPIT_KEY")
   ]
 ]

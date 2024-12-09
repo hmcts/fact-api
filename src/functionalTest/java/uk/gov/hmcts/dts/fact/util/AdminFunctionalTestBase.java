@@ -12,11 +12,13 @@ public class AdminFunctionalTestBase extends FunctionalTestBase {
     protected String authenticatedToken;
     protected String forbiddenToken;
     protected String superAdminToken;
+    protected String viewerToken;
 
     @BeforeEach
     void setUpAuthenticationTokens() {
         authenticatedToken = authClient.getToken();
         forbiddenToken = authClient.getNobodyToken();
         superAdminToken = authClient.getSuperAdminToken();
+        viewerToken = authClient.getViewerToken();
     }
 }

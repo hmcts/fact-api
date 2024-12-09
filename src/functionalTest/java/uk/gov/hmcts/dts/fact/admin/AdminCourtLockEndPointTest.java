@@ -101,6 +101,51 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
+    void shouldNotCreateCourtLockForViewer() throws JsonProcessingException {
+        final CourtLock expectedCourtLock = createCourtLock();
+        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+
+        final Response response = doPostRequest(
+            BARNSLEY_LAW_COURT_LOCK_PATH,
+            Map.of(AUTHORIZATION, BEARER + viewerToken), newCourtLockJson
+        );
+        assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
+    }
+
+    @Test
+    void shouldNotDeleteCourtLockForViewer() throws JsonProcessingException {
+        //Create court lock to try and delete
+        final CourtLock expectedCourtLock = createCourtLock();
+        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+
+        final var response = doPostRequest(
+            BARNSLEY_LAW_COURT_LOCK_PATH,
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
+            newCourtLockJson
+        );
+
+        assertThat(response.statusCode()).isEqualTo(CREATED.value());
+        final CourtLock createdCourtLock = response.as(CourtLock.class);
+        assertThat(createdCourtLock.getUserEmail()).isEqualTo(expectedCourtLock.getUserEmail());
+        final var deleteResponse = doDeleteRequest(
+            BARNSLEY_LAW_COURT_LOCK_PATH + createdCourtLock.getUserEmail(),
+            Map.of(AUTHORIZATION, BEARER + viewerToken),""
+        );
+
+        assertThat(deleteResponse.statusCode()).isEqualTo(FORBIDDEN.value());
+
+        // cleanup
+        final var cleanUpResponse = doDeleteRequest(
+            BARNSLEY_LAW_COURT_LOCK_PATH + createdCourtLock.getUserEmail(),
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),""
+        );
+
+        assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
+        final List<CourtLock> currentCourtLock = getCurrentLock();
+        assertThat(currentCourtLock).isEmpty();
+    }
+
+    @Test
     void shouldRequireATokenWhenCreatingCourtLock() throws JsonProcessingException {
         final CourtLock expectedCourtLock = createCourtLock();
         final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);

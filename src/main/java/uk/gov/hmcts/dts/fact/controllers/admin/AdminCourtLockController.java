@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -31,6 +32,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
  * Controller for retrieving and updating court locks.
  */
 @Validated
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",
@@ -79,7 +81,7 @@ public class AdminCourtLockController {
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
     @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
     @ApiResponse(responseCode = "409", description = "Court lock already exists")
-    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<CourtLock> addNewCourtLock(@PathVariable String slug,
                                                      @Valid @RequestBody CourtLock courtLock) {
         return created(URI.create("/admin/courts/" + slug + "/lock"))
@@ -97,7 +99,7 @@ public class AdminCourtLockController {
     @ApiResponse(responseCode = "200", description = "Deleted")
     @ApiResponse(responseCode = UNAUTHORISED_CODE, description = UNAUTHORISED)
     @ApiResponse(responseCode = FORBIDDEN_CODE, description = FORBIDDEN)
-    @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
+    @Role({FACT_ADMIN, FACT_SUPER_ADMIN})
     public ResponseEntity<List<CourtLock>> deleteCourtLockBySlugAndEmail(@PathVariable String slug,
                                                                          @PathVariable String userEmail) {
         return ok().body(adminCourtLockService.deleteCourtLock(slug, userEmail));
