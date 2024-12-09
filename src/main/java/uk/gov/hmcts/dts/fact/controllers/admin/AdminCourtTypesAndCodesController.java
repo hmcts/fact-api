@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import static uk.gov.hmcts.dts.fact.services.admin.AdminRole.FACT_VIEWER;
 /**
  * Controller for updating court types and codes.
  */
+@RateLimiter(name = "default")
 @RestController
 @RequestMapping(
     path = "/admin/courts",
