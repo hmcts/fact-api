@@ -19,7 +19,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 public class FunctionalTestBase {
     protected static final String CONTENT_TYPE_VALUE = "application/json";
 
-    @Value("${TEST_URL:http://localhost:8085}")
+    @Value("${http://localhost:8085}")
     private String testUrl;
 
     @BeforeEach
