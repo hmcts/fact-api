@@ -7,11 +7,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.County;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
+import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
@@ -25,6 +28,7 @@ import uk.gov.hmcts.dts.fact.services.MapitService;
 import uk.gov.hmcts.dts.fact.services.admin.list.AdminAddressTypeService;
 import uk.gov.hmcts.dts.fact.services.validation.ValidationService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,16 +38,21 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.anyDouble;
-import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -66,6 +75,7 @@ class AdminCourtAddressServiceTest {
     private static final String WRITE_TO_US_ADDRESS_TYPE_NAME_CY = WRITE_TO_US_ADDRESS_TYPE_NAME + " cy";
     private static final String VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME_CY = VISIT_OR_CONTACT_US_ADDRESS_TYPE_NAME + " cy";
     private static final String REGION = "North West";
+    private static final String TEST_USER = "test@test.com";
 
     private static final String UPDATE_ADDRESS_AND_COORDINATES_AUDIT_TYPE = "Update court addresses and coordinates";
 
@@ -156,9 +166,11 @@ class AdminCourtAddressServiceTest {
     private static final Integer SORT_ORDER_1 = 0;
     private static final Integer SORT_ORDER_2 = 1;
     private static final Integer SORT_ORDER_3 = 2;
-
+    private static final String EPIM_ID = "epim-id";
+    private static final String BAD_EPIM = "bad epim-id";
+    private static final String INVALID_EPIM_MESSAGE = "Invalid epimId: ";
     private static final int ADDRESS_COUNT = 3;
-    private static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
+    protected static final CourtAddress WRITE_TO_US_ADDRESS = new CourtAddress(
         1,
         WRITE_TO_US_ADDRESS_TYPE_ID,
         TEST_ADDRESS1,
@@ -168,7 +180,8 @@ class AdminCourtAddressServiceTest {
         COUNTY_ID,
         WRITE_TO_US_POSTCODE,
         COURT_SECONDARY_ADDRESS_TYPE_LIST,
-        SORT_ORDER_2
+        SORT_ORDER_2,
+        EPIM_ID
     );
     private static final CourtAddress VISIT_US_ADDRESS = new CourtAddress(
         2,
@@ -180,7 +193,8 @@ class AdminCourtAddressServiceTest {
         COUNTY_ID,
         VISIT_US_POSTCODE,
         COURT_SECONDARY_ADDRESS_TYPE_LIST_2,
-        SORT_ORDER_1
+        SORT_ORDER_1,
+        EPIM_ID
     );
     private static final CourtAddress NO_SECONDARY_COURT_TYPE_ADDRESS = new CourtAddress(
         3,
@@ -192,11 +206,41 @@ class AdminCourtAddressServiceTest {
         COUNTY_ID,
         VISIT_OR_CONTACT_US_POSTCODE,
         COURT_SECONDARY_ADDRESS_TYPE_LIST_3,
-        SORT_ORDER_3
+        SORT_ORDER_3,
+        EPIM_ID
     );
+    private static final CourtAddress BAD_EPIM_ADDRESS = new CourtAddress(
+        1,
+        WRITE_TO_US_ADDRESS_TYPE_ID,
+        TEST_ADDRESS1,
+        TEST_ADDRESS_CY1,
+        TEST_TOWN1,
+        null,
+        COUNTY_ID,
+        WRITE_TO_US_POSTCODE,
+        COURT_SECONDARY_ADDRESS_TYPE_LIST,
+        SORT_ORDER_2,
+        BAD_EPIM
+    );
+    private static final CourtAddress NULL_EPIM_ADDRESS = new CourtAddress(
+        1,
+        WRITE_TO_US_ADDRESS_TYPE_ID,
+        TEST_ADDRESS1,
+        TEST_ADDRESS_CY1,
+        TEST_TOWN1,
+        null,
+        COUNTY_ID,
+        WRITE_TO_US_POSTCODE,
+        COURT_SECONDARY_ADDRESS_TYPE_LIST,
+        SORT_ORDER_2,
+        null
+    );
+
     private static final List<CourtAddress> EXPECTED_ADDRESSES = asList(
         WRITE_TO_US_ADDRESS, VISIT_US_ADDRESS, NO_SECONDARY_COURT_TYPE_ADDRESS);
 
+    Authentication mockAuthentication = mock(Authentication.class);
+    private static final String MOCK_AUTH_USER = "test@test.com";
     private static final Court MOCK_COURT = mock(Court.class);
     private static final List<uk.gov.hmcts.dts.fact.entity.CourtAddress> COURT_ADDRESSES_ENTITY = asList(
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(
@@ -208,7 +252,8 @@ class AdminCourtAddressServiceTest {
             null,
             COUNTY,
             WRITE_TO_US_POSTCODE,
-            SORT_ORDER_2
+            SORT_ORDER_2,
+            EPIM_ID
         ),
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(
             MOCK_COURT,
@@ -219,7 +264,8 @@ class AdminCourtAddressServiceTest {
             null,
             COUNTY,
             VISIT_US_POSTCODE,
-            SORT_ORDER_1
+            SORT_ORDER_1,
+            EPIM_ID
         ),
         new uk.gov.hmcts.dts.fact.entity.CourtAddress(
             MOCK_COURT,
@@ -230,7 +276,8 @@ class AdminCourtAddressServiceTest {
             null,
             COUNTY,
             VISIT_OR_CONTACT_US_POSTCODE,
-            SORT_ORDER_3
+            SORT_ORDER_3,
+            EPIM_ID
         )
     );
 
@@ -238,9 +285,13 @@ class AdminCourtAddressServiceTest {
     private static final Double LONGITUDE = 2.0;
 
     private static final String NOT_FOUND = "Not found: ";
+    private static final String BAD_POSTCODE = "E@ 2LQ";
 
     @Autowired
     private AdminCourtAddressService adminCourtAddressService;
+
+    @MockBean
+    private AdminCourtLockService adminCourtLockService;
 
     @MockBean
     private CourtRepository courtRepository;
@@ -340,7 +391,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                5
+                5,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -351,7 +403,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                0
+                0,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -362,7 +415,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                1
+                1,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -373,7 +427,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                3
+                3,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -384,7 +439,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                4
+                4,
+                ""
             ),
             new uk.gov.hmcts.dts.fact.entity.CourtAddress(
                 MOCK_COURT,
@@ -395,7 +451,8 @@ class AdminCourtAddressServiceTest {
                 null,
                 null,
                 null,
-                2
+                2,
+                ""
             )
         );
         when(MOCK_COURT.getAddresses()).thenReturn(courtAddresses);
@@ -618,7 +675,8 @@ class AdminCourtAddressServiceTest {
     void validateCourtPostcodesShouldReturnInvalidPartialPostcode() {
         final List<CourtAddress> testAddresses = singletonList(
             new CourtAddress(1, WRITE_TO_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1, TEST_TOWN1,
-                             null, COUNTY_ID, PARTIAL_POSTCODE, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1
+                             null, COUNTY_ID, PARTIAL_POSTCODE, COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1,
+                             EPIM_ID
             )
         );
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
@@ -639,10 +697,82 @@ class AdminCourtAddressServiceTest {
     void validateCourtPostcodesShouldNotUpdateCoordinatesForAddressWithMissingPostcode() {
         final List<CourtAddress> testAddresses =
             singletonList(new CourtAddress(1, VISIT_OR_CONTACT_US_ADDRESS_TYPE_ID, TEST_ADDRESS1, TEST_ADDRESS_CY1,
-                                           TEST_TOWN1, null, COUNTY_ID, "", COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1
+                                           TEST_TOWN1, null, COUNTY_ID, "", COURT_SECONDARY_ADDRESS_TYPE_LIST, SORT_ORDER_1,
+                                           EPIM_ID
             ));
         when(adminAddressTypeService.getAddressTypeMap()).thenReturn(ADDRESS_TYPE_MAP);
         assertThat(adminCourtAddressService.validateCourtAddressPostcodes(testAddresses)).isEmpty();
         verifyNoInteractions(validationService);
+    }
+
+    @Test
+    void shouldValidateAndSaveAddresses() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(VISIT_US_ADDRESS))).thenReturn(List.of());
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+
+        assertDoesNotThrow(() -> {
+            adminCourtAddressService.validateAndSaveAddresses(asList(VISIT_US_ADDRESS), COURT_SLUG, mockAuthentication);
+        });
+
+        verify(adminCourtLockService, times(1)).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
+
+    @Test
+    void shouldNotValidateAndSaveAddressesWithBadPostcode() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(VISIT_US_ADDRESS))).thenReturn(List.of(BAD_POSTCODE));
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+
+        InvalidPostcodeException exception = assertThrows(
+            InvalidPostcodeException.class,
+            () -> adminCourtAddressService.validateAndSaveAddresses(asList(VISIT_US_ADDRESS), COURT_SLUG, mockAuthentication)
+        );
+
+        assertEquals(asList(BAD_POSTCODE), exception.getInvalidPostcodes());
+        verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
+
+    @Test
+    void shouldValidateAndNotSaveAddressesWithBadEpim() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(BAD_EPIM_ADDRESS))).thenReturn(List.of());
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+        doThrow(new InvalidEpimIdException(BAD_EPIM)).when(validationService).validateEpimIds(asList(BAD_EPIM_ADDRESS));
+
+        InvalidEpimIdException exception = assertThrows(
+            InvalidEpimIdException.class,
+            () -> validationService.validateEpimIds(List.of(BAD_EPIM_ADDRESS))
+        );
+        assertEquals((INVALID_EPIM_MESSAGE + BAD_EPIM), exception.getMessage());
+        verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
+
+    @Test
+    void shouldValidateAndNotSaveAddressesWithNullEpim() {
+        when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(MOCK_COURT));
+        when(adminCourtAddressService.validateCourtAddressPostcodes(asList(NULL_EPIM_ADDRESS))).thenReturn(List.of());
+        when(mockAuthentication.getName()).thenReturn(MOCK_AUTH_USER);
+        doThrow(new InvalidEpimIdException("null")).when(validationService).validateEpimIds(asList(NULL_EPIM_ADDRESS));
+
+        InvalidEpimIdException exception = assertThrows(
+            InvalidEpimIdException.class,
+            () -> validationService.validateEpimIds(asList(NULL_EPIM_ADDRESS))
+        );
+        assertEquals((INVALID_EPIM_MESSAGE + "null"), exception.getMessage());
+        verify(adminCourtLockService, never()).updateCourtLock(COURT_SLUG, TEST_USER);
+    }
+
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenAddressTypeIdDoesNotExist() {
+        // Setup a map without the expected address type ID
+        Map<Integer, AddressType> addressTypeMap = new HashMap<>();
+        Integer missingAddressTypeId = 999;  // ID that does not exist in the map
+
+        // Verify that an IllegalArgumentException is thrown for a missing addressTypeId
+        assertThrows(IllegalArgumentException.class, () ->
+                         adminCourtAddressService.getAddressTypeFromId(addressTypeMap, missingAddressTypeId),
+                     "Unknown address type ID: " + missingAddressTypeId
+        );
     }
 }

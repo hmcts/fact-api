@@ -2,8 +2,11 @@ package uk.gov.hmcts.dts.fact.services.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
+import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 
@@ -12,6 +15,7 @@ public class ValidationService {
 
     private final PostcodeValidator mapitPostcodeValidator;
     private final LocalAuthorityValidator mapitlocalAuthorityValidator;
+    private static final Pattern EPIM_ID_PATTERN = Pattern.compile("^[a-zA-Z0-9-]{0,30}$");
 
     /**
      * Constructor for the ValidationService.
@@ -53,5 +57,18 @@ public class ValidationService {
      */
     public boolean validateLocalAuthority(final String localAuthorityName) {
         return mapitlocalAuthorityValidator.localAuthorityNameIsValid(localAuthorityName);
+    }
+
+    /**
+     * Validates that the given epimId is alphanumeric and contains dashes only (to 30 chars).
+     * @param courtAddresses A list of court addresses
+     * @return The epimId if it fails the regex, otherwise InvalidEpimIdException
+     */
+    public void validateEpimIds(List<CourtAddress> courtAddresses) {
+        String epimId = courtAddresses.get(0).getEpimId(); // only primary address has epim id
+
+        if (epimId != null && !EPIM_ID_PATTERN.matcher(epimId).matches()) {
+            throw new InvalidEpimIdException(epimId);
+        }
     }
 }

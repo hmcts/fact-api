@@ -17,6 +17,8 @@ import uk.gov.hmcts.dts.fact.model.admin.Audit;
 import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -128,4 +130,28 @@ class AdminAuditControllerTest {
                                           TEST_DATE_FROM, null)))
             .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void shouldReturnDatesInEuropeLondonTimezone() throws Exception {
+        // Set up test data with a known ZonedDateTime
+        ZonedDateTime dateTimeInLondon = LocalDateTime.of(2024, 11, 8, 13, 30, 10)
+            .atZone(ZoneId.of("Europe/London"));
+
+        Audit auditWithLondonTime = new Audit(new uk.gov.hmcts.dts.fact.entity.Audit(
+            1, "kupo email", new AuditType(), "some data before",
+            "some data after", "mosh court", dateTimeInLondon.toLocalDateTime()
+        ));
+
+        List<Audit> auditListWithLondonTime = List.of(auditWithLondonTime);
+        String auditJsonWithLondonTime = OBJECT_MAPPER.writeValueAsString(auditListWithLondonTime);
+
+        when(adminAuditService.getAllAuditData(TEST_PAGE, TEST_SIZE, Optional.empty(), Optional.empty(),
+                                               Optional.empty(), Optional.empty())).thenReturn(auditListWithLondonTime);
+
+        mockMvc.perform(get(String.format(BASE_PATH, TEST_PAGE, TEST_SIZE)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(auditJsonWithLondonTime));
+    }
+
 }

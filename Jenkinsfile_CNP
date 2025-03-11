@@ -15,6 +15,7 @@ def secrets = [
     secret("oauth-user", "OAUTH_USER"),
     secret("oauth-user-password", "OAUTH_USER_PASSWORD"),
     secret("oauth-super-user", "OAUTH_SUPER_USER"),
+    secret("oauth-viewer-user", "OAUTH_VIEWER_USER"),
     secret("mapit-key", "MAPIT_KEY")
   ]
 ]
@@ -29,6 +30,9 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 }
 
 def branchesToSync = ['demo', 'perftest', 'ithc']
+
+// Prevent Docker hub rate limit errors by ensuring that testcontainers uses images from hmctspublic ACR
+env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = 'hmctspublic.azurecr.io/imported/'
 
 withPipeline(type, product, component) {
   disableLegacyDeployment()
