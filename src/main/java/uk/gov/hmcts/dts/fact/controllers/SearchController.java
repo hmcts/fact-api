@@ -48,7 +48,6 @@ public class SearchController {
      *
      * @deprecated Use {@link #findCourtsByPostcodeAndServiceArea}, path = /results}
      */
-    @Deprecated(since = "1.0", forRemoval = true)
     @GetMapping(path = "/results.json")
     @Operation(summary = "Find court by postcode, address or name")
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
