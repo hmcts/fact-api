@@ -10,6 +10,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtAddress;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.DxCode;
+import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
+import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
-import uk.gov.hmcts.dts.fact.model.deprecated.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 import uk.gov.hmcts.dts.fact.util.Action;
 
@@ -44,9 +44,7 @@ public class SearchController {
     }
 
     /**
-     * Find court by postcode.
-     *
-     * @deprecated Use {@link #findCourtsByPostcodeAndServiceArea}, path = /results}
+     * Find court by postcode, address, name or query.
      */
     @GetMapping(path = "/results.json")
     @Operation(summary = "Find court by postcode, address or name")
