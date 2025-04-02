@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
-
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.time.LocalDateTime;
@@ -18,9 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.*;
-import static org.springframework.http.HttpStatus.*;
-import static uk.gov.hmcts.dts.fact.util.TestUtil.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.ADMIN_COURTS_ENDPOINT;
+import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
 @ExtendWith(SpringExtension.class)
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.UseUnderscoresInNumericLiterals", "PMD.TestClassWithoutTestCases"})

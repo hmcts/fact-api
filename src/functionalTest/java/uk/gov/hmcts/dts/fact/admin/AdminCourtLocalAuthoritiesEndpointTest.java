@@ -14,7 +14,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
