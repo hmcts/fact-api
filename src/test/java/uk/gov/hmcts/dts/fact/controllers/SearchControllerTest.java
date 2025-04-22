@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 import uk.gov.hmcts.dts.fact.util.Action;
 
+import java.util.List;
+
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,6 +31,7 @@ class SearchControllerTest {
     private static final String POSTCODE = "OX1 1RZ";
     private static final String CRIME = "Crime";
     private static final String CHILDREN = "Children";
+    private static final List<String> CHILDREN_AS_LIST = List.of("Children");
 
     @MockBean
     private CourtService courtService;
@@ -89,7 +92,7 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=childcare-arrangements&action="))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", CHILDREN, Action.UNDEFINED, false);
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", CHILDREN_AS_LIST, Action.UNDEFINED, false);
     }
 
     @Test
