@@ -33,6 +33,9 @@ class SearchControllerTest {
     private static final String CHILDREN = "Children";
     private static final List<String> CHILDREN_AS_LIST = List.of("Children");
 
+    private static final List<String> HARM_AND_ABUSE_AS_LIST = List.of("Domestic violence", "Forced marriage", "FGM");
+
+
     @MockBean
     private CourtService courtService;
 
@@ -93,6 +96,29 @@ class SearchControllerTest {
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", CHILDREN_AS_LIST, Action.UNDEFINED, false);
+    }
+
+    @Test
+    void shouldSearchCourtsByPostcodeAndFGMServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=female-genital-mutilation&action="))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "female-genital-mutilation", HARM_AND_ABUSE_AS_LIST, Action.UNDEFINED, false);
+    }
+
+    @Test
+    void shouldSearchCourtsByPostcodeAndDAServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=domestic-abuse&action="))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "domestic-abuse", HARM_AND_ABUSE_AS_LIST, Action.UNDEFINED, false);
+    }
+    @Test
+    void shouldSearchCourtsByPostcodeAndFMServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=forced-marriage&action="))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "forced-marriage", HARM_AND_ABUSE_AS_LIST, Action.UNDEFINED, false);
     }
 
     @Test
