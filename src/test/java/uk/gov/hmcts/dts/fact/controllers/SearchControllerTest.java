@@ -32,7 +32,6 @@ class SearchControllerTest {
     private static final String CRIME = "Crime";
     private static final String CHILDREN = "Children";
     private static final List<String> CHILDREN_AS_LIST = List.of("Children");
-
     private static final List<String> HARM_AND_ABUSE_AS_LIST = List.of("Domestic violence", "Forced marriage", "FGM");
 
 
@@ -99,7 +98,7 @@ class SearchControllerTest {
     }
 
     @Test
-    void shouldSearchCourtsByPostcodeAndFGMServiceArea() throws Exception {
+    void shouldSearchCourtsByPostcodeAndFemaleGenitalMutilationMServiceArea() throws Exception {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=female-genital-mutilation&action="))
             .andExpect(status().isOk());
 
@@ -107,14 +106,15 @@ class SearchControllerTest {
     }
 
     @Test
-    void shouldSearchCourtsByPostcodeAndDAServiceArea() throws Exception {
+    void shouldSearchCourtsByPostcodeAndDomesticAbuseServiceArea() throws Exception {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=domestic-abuse&action="))
             .andExpect(status().isOk());
 
         verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "domestic-abuse", HARM_AND_ABUSE_AS_LIST, Action.UNDEFINED, false);
     }
+
     @Test
-    void shouldSearchCourtsByPostcodeAndFMServiceArea() throws Exception {
+    void shouldSearchCourtsByPostcodeAndForcedMarriageServiceArea() throws Exception {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=forced-marriage&action="))
             .andExpect(status().isOk());
 
