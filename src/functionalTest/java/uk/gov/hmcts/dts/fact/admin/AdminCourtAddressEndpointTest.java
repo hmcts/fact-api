@@ -251,9 +251,6 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         assertThat(false)
             .as("Response body: " + response.getBody())
             .isTrue();
-        assertThat(response.statusCode())
-            .as("Unexpected status code. Response body: " + response.getBody().asString())
-            .isEqualTo(OK.value());
         return response.body().jsonPath().getList(".", CourtAddress.class);
     }
 
