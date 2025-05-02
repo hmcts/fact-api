@@ -116,10 +116,6 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        String body = response.body().asString();
-        assertThat(false)
-            .as("Response body: " + body)
-            .isTrue();
         final List<CourtAddress> updatedCourtAddress =
             response.body().jsonPath().getList(".", CourtAddress.class);
         expectedCourtAddress.get(0).setId(updatedCourtAddress.get(0).getId());
@@ -253,11 +249,6 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
-        String body = response.body().asString();
-        assertThat(false)
-            .as("Response body: " + body)
-            .isTrue();
-
         ObjectMapper objMapper = new ObjectMapper();
         List<CourtAddress> updatedCourtAddress = objMapper.readValue(
             response.getBody().asString(),
