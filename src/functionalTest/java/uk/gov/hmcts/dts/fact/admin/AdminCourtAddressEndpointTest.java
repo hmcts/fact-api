@@ -248,7 +248,9 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
-        return response.body().jsonPath().getList("addresses", CourtAddress.class);
+        System.out.println("HELLO: " + response.statusCode());
+        System.out.println("Response JSON: " + response.body().asString());
+        return response.body().jsonPath().getList(".", CourtAddress.class);
     }
 
     private List<CourtAddress> addNewCourtAddress(final List<CourtAddress> courtAddresses) {
