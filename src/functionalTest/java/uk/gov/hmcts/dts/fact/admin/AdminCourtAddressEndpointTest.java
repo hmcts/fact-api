@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -247,7 +248,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
-    private List<CourtAddress> getCurrentCourtAddress() {
+    private List<CourtAddress> getCurrentCourtAddress() throws JsonProcessingException {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -256,7 +257,13 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         assertThat(false)
             .as("Response body: " + body)
             .isTrue();
-        return response.body().jsonPath().getList(".", CourtAddress.class);
+
+        ObjectMapper objMapper = new ObjectMapper();
+        List<CourtAddress> updatedCourtAddress = objMapper.readValue(
+            response.getBody().asString(),
+            objMapper.getTypeFactory().constructCollectionType(List.class, CourtAddress.class)
+        );
+        return updatedCourtAddress;
     }
 
     private List<CourtAddress> addNewCourtAddress(final List<CourtAddress> courtAddresses) {
