@@ -5,9 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Facility;
 import uk.gov.hmcts.dts.fact.entity.FacilityType;
@@ -43,10 +43,10 @@ class AdminFacilityServiceTest {
     @Autowired
     private AdminFacilityService adminFacilityService;
 
-    @MockBean
+    @MockitoBean
     private FacilityTypeRepository facilityTypeRepository;
 
-    @MockBean
+    @MockitoBean
     private FacilityRepository facilityRepository;
 
     @Test

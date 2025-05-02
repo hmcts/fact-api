@@ -9,8 +9,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtFacility;
@@ -80,16 +80,16 @@ class AdminCourtFacilityServiceTest {
     @Captor
     private ArgumentCaptor<List<CourtFacility>> courtFacilityRepositoryArgumentCaptor;
 
-    @MockBean
+    @MockitoBean
     private CourtRepository courtRepository;
 
-    @MockBean
+    @MockitoBean
     private FacilityTypeRepository facilityTypeRepository;
 
-    @MockBean
+    @MockitoBean
     private CourtFacilityRepository courtFacilityRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
     @Mock

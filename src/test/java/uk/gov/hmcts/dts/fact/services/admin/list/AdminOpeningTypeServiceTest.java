@@ -5,10 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.exception.DuplicatedListItemException;
 import uk.gov.hmcts.dts.fact.exception.ListItemInUseException;
@@ -47,13 +47,13 @@ class AdminOpeningTypeServiceTest {
     @Autowired
     private AdminOpeningTypeService adminOpeningTypeService;
 
-    @MockBean
+    @MockitoBean
     private OpeningTimeRepository openingTimeRepository;
 
-    @MockBean
+    @MockitoBean
     private OpeningTypeRepository openingTypeRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
     @Test

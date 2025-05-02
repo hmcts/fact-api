@@ -249,6 +249,7 @@ dependencies {
   testImplementation 'com.github.hmcts:fortify-client:1.4.8:all'
   testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.4.5'
   testImplementation libraries.junit5
+  testImplementation "org.junit.platform:junit-platform-launcher:${versions.junitPlatform}"
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

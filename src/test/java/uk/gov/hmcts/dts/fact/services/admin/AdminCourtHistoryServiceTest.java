@@ -7,8 +7,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtHistory;
@@ -40,13 +40,13 @@ class AdminCourtHistoryServiceTest {
     @Autowired
     private AdminCourtHistoryService adminCourtHistoryService;
 
-    @MockBean
+    @MockitoBean
     private CourtHistoryRepository courtHistoryRepository;
 
-    @MockBean
+    @MockitoBean
     private CourtRepository courtRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
     @Captor
