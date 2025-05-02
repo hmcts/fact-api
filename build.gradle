@@ -265,8 +265,8 @@ dependencies {
   functionalTestImplementation sourceSets.main.runtimeClasspath
   functionalTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
   functionalTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.1'
-  functionalTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.21.0'
-  functionalTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.21.0'
+  functionalTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.1'
+  functionalTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.20.1'
 
   smokeTestImplementation sourceSets.main.runtimeClasspath
   smokeTestImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'

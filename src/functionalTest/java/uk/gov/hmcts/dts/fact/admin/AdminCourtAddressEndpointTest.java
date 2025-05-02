@@ -249,12 +249,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
-        ObjectMapper objMapper = new ObjectMapper();
-        List<CourtAddress> updatedCourtAddress = objMapper.readValue(
-            response.getBody().asString(),
-            objMapper.getTypeFactory().constructCollectionType(List.class, CourtAddress.class)
-        );
-        return updatedCourtAddress;
+        return response.body().jsonPath().getList(".", CourtAddress.class);
     }
 
     private List<CourtAddress> addNewCourtAddress(final List<CourtAddress> courtAddresses) {
