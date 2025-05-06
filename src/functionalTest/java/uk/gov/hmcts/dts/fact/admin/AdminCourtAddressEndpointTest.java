@@ -3,9 +3,8 @@ package uk.gov.hmcts.dts.fact.admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestReporter;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
@@ -30,9 +29,6 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.objectMapper;
 
 @ExtendWith(SpringExtension.class)
 class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
-
-    // Add this at the class level
-    private static final Logger log = LoggerFactory.getLogger(AdminCourtAddressEndpointTest.class);
 
     private static final String ADMIN_COURTS_ENDPOINT = "/admin/courts/";
     private static final String COURT_ADDRESS_PATH = "/addresses";
@@ -110,15 +106,15 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateAddress() throws JsonProcessingException {
+    void shouldUpdateAddress(TestReporter testReporter) throws JsonProcessingException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
-        log.info("currentCourtAddress: {}", objectMapper().writeValueAsString(currentCourtAddress));
+        testReporter.publishEntry("Current court address", objectMapper().writeValueAsString(currentCourtAddress));
 
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
-        log.info("expectedCourtAddress: {}", objectMapper().writeValueAsString(expectedCourtAddress));
+        testReporter.publishEntry("Expected court address", objectMapper().writeValueAsString(expectedCourtAddress));
 
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
-        log.info("updatedJson: {}", updatedJson);
+        testReporter.publishEntry("Updated JSON payload", updatedJson);
 
         final Response response = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
@@ -126,9 +122,8 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             updatedJson
         );
 
-        log.info("PUT response: {}", response);
-        log.info("PUT response status code: {}", response.statusCode());
-        log.info("PUT response body: {}", response.getBody().asString());
+        testReporter.publishEntry("PUT response status code", String.valueOf(response.statusCode()));
+        testReporter.publishEntry("PUT response body", response.getBody().asString());
 
         final List<CourtAddress> updatedCourtAddress = response.body().jsonPath().getList(".", CourtAddress.class);
         expectedCourtAddress.get(0).setId(updatedCourtAddress.get(0).getId());
@@ -138,6 +133,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
         assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress);
 
+        // Cleanup: revert back to original court address
         final String originalJson = objectMapper().writeValueAsString(currentCourtAddress);
         final Response cleanUpResponse = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
@@ -145,8 +141,8 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             originalJson
         );
 
-        log.info("Cleanup PUT response status: {}", cleanUpResponse.statusCode());
-        log.info("Cleanup response body: {}", cleanUpResponse.getBody().asString());
+        testReporter.publishEntry("Cleanup PUT response status", String.valueOf(cleanUpResponse.statusCode()));
+        testReporter.publishEntry("Cleanup response body", cleanUpResponse.getBody().asString());
 
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
         expectedCourtAddress.get(0).setId(updatedId + 1); // +1 compared to above
@@ -265,8 +261,6 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
         );
-
-        log.info("getCurrentCourtAddress response: {}", response.prettyPrint());
         return response.body().jsonPath().getList(".", CourtAddress.class);
     }
 
