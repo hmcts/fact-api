@@ -31,6 +31,13 @@ java {
   }
 }
 
+ext.mockitoJavaAgent = {
+  return {
+    def agent = configurations.testRuntimeClasspath.find { it.name.contains("byte-buddy-agent") }
+    return agent ? ["-javaagent:${agent}"] : []
+  }
+}
+
 sourceSets {
   functionalTest {
     java {
@@ -86,14 +93,13 @@ ext.getVaultSecret = { String secretName ->
   }
 }
 
-// https://github.com/gradle/gradle/issues/16791
 tasks.withType(JavaExec).configureEach {
   javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
 task functional(type: Test) {
 
-  doFirst() {
+  doFirst {
     if (System.getenv("TEST_URL") == null) {
       println("Loading secrets and admin credentials from vault")
 
@@ -103,6 +109,12 @@ task functional(type: Test) {
       systemProperty 'OAUTH_SUPER_USER', getVaultSecret('oauth-super-user')
       systemProperty 'OAUTH_VIEWER_USER', getVaultSecret('oauth-viewer-user')
     }
+
+    // Safe and deferred resolution of byte-buddy agent
+    def agent = configurations.testRuntimeClasspath.find { it.name.contains("byte-buddy-agent") }
+    if (agent) {
+      jvmArgs += "-javaagent:${agent}"
+    }
   }
 
   description = "Runs functional tests"
@@ -110,6 +122,7 @@ task functional(type: Test) {
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
 }
+
 
 task integration(type: Test) {
   description = "Runs integration tests"
@@ -194,12 +207,12 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.12.2',
-  junitPlatform   : '1.12.2',
-  reformLogging   : '6.1.8',
-  springBoot      : springBoot.class.package.implementationVersion,
-  flyway          : "$flywayVersion",
-  postgresql      : "$postgresqlVersion"
+  junit         : '5.12.2',
+  junitPlatform : '1.12.2',
+  reformLogging : '6.1.8',
+  springBoot    : springBoot.class.package.implementationVersion,
+  flyway        : "$flywayVersion",
+  postgresql    : "$postgresqlVersion"
 ]
 
 ext.libraries = [
@@ -254,6 +267,7 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+  testRuntimeOnly 'net.bytebuddy:byte-buddy-agent:1.15.11'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath

@@ -14,6 +14,7 @@ import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -263,7 +264,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             TEST_TOWN_NAME_CY,
             COUNTY_ID,
             TEST_POSTCODE,
-            COURT_SECONDARY_ADDRESS_TYPE_LIST,
+            new CourtSecondaryAddressType(Collections.emptyList(), Collections.emptyList()),
             SORT_ORDER_2,
             EPIM_ID
         ));
