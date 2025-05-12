@@ -3,8 +3,8 @@ package uk.gov.hmcts.dts.fact.services.search;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtWithDistance;
@@ -37,10 +37,10 @@ class FamilyNonRegionalSearchTest {
     @Autowired
     private FamilyNonRegionalSearch familyNonRegionalSearch;
 
-    @MockBean
+    @MockitoBean
     private CourtWithDistanceRepository courtWithDistanceRepository;
 
-    @MockBean
+    @MockitoBean
     private FallbackProximitySearch fallbackProximitySearch;
 
     @Test

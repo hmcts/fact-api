@@ -35,8 +35,8 @@ class CourtAreaOfLawRepositoryTest {
         assertThat(court).isPresent();
         final int courtId = court.get().getId();
 
-        AreaOfLaw areaOfLaw = new AreaOfLaw(100_001, "Area of Law");
-        AreaOfLaw areaOfLaw2 = new AreaOfLaw(100_002, "Area of Law 2");
+        AreaOfLaw areaOfLaw = new AreaOfLaw(null, "Area of Law");
+        AreaOfLaw areaOfLaw2 = new AreaOfLaw(null, "Area of Law 2");
         areasOfLawRepository.save(areaOfLaw);
         areasOfLawRepository.save(areaOfLaw2);
         areasOfLawRepository.flush();

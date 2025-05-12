@@ -14,6 +14,7 @@ import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -115,22 +116,23 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
-        final List<CourtAddress> updatedCourtAddress =
-            response.body().jsonPath().getList(".", CourtAddress.class);
+
+        final List<CourtAddress> updatedCourtAddress = response.body().jsonPath().getList(".", CourtAddress.class);
         expectedCourtAddress.get(0).setId(updatedCourtAddress.get(0).getId());
         Integer updatedId = updatedCourtAddress.get(1).getId();
         expectedCourtAddress.get(1).setId(updatedId);
-        assertThat(response.statusCode()).isEqualTo(OK.value());
-        assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress);
 
-        //clean up by removing added record
+        assertThat(response.statusCode()).isEqualTo(OK.value()).withFailMessage("Response: %s \nUpdatedJson: %s", response.asString(), updatedJson);
+        assertThat(updatedCourtAddress).containsExactlyElementsOf(expectedCourtAddress).withFailMessage("trash");
+
+        // Cleanup: revert back to original court address
         final String originalJson = objectMapper().writeValueAsString(currentCourtAddress);
-
         final Response cleanUpResponse = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
             originalJson
         );
+
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());
         expectedCourtAddress.get(0).setId(updatedId + 1); // +1 compared to above
         final List<CourtAddress> cleanCourtAddress = cleanUpResponse.body().jsonPath().getList(".", CourtAddress.class);
@@ -243,7 +245,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
-    private List<CourtAddress> getCurrentCourtAddress() {
+    private List<CourtAddress> getCurrentCourtAddress() throws JsonProcessingException {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)
@@ -262,7 +264,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
             TEST_TOWN_NAME_CY,
             COUNTY_ID,
             TEST_POSTCODE,
-            COURT_SECONDARY_ADDRESS_TYPE_LIST,
+            new CourtSecondaryAddressType(Collections.emptyList(), Collections.emptyList()),
             SORT_ORDER_2,
             EPIM_ID
         ));

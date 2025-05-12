@@ -6,9 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AddressType;
 import uk.gov.hmcts.dts.fact.entity.County;
@@ -290,34 +290,34 @@ class AdminCourtAddressServiceTest {
     @Autowired
     private AdminCourtAddressService adminCourtAddressService;
 
-    @MockBean
+    @MockitoBean
     private AdminCourtLockService adminCourtLockService;
 
-    @MockBean
+    @MockitoBean
     private CourtRepository courtRepository;
 
-    @MockBean
+    @MockitoBean
     private CourtAddressRepository courtAddressRepository;
 
-    @MockBean
+    @MockitoBean
     private CourtSecondaryAddressTypeRepository courtSecondaryAddressTypeRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAddressTypeService adminAddressTypeService;
 
-    @MockBean
+    @MockitoBean
     private AdminCountyService adminCountyService;
 
-    @MockBean
+    @MockitoBean
     private AdminService adminService;
 
-    @MockBean
+    @MockitoBean
     private MapitService mapitService;
 
-    @MockBean
+    @MockitoBean
     private ValidationService validationService;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
     @Mock

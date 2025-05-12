@@ -6,8 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
@@ -107,40 +107,40 @@ class CourtServiceTest {
     @Autowired
     private CourtService courtService;
 
-    @MockBean
+    @MockitoBean
     private ProximitySearch proximitySearch;
 
-    @MockBean
+    @MockitoBean
     private CourtRepository courtRepository;
 
-    @MockBean
+    @MockitoBean
     private CourtWithDistanceRepository courtWithDistanceRepository;
 
-    @MockBean
+    @MockitoBean
     private MapitService mapitService;
 
-    @MockBean
+    @MockitoBean
     private ServiceAreaRepository serviceAreaRepository;
 
-    @MockBean
+    @MockitoBean
     private ServiceAreaSearchFactory serviceAreaSearchFactory;
 
-    @MockBean
+    @MockitoBean
     private FallbackProximitySearch fallbackProximitySearch;
 
-    @MockBean
+    @MockitoBean
     private ServiceArea serviceArea;
 
-    @MockBean
+    @MockitoBean
     private MapitData mapitData;
 
-    @MockBean
+    @MockitoBean
     private Search search;
 
-    @MockBean
+    @MockitoBean
     private Court court;
 
-    @MockBean
+    @MockitoBean
     private CourtHistoryRepository courtHistoryRepository;
 
     @Test

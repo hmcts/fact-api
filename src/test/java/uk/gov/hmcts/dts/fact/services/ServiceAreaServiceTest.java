@@ -3,8 +3,8 @@ package uk.gov.hmcts.dts.fact.services;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
@@ -25,7 +25,7 @@ class ServiceAreaServiceTest {
     @Autowired
     private ServiceAreaService serviceAreaService;
 
-    @MockBean
+    @MockitoBean
     private ServiceAreaRepository serviceAreaRepository;
 
     @Test

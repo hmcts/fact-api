@@ -7,8 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
@@ -50,14 +50,13 @@ class AdminCourtSpoeAreasOfLawServiceTest {
     private static final List<CourtAreaOfLawSpoe> COURT_SPOE_AREA_OF_LAWS = new ArrayList<>();
     private static final List<SpoeAreaOfLaw> DUPLICATED_SPOE_LIST = new ArrayList<>();
 
-    @MockBean
+    @MockitoBean
     private CourtRepository courtRepository;
 
-
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
-    @MockBean
+    @MockitoBean
     private CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
 
     @Mock
