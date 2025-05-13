@@ -8,8 +8,8 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.mapit.MapitArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
@@ -32,10 +32,10 @@ class MapitServiceTest {
 
     private static final String RESPONSE_MESSAGE = "message";
 
-    @MockBean
+    @MockitoBean
     private MapitClient mapitClient;
 
-    @MockBean
+    @MockitoBean
     private Logger logger;
 
     @Autowired

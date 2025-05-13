@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Court;
@@ -50,13 +50,13 @@ class AdminCourtLocalAuthoritiesServiceTest {
         new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(2,"localAuthority2"),
         new uk.gov.hmcts.dts.fact.model.admin.LocalAuthority(3,"localAuthority3"));
 
-    @MockBean
+    @MockitoBean
     private CourtRepository courtRepository;
 
-    @MockBean
+    @MockitoBean
     private CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
     @Mock

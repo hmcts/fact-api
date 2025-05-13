@@ -5,10 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.Email;
@@ -60,16 +60,16 @@ class AdminContactTypeServiceTest {
     @Autowired
     private AdminContactTypeService adminContactTypeService;
 
-    @MockBean
+    @MockitoBean
     private EmailRepository emailRepository;
 
-    @MockBean
+    @MockitoBean
     private EmailTypeRepository emailTypeRepository;
 
-    @MockBean
+    @MockitoBean
     private ContactTypeRepository contactTypeRepository;
 
-    @MockBean
+    @MockitoBean
     private ContactRepository contactRepository;
 
     @Test

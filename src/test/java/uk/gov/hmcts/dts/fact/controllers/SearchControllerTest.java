@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 import uk.gov.hmcts.dts.fact.util.Action;
@@ -35,7 +35,7 @@ class SearchControllerTest {
     private static final List<String> HARM_AND_ABUSE_AS_LIST = List.of("Domestic violence", "Forced marriage", "FGM");
 
 
-    @MockBean
+    @MockitoBean
     private CourtService courtService;
 
     @Autowired

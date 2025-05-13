@@ -6,8 +6,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.CourtLock;
 import uk.gov.hmcts.dts.fact.exception.LockExistsException;
@@ -33,10 +33,10 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = AdminCourtLockService.class)
 class AdminCourtLockServiceTest {
 
-    @MockBean
+    @MockitoBean
     private CourtLockRepository courtLockRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
     @Autowired

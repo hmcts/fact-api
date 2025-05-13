@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -71,13 +71,13 @@ class AdminCourtPostcodeControllerTest {
     @Autowired
     private transient MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private AdminCourtPostcodeService adminService;
 
-    @MockBean
+    @MockitoBean
     private ValidationService validationService;
 
-    @MockBean
+    @MockitoBean
     private AdminCourtLockService adminCourtLockService;
 
     @Autowired

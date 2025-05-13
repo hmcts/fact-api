@@ -3,8 +3,8 @@ package uk.gov.hmcts.dts.fact.services.validation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.exception.InvalidEpimIdException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
@@ -30,10 +30,10 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = ValidationService.class)
 class ValidateServiceTest {
 
-    @MockBean
+    @MockitoBean
     private PostcodeValidator postcodeValidator;
 
-    @MockBean
+    @MockitoBean
     private LocalAuthorityValidator localAuthorityValidator;
 
     @Autowired

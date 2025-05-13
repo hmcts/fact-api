@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.config.security.RolesProvider;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
@@ -66,25 +66,25 @@ class AdminServiceTest {
     @Autowired
     private AdminService adminService;
 
-    @MockBean
+    @MockitoBean
     private CourtRepository courtRepository;
 
-    @MockBean
+    @MockitoBean
     private ServiceAreaRepository serviceAreaRepository;
 
-    @MockBean
+    @MockitoBean
     private AreasOfLawRepository areasOfLawRepository;
 
-    @MockBean
+    @MockitoBean
     private RolesProvider rolesProvider;
 
-    @MockBean
+    @MockitoBean
     private CourtHistoryRepository courtHistoryRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
-    @MockBean
+    @MockitoBean
     private CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
 
     @BeforeEach

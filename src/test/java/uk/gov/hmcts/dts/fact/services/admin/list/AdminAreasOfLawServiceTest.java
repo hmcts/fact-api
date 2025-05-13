@@ -7,8 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
@@ -48,19 +48,19 @@ class AdminAreasOfLawServiceTest {
     @Autowired
     private AdminAreasOfLawService areasOfLawService;
 
-    @MockBean
+    @MockitoBean
     private AreasOfLawRepository areasOfLawRepository;
 
-    @MockBean
+    @MockitoBean
     private AdminAuditService adminAuditService;
 
-    @MockBean
+    @MockitoBean
     private CourtAreaOfLawRepository courtAreaOfLawRepository;
 
-    @MockBean
+    @MockitoBean
     private CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepo;
 
-    @MockBean
+    @MockitoBean
     private ServiceAreaRepository serviceAreaRepository;
 
     private static final List<AreaOfLaw> AREAS_OF_LAW = Arrays.asList(

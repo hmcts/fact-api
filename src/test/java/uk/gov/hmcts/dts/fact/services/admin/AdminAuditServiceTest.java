@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.entity.Audit;
 import uk.gov.hmcts.dts.fact.entity.AuditType;
@@ -40,10 +40,10 @@ class AdminAuditServiceTest {
     @Autowired
     private AdminAuditService adminAuditService;
 
-    @MockBean
+    @MockitoBean
     private AuditRepository auditRepository;
 
-    @MockBean
+    @MockitoBean
     private AuditTypeRepository auditTypeRepository;
 
     private static final List<Audit> AUDIT_DATA = new ArrayList<>();
