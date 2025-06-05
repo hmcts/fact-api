@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.util.AuditType;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Collections; // Ensure this import is present
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,15 +99,18 @@ public class AdminCourtLockService {
             // If it exists, delete and update the resource
             log.debug("Creating court lock for slug {} and user {}", courtSlug, courtUserEmail);
             courtLock.setLockAcquired(LocalDateTime.now(ZoneOffset.UTC));
-            CourtLock savedCourtLock = new CourtLock(courtLockRepository.save(new uk.gov.hmcts.dts.fact.entity.CourtLock(
-                courtLock)));
+            // Ensure we pass the correct object type to the repository save method
+            uk.gov.hmcts.dts.fact.entity.CourtLock entityToSave = new uk.gov.hmcts.dts.fact.entity.CourtLock(courtLock);
+            uk.gov.hmcts.dts.fact.entity.CourtLock savedEntity = courtLockRepository.save(entityToSave);
+            CourtLock savedCourtLock = new CourtLock(savedEntity); // Map the saved *entity* back to the DTO
+
             adminAuditService.saveAudit(
                 AuditType.findByName("Create court lock"),
-                courtLockEntityList,
-                savedCourtLock,
+                null, // For create, 'before' data is usually null
+                savedCourtLock, // Audit the DTO representing the created state
                 courtLock.getCourtSlug()
             );
-            return savedCourtLock;
+            return savedCourtLock; // Return the DTO
         }
     }
 
@@ -133,18 +137,24 @@ public class AdminCourtLockService {
                                                       courtSlug, userEmail
             ));
         }
+        // This method still uses fetch-then-delete. If it causes issues later,
+        // it might need the same direct delete treatment.
         for (uk.gov.hmcts.dts.fact.entity.CourtLock courtLock : courtLockList) {
             courtLockRepository.delete(courtLock);
         }
         adminAuditService.saveAudit(
             AuditType.findByName("Delete court lock"),
-            courtLockList,
+            courtLockList, // Auditing the list of entities before they were deleted
             null,
             courtSlug
         );
+        // Map the list of deleted entities back to DTOs for the return value
         return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
     }
 
+    // ================================================================================
+    // START OF CORRECTED deleteCourtLockByEmail METHOD
+    // ================================================================================
     /**
      *
      * <p>Delete the court lock by email.</p>
@@ -153,20 +163,39 @@ public class AdminCourtLockService {
      * At that point, we would want no locks to be assigned to them.</p>
      *
      * @param userEmail the users email.
-     * @return A list of court locks that have been removed.
+     * @return A list of court locks that have been removed (or an empty list if none were found).
      */
-    @Transactional
+    @Transactional // Keep transactional for atomicity of find, delete, audit
     public List<CourtLock> deleteCourtLockByEmail(String userEmail) {
-        List<uk.gov.hmcts.dts.fact.entity.CourtLock> courtLockList =
-            courtLockRepository.deleteAllByUserEmail(userEmail);
-        adminAuditService.saveAudit(
-            AuditType.findByName("Delete court lock"),
-            courtLockList,
-            null,
-            null
-        );
-        return courtLockList.stream().map(CourtLock::new).collect(Collectors.toList());
+        // 1. Find the locks first to know what *was* there for audit and return value
+        List<uk.gov.hmcts.dts.fact.entity.CourtLock> locksToDelete = courtLockRepository.findByUserEmail(userEmail); // Use the method defined in the updated repository
+
+        if (!locksToDelete.isEmpty()) {
+            log.info("Found {} lock(s) for user {}. Attempting direct deletion.", locksToDelete.size(), userEmail);
+            // 2. Perform the direct delete using the new repository method
+            int deletedCount = courtLockRepository.deleteDirectByUserEmail(userEmail); // Use the method defined in the updated repository
+            log.info("Direct delete operation removed {} lock(s) for user {}.", deletedCount, userEmail);
+
+            // 3. Audit the deletion using the list fetched *before* the delete
+            adminAuditService.saveAudit(
+                AuditType.findByName("Delete court lock"),
+                locksToDelete, // Use the state before deletion for audit 'before' data
+                null,
+                null // Slug is not relevant when deleting by email only
+            );
+
+            // 4. Return the list of locks that were found (and subsequently deleted)
+            return locksToDelete.stream().map(CourtLock::new).collect(Collectors.toList());
+        } else {
+            log.warn("No court locks found for user {} to delete.", userEmail);
+            // If no locks were found, nothing to delete or audit
+            return Collections.emptyList(); // Return an empty list explicitly
+        }
     }
+    // ================================================================================
+    // END OF CORRECTED deleteCourtLockByEmail METHOD
+    // ================================================================================
+
 
     /**
      *
@@ -193,11 +222,14 @@ public class AdminCourtLockService {
             log.debug("When updating user: {}, no row was found. Creating lock now for court: {}",
                       userEmail, courtSlug
             );
-            return addNewCourtLock(new CourtLock(
+            // Ensure we create the entity correctly before passing to addNewCourtLock if its signature expects a DTO
+            CourtLock newLockDto = new CourtLock(
                 LocalDateTime.now(ZoneOffset.UTC),
                 courtSlug,
                 userEmail
-            ));
+            );
+            return addNewCourtLock(newLockDto); // Assuming addNewCourtLock handles the DTO->Entity conversion and save
+
         } else if (courtLockList.size() > LOCK_AMOUNT_PER_COURT) {
             throw new LockExistsException(String.format(
                 "More than one lock exists for %s: %s",
@@ -205,22 +237,34 @@ public class AdminCourtLockService {
                 Arrays.toString(courtLockList.toArray())
             ));
         }
+
+        // If we reach here, courtLockList contains exactly one entity to update
+        uk.gov.hmcts.dts.fact.entity.CourtLock lockToUpdate = courtLockList.get(0);
+        LocalDateTime oldTime = lockToUpdate.getLockAcquired(); // Capture old time if needed for audit comparison
         LocalDateTime newTime = LocalDateTime.now(ZoneOffset.UTC);
+
+        // Capture state *before* the update for audit, perhaps using the DTO constructor
+        CourtLock stateBefore = new CourtLock(lockToUpdate);
+
+        // Update the entity's timestamp
+        lockToUpdate.setLockAcquired(newTime);
+
+        // Save the updated entity
+        uk.gov.hmcts.dts.fact.entity.CourtLock savedEntity = courtLockRepository.save(lockToUpdate);
+
+        // Capture state *after* the update for audit, using the saved entity
+        CourtLock stateAfter = new CourtLock(savedEntity);
+
+        // Perform audit - Adjust audit parameters based on AdminAuditService expectations
+        // This example audits the DTO representations of the state before/after.
         adminAuditService.saveAudit(
             AuditType.findByName("Update court lock"),
-            String.format(
-                "User %s has a lock acquired time (before) of: %s",
-                courtLockList.get(0).getUserEmail(),
-                courtLockList.get(0).getLockAcquired()
-            ),
-            String.format(
-                "User %s has a lock acquired time (after) of: %s",
-                courtLockList.get(0).getUserEmail(),
-                newTime
-            ),
+            stateBefore, // State before update
+            stateAfter,  // State after update
             courtSlug
         );
-        courtLockList.get(0).setLockAcquired(newTime);
-        return new CourtLock(courtLockRepository.save(courtLockList.get(0)));
+
+        // Return the DTO representing the updated state
+        return stateAfter;
     }
 }
