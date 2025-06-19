@@ -35,7 +35,7 @@ SET
 
       -- default about 95% of it to the main statement
       ELSE 'Scammers are mimicking genuine HMCTS phone numbers and email addresses (https://www.gov.uk/government/news/scammers-using-hmcts-telephone-numbers). They may demand payment and claim to be from HMRC or enforcement. If you''re unsure, do not pay anything and report the scam to Action Fraud (https://www.actionfraud.police.uk/).'
-      end;
+end;
 
 --UPDATE search_court
 --SET
@@ -111,27 +111,27 @@ SET
 
 UPDATE search_court
 SET alert = REGEXP_REPLACE(REGEXP_REPLACE(alert, '<[^>]+>', '', 'g'), '&#39;', '''', 'g')
-where slug in ('barnet-civil-and-family-courts-centre','gateshead-magistrates-court-and-family-court');
+WHERE slug in ('barnet-civil-and-family-courts-centre','gateshead-magistrates-court-and-family-court');
 
 UPDATE search_court
 SET alert = REGEXP_REPLACE(REGEXP_REPLACE(alert, '<[^>]+>', '', 'g'), '&#64;', '@', 'g')
-where slug = 'blackpool-family-and-civil-court';
+WHERE slug = 'blackpool-family-and-civil-court';
 
 UPDATE search_court
-SET alert = 'Our lift is out of service, with no level access to courtrooms. We apologise for any inconvenience. If this affects you, email enquiries.Kingstoncountycourt&#64;justice.gov.uk with ''LEVEL ACCESS'' in the subject, and we’ll arrange alternatives.';
-where slug = 'kingston-upon-thames-county-court-and-family-court';
+SET alert = 'Our lift is out of service, with no level access to courtrooms. We apologise for any inconvenience. If this affects you, email enquiries.Kingstoncountycourt&#64;justice.gov.uk with ''LEVEL ACCESS'' in the subject, and we’ll arrange alternatives.'
+WHERE slug = 'kingston-upon-thames-county-court-and-family-court';
 
 UPDATE search_court
 SET alert = 'The Chair Lift between the ground floor and the first floor is Out of Order until further notice. This building has a ramp to the building entrance only.'
 where slug = 'edmonton-county-court-and-family-court';
 
 UPDATE search_court
-SET alert = REGEXP_REPLACE(REGEXP_REPLACE(alert, '<[^>]+>', '', 'g'), '&amp;', '&', 'g');
-where slug = 'clerkenwell-and-shoreditch-county-court-and-family-court';
+SET alert = REGEXP_REPLACE(REGEXP_REPLACE(alert, '<[^>]+>', '', 'g'), '&amp;', '&', 'g')
+WHERE slug = 'clerkenwell-and-shoreditch-county-court-and-family-court';
 
 UPDATE search_court
 SET alert = REGEXP_REPLACE(alert, '<[^>]+>', '', 'g')
-where slug in ('east-london-tribunal-hearing-centre','doncaster-justice-centre-south');
+WHERE slug in ('east-london-tribunal-hearing-centre','doncaster-justice-centre-south');
 
 UPDATE search_court
 SET alert_cy = 'Yn dilyn marwolaeth Ei Mawrhydi Y Frenhines, ni fydd y rhan fwyaf o wrandawiadau llys a thribiwnlys yn cael eu cynnal ar 19 Medi 2022, sef diwrnod yr Angladd Wladol. (https://www.gov.uk/government/news/courts-and-tribunals-arrangements-for-the-queens-state-funeral) Rhagor o wybodaeth am drefniadaur llys ar tribiwnlys yn ystod y cyfnod hwn.'
@@ -140,7 +140,9 @@ WHERE slug = 'harrogate-justice-centre';
 
 
 UPDATE search_servicecentre ss
-SET intro_paragraph = REGEXP_REPLACE(intro_paragraph, '<[^>]+>', '', 'g'); -- do first for sc intro paragraph then bit below
+SET intro_paragraph = REGEXP_REPLACE(intro_paragraph, '<[^>]+>', '', 'g');
+-- do first for sc intro paragraph then bit below because all the data just has the random <x> tags and no links to keep
+-- except the next query
 
 UPDATE search_servicecentre ss
 SET intro_paragraph = 'This location serves all of England and Wales for small claims mediation on most defended small claims cases. The service is free and helps resolve money disputes without the need for a court hearing. You can find out more in the guide to the (https://www.gov.uk/guidance/small-claims-mediation-service) Small Claims Mediation Service on GOV.UK. We do not provide an in-person service.'
