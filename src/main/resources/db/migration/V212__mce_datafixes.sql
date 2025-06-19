@@ -111,14 +111,14 @@ end;
 
 UPDATE search_court
 SET alert = REGEXP_REPLACE(REGEXP_REPLACE(alert, '<[^>]+>', '', 'g'), '&#39;', '''', 'g')
-WHERE slug in ('barnet-civil-and-family-courts-centre','gateshead-magistrates-court-and-family-court');
+WHERE slug IN ('barnet-civil-and-family-courts-centre','gateshead-magistrates-court-and-family-court');
 
 UPDATE search_court
 SET alert = REGEXP_REPLACE(REGEXP_REPLACE(alert, '<[^>]+>', '', 'g'), '&#64;', '@', 'g')
 WHERE slug = 'blackpool-family-and-civil-court';
 
 UPDATE search_court
-SET alert = 'Our lift is out of service, with no level access to courtrooms. We apologise for any inconvenience. If this affects you, email enquiries.Kingstoncountycourt&#64;justice.gov.uk with ''LEVEL ACCESS'' in the subject, and we’ll arrange alternatives.'
+SET alert = 'Our lift is out of service, with no level access to courtrooms. We apologise for any inconvenience. If this affects you, email enquiries.Kingstoncountycourt@justice.gov.uk with ''LEVEL ACCESS'' in the subject, and we’ll arrange alternatives.'
 WHERE slug = 'kingston-upon-thames-county-court-and-family-court';
 
 UPDATE search_court
@@ -131,7 +131,7 @@ WHERE slug = 'clerkenwell-and-shoreditch-county-court-and-family-court';
 
 UPDATE search_court
 SET alert = REGEXP_REPLACE(alert, '<[^>]+>', '', 'g')
-WHERE slug in ('east-london-tribunal-hearing-centre','doncaster-justice-centre-south');
+WHERE slug IN ('east-london-tribunal-hearing-centre','doncaster-justice-centre-south');
 
 UPDATE search_court
 SET alert_cy = 'Yn dilyn marwolaeth Ei Mawrhydi Y Frenhines, ni fydd y rhan fwyaf o wrandawiadau llys a thribiwnlys yn cael eu cynnal ar 19 Medi 2022, sef diwrnod yr Angladd Wladol. (https://www.gov.uk/government/news/courts-and-tribunals-arrangements-for-the-queens-state-funeral) Rhagor o wybodaeth am drefniadaur llys ar tribiwnlys yn ystod y cyfnod hwn.'
@@ -139,15 +139,64 @@ WHERE slug = 'harrogate-justice-centre';
 
 
 
-UPDATE search_servicecentre ss
-SET intro_paragraph = REGEXP_REPLACE(intro_paragraph, '<[^>]+>', '', 'g');
--- do first for sc intro paragraph then bit below because all the data just has the random <x> tags and no links to keep
--- except the next query
+UPDATE search_servicecentre
+SET intro_paragraph = REGEXP_REPLACE(intro_paragraph, '<[^>]+>', '', 'g'); -- do first for sc intro paragraph then bit below
 
-UPDATE search_servicecentre ss
+UPDATE search_servicecentre
 SET intro_paragraph = 'This location serves all of England and Wales for small claims mediation on most defended small claims cases. The service is free and helps resolve money disputes without the need for a court hearing. You can find out more in the guide to the (https://www.gov.uk/guidance/small-claims-mediation-service) Small Claims Mediation Service on GOV.UK. We do not provide an in-person service.'
 WHERE court_id = 1480145;
 
-UPDATE search_servicecentre ss
+UPDATE search_servicecentre
 SET intro_paragraph_cy = 'Mae''r lleoliad hwn yn gwasanaethu Cymru a Lloegr gyfan ar gyfer cyfryngu hawliadau bychain ar y rhan fwyaf o achosion o hawliadau bychain a amddiffynnwyd. Mae''r gwasanaeth yn rhad ac am ddim ac yn helpu i ddatrys anghydfodau ariannol heb fod angen gwrandawiad llys. Gallwch gael rhagor o wybodaeth yn y canllaw ar gyfer (https://www.gov.uk/guidance/small-claims-mediation-service) Gwasanaeth Cyfryngu Hawliadau Bychain ar GOV.UK. Nid ydym yn darparu gwasanaeth wyneb yn wyneb.'
 WHERE court_id = 1480145;
+
+
+UPDATE search_facility
+SET description  = REGEXP_REPLACE(description, '<[^>]+>', '', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '<[^>]+>', '', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&nbsp;', ' ', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&nbsp;', ' ', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&amp;', '&', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&amp;', '&', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&#39;', '''', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&#39;', '''', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&ndash;', '–', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&ndash;', '–', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&lsquo;', '''', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&lsquo;', '''', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&eacute;', 'é', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&eacute;', 'é', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&middot;', '·', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&middot;', '·', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&#64;', '@', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&#64;', '@', 'g');
+
+UPDATE search_facility
+SET description = REGEXP_REPLACE(description, '&rsquo;', '''', 'g');
+UPDATE search_facility
+SET description_cy = REGEXP_REPLACE(description_cy, '&rsquo;', '''', 'g');
