@@ -49,8 +49,7 @@ public class CourtAddress {
     private County county;
     private String postcode;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "address_id")
+    @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;
 
     private Integer sortOrder;
