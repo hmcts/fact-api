@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -47,8 +48,8 @@ public class CourtAddress {
     @JoinColumn(name = "county_id")
     private County county;
     private String postcode;
-    @OneToMany
-    @JoinColumn(name = "address_id")
+
+    @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;
 
     private Integer sortOrder;
