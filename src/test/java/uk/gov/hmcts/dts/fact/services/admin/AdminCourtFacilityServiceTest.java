@@ -25,11 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.anyString;
@@ -56,6 +58,7 @@ class AdminCourtFacilityServiceTest {
     private static final String BAD_DESCRIPTION_1 = "<script>alert(\"hi\")</script>Description1";
     private static final String DESCRIPTION_1 = "Description1";
     private static final String DESCRIPTION_CY_1 = "<a href=\"www.google.co.uk\" rel=\"nofollow\">google</a>";
+    private static final String SANITIZED_DESCRIPTION_CY_1 = "google";
     private static final String DESCRIPTION_2 = "Description2";
     private static final String DESCRIPTION_CY_2 = "DescriptionCy2";
     private static final String DESCRIPTION_3 = "Description3";
@@ -154,9 +157,20 @@ class AdminCourtFacilityServiceTest {
 
     @Test
     void shouldUpdateCourtFacility() {
-        doAnswer(i -> i.getArguments()[0])
-            .when(courtFacilityRepository)
-            .saveAll(anyList());
+        //unsanitizedInput and expectedSanitizedInput needed because they haven't changed by this point by sanitization
+        //can't use the ones defined at the top even by running INPUT_COURT_FACILITIES through sanitization
+        List<uk.gov.hmcts.dts.fact.model.admin.Facility> unsanitizedInput = Arrays.asList(
+            new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1, BAD_DESCRIPTION_1, DESCRIPTION_CY_1),
+            new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_2, DESCRIPTION_2, DESCRIPTION_CY_2),
+            new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3, DESCRIPTION_3, DESCRIPTION_CY_3)
+        );
+
+        List<uk.gov.hmcts.dts.fact.model.admin.Facility> expectedSanitizedInput = Arrays.asList(
+            new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_1, DESCRIPTION_1, SANITIZED_DESCRIPTION_CY_1),
+            new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_2, DESCRIPTION_2, DESCRIPTION_CY_2),
+            new uk.gov.hmcts.dts.fact.model.admin.Facility(FACILITY_ID_3, DESCRIPTION_3, DESCRIPTION_CY_3)
+        );
+
         when(courtRepository.findBySlug(COURT_SLUG)).thenReturn(Optional.of(court));
         when(courtFacilityRepository.findByCourtId(anyInt())).thenReturn(COURT_FACILITIES);
         when(courtRepository.save(court)).thenReturn(court);
@@ -165,19 +179,23 @@ class AdminCourtFacilityServiceTest {
             .thenReturn(Optional.of(COURT_FACILITIES.get(1).getFacility().getFacilityType()))
             .thenReturn(Optional.of(COURT_FACILITIES.get(2).getFacility().getFacilityType()));
 
-        List<uk.gov.hmcts.dts.fact.model.admin.Facility> results =
-            adminCourtFacilityService.updateCourtFacility(COURT_SLUG, INPUT_COURT_FACILITIES);
+        doAnswer(i -> i.getArguments()[0]).when(courtFacilityRepository).saveAll(anyList());
+        List<uk.gov.hmcts.dts.fact.model.admin.Facility> results = adminCourtFacilityService.updateCourtFacility(COURT_SLUG, unsanitizedInput);
         verify(courtFacilityRepository, atLeastOnce()).saveAll(courtFacilityRepositoryArgumentCaptor.capture());
-        verify(adminAuditService, atLeastOnce()).saveAudit("Update court facilities",
-                                                           INPUT_COURT_FACILITIES,
-                                                           results,
-                                                           COURT_SLUG);
-        List<List<CourtFacility>> capturedInPerson = courtFacilityRepositoryArgumentCaptor.getAllValues();
-        assertEquals("Description1", capturedInPerson.get(0).get(0).getFacility().getDescription());
-        assertEquals("<a href=\"www.google.co.uk\" rel=\"nofollow\">google</a>", capturedInPerson.get(0).get(0).getFacility().getDescriptionCy());
+        verify(adminAuditService, atLeastOnce()).saveAudit(
+            eq("Update court facilities"),
+            eq(COURT_FACILITIES.stream().map(cf -> new uk.gov.hmcts.dts.fact.model.admin.Facility(cf.getFacility())).collect(Collectors.toList())),
+            eq(expectedSanitizedInput),
+            eq(COURT_SLUG)
+        );
+
+        List<List<CourtFacility>> capturedSavedEntities = courtFacilityRepositoryArgumentCaptor.getAllValues();
+        assertEquals("Description1", capturedSavedEntities.get(0).get(0).getFacility().getDescription());
+        assertEquals("google", capturedSavedEntities.get(0).get(0).getFacility().getDescriptionCy());
+
         assertThat(results)
             .hasSize(FACILITY_COUNT)
-            .containsExactlyElementsOf(EXPECTED_COURT_FACILITIES);
+            .containsExactlyElementsOf(expectedSanitizedInput);
     }
 
     @Test
