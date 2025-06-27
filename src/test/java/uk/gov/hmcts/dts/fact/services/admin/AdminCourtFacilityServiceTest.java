@@ -180,7 +180,7 @@ class AdminCourtFacilityServiceTest {
             .thenReturn(Optional.of(COURT_FACILITIES.get(2).getFacility().getFacilityType()));
 
         doAnswer(i -> i.getArguments()[0]).when(courtFacilityRepository).saveAll(anyList());
-        List<uk.gov.hmcts.dts.fact.model.admin.Facility> results = adminCourtFacilityService.updateCourtFacility(COURT_SLUG, unsanitizedInput);
+        final List<uk.gov.hmcts.dts.fact.model.admin.Facility> results = adminCourtFacilityService.updateCourtFacility(COURT_SLUG, unsanitizedInput);
         verify(courtFacilityRepository, atLeastOnce()).saveAll(courtFacilityRepositoryArgumentCaptor.capture());
         verify(adminAuditService, atLeastOnce()).saveAudit(
             eq("Update court facilities"),
