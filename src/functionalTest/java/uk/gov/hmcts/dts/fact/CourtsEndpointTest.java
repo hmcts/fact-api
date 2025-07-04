@@ -159,6 +159,19 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
+
+        //log out the data
+        courtReferences.forEach(court -> System.out.printf("Court - Name: %s, Slug: %s, Displayed: %s%n",
+                                                           court.getName(), court.getSlug(), court.isDisplayed())
+        );
+        courtReferences.stream()
+            .filter(c -> c.getName().charAt(0) != 'A')
+            .forEach(c -> System.out.printf("Name not start with 'A': %s%n", c.getName()));
+
+        courtReferences.stream()
+            .filter(c -> c.getSlug().charAt(0) != 'a')
+            .forEach(c -> System.out.printf("Slug not start with 'a': %s%n", c.getSlug()));
+
         assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
         assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
     }
