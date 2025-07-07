@@ -93,12 +93,22 @@ public class AdminCourtGeneralInfoService {
                     // intro paragraph, or otherwise if one exists, alter the rows instead
                     ServiceCentre serviceCentre = new ServiceCentre();
                     serviceCentre.setCourtId(courtEntity);
-                    serviceCentre.setIntroParagraph(generalInfo.getScIntroParagraph());
-                    serviceCentre.setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
+                    serviceCentre.setIntroParagraph(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                        StringEscapeUtils.unescapeHtml4(generalInfo.getScIntroParagraph())
+                    )));
+                    serviceCentre.setIntroParagraphCy(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                        StringEscapeUtils.unescapeHtml4(generalInfo.getScIntroParagraphCy())
+                    )));
                     courtEntity.setServiceCentre(serviceCentre);
                 } else {
-                    courtEntity.getServiceCentre().setIntroParagraph(generalInfo.getScIntroParagraph());
-                    courtEntity.getServiceCentre().setIntroParagraphCy(generalInfo.getScIntroParagraphCy());
+                    courtEntity.getServiceCentre().setIntroParagraph(StringEscapeUtils.unescapeHtml4(
+                        OwaspHtmlSanitizer.sanitizeHtml(StringEscapeUtils.unescapeHtml4(
+                            generalInfo.getScIntroParagraph())
+                    )));
+                    courtEntity.getServiceCentre().setIntroParagraphCy(StringEscapeUtils.unescapeHtml4(
+                        OwaspHtmlSanitizer.sanitizeHtml(StringEscapeUtils.unescapeHtml4(
+                            generalInfo.getScIntroParagraph())
+                    )));
                 }
             }
         }
