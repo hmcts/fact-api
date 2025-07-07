@@ -107,7 +107,7 @@ public class AdminCourtGeneralInfoService {
                     )));
                     courtEntity.getServiceCentre().setIntroParagraphCy(StringEscapeUtils.unescapeHtml4(
                         OwaspHtmlSanitizer.sanitizeHtml(StringEscapeUtils.unescapeHtml4(
-                            generalInfo.getScIntroParagraph())
+                            generalInfo.getScIntroParagraphCy())
                     )));
                 }
             }
