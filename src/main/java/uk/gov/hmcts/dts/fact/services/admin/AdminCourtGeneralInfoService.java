@@ -63,8 +63,8 @@ public class AdminCourtGeneralInfoService {
             .orElseThrow(() -> new NotFoundException(slug));
 
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
-        courtEntity.setAlert(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlert()));
-        courtEntity.setAlertCy(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlertCy()));
+        courtEntity.setAlert(generalInfo.getAlert());
+        courtEntity.setAlertCy(generalInfo.getAlertCy());
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
             String newSlug = Utils.convertNameToSlug(generalInfo.getName());

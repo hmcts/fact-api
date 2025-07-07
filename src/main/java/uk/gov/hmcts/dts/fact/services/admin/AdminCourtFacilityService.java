@@ -75,8 +75,8 @@ public class AdminCourtFacilityService {
             .orElseThrow(() -> new NotFoundException(slug));
 
         courtFacilities.forEach(facility -> {
-            facility.setDescription(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescription()));
-            facility.setDescriptionCy(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescriptionCy()));
+            facility.setDescription(facility.getDescription());
+            facility.setDescriptionCy(facility.getDescriptionCy());
         });
 
         List<CourtFacility> existingList = getExistingCourtFacilities(courtEntity);
