@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,16 +64,27 @@ public class AdminCourtGeneralInfoService {
             .orElseThrow(() -> new NotFoundException(slug));
 
         final CourtGeneralInfo originalGeneralInfo = new CourtGeneralInfo(courtEntity);
-        courtEntity.setAlert(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlert()));
-        courtEntity.setAlertCy(OwaspHtmlSanitizer.sanitizeHtml(generalInfo.getAlertCy()));
+
+        //here we are unescaping anything temporarily so owasp can safely remove them
+        //after we still have escaped bits (that are safe) so we now need to turn them back into safe html for saving
+        courtEntity.setAlert(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+            StringEscapeUtils.unescapeHtml4(generalInfo.getAlert())
+        )));
+        courtEntity.setAlertCy(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+            StringEscapeUtils.unescapeHtml4(generalInfo.getAlertCy())
+        )));
 
         if (rolesProvider.getRoles().contains(FACT_SUPER_ADMIN)) {
             String newSlug = Utils.convertNameToSlug(generalInfo.getName());
             checkIfUpdatedCourtIsValid(courtEntity.getSlug(), newSlug);
             courtEntity.setName(generalInfo.getName());
             courtEntity.setSlug(newSlug);
-            courtEntity.setInfo(generalInfo.getInfo());
-            courtEntity.setInfoCy(generalInfo.getInfoCy());
+            courtEntity.setInfo(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                StringEscapeUtils.unescapeHtml4(generalInfo.getInfo())
+            )));
+            courtEntity.setInfoCy(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                StringEscapeUtils.unescapeHtml4(generalInfo.getInfoCy())
+            )));
             courtEntity.setDisplayed(generalInfo.getOpen());
 
             if (generalInfo.isServiceCentre()) {
