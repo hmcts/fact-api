@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.services.CourtService;
 import uk.gov.hmcts.dts.fact.util.Action;
 
+import java.util.List;
+
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,6 +31,9 @@ class SearchControllerTest {
     private static final String POSTCODE = "OX1 1RZ";
     private static final String CRIME = "Crime";
     private static final String CHILDREN = "Children";
+    private static final List<String> CHILDREN_AS_LIST = List.of("Children");
+    private static final List<String> HARM_AND_ABUSE_AS_LIST = List.of("Domestic violence", "Forced marriage", "FGM");
+
 
     @MockitoBean
     private CourtService courtService;
@@ -89,7 +94,31 @@ class SearchControllerTest {
         mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=childcare-arrangements&action="))
             .andExpect(status().isOk());
 
-        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", CHILDREN, Action.UNDEFINED, false);
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "childcare-arrangements", CHILDREN_AS_LIST, Action.UNDEFINED, false);
+    }
+
+    @Test
+    void shouldSearchCourtsByPostcodeAndFemaleGenitalMutilationMServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=female-genital-mutilation&action="))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "female-genital-mutilation", HARM_AND_ABUSE_AS_LIST, Action.UNDEFINED, false);
+    }
+
+    @Test
+    void shouldSearchCourtsByPostcodeAndDomesticAbuseServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=domestic-abuse&action="))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "domestic-abuse", HARM_AND_ABUSE_AS_LIST, Action.UNDEFINED, false);
+    }
+
+    @Test
+    void shouldSearchCourtsByPostcodeAndForcedMarriageServiceArea() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/results?postcode=B1 1AA&serviceArea=forced-marriage&action="))
+            .andExpect(status().isOk());
+
+        verify(courtService).getNearestCourtsByAreaOfLawSinglePointOfEntry("B1 1AA", "forced-marriage", HARM_AND_ABUSE_AS_LIST, Action.UNDEFINED, false);
     }
 
     @Test
