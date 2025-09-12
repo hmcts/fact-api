@@ -13,7 +13,7 @@ java:
           alias: POSTGRES_DATABASE
         - name: api-POSTGRES-USER
           alias: POSTGRES_USER
-        - name: AppInsightsInstrumentationKey
+        - name: AppInsightsInstrumentationKey-ai
           alias: APPINSIGHTS_INSTRUMENTATIONKEY
         - name: mapit-key
           alias: MAPIT_KEY
