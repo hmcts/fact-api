@@ -28,7 +28,7 @@ java:
           alias: MAPIT_KEY
         - name: launchdarkly-sdk-key
           alias: LAUNCH_DARKLY_SDK_KEY
-        - name: app-insights-connection-string
+        - name: app-insights-connection-string-ai
           alias: APP_INSIGHTS_CONNECTION_STRING
   environment:
     OAUTH_PROVIDER_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
