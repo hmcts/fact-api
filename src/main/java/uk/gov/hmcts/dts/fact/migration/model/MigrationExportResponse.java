@@ -12,4 +12,12 @@ import java.util.List;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MigrationExportResponse {
     private final List<CourtMigrationData> courts;
+    private final List<LocalAuthorityTypeData> localAuthorityTypes;
+    private final List<ServiceAreaTypeData> serviceAreas;
+    private final List<ServiceTypeData> services;
+    private final List<ContactDescriptionTypeData> contactDescriptionTypes;
+    private final List<OpeningHourTypeData> openingHourTypes;
+    private final List<CourtTypeData> courtTypes;
+    private final List<RegionData> regions;
+    private final List<AreaOfLawTypeData> areaOfLawTypes;
 }

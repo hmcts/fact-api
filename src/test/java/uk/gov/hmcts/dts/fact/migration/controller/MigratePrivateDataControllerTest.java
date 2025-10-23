@@ -5,8 +5,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.dts.fact.migration.model.AreaOfLawTypeData;
+import uk.gov.hmcts.dts.fact.migration.model.ContactDescriptionTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtTypeData;
+import uk.gov.hmcts.dts.fact.migration.model.LocalAuthorityTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.MigrationExportResponse;
+import uk.gov.hmcts.dts.fact.migration.model.OpeningHourTypeData;
+import uk.gov.hmcts.dts.fact.migration.model.RegionData;
+import uk.gov.hmcts.dts.fact.migration.model.ServiceAreaTypeData;
+import uk.gov.hmcts.dts.fact.migration.model.ServiceTypeData;
 import uk.gov.hmcts.dts.fact.migration.service.MigrationPrivateDataService;
 
 import java.time.OffsetDateTime;
@@ -19,8 +28,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class MigratePrivateDataControllerTest {
 
-    private static final String SLUG = "test-slug";
-
     @Mock
     private MigrationPrivateDataService migrationPrivateDataService;
 
@@ -32,15 +39,28 @@ class MigratePrivateDataControllerTest {
         CourtMigrationData court = new CourtMigrationData(
             "12",
             "Test Court",
-            SLUG,
+            "test-slug",
             Boolean.TRUE,
-            "notice",
             OffsetDateTime.now(),
             OffsetDateTime.now(),
             9,
-            Boolean.TRUE
+            Boolean.TRUE,
+            List.of(new CourtServiceAreaData(50, List.of(2, 3), 12, "regional"))
         );
-        MigrationExportResponse expected = new MigrationExportResponse(List.of(court));
+        MigrationExportResponse expected = new MigrationExportResponse(
+            List.of(court),
+            List.of(new LocalAuthorityTypeData(1, "Authority")),
+            List.of(new ServiceAreaTypeData(2, "Service Area", "Service Area Cy", "desc", "desc cy",
+                "service-area", "http://example.com", "online", "online cy", "type", "text",
+                "text cy", "catchment", 6)),
+            List.of(new ServiceTypeData(3, "Service", "Service Cy", "service desc", "service desc cy", "service")),
+            List.of(new ContactDescriptionTypeData(4, "Phone", "Phone cy")),
+            List.of(new OpeningHourTypeData(5, "Opening", "Opening cy")),
+            List.of(new CourtTypeData(7, "Court Type", "court-type")),
+            List.of(new RegionData(8, "Region", "England")),
+            List.of(new AreaOfLawTypeData(9, "Area", "http://external", "http://external-cy", "desc",
+                "desc cy", "alt", "alt cy", "display", "display cy", "Y"))
+        );
         when(migrationPrivateDataService.getCourtExport()).thenReturn(expected);
 
         MigrationExportResponse response = migratePrivateDataController.migratePrivateData();
