@@ -174,7 +174,7 @@ public class MigrationPrivateDataService {
     private List<CourtPostcodeData> mapCourtPostcodes(final Court court) {
         List<CourtPostcode> courtPostcodes = court.getCourtPostcodes();
         if (courtPostcodes == null || courtPostcodes.isEmpty()) {
-            return List.of();
+            return null;
         }
 
         return courtPostcodes
@@ -269,6 +269,15 @@ public class MigrationPrivateDataService {
 
     private CourtCodeData mapCourtCodes(final Court court) {
         String courtId = court.getId() == null ? null : court.getId().toString();
+        if (court.getMagistrateCode() == null
+            && court.getCourtCode() == null
+            && court.getLocationCode() == null
+            && court.getCciCode() == null
+            && court.getNumber() == null
+            && court.getGbs() == null) {
+            return null;
+        }
+
         return new CourtCodeData(
             courtId,
             courtId,
@@ -284,7 +293,7 @@ public class MigrationPrivateDataService {
     private List<CourtServiceAreaData> mapCourtServiceAreas(final Court court) {
         List<ServiceAreaCourt> serviceAreaCourts = court.getServiceAreaCourts();
         if (serviceAreaCourts == null || serviceAreaCourts.isEmpty()) {
-            return List.of();
+            return null;
         }
 
         Map<String, List<ServiceAreaCourt>> groupedByCatchment = serviceAreaCourts
@@ -333,7 +342,7 @@ public class MigrationPrivateDataService {
             : courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(courtId);
 
         if (courtAreas == null || courtAreas.isEmpty()) {
-            return new CourtAreasOfLawData(null, List.of(), courtIdAsString);
+            return null;
         }
 
         List<Integer> areaIds = courtAreas.stream()
@@ -363,7 +372,7 @@ public class MigrationPrivateDataService {
             : courtAreaOfLawSpoeRepository.getAllByCourtId(courtId);
 
         if (courtAreas == null || courtAreas.isEmpty()) {
-            return new CourtSinglePointOfEntryData(null, List.of(), courtIdAsString);
+            return null;
         }
 
         List<Integer> areaIds = courtAreas.stream()
