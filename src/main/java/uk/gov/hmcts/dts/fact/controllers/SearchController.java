@@ -22,7 +22,6 @@ import uk.gov.hmcts.dts.fact.util.Action;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
@@ -38,8 +37,6 @@ public class SearchController {
 
     private final CourtService courtService;
     private static final String CHILDRENAREAOFLAW = "Children";
-    private static final List<String> CHILDRENAREAOFLAWLIST = List.of("Children");
-    private static final List<String> HARMANDABUSEAREAOFLAWLIST = List.of("Domestic violence", "Forced marriage", "FGM");
 
     @Autowired
     public SearchController(final CourtService courtService) {
@@ -122,15 +119,7 @@ public class SearchController {
                 return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
                     postcode.get(),
                     serviceAreaSlug.get(),
-                    CHILDRENAREAOFLAWLIST,
-                    Action.UNDEFINED,
-                    includeClosed
-                ));
-            } else if (Set.of("domestic-abuse", "female-genital-mutilation", "forced-marriage").contains(serviceAreaSlug.get())) {
-                return ok(courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
-                    postcode.get(),
-                    serviceAreaSlug.get(),
-                    HARMANDABUSEAREAOFLAWLIST,
+                    CHILDRENAREAOFLAW,
                     Action.UNDEFINED,
                     includeClosed
                 ));
