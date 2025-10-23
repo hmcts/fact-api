@@ -28,4 +28,5 @@ public class CourtMigrationData {
     private final CourtCodeData courtCodes;
     private final CourtAreasOfLawData courtAreasOfLaw;
     private final CourtSinglePointOfEntryData courtSinglePointsOfEntry;
+    private final List<CourtDxCodeData> courtDxCodes;
 }

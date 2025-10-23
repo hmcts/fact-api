@@ -11,8 +11,10 @@ import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
+import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.DxCode;
 import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
 import uk.gov.hmcts.dts.fact.entity.OpeningType;
 import uk.gov.hmcts.dts.fact.entity.Region;
@@ -22,6 +24,7 @@ import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
@@ -216,6 +219,15 @@ class MigrationPrivateDataServiceTest {
 
         court.setCourtPostcodes(List.of(postcodeOne, postcodeTwo));
 
+        DxCode dxCode = new DxCode();
+        dxCode.setId(120);
+        dxCode.setCode("DX123");
+        dxCode.setExplanation("DX explanation");
+        CourtDxCode courtDxCode = new CourtDxCode();
+        courtDxCode.setDxCode(dxCode);
+        courtDxCode.setCourt(court);
+        court.setCourtDxCodes(List.of(courtDxCode));
+
         when(courtRepository.findAll()).thenReturn(List.of(court, anotherCourt));
         when(localAuthorityRepository.findAll()).thenReturn(localAuthorities);
         when(serviceAreaRepository.findAll()).thenReturn(serviceAreas);
@@ -272,6 +284,14 @@ class MigrationPrivateDataServiceTest {
         assertThat(spoe.getId()).isEqualTo("80");
         assertThat(spoe.getCourtId()).isEqualTo("12");
         assertThat(spoe.getAreasOfLaw()).containsExactly(9);
+
+        List<CourtDxCodeData> dxCodes = first.getCourtDxCodes();
+        assertThat(dxCodes).hasSize(1);
+        CourtDxCodeData dxData = dxCodes.get(0);
+        assertThat(dxData.getId()).isEqualTo("120");
+        assertThat(dxData.getCourtId()).isEqualTo("12");
+        assertThat(dxData.getDxCode()).isEqualTo("DX123");
+        assertThat(dxData.getExplanation()).isEqualTo("DX explanation");
 
         assertThat(response.getLocalAuthorityTypes()).hasSize(1);
         assertThat(response.getLocalAuthorityTypes().get(0).getName()).isEqualTo("Authority");

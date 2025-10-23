@@ -6,8 +6,10 @@ import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
+import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
+import uk.gov.hmcts.dts.fact.entity.DxCode;
 import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
 import uk.gov.hmcts.dts.fact.entity.OpeningType;
 import uk.gov.hmcts.dts.fact.entity.Region;
@@ -17,6 +19,7 @@ import uk.gov.hmcts.dts.fact.migration.model.AreaOfLawTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.ContactDescriptionTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
@@ -163,7 +166,8 @@ public class MigrationPrivateDataService {
             mapCourtPostcodes(court),
             mapCourtCodes(court),
             mapCourtAreasOfLaw(court),
-            mapCourtSinglePointsOfEntry(court)
+            mapCourtSinglePointsOfEntry(court),
+            mapCourtDxCodes(court)
         );
     }
 
@@ -391,6 +395,31 @@ public class MigrationPrivateDataService {
             .orElse(null);
 
         return new CourtSinglePointOfEntryData(id, areaIds, courtIdAsString);
+    }
+
+    private List<CourtDxCodeData> mapCourtDxCodes(final Court court) {
+        List<CourtDxCode> courtDxCodes = court.getCourtDxCodes();
+        if (courtDxCodes == null || courtDxCodes.isEmpty()) {
+            return null;
+        }
+
+        List<CourtDxCodeData> dxCodes = courtDxCodes.stream()
+            .map(courtDxCode -> {
+                DxCode dxCode = courtDxCode.getDxCode();
+                if (dxCode == null) {
+                    return null;
+                }
+                return new CourtDxCodeData(
+                    dxCode.getId() == null ? null : dxCode.getId().toString(),
+                    court.getId() == null ? null : court.getId().toString(),
+                    dxCode.getCode(),
+                    dxCode.getExplanation()
+                );
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        return dxCodes.isEmpty() ? null : dxCodes;
     }
 
     private OffsetDateTime toOffsetDateTime(final Timestamp timestamp) {
