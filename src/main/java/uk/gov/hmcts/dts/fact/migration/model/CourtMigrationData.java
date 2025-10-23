@@ -26,4 +26,6 @@ public class CourtMigrationData {
     private final List<CourtServiceAreaData> courtServiceAreas;
     private final List<CourtPostcodeData> courtPostcodes;
     private final CourtCodeData courtCodes;
+    private final CourtAreasOfLawData courtAreasOfLaw;
+    private final CourtSinglePointOfEntryData courtSinglePointsOfEntry;
 }

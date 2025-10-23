@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
@@ -18,12 +20,16 @@ import uk.gov.hmcts.dts.fact.entity.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
+import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
 import uk.gov.hmcts.dts.fact.migration.model.MigrationExportResponse;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
@@ -61,6 +67,10 @@ class MigrationPrivateDataServiceTest {
     private RegionRepository regionRepository;
     @Mock
     private AreasOfLawRepository areasOfLawRepository;
+    @Mock
+    private CourtAreaOfLawRepository courtAreaOfLawRepository;
+    @Mock
+    private CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
 
     @InjectMocks
     private MigrationPrivateDataService migrationPrivateDataService;
@@ -168,6 +178,18 @@ class MigrationPrivateDataServiceTest {
         areaOfLawType.setDisplayExternalLink("Y");
         final List<AreaOfLaw> areaOfLawTypes = List.of(areaOfLawType);
 
+        CourtAreaOfLaw courtAreaOfLaw = new CourtAreaOfLaw();
+        courtAreaOfLaw.setId(70);
+        courtAreaOfLaw.setAreaOfLaw(areaOfLawType);
+        courtAreaOfLaw.setCourt(court);
+        final List<CourtAreaOfLaw> courtAreasOfLaw = List.of(courtAreaOfLaw);
+
+        CourtAreaOfLawSpoe courtAreaOfLawSpoe = new CourtAreaOfLawSpoe();
+        courtAreaOfLawSpoe.setId(80);
+        courtAreaOfLawSpoe.setAreaOfLaw(areaOfLawType);
+        courtAreaOfLawSpoe.setCourt(court);
+        final List<CourtAreaOfLawSpoe> courtAreasOfLawSpoe = List.of(courtAreaOfLawSpoe);
+
         ServiceAreaCourt serviceAreaCourt = new ServiceAreaCourt();
         serviceAreaCourt.setId(50);
         serviceAreaCourt.setCatchmentType("regional");
@@ -203,6 +225,8 @@ class MigrationPrivateDataServiceTest {
         when(courtTypeRepository.findAll()).thenReturn(courtTypes);
         when(regionRepository.findAll()).thenReturn(regions);
         when(areasOfLawRepository.findAll()).thenReturn(areaOfLawTypes);
+        when(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(12)).thenReturn(courtAreasOfLaw);
+        when(courtAreaOfLawSpoeRepository.getAllByCourtId(12)).thenReturn(courtAreasOfLawSpoe);
 
         MigrationExportResponse response = migrationPrivateDataService.getCourtExport();
 
@@ -236,6 +260,18 @@ class MigrationPrivateDataServiceTest {
         assertThat(courtCodes.getFamilyCourtCode()).isEqualTo(4444);
         assertThat(courtCodes.getTribunalCode()).isEqualTo(5555);
         assertThat(courtCodes.getGbs()).isEqualTo("GBS123");
+
+        CourtAreasOfLawData courtAreasOfLawData = first.getCourtAreasOfLaw();
+        assertThat(courtAreasOfLawData).isNotNull();
+        assertThat(courtAreasOfLawData.getId()).isEqualTo("70");
+        assertThat(courtAreasOfLawData.getCourtId()).isEqualTo("12");
+        assertThat(courtAreasOfLawData.getAreasOfLaw()).containsExactly(9);
+
+        CourtSinglePointOfEntryData spoe = first.getCourtSinglePointsOfEntry();
+        assertThat(spoe).isNotNull();
+        assertThat(spoe.getId()).isEqualTo("80");
+        assertThat(spoe.getCourtId()).isEqualTo("12");
+        assertThat(spoe.getAreasOfLaw()).containsExactly(9);
 
         assertThat(response.getLocalAuthorityTypes()).hasSize(1);
         assertThat(response.getLocalAuthorityTypes().get(0).getName()).isEqualTo("Authority");

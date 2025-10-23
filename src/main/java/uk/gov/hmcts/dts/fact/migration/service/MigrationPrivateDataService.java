@@ -1,11 +1,11 @@
 package uk.gov.hmcts.dts.fact.migration.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
@@ -15,10 +15,12 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.migration.model.AreaOfLawTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.ContactDescriptionTypeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.LocalAuthorityTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.MigrationExportResponse;
@@ -28,6 +30,8 @@ import uk.gov.hmcts.dts.fact.migration.model.ServiceAreaTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.ServiceTypeData;
 import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
@@ -48,8 +52,6 @@ import java.util.stream.Collectors;
 @Service
 public class MigrationPrivateDataService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MigrationPrivateDataService.class);
-
     private final CourtRepository courtRepository;
     private final LocalAuthorityRepository localAuthorityRepository;
     private final ServiceAreaRepository serviceAreaRepository;
@@ -59,6 +61,8 @@ public class MigrationPrivateDataService {
     private final CourtTypeRepository courtTypeRepository;
     private final RegionRepository regionRepository;
     private final AreasOfLawRepository areasOfLawRepository;
+    private final CourtAreaOfLawRepository courtAreaOfLawRepository;
+    private final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
 
     public MigrationPrivateDataService(final CourtRepository courtRepository,
                                        final LocalAuthorityRepository localAuthorityRepository,
@@ -68,7 +72,9 @@ public class MigrationPrivateDataService {
                                        final OpeningTypeRepository openingTypeRepository,
                                        final CourtTypeRepository courtTypeRepository,
                                        final RegionRepository regionRepository,
-                                       final AreasOfLawRepository areasOfLawRepository) {
+                                       final AreasOfLawRepository areasOfLawRepository,
+                                       final CourtAreaOfLawRepository courtAreaOfLawRepository,
+                                       final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository) {
         this.courtRepository = courtRepository;
         this.localAuthorityRepository = localAuthorityRepository;
         this.serviceAreaRepository = serviceAreaRepository;
@@ -78,6 +84,8 @@ public class MigrationPrivateDataService {
         this.courtTypeRepository = courtTypeRepository;
         this.regionRepository = regionRepository;
         this.areasOfLawRepository = areasOfLawRepository;
+        this.courtAreaOfLawRepository = courtAreaOfLawRepository;
+        this.courtAreaOfLawSpoeRepository = courtAreaOfLawSpoeRepository;
     }
 
     public MigrationExportResponse getCourtExport() {
@@ -153,7 +161,9 @@ public class MigrationPrivateDataService {
             court.getServiceCentre() != null,
             mapCourtServiceAreas(court),
             mapCourtPostcodes(court),
-            mapCourtCodes(court)
+            mapCourtCodes(court),
+            mapCourtAreasOfLaw(court),
+            mapCourtSinglePointsOfEntry(court)
         );
     }
 
@@ -164,7 +174,6 @@ public class MigrationPrivateDataService {
     private List<CourtPostcodeData> mapCourtPostcodes(final Court court) {
         List<CourtPostcode> courtPostcodes = court.getCourtPostcodes();
         if (courtPostcodes == null || courtPostcodes.isEmpty()) {
-            LOG.info("No court postcodes found for court id {}", court.getId());
             return List.of();
         }
 
@@ -275,7 +284,6 @@ public class MigrationPrivateDataService {
     private List<CourtServiceAreaData> mapCourtServiceAreas(final Court court) {
         List<ServiceAreaCourt> serviceAreaCourts = court.getServiceAreaCourts();
         if (serviceAreaCourts == null || serviceAreaCourts.isEmpty()) {
-            LOG.info("No service area courts found for court id {}", court.getId());
             return List.of();
         }
 
@@ -314,6 +322,66 @@ public class MigrationPrivateDataService {
                 );
             })
             .collect(Collectors.toList());
+    }
+
+    private CourtAreasOfLawData mapCourtAreasOfLaw(final Court court) {
+        Integer courtId = court.getId();
+        String courtIdAsString = courtId == null ? null : courtId.toString();
+
+        List<CourtAreaOfLaw> courtAreas = courtId == null
+            ? List.of()
+            : courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(courtId);
+
+        if (courtAreas == null || courtAreas.isEmpty()) {
+            return new CourtAreasOfLawData(null, List.of(), courtIdAsString);
+        }
+
+        List<Integer> areaIds = courtAreas.stream()
+            .map(CourtAreaOfLaw::getAreaOfLaw)
+            .filter(Objects::nonNull)
+            .map(AreaOfLaw::getId)
+            .filter(Objects::nonNull)
+            .distinct()
+            .collect(Collectors.toList());
+
+        String id = courtAreas.stream()
+            .map(CourtAreaOfLaw::getId)
+            .filter(Objects::nonNull)
+            .map(String::valueOf)
+            .findFirst()
+            .orElse(null);
+
+        return new CourtAreasOfLawData(id, areaIds, courtIdAsString);
+    }
+
+    private CourtSinglePointOfEntryData mapCourtSinglePointsOfEntry(final Court court) {
+        Integer courtId = court.getId();
+        String courtIdAsString = courtId == null ? null : courtId.toString();
+
+        List<CourtAreaOfLawSpoe> courtAreas = courtId == null
+            ? List.of()
+            : courtAreaOfLawSpoeRepository.getAllByCourtId(courtId);
+
+        if (courtAreas == null || courtAreas.isEmpty()) {
+            return new CourtSinglePointOfEntryData(null, List.of(), courtIdAsString);
+        }
+
+        List<Integer> areaIds = courtAreas.stream()
+            .map(CourtAreaOfLawSpoe::getAreaOfLaw)
+            .filter(Objects::nonNull)
+            .map(AreaOfLaw::getId)
+            .filter(Objects::nonNull)
+            .distinct()
+            .collect(Collectors.toList());
+
+        String id = courtAreas.stream()
+            .map(CourtAreaOfLawSpoe::getId)
+            .filter(Objects::nonNull)
+            .map(String::valueOf)
+            .findFirst()
+            .orElse(null);
+
+        return new CourtSinglePointOfEntryData(id, areaIds, courtIdAsString);
     }
 
     private OffsetDateTime toOffsetDateTime(final Timestamp timestamp) {

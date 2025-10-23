@@ -7,10 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.dts.fact.migration.model.AreaOfLawTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.ContactDescriptionTypeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.LocalAuthorityTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.MigrationExportResponse;
@@ -50,7 +52,9 @@ class MigratePrivateDataControllerTest {
             Boolean.TRUE,
             List.of(new CourtServiceAreaData(50, List.of(2, 3), 12, "regional")),
             List.of(new CourtPostcodeData(100, "AB1 2CD", 12)),
-            new CourtCodeData("12", "12", 3333, 4444, 5555, 2222, 1111, "GBS123")
+            new CourtCodeData("12", "12", 3333, 4444, 5555, 2222, 1111, "GBS123"),
+            new CourtAreasOfLawData("70", List.of(9), "12"),
+            new CourtSinglePointOfEntryData("80", List.of(9), "12")
         );
         MigrationExportResponse expected = new MigrationExportResponse(
             List.of(court),

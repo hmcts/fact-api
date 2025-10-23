@@ -5,16 +5,14 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CourtCodeData {
+public class CourtSinglePointOfEntryData {
     private final String id;
+    private final List<Integer> areasOfLaw;
     private final String courtId;
-    private final Integer magistrateCourtCode;
-    private final Integer familyCourtCode;
-    private final Integer tribunalCode;
-    private final Integer countyCourtCode;
-    private final Integer crownCourtCode;
-    private final String gbs;
 }
+
