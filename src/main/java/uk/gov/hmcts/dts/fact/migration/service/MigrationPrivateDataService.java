@@ -1,9 +1,12 @@
 package uk.gov.hmcts.dts.fact.migration.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
 import uk.gov.hmcts.dts.fact.entity.OpeningType;
@@ -12,7 +15,9 @@ import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.migration.model.AreaOfLawTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.ContactDescriptionTypeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.LocalAuthorityTypeData;
@@ -42,6 +47,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class MigrationPrivateDataService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MigrationPrivateDataService.class);
 
     private final CourtRepository courtRepository;
     private final LocalAuthorityRepository localAuthorityRepository;
@@ -139,16 +146,37 @@ public class MigrationPrivateDataService {
             court.getName(),
             court.getSlug(),
             Boolean.TRUE.equals(court.getDisplayed()),
+            court.getAlert(),
             toOffsetDateTime(court.getCreatedAt()),
             toOffsetDateTime(court.getUpdatedAt()),
             court.getRegionId(),
             court.getServiceCentre() != null,
-            mapCourtServiceAreas(court)
+            mapCourtServiceAreas(court),
+            mapCourtPostcodes(court),
+            mapCourtCodes(court)
         );
     }
 
     private LocalAuthorityTypeData mapLocalAuthority(final LocalAuthority localAuthority) {
         return new LocalAuthorityTypeData(localAuthority.getId(), localAuthority.getName());
+    }
+
+    private List<CourtPostcodeData> mapCourtPostcodes(final Court court) {
+        List<CourtPostcode> courtPostcodes = court.getCourtPostcodes();
+        if (courtPostcodes == null || courtPostcodes.isEmpty()) {
+            LOG.info("No court postcodes found for court id {}", court.getId());
+            return List.of();
+        }
+
+        return courtPostcodes
+            .stream()
+            .filter(Objects::nonNull)
+            .map(courtPostcode -> new CourtPostcodeData(
+                courtPostcode.getId(),
+                courtPostcode.getPostcode(),
+                courtPostcode.getCourt() == null ? null : courtPostcode.getCourt().getId()
+            ))
+            .collect(Collectors.toList());
     }
 
     private ServiceAreaTypeData mapServiceArea(final ServiceArea serviceArea) {
@@ -230,12 +258,28 @@ public class MigrationPrivateDataService {
         );
     }
 
+    private CourtCodeData mapCourtCodes(final Court court) {
+        String courtId = court.getId() == null ? null : court.getId().toString();
+        return new CourtCodeData(
+            courtId,
+            courtId,
+            court.getMagistrateCode(),
+            court.getCourtCode(),
+            court.getLocationCode(),
+            court.getCciCode(),
+            court.getNumber(),
+            court.getGbs()
+        );
+    }
+
     private List<CourtServiceAreaData> mapCourtServiceAreas(final Court court) {
-        if (court.getServiceAreaCourts() == null || court.getServiceAreaCourts().isEmpty()) {
+        List<ServiceAreaCourt> serviceAreaCourts = court.getServiceAreaCourts();
+        if (serviceAreaCourts == null || serviceAreaCourts.isEmpty()) {
+            LOG.info("No service area courts found for court id {}", court.getId());
             return List.of();
         }
 
-        Map<String, List<ServiceAreaCourt>> groupedByCatchment = court.getServiceAreaCourts()
+        Map<String, List<ServiceAreaCourt>> groupedByCatchment = serviceAreaCourts
             .stream()
             .collect(Collectors.groupingBy(
                 ServiceAreaCourt::getCatchmentType,

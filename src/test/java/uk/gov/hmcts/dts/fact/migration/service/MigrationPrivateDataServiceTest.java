@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
+import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
 import uk.gov.hmcts.dts.fact.entity.OpeningType;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.dts.fact.entity.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
+import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.MigrationExportResponse;
@@ -75,6 +77,12 @@ class MigrationPrivateDataServiceTest {
         court.setDisplayed(Boolean.TRUE);
         court.setRegionId(9);
         court.setServiceCentre(new ServiceCentre());
+        court.setNumber(1111);
+        court.setCciCode(2222);
+        court.setMagistrateCode(3333);
+        court.setCourtCode(4444);
+        court.setLocationCode(5555);
+        court.setGbs("GBS123");
         court.setCreatedAt(Timestamp.from(ZonedDateTime.of(2023, 1, 1, 10, 0, 0, 0, ZoneOffset.UTC).toInstant()));
         court.setUpdatedAt(Timestamp.from(ZonedDateTime.of(2023, 12, 3, 11, 43, 0, 0, ZoneOffset.UTC).toInstant()));
     }
@@ -174,6 +182,18 @@ class MigrationPrivateDataServiceTest {
 
         court.setServiceAreaCourts(List.of(serviceAreaCourt, secondServiceAreaCourt));
 
+        CourtPostcode postcodeOne = new CourtPostcode();
+        postcodeOne.setId(100);
+        postcodeOne.setPostcode("AB1 2CD");
+        postcodeOne.setCourt(court);
+
+        CourtPostcode postcodeTwo = new CourtPostcode();
+        postcodeTwo.setId(101);
+        postcodeTwo.setPostcode("EF3 4GH");
+        postcodeTwo.setCourt(court);
+
+        court.setCourtPostcodes(List.of(postcodeOne, postcodeTwo));
+
         when(courtRepository.findAll()).thenReturn(List.of(court, anotherCourt));
         when(localAuthorityRepository.findAll()).thenReturn(localAuthorities);
         when(serviceAreaRepository.findAll()).thenReturn(serviceAreas);
@@ -191,6 +211,7 @@ class MigrationPrivateDataServiceTest {
         assertThat(first.getId()).isEqualTo("12");
         assertThat(first.getSlug()).isEqualTo("test-slug");
         assertThat(first.getOpen()).isTrue();
+        assertThat(first.getTemporaryUrgentNotice()).isEqualTo("urgent notice");
         assertThat(first.getRegionId()).isEqualTo(9);
         assertThat(first.getServiceCentre()).isTrue();
         assertThat(first.getCourtServiceAreas()).hasSize(1);
@@ -199,6 +220,22 @@ class MigrationPrivateDataServiceTest {
         assertThat(courtServiceAreaData.getCatchmentType()).isEqualTo("regional");
         assertThat(courtServiceAreaData.getCourtId()).isEqualTo(12);
         assertThat(courtServiceAreaData.getId()).isEqualTo(50);
+
+        assertThat(first.getCourtPostcodes()).hasSize(2);
+        assertThat(first.getCourtPostcodes().get(0).getId()).isEqualTo(100);
+        assertThat(first.getCourtPostcodes().get(0).getPostcode()).isEqualTo("AB1 2CD");
+        assertThat(first.getCourtPostcodes().get(1).getId()).isEqualTo(101);
+        assertThat(first.getCourtPostcodes().get(1).getPostcode()).isEqualTo("EF3 4GH");
+
+        CourtCodeData courtCodes = first.getCourtCodes();
+        assertThat(courtCodes).isNotNull();
+        assertThat(courtCodes.getCourtId()).isEqualTo("12");
+        assertThat(courtCodes.getCrownCourtCode()).isEqualTo(1111);
+        assertThat(courtCodes.getCountyCourtCode()).isEqualTo(2222);
+        assertThat(courtCodes.getMagistrateCourtCode()).isEqualTo(3333);
+        assertThat(courtCodes.getFamilyCourtCode()).isEqualTo(4444);
+        assertThat(courtCodes.getTribunalCode()).isEqualTo(5555);
+        assertThat(courtCodes.getGbs()).isEqualTo("GBS123");
 
         assertThat(response.getLocalAuthorityTypes()).hasSize(1);
         assertThat(response.getLocalAuthorityTypes().get(0).getName()).isEqualTo("Authority");

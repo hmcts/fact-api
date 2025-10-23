@@ -17,10 +17,13 @@ public class CourtMigrationData {
     private final String name;
     private final String slug;
     private final Boolean open;
+    private final String temporaryUrgentNotice;
     private final OffsetDateTime createdAt;
     private final OffsetDateTime lastUpdatedAt;
     private final Integer regionId;
     @JsonProperty("is_service_centre")
     private final Boolean serviceCentre;
     private final List<CourtServiceAreaData> courtServiceAreas;
+    private final List<CourtPostcodeData> courtPostcodes;
+    private final CourtCodeData courtCodes;
 }
