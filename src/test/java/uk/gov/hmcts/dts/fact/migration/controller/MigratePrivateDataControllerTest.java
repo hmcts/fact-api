@@ -10,7 +10,9 @@ import uk.gov.hmcts.dts.fact.migration.model.ContactDescriptionTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtFaxData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtPhotoData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
@@ -56,7 +58,9 @@ class MigratePrivateDataControllerTest {
             new CourtCodeData("12", "12", 3333, 4444, 5555, 2222, 1111, "GBS123"),
             new CourtAreasOfLawData("70", List.of(9), "12"),
             new CourtSinglePointOfEntryData("80", List.of(9), "12"),
-            List.of(new CourtDxCodeData("120", "12", "DX123", "DX explanation"))
+            List.of(new CourtDxCodeData("120", "12", "DX123", "DX explanation")),
+            List.of(new CourtFaxData("90", "12", "0123456789")),
+            new CourtPhotoData("https://factaat.blob.core.windows.net/images/court.jpg")
         );
         MigrationExportResponse expected = new MigrationExportResponse(
             List.of(court),

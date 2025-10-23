@@ -3,14 +3,15 @@ package uk.gov.hmcts.dts.fact.migration.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -25,7 +26,9 @@ import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtFaxData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtPhotoData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
 import uk.gov.hmcts.dts.fact.migration.model.MigrationExportResponse;
@@ -75,13 +78,26 @@ class MigrationPrivateDataServiceTest {
     @Mock
     private CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
 
-    @InjectMocks
     private MigrationPrivateDataService migrationPrivateDataService;
 
     private Court court;
 
     @BeforeEach
     void setUp() {
+        migrationPrivateDataService = new MigrationPrivateDataService(
+            courtRepository,
+            localAuthorityRepository,
+            serviceAreaRepository,
+            serviceRepository,
+            contactTypeRepository,
+            openingTypeRepository,
+            courtTypeRepository,
+            regionRepository,
+            areasOfLawRepository,
+            courtAreaOfLawRepository,
+            courtAreaOfLawSpoeRepository,
+            "https://factaat.blob.core.windows.net/images"
+        );
         court = new Court();
         court.setId(12);
         court.setName("Test Court");
@@ -96,6 +112,7 @@ class MigrationPrivateDataServiceTest {
         court.setCourtCode(4444);
         court.setLocationCode(5555);
         court.setGbs("GBS123");
+        court.setImageFile("court.jpg");
         court.setCreatedAt(Timestamp.from(ZonedDateTime.of(2023, 1, 1, 10, 0, 0, 0, ZoneOffset.UTC).toInstant()));
         court.setUpdatedAt(Timestamp.from(ZonedDateTime.of(2023, 12, 3, 11, 43, 0, 0, ZoneOffset.UTC).toInstant()));
     }
@@ -219,6 +236,15 @@ class MigrationPrivateDataServiceTest {
 
         court.setCourtPostcodes(List.of(postcodeOne, postcodeTwo));
 
+        Contact faxContact = new Contact();
+        faxContact.setId(90);
+        faxContact.setNumber("0123456789");
+        faxContact.setFax(true);
+        CourtContact courtContact = new CourtContact();
+        courtContact.setContact(faxContact);
+        courtContact.setCourt(court);
+        court.setCourtContacts(List.of(courtContact));
+
         DxCode dxCode = new DxCode();
         dxCode.setId(120);
         dxCode.setCode("DX123");
@@ -292,6 +318,17 @@ class MigrationPrivateDataServiceTest {
         assertThat(dxData.getCourtId()).isEqualTo("12");
         assertThat(dxData.getDxCode()).isEqualTo("DX123");
         assertThat(dxData.getExplanation()).isEqualTo("DX explanation");
+
+        List<CourtFaxData> faxData = first.getCourtFax();
+        assertThat(faxData).hasSize(1);
+        CourtFaxData fax = faxData.get(0);
+        assertThat(fax.getId()).isEqualTo("90");
+        assertThat(fax.getCourtId()).isEqualTo("12");
+        assertThat(fax.getFaxNumber()).isEqualTo("0123456789");
+
+        CourtPhotoData photo = first.getCourtPhoto();
+        assertThat(photo).isNotNull();
+        assertThat(photo.getImagePath()).isEqualTo("https://factaat.blob.core.windows.net/images/court.jpg");
 
         assertThat(response.getLocalAuthorityTypes()).hasSize(1);
         assertThat(response.getLocalAuthorityTypes().get(0).getName()).isEqualTo("Authority");

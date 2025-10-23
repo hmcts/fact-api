@@ -1,11 +1,14 @@
 package uk.gov.hmcts.dts.fact.migration.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.Contact;
 import uk.gov.hmcts.dts.fact.entity.ContactType;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
+import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
@@ -20,7 +23,9 @@ import uk.gov.hmcts.dts.fact.migration.model.ContactDescriptionTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtFaxData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtPhotoData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
@@ -66,6 +71,7 @@ public class MigrationPrivateDataService {
     private final AreasOfLawRepository areasOfLawRepository;
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
     private final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
+    private final String imageBaseUrl;
 
     public MigrationPrivateDataService(final CourtRepository courtRepository,
                                        final LocalAuthorityRepository localAuthorityRepository,
@@ -77,7 +83,8 @@ public class MigrationPrivateDataService {
                                        final RegionRepository regionRepository,
                                        final AreasOfLawRepository areasOfLawRepository,
                                        final CourtAreaOfLawRepository courtAreaOfLawRepository,
-                                       final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository) {
+                                       final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository,
+                                       @Value("${storageAccount.imageUrl}") final String imageBaseUrl) {
         this.courtRepository = courtRepository;
         this.localAuthorityRepository = localAuthorityRepository;
         this.serviceAreaRepository = serviceAreaRepository;
@@ -89,6 +96,7 @@ public class MigrationPrivateDataService {
         this.areasOfLawRepository = areasOfLawRepository;
         this.courtAreaOfLawRepository = courtAreaOfLawRepository;
         this.courtAreaOfLawSpoeRepository = courtAreaOfLawSpoeRepository;
+        this.imageBaseUrl = imageBaseUrl;
     }
 
     public MigrationExportResponse getCourtExport() {
@@ -167,7 +175,9 @@ public class MigrationPrivateDataService {
             mapCourtCodes(court),
             mapCourtAreasOfLaw(court),
             mapCourtSinglePointsOfEntry(court),
-            mapCourtDxCodes(court)
+            mapCourtDxCodes(court),
+            mapCourtFaxNumbers(court),
+            mapCourtPhoto(court)
         );
     }
 
@@ -395,6 +405,39 @@ public class MigrationPrivateDataService {
             .orElse(null);
 
         return new CourtSinglePointOfEntryData(id, areaIds, courtIdAsString);
+    }
+
+    private List<CourtFaxData> mapCourtFaxNumbers(final Court court) {
+        List<CourtContact> courtContacts = court.getCourtContacts();
+        if (courtContacts == null || courtContacts.isEmpty()) {
+            return null;
+        }
+
+        List<CourtFaxData> faxData = courtContacts.stream()
+            .map(CourtContact::getContact)
+            .filter(Objects::nonNull)
+            .filter(Contact::isFax)
+            .map(contact -> new CourtFaxData(
+                contact.getId() == null ? null : contact.getId().toString(),
+                court.getId() == null ? null : court.getId().toString(),
+                contact.getNumber()
+            ))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        return faxData.isEmpty() ? null : faxData;
+    }
+
+    private CourtPhotoData mapCourtPhoto(final Court court) {
+        String imageFile = court.getImageFile();
+        if (imageFile == null || imageFile.isBlank()) {
+            return null;
+        }
+
+        String base = imageBaseUrl == null ? "" : imageBaseUrl;
+        String normalizedBase = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+        String normalizedFile = imageFile.startsWith("/") ? imageFile.substring(1) : imageFile;
+        return new CourtPhotoData(normalizedBase + "/" + normalizedFile);
     }
 
     private List<CourtDxCodeData> mapCourtDxCodes(final Court court) {
