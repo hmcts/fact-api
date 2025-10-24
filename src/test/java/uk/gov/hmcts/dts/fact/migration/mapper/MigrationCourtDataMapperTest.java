@@ -21,8 +21,6 @@ import uk.gov.hmcts.dts.fact.migration.model.CourtPhotoData;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,8 +52,6 @@ class MigrationCourtDataMapperTest {
         court.setSlug("test-court");
         court.setDisplayed(true);
         court.setAlert("notice");
-        court.setCreatedAt(Timestamp.from(Instant.parse("2024-01-01T10:00:00Z")));
-        court.setUpdatedAt(Timestamp.from(Instant.parse("2024-01-02T11:30:00Z")));
 
         when(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(1)).thenReturn(List.of());
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(1)).thenReturn(List.of());

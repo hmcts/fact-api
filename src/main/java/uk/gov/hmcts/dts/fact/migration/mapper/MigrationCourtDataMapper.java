@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 @Component
 public class MigrationCourtDataMapper {
 
-    private static final String PATH_SEPARATOR = "/";
     private static final char PATH_SEPARATOR_CHAR = '/';
 
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
@@ -261,9 +260,9 @@ public class MigrationCourtDataMapper {
         String normalizedBase = StringUtils.trimTrailingCharacter(base, PATH_SEPARATOR_CHAR);
         String normalizedFile = StringUtils.trimLeadingCharacter(imageFile, PATH_SEPARATOR_CHAR);
         if (normalizedBase.isEmpty()) {
-            return new CourtPhotoData(PATH_SEPARATOR + normalizedFile);
+            return new CourtPhotoData(PATH_SEPARATOR_CHAR + normalizedFile);
         }
-        return new CourtPhotoData(normalizedBase + PATH_SEPARATOR + normalizedFile);
+        return new CourtPhotoData(normalizedBase + PATH_SEPARATOR_CHAR + normalizedFile);
     }
 
     /**

@@ -45,9 +45,6 @@ import uk.gov.hmcts.dts.fact.repositories.RegionRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceRepository;
 
-import java.sql.Timestamp;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -116,8 +113,6 @@ class MigrationPrivateDataServiceTest {
         court.setLocationCode(5555);
         court.setGbs("GBS123");
         court.setImageFile("court.jpg");
-        court.setCreatedAt(Timestamp.from(ZonedDateTime.of(2023, 1, 1, 10, 0, 0, 0, ZoneOffset.UTC).toInstant()));
-        court.setUpdatedAt(Timestamp.from(ZonedDateTime.of(2023, 12, 3, 11, 43, 0, 0, ZoneOffset.UTC).toInstant()));
     }
 
     @Test
@@ -129,8 +124,6 @@ class MigrationPrivateDataServiceTest {
         anotherCourt.setAlert("notice");
         anotherCourt.setDisplayed(Boolean.FALSE);
         anotherCourt.setRegionId(5);
-        anotherCourt.setCreatedAt(Timestamp.from(ZonedDateTime.of(2020, 5, 1, 9, 0, 0, 0, ZoneOffset.UTC).toInstant()));
-        anotherCourt.setUpdatedAt(Timestamp.from(ZonedDateTime.of(2021, 6, 2, 14, 30, 0, 0, ZoneOffset.UTC).toInstant()));
 
         final List<LocalAuthority> localAuthorities = List.of(new LocalAuthority(1, "Authority"));
         ServiceArea serviceArea = new ServiceArea();
