@@ -1,7 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -62,7 +61,6 @@ public class Court {
     private Integer courtCode;
     private Boolean welshEnabled;
     private Boolean hideAols;
-it p    @UpdateTimestamp
     private Timestamp updatedAt;
     private Integer regionId;
 
