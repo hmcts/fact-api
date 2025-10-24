@@ -61,6 +61,7 @@ public class Court {
     private Integer courtCode;
     private Boolean welshEnabled;
     private Boolean hideAols;
+    @UpdateTimestamp
     private Timestamp updatedAt;
     private Integer regionId;
 
