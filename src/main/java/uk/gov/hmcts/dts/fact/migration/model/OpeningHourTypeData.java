@@ -8,9 +8,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@SuppressWarnings("ClassCanBeRecord") // Keep Lombok POJO until Checkstyle handles records
 public class OpeningHourTypeData {
     private final Integer id;
     private final String description;
     private final String descriptionCy;
 }
-

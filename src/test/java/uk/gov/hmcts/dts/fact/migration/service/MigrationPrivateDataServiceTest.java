@@ -23,6 +23,7 @@ import uk.gov.hmcts.dts.fact.entity.Service;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.entity.ServiceCentre;
+import uk.gov.hmcts.dts.fact.migration.mapper.MigrationCourtDataMapper;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
@@ -94,9 +95,11 @@ class MigrationPrivateDataServiceTest {
             courtTypeRepository,
             regionRepository,
             areasOfLawRepository,
-            courtAreaOfLawRepository,
-            courtAreaOfLawSpoeRepository,
-            "https://factaat.blob.core.windows.net/images"
+            new MigrationCourtDataMapper(
+                courtAreaOfLawRepository,
+                courtAreaOfLawSpoeRepository,
+                "https://factaat.blob.core.windows.net/images"
+            )
         );
         court = new Court();
         court.setId(12);

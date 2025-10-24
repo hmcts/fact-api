@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@SuppressWarnings("ClassCanBeRecord") // Keep Lombok POJO until Checkstyle handles records
 public class CourtAreasOfLawData {
     private final String id;
     private final List<Integer> areasOfLaw;

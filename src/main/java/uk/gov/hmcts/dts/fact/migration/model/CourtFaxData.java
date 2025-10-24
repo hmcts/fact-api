@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@SuppressWarnings("ClassCanBeRecord") // Keep Lombok POJO until Checkstyle handles records
 public class CourtFaxData {
     private final String id;
     private final String faxNumber;

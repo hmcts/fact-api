@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@SuppressWarnings("ClassCanBeRecord") // Keep Lombok POJO until Checkstyle handles records
 public class MigrationExportResponse {
     private final List<CourtMigrationData> courts;
     private final List<LocalAuthorityTypeData> localAuthorityTypes;

@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@SuppressWarnings("ClassCanBeRecord") // Keep Lombok POJO until Checkstyle handles records
 public class AreaOfLawTypeData {
     private final Integer id;
     private final String name;
@@ -21,4 +22,3 @@ public class AreaOfLawTypeData {
     private final String displayNameCy;
     private final String displayExternalLink;
 }
-
