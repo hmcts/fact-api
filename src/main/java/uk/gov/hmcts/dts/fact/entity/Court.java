@@ -62,9 +62,7 @@ public class Court {
     private Integer courtCode;
     private Boolean welshEnabled;
     private Boolean hideAols;
-    @Column(name = "created_at", updatable = false, insertable = false)
-    private Timestamp createdAt;
-    @UpdateTimestamp
+it p    @UpdateTimestamp
     private Timestamp updatedAt;
     private Integer regionId;
 
