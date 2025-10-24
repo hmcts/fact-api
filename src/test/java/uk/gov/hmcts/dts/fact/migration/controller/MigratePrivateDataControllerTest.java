@@ -25,7 +25,6 @@ import uk.gov.hmcts.dts.fact.migration.model.ServiceAreaTypeData;
 import uk.gov.hmcts.dts.fact.migration.model.ServiceTypeData;
 import uk.gov.hmcts.dts.fact.migration.service.MigrationPrivateDataService;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,9 +47,6 @@ class MigratePrivateDataControllerTest {
             "Test Court",
             "test-slug",
             Boolean.TRUE,
-            "notice",
-            OffsetDateTime.now(),
-            OffsetDateTime.now(),
             9,
             Boolean.TRUE,
             List.of(new CourtServiceAreaData(50, List.of(2, 3), "regional")),

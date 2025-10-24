@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.migration.mapper;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Contact;
@@ -11,7 +10,6 @@ import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
-import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
@@ -26,13 +24,12 @@ import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 
-import java.sql.Timestamp;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -69,9 +66,6 @@ public class MigrationCourtDataMapper {
             court.getName(),
             court.getSlug(),
             Boolean.TRUE.equals(court.getDisplayed()),
-            court.getAlert(),
-            toOffsetDateTime(court.getCreatedAt()),
-            toOffsetDateTime(court.getUpdatedAt()),
             court.getRegionId(),
             court.getServiceCentre() != null,
             mapCourtServiceAreas(court),
@@ -91,21 +85,13 @@ public class MigrationCourtDataMapper {
      * @return list of postcode data or {@code null} when none
      */
     private List<CourtPostcodeData> mapCourtPostcodes(final Court court) {
-        List<CourtPostcode> courtPostcodes = court.getCourtPostcodes();
-        if (CollectionUtils.isEmpty(courtPostcodes)) {
-            return null;
-        }
-
-        List<CourtPostcodeData> postcodes = courtPostcodes
-            .stream()
-            .filter(Objects::nonNull)
-            .map(courtPostcode -> new CourtPostcodeData(
+        return mapToListOrNull(
+            court.getCourtPostcodes(),
+            courtPostcode -> new CourtPostcodeData(
                 courtPostcode.getId(),
                 courtPostcode.getPostcode()
-            ))
-            .collect(Collectors.toList());
-
-        return postcodes.isEmpty() ? null : postcodes;
+            )
+        );
     }
 
     /**
@@ -142,7 +128,7 @@ public class MigrationCourtDataMapper {
      */
     private List<CourtServiceAreaData> mapCourtServiceAreas(final Court court) {
         List<ServiceAreaCourt> serviceAreaCourts = court.getServiceAreaCourts();
-        if (CollectionUtils.isEmpty(serviceAreaCourts)) {
+        if (isEmpty(serviceAreaCourts)) {
             return null;
         }
 
@@ -180,8 +166,7 @@ public class MigrationCourtDataMapper {
                 );
             })
             .collect(Collectors.toList());
-
-        return serviceAreas.isEmpty() ? null : serviceAreas;
+        return nullIfEmpty(serviceAreas);
     }
 
     /**
@@ -196,7 +181,7 @@ public class MigrationCourtDataMapper {
             ? List.of()
             : courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(courtId);
 
-        if (CollectionUtils.isEmpty(courtAreas)) {
+        if (isEmpty(courtAreas)) {
             return null;
         }
 
@@ -230,7 +215,7 @@ public class MigrationCourtDataMapper {
             ? List.of()
             : courtAreaOfLawSpoeRepository.getAllByCourtId(courtId);
 
-        if (CollectionUtils.isEmpty(courtAreas)) {
+        if (isEmpty(courtAreas)) {
             return null;
         }
 
@@ -258,23 +243,7 @@ public class MigrationCourtDataMapper {
      * @return fax data or {@code null} when no fax contacts exist
      */
     private List<CourtFaxData> mapCourtFaxNumbers(final Court court) {
-        List<CourtContact> courtContacts = court.getCourtContacts();
-        if (CollectionUtils.isEmpty(courtContacts)) {
-            return null;
-        }
-
-        List<CourtFaxData> faxData = courtContacts.stream()
-            .map(CourtContact::getContact)
-            .filter(Objects::nonNull)
-            .filter(Contact::isFax)
-            .map(contact -> new CourtFaxData(
-                contact.getId() == null ? null : contact.getId().toString(),
-                contact.getNumber()
-            ))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-        return faxData.isEmpty() ? null : faxData;
+        return mapToListOrNull(court.getCourtContacts(), this::toFaxData);
     }
 
     /**
@@ -303,31 +272,57 @@ public class MigrationCourtDataMapper {
      * @return list of DX code data or {@code null} when none exist
      */
     private List<CourtDxCodeData> mapCourtDxCodes(final Court court) {
-        List<CourtDxCode> courtDxCodes = court.getCourtDxCodes();
-        if (CollectionUtils.isEmpty(courtDxCodes)) {
+        return mapToListOrNull(court.getCourtDxCodes(), this::toDxCodeData);
+    }
+
+    private CourtFaxData toFaxData(final CourtContact courtContact) {
+        if (courtContact == null) {
+            return null;
+        }
+        Contact contact = courtContact.getContact();
+        if (contact == null || !contact.isFax()) {
+            return null;
+        }
+        return new CourtFaxData(
+            toStringOrNull(contact.getId()),
+            contact.getNumber()
+        );
+    }
+
+    private CourtDxCodeData toDxCodeData(final CourtDxCode courtDxCode) {
+        if (courtDxCode == null) {
+            return null;
+        }
+        uk.gov.hmcts.dts.fact.entity.DxCode dxCode = courtDxCode.getDxCode();
+        if (dxCode == null) {
+            return null;
+        }
+        return new CourtDxCodeData(
+            toStringOrNull(dxCode.getId()),
+            dxCode.getCode(),
+            dxCode.getExplanation()
+        );
+    }
+
+    private static boolean isEmpty(final Collection<?> collection) {
+        return collection == null || collection.isEmpty();
+    }
+
+    private static <T> List<T> nullIfEmpty(final List<T> items) {
+        return items == null || items.isEmpty() ? null : items;
+    }
+
+    private static <T, R> List<R> mapToListOrNull(final Collection<T> source, final Function<T, R> mapper) {
+        if (isEmpty(source)) {
             return null;
         }
 
-        List<CourtDxCodeData> dxCodes = courtDxCodes.stream()
-            .map(CourtDxCode::getDxCode)
+        List<R> mapped = source.stream()
+            .map(mapper)
             .filter(Objects::nonNull)
-            .map(dxCode -> new CourtDxCodeData(
-                toStringOrNull(dxCode.getId()),
-                dxCode.getCode(),
-                dxCode.getExplanation()
-            ))
             .collect(Collectors.toList());
 
-        return dxCodes.isEmpty() ? null : dxCodes;
-    }
-
-    /**
-     * Convert a SQL timestamp into a UTC offset date-time representation.
-     * @param timestamp timestamp stored in the database
-     * @return offset date-time in UTC or {@code null} when input is null
-     */
-    private OffsetDateTime toOffsetDateTime(final Timestamp timestamp) {
-        return timestamp == null ? null : timestamp.toInstant().atOffset(ZoneOffset.UTC);
+        return mapped.isEmpty() ? null : mapped;
     }
 
     private static String toStringOrNull(final Integer value) {

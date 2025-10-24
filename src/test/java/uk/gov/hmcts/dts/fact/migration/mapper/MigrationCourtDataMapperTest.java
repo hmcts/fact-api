@@ -23,7 +23,6 @@ import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,11 +65,8 @@ class MigrationCourtDataMapperTest {
         assertThat(result.getId()).isEqualTo("1");
         assertThat(result.getName()).isEqualTo("Test Court");
         assertThat(result.getSlug()).isEqualTo("test-court");
-        assertThat(result.getTemporaryUrgentNotice()).isEqualTo("notice");
         assertThat(result.getOpen()).isTrue();
         assertThat(result.getServiceCentre()).isFalse();
-        assertThat(result.getCreatedAt()).isEqualTo(OffsetDateTime.parse("2024-01-01T10:00Z"));
-        assertThat(result.getLastUpdatedAt()).isEqualTo(OffsetDateTime.parse("2024-01-02T11:30Z"));
         assertThat(result.getCourtServiceAreas()).isNull();
         assertThat(result.getCourtPostcodes()).isNull();
         assertThat(result.getCourtCodes()).isNull();

@@ -276,7 +276,6 @@ class MigrationPrivateDataServiceTest {
         assertThat(first.getId()).isEqualTo("12");
         assertThat(first.getSlug()).isEqualTo("test-slug");
         assertThat(first.getOpen()).isTrue();
-        assertThat(first.getTemporaryUrgentNotice()).isEqualTo("urgent notice");
         assertThat(first.getRegionId()).isEqualTo(9);
         assertThat(first.getServiceCentre()).isTrue();
         assertThat(first.getCourtServiceAreas()).hasSize(1);
