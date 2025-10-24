@@ -80,7 +80,6 @@ class CourtServiceTest {
     private static final double LON = 0.7;
     private static final String LOCAL_AUTHORITY_NAME = "Suffolk County Council";
     private static final String CHILDREN = "Children";
-    private static final List<String> CHILDREN_AS_LIST = List.of("Children");
     private static final String IMMIGRATION = "Immigration";
     private static final String EMPLOYMENT = "Employment";
     private static final String GLASGOW_TRIBUNALS_CENTRE = "Glasgow Tribunals Centre";
@@ -700,7 +699,7 @@ class CourtServiceTest {
             courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
                 JE2_4BA,
                 serviceAreaSlug,
-                List.of("money-claims"),
+                "money-claims",
                 Action.NEAREST,
                 true
             );
@@ -739,7 +738,7 @@ class CourtServiceTest {
         final ServiceAreaWithCourtReferencesWithDistance results = courtService.getNearestCourtsByAreaOfLawSinglePointOfEntry(
             JE2_4BA,
             serviceAreaSlug,
-            CHILDREN_AS_LIST,
+            CHILDREN,
             Action.DOCUMENTS,
             true
         );
