@@ -11,6 +11,4 @@ import lombok.Getter;
 public class CourtPostcodeData {
     private final Integer id;
     private final String postcode;
-    private final Integer courtId;
 }
-

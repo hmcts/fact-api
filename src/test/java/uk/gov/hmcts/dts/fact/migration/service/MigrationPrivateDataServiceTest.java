@@ -280,7 +280,6 @@ class MigrationPrivateDataServiceTest {
         CourtServiceAreaData courtServiceAreaData = first.getCourtServiceAreas().get(0);
         assertThat(courtServiceAreaData.getServiceAreaIds()).containsExactlyInAnyOrder(2, 3);
         assertThat(courtServiceAreaData.getCatchmentType()).isEqualTo("regional");
-        assertThat(courtServiceAreaData.getCourtId()).isEqualTo(12);
         assertThat(courtServiceAreaData.getId()).isEqualTo(50);
 
         assertThat(first.getCourtPostcodes()).hasSize(2);
@@ -291,7 +290,6 @@ class MigrationPrivateDataServiceTest {
 
         CourtCodeData courtCodes = first.getCourtCodes();
         assertThat(courtCodes).isNotNull();
-        assertThat(courtCodes.getCourtId()).isEqualTo("12");
         assertThat(courtCodes.getCrownCourtCode()).isEqualTo(1111);
         assertThat(courtCodes.getCountyCourtCode()).isEqualTo(2222);
         assertThat(courtCodes.getMagistrateCourtCode()).isEqualTo(3333);
@@ -302,20 +300,17 @@ class MigrationPrivateDataServiceTest {
         CourtAreasOfLawData courtAreasOfLawData = first.getCourtAreasOfLaw();
         assertThat(courtAreasOfLawData).isNotNull();
         assertThat(courtAreasOfLawData.getId()).isEqualTo("70");
-        assertThat(courtAreasOfLawData.getCourtId()).isEqualTo("12");
         assertThat(courtAreasOfLawData.getAreasOfLaw()).containsExactly(9);
 
         CourtSinglePointOfEntryData spoe = first.getCourtSinglePointsOfEntry();
         assertThat(spoe).isNotNull();
         assertThat(spoe.getId()).isEqualTo("80");
-        assertThat(spoe.getCourtId()).isEqualTo("12");
         assertThat(spoe.getAreasOfLaw()).containsExactly(9);
 
         List<CourtDxCodeData> dxCodes = first.getCourtDxCodes();
         assertThat(dxCodes).hasSize(1);
         CourtDxCodeData dxData = dxCodes.get(0);
         assertThat(dxData.getId()).isEqualTo("120");
-        assertThat(dxData.getCourtId()).isEqualTo("12");
         assertThat(dxData.getDxCode()).isEqualTo("DX123");
         assertThat(dxData.getExplanation()).isEqualTo("DX explanation");
 
@@ -323,7 +318,6 @@ class MigrationPrivateDataServiceTest {
         assertThat(faxData).hasSize(1);
         CourtFaxData fax = faxData.get(0);
         assertThat(fax.getId()).isEqualTo("90");
-        assertThat(fax.getCourtId()).isEqualTo("12");
         assertThat(fax.getFaxNumber()).isEqualTo("0123456789");
 
         CourtPhotoData photo = first.getCourtPhoto();

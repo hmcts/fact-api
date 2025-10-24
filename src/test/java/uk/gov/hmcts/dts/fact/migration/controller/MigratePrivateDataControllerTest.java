@@ -53,13 +53,13 @@ class MigratePrivateDataControllerTest {
             OffsetDateTime.now(),
             9,
             Boolean.TRUE,
-            List.of(new CourtServiceAreaData(50, List.of(2, 3), 12, "regional")),
-            List.of(new CourtPostcodeData(100, "AB1 2CD", 12)),
-            new CourtCodeData("12", "12", 3333, 4444, 5555, 2222, 1111, "GBS123"),
-            new CourtAreasOfLawData("70", List.of(9), "12"),
-            new CourtSinglePointOfEntryData("80", List.of(9), "12"),
-            List.of(new CourtDxCodeData("120", "12", "DX123", "DX explanation")),
-            List.of(new CourtFaxData("90", "12", "0123456789")),
+            List.of(new CourtServiceAreaData(50, List.of(2, 3), "regional")),
+            List.of(new CourtPostcodeData(100, "AB1 2CD")),
+            new CourtCodeData("12", 3333, 4444, 5555, 2222, 1111, "GBS123"),
+            new CourtAreasOfLawData("70", List.of(9)),
+            new CourtSinglePointOfEntryData("80", List.of(9)),
+            List.of(new CourtDxCodeData("120", "DX123", "DX explanation")),
+            List.of(new CourtFaxData("90", "0123456789")),
             new CourtPhotoData("https://factaat.blob.core.windows.net/images/court.jpg")
         );
         MigrationExportResponse expected = new MigrationExportResponse(

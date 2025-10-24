@@ -10,7 +10,5 @@ import lombok.Getter;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CourtFaxData {
     private final String id;
-    private final String courtId;
     private final String faxNumber;
 }
-

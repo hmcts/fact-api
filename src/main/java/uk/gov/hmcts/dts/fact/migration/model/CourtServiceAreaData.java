@@ -15,7 +15,5 @@ public class CourtServiceAreaData {
     private final Integer id;
     @JsonProperty("service_area_ids")
     private final List<Integer> serviceAreaIds;
-    private final Integer courtId;
     private final String catchmentType;
 }
-

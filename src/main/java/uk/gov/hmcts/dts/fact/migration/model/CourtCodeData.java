@@ -10,7 +10,6 @@ import lombok.Getter;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CourtCodeData {
     private final String id;
-    private final String courtId;
     private final Integer magistrateCourtCode;
     private final Integer familyCourtCode;
     private final Integer tribunalCode;

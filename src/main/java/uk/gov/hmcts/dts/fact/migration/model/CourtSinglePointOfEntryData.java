@@ -13,6 +13,4 @@ import java.util.List;
 public class CourtSinglePointOfEntryData {
     private final String id;
     private final List<Integer> areasOfLaw;
-    private final String courtId;
 }
-

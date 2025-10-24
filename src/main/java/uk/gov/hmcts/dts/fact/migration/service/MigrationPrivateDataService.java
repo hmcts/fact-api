@@ -196,8 +196,7 @@ public class MigrationPrivateDataService {
             .filter(Objects::nonNull)
             .map(courtPostcode -> new CourtPostcodeData(
                 courtPostcode.getId(),
-                courtPostcode.getPostcode(),
-                courtPostcode.getCourt() == null ? null : courtPostcode.getCourt().getId()
+                courtPostcode.getPostcode()
             ))
             .collect(Collectors.toList());
     }
@@ -294,7 +293,6 @@ public class MigrationPrivateDataService {
 
         return new CourtCodeData(
             courtId,
-            courtId,
             court.getMagistrateCode(),
             court.getCourtCode(),
             court.getLocationCode(),
@@ -340,7 +338,6 @@ public class MigrationPrivateDataService {
                 return new CourtServiceAreaData(
                     id,
                     serviceAreaIds,
-                    court.getId(),
                     entry.getKey()
                 );
             })
@@ -374,7 +371,7 @@ public class MigrationPrivateDataService {
             .findFirst()
             .orElse(null);
 
-        return new CourtAreasOfLawData(id, areaIds, courtIdAsString);
+        return new CourtAreasOfLawData(id, areaIds);
     }
 
     private CourtSinglePointOfEntryData mapCourtSinglePointsOfEntry(final Court court) {
@@ -404,7 +401,7 @@ public class MigrationPrivateDataService {
             .findFirst()
             .orElse(null);
 
-        return new CourtSinglePointOfEntryData(id, areaIds, courtIdAsString);
+        return new CourtSinglePointOfEntryData(id, areaIds);
     }
 
     private List<CourtFaxData> mapCourtFaxNumbers(final Court court) {
@@ -419,7 +416,6 @@ public class MigrationPrivateDataService {
             .filter(Contact::isFax)
             .map(contact -> new CourtFaxData(
                 contact.getId() == null ? null : contact.getId().toString(),
-                court.getId() == null ? null : court.getId().toString(),
                 contact.getNumber()
             ))
             .filter(Objects::nonNull)
@@ -454,7 +450,6 @@ public class MigrationPrivateDataService {
                 }
                 return new CourtDxCodeData(
                     dxCode.getId() == null ? null : dxCode.getId().toString(),
-                    court.getId() == null ? null : court.getId().toString(),
                     dxCode.getCode(),
                     dxCode.getExplanation()
                 );

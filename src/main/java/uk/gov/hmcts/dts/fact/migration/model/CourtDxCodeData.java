@@ -10,8 +10,6 @@ import lombok.Getter;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CourtDxCodeData {
     private final String id;
-    private final String courtId;
     private final String dxCode;
     private final String explanation;
 }
-
