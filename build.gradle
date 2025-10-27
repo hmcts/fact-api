@@ -218,7 +218,7 @@ dependencies {
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.6.0'
   implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20240325.1'
   implementation group: 'com.google.guava', name: 'guava', version: '33.5.0-jre'
-  implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
+  implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
   implementation group: 'io.github.resilience4j', name: 'resilience4j-spring-boot3', version: '2.3.0'
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
