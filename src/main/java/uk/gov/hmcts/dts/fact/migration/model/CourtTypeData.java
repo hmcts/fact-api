@@ -12,5 +12,4 @@ import lombok.Getter;
 public class CourtTypeData {
     private final Integer id;
     private final String name;
-    private final String search;
 }

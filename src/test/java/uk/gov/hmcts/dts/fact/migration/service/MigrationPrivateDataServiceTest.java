@@ -323,11 +323,11 @@ class MigrationPrivateDataServiceTest {
         assertThat(response.getLocalAuthorityTypes().get(0).getName()).isEqualTo("Authority");
 
         assertThat(response.getServiceAreas()).hasSize(1);
-        assertThat(response.getServiceAreas().get(0).getSlug()).isEqualTo("service-area");
+        assertThat(response.getServiceAreas().get(0).getName()).isEqualTo("Service Area");
         assertThat(response.getServiceAreas().get(0).getAreaOfLawId()).isEqualTo(6);
 
         assertThat(response.getServices()).hasSize(1);
-        assertThat(response.getServices().get(0).getSlug()).isEqualTo("service");
+        assertThat(response.getServices().get(0).getName()).isEqualTo("Service");
 
         assertThat(response.getContactDescriptionTypes()).hasSize(1);
         assertThat(response.getContactDescriptionTypes().get(0).getDescription()).isEqualTo("Phone");

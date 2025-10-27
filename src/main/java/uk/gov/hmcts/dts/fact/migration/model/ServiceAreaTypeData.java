@@ -15,7 +15,6 @@ public class ServiceAreaTypeData {
     private final String nameCy;
     private final String description;
     private final String descriptionCy;
-    private final String slug;
     private final String onlineUrl;
     private final String onlineText;
     private final String onlineTextCy;

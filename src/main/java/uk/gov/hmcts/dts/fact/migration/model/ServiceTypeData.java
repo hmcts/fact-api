@@ -15,5 +15,4 @@ public class ServiceTypeData {
     private final String nameCy;
     private final String description;
     private final String descriptionCy;
-    private final String slug;
 }

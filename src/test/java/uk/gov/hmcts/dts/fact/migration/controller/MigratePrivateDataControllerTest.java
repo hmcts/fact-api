@@ -62,15 +62,14 @@ class MigratePrivateDataControllerTest {
             List.of(court),
             List.of(new LocalAuthorityTypeData(1, "Authority")),
             List.of(new ServiceAreaTypeData(2, "Service Area", "Service Area Cy", "desc", "desc cy",
-                "service-area", "http://example.com", "online", "online cy", "type", "text",
+                "http://example.com", "online", "online cy", "type", "text",
                 "text cy", "catchment", 6)),
-            List.of(new ServiceTypeData(3, "Service", "Service Cy", "service desc", "service desc cy", "service")),
+            List.of(new ServiceTypeData(3, "Service", "Service Cy", "service desc", "service desc cy")),
             List.of(new ContactDescriptionTypeData(4, "Phone", "Phone cy")),
             List.of(new OpeningHourTypeData(5, "Opening", "Opening cy")),
-            List.of(new CourtTypeData(7, "Court Type", "court-type")),
+            List.of(new CourtTypeData(7, "Court Type")),
             List.of(new RegionData(8, "Region", "England")),
-            List.of(new AreaOfLawTypeData(9, "Area", "http://external", "http://external-cy", "desc",
-                "desc cy", "alt", "alt cy", "display", "display cy", "Y"))
+            List.of(new AreaOfLawTypeData(9, "Area", "Area Cy"))
         );
         when(migrationPrivateDataService.getCourtExport()).thenReturn(expected);
 

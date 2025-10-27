@@ -12,13 +12,5 @@ import lombok.Getter;
 public class AreaOfLawTypeData {
     private final Integer id;
     private final String name;
-    private final String externalLink;
-    private final String externalLinkCy;
-    private final String externalLinkDescription;
-    private final String externalLinkDescriptionCy;
-    private final String altName;
-    private final String altNameCy;
-    private final String displayName;
-    private final String displayNameCy;
-    private final String displayExternalLink;
+    private final String nameCy;
 }

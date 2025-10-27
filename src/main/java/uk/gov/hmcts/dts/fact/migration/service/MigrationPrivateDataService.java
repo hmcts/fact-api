@@ -157,7 +157,6 @@ public class MigrationPrivateDataService {
             serviceArea.getNameCy(),
             serviceArea.getDescription(),
             serviceArea.getDescriptionCy(),
-            serviceArea.getSlug(),
             serviceArea.getOnlineUrl(),
             serviceArea.getOnlineText(),
             serviceArea.getOnlineTextCy(),
@@ -180,8 +179,7 @@ public class MigrationPrivateDataService {
             service.getName(),
             service.getNameCy(),
             service.getDescription(),
-            service.getDescriptionCy(),
-            service.getSlug()
+            service.getDescriptionCy()
         );
     }
 
@@ -219,8 +217,7 @@ public class MigrationPrivateDataService {
     private CourtTypeData toCourtTypeData(final CourtType courtType) {
         return new CourtTypeData(
             courtType.getId(),
-            courtType.getName(),
-            courtType.getSearch()
+            courtType.getName()
         );
     }
 
@@ -246,15 +243,7 @@ public class MigrationPrivateDataService {
         return new AreaOfLawTypeData(
             areaOfLaw.getId(),
             areaOfLaw.getName(),
-            areaOfLaw.getExternalLink(),
-            areaOfLaw.getExternalLinkCy(),
-            areaOfLaw.getExternalLinkDescription(),
-            areaOfLaw.getExternalLinkDescriptionCy(),
-            areaOfLaw.getAltName(),
-            areaOfLaw.getAltNameCy(),
-            areaOfLaw.getDisplayName(),
-            areaOfLaw.getDisplayNameCy(),
-            areaOfLaw.getDisplayExternalLink()
+            areaOfLaw.getDisplayNameCy()
         );
     }
 }
