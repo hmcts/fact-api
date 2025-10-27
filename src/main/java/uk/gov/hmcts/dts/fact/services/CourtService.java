@@ -266,7 +266,7 @@ public class CourtService {
         return new ServiceAreaWithCourtReferencesWithDistance(serviceArea, convert(courts));
     }
 
-    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final List<String> areasOfLaw, final Action action, final Boolean includeClosed) {
+    public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByAreaOfLawSinglePointOfEntry(final String postcode, final String serviceArea, final String areaOfLaw, final Action action, final Boolean includeClosed) {
         ServiceAreaWithCourtReferencesWithDistance results = this.getNearestCourtsByPostcodeSearch(
             postcode,
             serviceArea,
@@ -279,7 +279,7 @@ public class CourtService {
         }
         results.setCourts(results.getCourts()
                               .stream()
-                              .filter(court -> court.getAreasOfLawSpoe().stream().anyMatch(areasOfLaw::contains))
+                              .filter(c -> c.getAreasOfLawSpoe().contains(areaOfLaw))
                               .findFirst()
                               .stream()
                               .collect(toList()));
