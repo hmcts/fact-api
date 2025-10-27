@@ -11,6 +11,6 @@ import lombok.Getter;
 @SuppressWarnings("ClassCanBeRecord") // Keep Lombok POJO until Checkstyle handles records
 public class OpeningHourTypeData {
     private final Integer id;
-    private final String description;
-    private final String descriptionCy;
+    private final String name;
+    private final String nameCy;
 }

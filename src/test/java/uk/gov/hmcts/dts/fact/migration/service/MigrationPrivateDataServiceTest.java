@@ -330,10 +330,10 @@ class MigrationPrivateDataServiceTest {
         assertThat(response.getServices().get(0).getName()).isEqualTo("Service");
 
         assertThat(response.getContactDescriptionTypes()).hasSize(1);
-        assertThat(response.getContactDescriptionTypes().get(0).getDescription()).isEqualTo("Phone");
+        assertThat(response.getContactDescriptionTypes().get(0).getName()).isEqualTo("Phone");
 
         assertThat(response.getOpeningHourTypes()).hasSize(1);
-        assertThat(response.getOpeningHourTypes().get(0).getDescription()).isEqualTo("Opening");
+        assertThat(response.getOpeningHourTypes().get(0).getName()).isEqualTo("Opening");
 
         assertThat(response.getCourtTypes()).hasSize(1);
         assertThat(response.getCourtTypes().get(0).getName()).isEqualTo("Court Type");
