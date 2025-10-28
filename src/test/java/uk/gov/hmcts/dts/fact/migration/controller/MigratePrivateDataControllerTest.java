@@ -73,7 +73,7 @@ class MigratePrivateDataControllerTest {
         );
         when(migrationPrivateDataService.getCourtExport()).thenReturn(expected);
 
-        MigrationExportResponse response = migratePrivateDataController.migratePrivateData();
+        MigrationExportResponse response = migratePrivateDataController.migratePrivateData().getBody();
 
         assertThat(response).isEqualTo(expected);
         verify(migrationPrivateDataService).getCourtExport();
