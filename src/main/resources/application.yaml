@@ -64,6 +64,9 @@ mapit:
     area-search: /areas
     quota: /quota
 
+storageAccount:
+  imageUrl: ${IMAGE_BASE_URL:https://factaat.blob.core.windows.net/images}
+
 launchDarkly:
   sdk-key: ${LAUNCH_DARKLY_SDK_KEY:}
 
