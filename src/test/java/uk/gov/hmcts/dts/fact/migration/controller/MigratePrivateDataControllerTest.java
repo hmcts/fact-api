@@ -11,9 +11,10 @@ import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtFaxData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtLocalAuthorityData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPhotoData;
-import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtProfessionalInformationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtTypeData;
@@ -50,7 +51,8 @@ class MigratePrivateDataControllerTest {
             9,
             Boolean.TRUE,
             List.of(new CourtServiceAreaData(50, List.of(2, 3), "regional")),
-            List.of(new CourtPostcodeData(100, "AB1 2CD")),
+            List.of(new CourtLocalAuthorityData(60, 9, List.of(1, 2))),
+            new CourtProfessionalInformationData(Boolean.TRUE, null, null, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE),
             new CourtCodeData("12", 3333, 4444, 5555, 2222, 1111, "GBS123"),
             new CourtAreasOfLawData("70", List.of(9)),
             new CourtSinglePointOfEntryData("80", List.of(9)),

@@ -13,9 +13,11 @@ import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
-import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
+import uk.gov.hmcts.dts.fact.entity.CourtLocalAuthorityAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.DxCode;
+import uk.gov.hmcts.dts.fact.entity.Facility;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
 import uk.gov.hmcts.dts.fact.entity.OpeningType;
 import uk.gov.hmcts.dts.fact.entity.Region;
@@ -37,6 +39,7 @@ import uk.gov.hmcts.dts.fact.repositories.AreasOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.ContactTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtTypeRepository;
 import uk.gov.hmcts.dts.fact.repositories.LocalAuthorityRepository;
@@ -75,6 +78,8 @@ class MigrationPrivateDataServiceTest {
     private CourtAreaOfLawRepository courtAreaOfLawRepository;
     @Mock
     private CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
+    @Mock
+    private CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
 
     private MigrationPrivateDataService migrationPrivateDataService;
 
@@ -95,6 +100,7 @@ class MigrationPrivateDataServiceTest {
             new MigrationCourtDataMapper(
                 courtAreaOfLawRepository,
                 courtAreaOfLawSpoeRepository,
+                courtLocalAuthorityAreaOfLawRepository,
                 "https://factaat.blob.core.windows.net/images"
             )
         );
@@ -220,17 +226,23 @@ class MigrationPrivateDataServiceTest {
 
         court.setServiceAreaCourts(List.of(serviceAreaCourt, secondServiceAreaCourt));
 
-        CourtPostcode postcodeOne = new CourtPostcode();
-        postcodeOne.setId(100);
-        postcodeOne.setPostcode("AB1 2CD");
-        postcodeOne.setCourt(court);
+        InPerson inPerson = new InPerson();
+        inPerson.setAccessScheme(true);
+        inPerson.setCommonPlatform(false);
+        inPerson.setCourtId(court);
+        court.setInPerson(inPerson);
 
-        CourtPostcode postcodeTwo = new CourtPostcode();
-        postcodeTwo.setId(101);
-        postcodeTwo.setPostcode("EF3 4GH");
-        postcodeTwo.setCourt(court);
+        Facility videoFacility = new Facility();
+        videoFacility.setName("Video facilities");
+        Facility interviewFacility = new Facility();
+        interviewFacility.setName("Interview room");
+        court.setFacilities(List.of(videoFacility, interviewFacility));
 
-        court.setCourtPostcodes(List.of(postcodeOne, postcodeTwo));
+        CourtLocalAuthorityAreaOfLaw courtLocalAuthorityArea = new CourtLocalAuthorityAreaOfLaw();
+        courtLocalAuthorityArea.setId(85);
+        courtLocalAuthorityArea.setCourt(court);
+        courtLocalAuthorityArea.setAreaOfLaw(areaOfLawType);
+        courtLocalAuthorityArea.setLocalAuthority(localAuthorities.get(0));
 
         Contact faxContact = new Contact();
         faxContact.setId(90);
@@ -261,6 +273,7 @@ class MigrationPrivateDataServiceTest {
         when(areasOfLawRepository.findAll()).thenReturn(areaOfLawTypes);
         when(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(12)).thenReturn(courtAreasOfLaw);
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(12)).thenReturn(courtAreasOfLawSpoe);
+        when(courtLocalAuthorityAreaOfLawRepository.findByCourtId(12)).thenReturn(List.of(courtLocalAuthorityArea));
 
         MigrationExportResponse response = migrationPrivateDataService.getCourtExport();
 
@@ -277,11 +290,17 @@ class MigrationPrivateDataServiceTest {
         assertThat(courtServiceAreaData.getCatchmentType()).isEqualTo("regional");
         assertThat(courtServiceAreaData.getId()).isEqualTo(50);
 
-        assertThat(first.getCourtPostcodes()).hasSize(2);
-        assertThat(first.getCourtPostcodes().get(0).getId()).isEqualTo(100);
-        assertThat(first.getCourtPostcodes().get(0).getPostcode()).isEqualTo("AB1 2CD");
-        assertThat(first.getCourtPostcodes().get(1).getId()).isEqualTo(101);
-        assertThat(first.getCourtPostcodes().get(1).getPostcode()).isEqualTo("EF3 4GH");
+        assertThat(first.getCourtLocalAuthorities()).singleElement()
+            .satisfies(localAuthorityData -> {
+                assertThat(localAuthorityData.getAreaOfLawId()).isEqualTo(9);
+                assertThat(localAuthorityData.getLocalAuthorityIds()).containsExactly(1);
+            });
+
+        assertThat(first.getCourtProfessionalInformation()).isNotNull();
+        assertThat(first.getCourtProfessionalInformation().getInterviewRooms()).isTrue();
+        assertThat(first.getCourtProfessionalInformation().getVideoHearings()).isTrue();
+        assertThat(first.getCourtProfessionalInformation().getCommonPlatform()).isFalse();
+        assertThat(first.getCourtProfessionalInformation().getAccessScheme()).isTrue();
 
         CourtCodeData courtCodes = first.getCourtCodes();
         assertThat(courtCodes).isNotNull();

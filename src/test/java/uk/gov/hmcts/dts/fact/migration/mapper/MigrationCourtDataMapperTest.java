@@ -12,14 +12,18 @@ import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
-import uk.gov.hmcts.dts.fact.entity.CourtPostcode;
+import uk.gov.hmcts.dts.fact.entity.CourtLocalAuthorityAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.DxCode;
+import uk.gov.hmcts.dts.fact.entity.Facility;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPhotoData;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 
 import java.util.List;
 
@@ -36,12 +40,14 @@ class MigrationCourtDataMapperTest {
     private CourtAreaOfLawRepository courtAreaOfLawRepository;
     @Mock
     private CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
+    @Mock
+    private CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
 
     private MigrationCourtDataMapper mapper;
 
     @BeforeEach
     void setUp() {
-        mapper = new MigrationCourtDataMapper(courtAreaOfLawRepository, courtAreaOfLawSpoeRepository, IMAGE_BASE);
+        mapper = new MigrationCourtDataMapper(courtAreaOfLawRepository, courtAreaOfLawSpoeRepository, courtLocalAuthorityAreaOfLawRepository, IMAGE_BASE);
     }
 
     @Test
@@ -64,7 +70,12 @@ class MigrationCourtDataMapperTest {
         assertThat(result.getOpen()).isTrue();
         assertThat(result.getServiceCentre()).isFalse();
         assertThat(result.getCourtServiceAreas()).isNull();
-        assertThat(result.getCourtPostcodes()).isNull();
+        assertThat(result.getCourtLocalAuthorities()).isNull();
+        assertThat(result.getCourtProfessionalInformation()).isNotNull();
+        assertThat(result.getCourtProfessionalInformation().getInterviewRooms()).isFalse();
+        assertThat(result.getCourtProfessionalInformation().getVideoHearings()).isFalse();
+        assertThat(result.getCourtProfessionalInformation().getCommonPlatform()).isFalse();
+        assertThat(result.getCourtProfessionalInformation().getAccessScheme()).isFalse();
         assertThat(result.getCourtCodes()).isNull();
         assertThat(result.getCourtAreasOfLaw()).isNull();
         assertThat(result.getCourtSinglePointsOfEntry()).isNull();
@@ -90,10 +101,27 @@ class MigrationCourtDataMapperTest {
         serviceAreaCourt.setServicearea(serviceArea);
         court.setServiceAreaCourts(List.of(serviceAreaCourt));
 
-        CourtPostcode courtPostcode = new CourtPostcode();
-        courtPostcode.setId(300);
-        courtPostcode.setPostcode("AB1 2CD");
-        court.setCourtPostcodes(List.of(courtPostcode));
+        InPerson inPerson = new InPerson();
+        inPerson.setAccessScheme(true);
+        inPerson.setCommonPlatform(true);
+        inPerson.setCourtId(court);
+        court.setInPerson(inPerson);
+
+        Facility interviewFacility = new Facility();
+        interviewFacility.setName("Interview room");
+        Facility videoFacility = new Facility();
+        videoFacility.setName("Video facilities");
+        court.setFacilities(List.of(interviewFacility, videoFacility));
+
+        LocalAuthority localAuthority = new LocalAuthority();
+        localAuthority.setId(321);
+        AreaOfLaw localAuthorityAreaOfLaw = new AreaOfLaw();
+        localAuthorityAreaOfLaw.setId(600);
+        CourtLocalAuthorityAreaOfLaw courtLocalAuthorityArea = new CourtLocalAuthorityAreaOfLaw();
+        courtLocalAuthorityArea.setId(322);
+        courtLocalAuthorityArea.setAreaOfLaw(localAuthorityAreaOfLaw);
+        courtLocalAuthorityArea.setCourt(court);
+        courtLocalAuthorityArea.setLocalAuthority(localAuthority);
 
         Contact faxContact = new Contact();
         faxContact.setId(400);
@@ -125,6 +153,7 @@ class MigrationCourtDataMapperTest {
 
         when(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(3)).thenReturn(List.of(courtAreaOfLaw));
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(3)).thenReturn(List.of(courtAreaOfLawSpoe));
+        when(courtLocalAuthorityAreaOfLawRepository.findByCourtId(3)).thenReturn(List.of(courtLocalAuthorityArea));
 
         CourtMigrationData result = mapper.mapCourt(court);
 
@@ -135,11 +164,17 @@ class MigrationCourtDataMapperTest {
                 assertThat(area.getServiceAreaIds()).containsExactly(20);
             });
 
-        assertThat(result.getCourtPostcodes()).singleElement()
-            .satisfies(postcode -> {
-                assertThat(postcode.getId()).isEqualTo(300);
-                assertThat(postcode.getPostcode()).isEqualTo("AB1 2CD");
+        assertThat(result.getCourtLocalAuthorities()).singleElement()
+            .satisfies(localAuthorityData -> {
+                assertThat(localAuthorityData.getAreaOfLawId()).isEqualTo(600);
+                assertThat(localAuthorityData.getLocalAuthorityIds()).containsExactly(321);
             });
+
+        assertThat(result.getCourtProfessionalInformation()).isNotNull();
+        assertThat(result.getCourtProfessionalInformation().getInterviewRooms()).isTrue();
+        assertThat(result.getCourtProfessionalInformation().getVideoHearings()).isTrue();
+        assertThat(result.getCourtProfessionalInformation().getAccessScheme()).isTrue();
+        assertThat(result.getCourtProfessionalInformation().getCommonPlatform()).isTrue();
 
         assertThat(result.getCourtFax()).singleElement()
             .satisfies(fax -> {

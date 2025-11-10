@@ -10,19 +10,24 @@ import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLawSpoe;
 import uk.gov.hmcts.dts.fact.entity.CourtContact;
 import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
+import uk.gov.hmcts.dts.fact.entity.CourtLocalAuthorityAreaOfLaw;
+import uk.gov.hmcts.dts.fact.entity.Facility;
+import uk.gov.hmcts.dts.fact.entity.InPerson;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtDxCodeData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtFaxData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtLocalAuthorityData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtMigrationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtPhotoData;
-import uk.gov.hmcts.dts.fact.migration.model.CourtPostcodeData;
+import uk.gov.hmcts.dts.fact.migration.model.CourtProfessionalInformationData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtServiceAreaData;
 import uk.gov.hmcts.dts.fact.migration.model.CourtSinglePointOfEntryData;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawRepository;
 import uk.gov.hmcts.dts.fact.repositories.CourtAreaOfLawSpoeRepository;
+import uk.gov.hmcts.dts.fact.repositories.CourtLocalAuthorityAreaOfLawRepository;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -42,13 +47,16 @@ public class MigrationCourtDataMapper {
 
     private final CourtAreaOfLawRepository courtAreaOfLawRepository;
     private final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository;
+    private final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository;
     private final String imageBaseUrl;
 
     public MigrationCourtDataMapper(final CourtAreaOfLawRepository courtAreaOfLawRepository,
                                     final CourtAreaOfLawSpoeRepository courtAreaOfLawSpoeRepository,
+                                    final CourtLocalAuthorityAreaOfLawRepository courtLocalAuthorityAreaOfLawRepository,
                                     @Value("${storageAccount.imageUrl}") final String imageBaseUrl) {
         this.courtAreaOfLawRepository = courtAreaOfLawRepository;
         this.courtAreaOfLawSpoeRepository = courtAreaOfLawSpoeRepository;
+        this.courtLocalAuthorityAreaOfLawRepository = courtLocalAuthorityAreaOfLawRepository;
         this.imageBaseUrl = imageBaseUrl;
     }
 
@@ -68,7 +76,8 @@ public class MigrationCourtDataMapper {
             court.getRegionId(),
             court.getServiceCentre() != null,
             mapCourtServiceAreas(court),
-            mapCourtPostcodes(court),
+            mapCourtLocalAuthorities(court),
+            mapCourtProfessionalInformation(court),
             mapCourtCodes(court),
             mapCourtAreasOfLaw(court),
             mapCourtSinglePointsOfEntry(court),
@@ -78,18 +87,75 @@ public class MigrationCourtDataMapper {
         );
     }
 
-    /**
-     * Convert associated court postcodes into export DTOs.
-     * @param court court entity including postcode data
-     * @return list of postcode data or {@code null} when none
-     */
-    private List<CourtPostcodeData> mapCourtPostcodes(final Court court) {
-        return mapToListOrNull(
-            court.getCourtPostcodes(),
-            courtPostcode -> new CourtPostcodeData(
-                courtPostcode.getId(),
-                courtPostcode.getPostcode()
-            )
+    private List<CourtLocalAuthorityData> mapCourtLocalAuthorities(final Court court) {
+        Integer courtId = court.getId();
+        if (courtId == null) {
+            return null;
+        }
+
+        List<CourtLocalAuthorityAreaOfLaw> associations =
+            courtLocalAuthorityAreaOfLawRepository.findByCourtId(courtId);
+        if (isEmpty(associations)) {
+            return null;
+        }
+
+        Map<Integer, List<CourtLocalAuthorityAreaOfLaw>> groupedByAreaOfLaw = associations.stream()
+            .filter(association -> association.getAreaOfLaw() != null && association.getAreaOfLaw().getId() != null)
+            .collect(Collectors.groupingBy(
+                association -> association.getAreaOfLaw().getId(),
+                LinkedHashMap::new,
+                Collectors.toList()
+            ));
+
+        List<CourtLocalAuthorityData> localAuthorities = groupedByAreaOfLaw.entrySet()
+            .stream()
+            .map(entry -> {
+                List<Integer> localAuthorityIds = entry.getValue().stream()
+                    .map(CourtLocalAuthorityAreaOfLaw::getLocalAuthority)
+                    .filter(Objects::nonNull)
+                    .map(localAuthority -> localAuthority.getId())
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+                if (localAuthorityIds.isEmpty()) {
+                    return null;
+                }
+
+                Integer associationId = entry.getValue().stream()
+                    .map(CourtLocalAuthorityAreaOfLaw::getId)
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(null);
+
+                return new CourtLocalAuthorityData(
+                    associationId,
+                    entry.getKey(),
+                    localAuthorityIds
+                );
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        return nullIfEmpty(localAuthorities);
+    }
+
+    private CourtProfessionalInformationData mapCourtProfessionalInformation(final Court court) {
+        List<Facility> facilities = court.getFacilities();
+        boolean hasInterviewRooms = hasFacility(facilities, "Interview room");
+        boolean hasVideoHearings = hasFacility(facilities, "Video facilities");
+
+        InPerson inPerson = court.getInPerson();
+        boolean accessScheme = inPerson != null && Boolean.TRUE.equals(inPerson.getAccessScheme());
+        boolean commonPlatform = inPerson != null && Boolean.TRUE.equals(inPerson.getCommonPlatform());
+
+        return new CourtProfessionalInformationData(
+            Boolean.valueOf(hasInterviewRooms),
+            null,
+            null,
+            Boolean.valueOf(hasVideoHearings),
+            Boolean.valueOf(commonPlatform),
+            Boolean.valueOf(accessScheme)
         );
     }
 
@@ -301,6 +367,17 @@ public class MigrationCourtDataMapper {
             dxCode.getCode(),
             dxCode.getExplanation()
         );
+    }
+
+    private static boolean hasFacility(final Collection<Facility> facilities, final String facilityName) {
+        if (isEmpty(facilities) || !StringUtils.hasText(facilityName)) {
+            return false;
+        }
+
+        return facilities.stream()
+            .map(Facility::getName)
+            .filter(Objects::nonNull)
+            .anyMatch(name -> facilityName.equalsIgnoreCase(name));
     }
 
     private static boolean isEmpty(final Collection<?> collection) {

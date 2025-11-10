@@ -21,7 +21,8 @@ public class CourtMigrationData {
     @JsonProperty("is_service_centre")
     private final Boolean serviceCentre;
     private final List<CourtServiceAreaData> courtServiceAreas;
-    private final List<CourtPostcodeData> courtPostcodes;
+    private final List<CourtLocalAuthorityData> courtLocalAuthorities;
+    private final CourtProfessionalInformationData courtProfessionalInformation;
     private final CourtCodeData courtCodes;
     private final CourtAreasOfLawData courtAreasOfLaw;
     private final CourtSinglePointOfEntryData courtSinglePointsOfEntry;
