@@ -19,6 +19,7 @@ AGENTS.md
 *.iws
 *.iml
 *.ipr
+AGENTS.md
 
 .DS_Store
 
