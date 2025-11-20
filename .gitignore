@@ -11,6 +11,7 @@ bin/main/application.yaml
 .project
 .settings
 .springBeans
+AGENTS.md
 
 ### IntelliJ IDEA ###
 .idea
@@ -21,6 +22,5 @@ bin/main/application.yaml
 AGENTS.md
 
 .DS_Store
-
 
 .env
