@@ -1,0 +1,32 @@
+package uk.gov.hmcts.dts.fact.migration.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.List;
+
+@Getter
+@AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@SuppressWarnings("ClassCanBeRecord") // Keep Lombok POJO until Checkstyle handles records
+public class CourtMigrationData {
+    private final String id;
+    private final String name;
+    private final String slug;
+    private final Boolean open;
+    private final Integer regionId;
+    @JsonProperty("is_service_centre")
+    private final Boolean serviceCentre;
+    private final List<CourtServiceAreaData> courtServiceAreas;
+    private final List<CourtLocalAuthorityData> courtLocalAuthorities;
+    private final CourtProfessionalInformationData courtProfessionalInformation;
+    private final CourtCodeData courtCodes;
+    private final CourtAreasOfLawData courtAreasOfLaw;
+    private final CourtSinglePointOfEntryData courtSinglePointsOfEntry;
+    private final List<CourtDxCodeData> courtDxCodes;
+    private final List<CourtFaxData> courtFax;
+    private final CourtPhotoData courtPhoto;
+}
