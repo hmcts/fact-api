@@ -62,31 +62,31 @@
   ],
   "facilities": [
     {
-      "description": "<p>Assistance dogs are welcome.</p>",
+      "description": "Assistance dogs are welcome.",
       "name": "Assistance dogs"
     },
     {
-      "description": "<p>The car park is unavailable for public access.</p>\r\n<p>&nbsp;</p>",
+      "description": "The car park is unavailable for public access.\r\n ",
       "name": "Parking"
     },
     {
-      "description": "<p>4 interview rooms are available on the ground floor</p>",
+      "description": "4 interview rooms are available on the ground floor",
       "name": "Interview room"
     },
     {
-      "description": "<p>The building has hearing enhancement facilities available by prior arrangement.&nbsp; Please contact the Court office by telephone or email if necessary.</p>",
+      "description": "The building has hearing enhancement facilities available by prior arrangement.  Please contact the Court office by telephone or email if necessary.",
       "name": "Hearing Loop"
     },
     {
-      "description": "<p>Baby changing facilities are available in the disabled toilets on the ground floor</p>\r\n<p>&nbsp;</p>",
+      "description": "Baby changing facilities are available in the disabled toilets on the ground floor\r\n ",
       "name": "Baby changing facility"
     },
     {
-      "description": "<p>This building has level access to the building entrance, and court room.</p>\r\n<p>&nbsp;</p>",
+      "description": "This building has level access to the building entrance, and court room.\r\n ",
       "name": "Disabled access"
     },
     {
-      "description": "<p>Video conference facilities excluding prison to court video links</p>",
+      "description": "Video conference facilities excluding prison to court video links",
       "name": "Video facilities"
     },
     {
