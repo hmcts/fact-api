@@ -223,7 +223,7 @@ dependencies {
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.4.10'
-  testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '7.0.0'
+  testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '7.0.2'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
