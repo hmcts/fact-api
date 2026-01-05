@@ -227,8 +227,8 @@ dependencies {
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
-  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.21.3'
-  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.21.3'
+  integrationTestImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.21.4'
+  integrationTestImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.21.4'
   integrationTestImplementation group: 'org.apiguardian', name: 'apiguardian-api', version: '1.1.2'
 
 
