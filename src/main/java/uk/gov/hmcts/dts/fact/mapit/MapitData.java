@@ -26,6 +26,8 @@ public class MapitData {
     Double lat;
     @JsonProperty("wgs84_lon")
     Double lon;
+    @JsonProperty("postcode")
+    String postcode;
 
     JsonNode shortcuts;
 

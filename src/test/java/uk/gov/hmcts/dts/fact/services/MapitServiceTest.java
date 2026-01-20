@@ -14,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.dts.fact.mapit.MapitArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
+import uk.gov.hmcts.dts.fact.repositories.PostcodeSearchUsageRepository;
 
 import java.util.Collections;
 import java.util.Map;
@@ -36,6 +37,9 @@ class MapitServiceTest {
     private MapitClient mapitClient;
 
     @MockitoBean
+    private PostcodeSearchUsageRepository postcodeSearchUsageRepository;
+
+    @MockitoBean
     private Logger logger;
 
     @Autowired
@@ -44,7 +48,7 @@ class MapitServiceTest {
     @Test
     void shouldReturnOptionalOfCoordinatesForValidPostcode() {
         final String postcode = "OX1 1RZ";
-        final MapitData mapitData = new MapitData(51.7, -1.2, null, null);
+        final MapitData mapitData = new MapitData(51.7, -1.2, null, null, null);
         when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
 
         final Optional<MapitData> result = mapitService.getMapitData(postcode);
@@ -57,7 +61,7 @@ class MapitServiceTest {
     @Test
     void shouldReturnOptionalOfCoordinatesForValidPartialPostcode() {
         final String postcode = "OX1";
-        final MapitData mapitData = new MapitData(51.7, -1.2, null, null);
+        final MapitData mapitData = new MapitData(51.7, -1.2, null, null, null);
         when(mapitClient.getMapitDataWithPartial(postcode)).thenReturn(mapitData);
 
         final Optional<MapitData> result = mapitService.getMapitDataWithPartial(postcode);
@@ -70,7 +74,7 @@ class MapitServiceTest {
     @Test
     void shouldReturnOptionalEmptyForUnsupportedPostcode() {
         final String postcode = "JE3 4BA";
-        final MapitData mapitData = new MapitData(null, null, null, null);
+        final MapitData mapitData = new MapitData(null, null, null, null, null);
         when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
 
         final Optional<MapitData> result = mapitService.getMapitData(postcode);
@@ -81,7 +85,7 @@ class MapitServiceTest {
     @Test
     void shouldReturnOptionalEmptyForUnsupportedPartialPostcode() {
         final String postcode = "JE3";
-        final MapitData mapitData = new MapitData(null, null, null, null);
+        final MapitData mapitData = new MapitData(null, null, null, null, null);
         when(mapitClient.getMapitDataWithPartial(postcode)).thenReturn(mapitData);
 
         final Optional<MapitData> result = mapitService.getMapitDataWithPartial(postcode);
