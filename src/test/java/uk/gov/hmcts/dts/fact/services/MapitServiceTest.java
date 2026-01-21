@@ -6,11 +6,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import uk.gov.hmcts.dts.fact.entity.PostcodeSearchUsage;
 import uk.gov.hmcts.dts.fact.mapit.MapitArea;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
@@ -21,8 +24,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -174,5 +179,77 @@ class MapitServiceTest {
 
         assertThat(mapitService.localAuthorityExists("Test Council")).isFalse();
         verify(logger).warn("Mapit API call (local authority validation) failed. HTTP Status: {} Message: {}", 400, RESPONSE_MESSAGE, feignException);
+    }
+
+    @Test
+    void postcodeMetricsAreTrackedForValidMapitPostcodeData() {
+        final String postcode = "OX1 1RZ";
+        final String cachePostcode = "OX1 1";
+
+        final MapitData mapitData = new MapitData(51.7, -1.2, postcode, null, null);
+        when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
+
+        final Optional<MapitData> result = mapitService.getMapitData(postcode);
+
+        assertThat(result)
+            .isPresent()
+            .isEqualTo(Optional.of(mapitData));
+
+        ArgumentCaptor<PostcodeSearchUsage> captor = ArgumentCaptor.forClass(PostcodeSearchUsage.class);
+        verify(postcodeSearchUsageRepository).save(captor.capture());
+        assertThat(captor.getValue()).isNotNull();
+        assertThat(captor.getValue().getFullPostcode()).isEqualTo(postcode);
+        assertThat(captor.getValue().getCachePostcode()).isEqualTo(cachePostcode);
+    }
+
+    @Test
+    void postcodeMetricsAreNotTrackedForMissingMapitPostcodeData() {
+        final String postcode = "OX1 1RZ";
+
+        final MapitData mapitData = new MapitData(51.7, -1.2, null, null, null);
+        when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
+
+        final Optional<MapitData> result = mapitService.getMapitData(postcode);
+
+        assertThat(result)
+            .isPresent()
+            .isEqualTo(Optional.of(mapitData));
+
+        verify(postcodeSearchUsageRepository, times(0)).save(any(PostcodeSearchUsage.class));
+        verify(logger).info("No valid postcode available in Mapit API response. Unable to track.");
+    }
+
+    @Test
+    void postcodeMetricsAreNotTrackedForBlankMapitPostcodeData() {
+        final String postcode = "OX1 1RZ";
+
+        final MapitData mapitData = new MapitData(51.7, -1.2, " ", null, null);
+        when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
+
+        final Optional<MapitData> result = mapitService.getMapitData(postcode);
+
+        assertThat(result)
+            .isPresent()
+            .isEqualTo(Optional.of(mapitData));
+
+        verify(postcodeSearchUsageRepository, times(0)).save(any(PostcodeSearchUsage.class));
+        verify(logger).info("No valid postcode available in Mapit API response. Unable to track.");
+    }
+
+    @Test
+    void postcodeMetricsTrackingFailuresDontBreakService() {
+        final String postcode = "OX1 1RZ";
+
+        final MapitData mapitData = new MapitData(51.7, -1.2, postcode, null, null);
+        when(mapitClient.getMapitData(postcode)).thenReturn(mapitData);
+        when(postcodeSearchUsageRepository.save(any())).thenThrow(new RuntimeException("A problem occurred"));
+
+        final Optional<MapitData> result = mapitService.getMapitData(postcode);
+
+        assertThat(result)
+            .isPresent()
+            .isEqualTo(Optional.of(mapitData));
+
+        verify(logger).warn(eq("Tracking postcode for Mapit API call failed: "), any(Exception.class));
     }
 }

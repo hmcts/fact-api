@@ -123,10 +123,10 @@ public class MapitService {
                 .map(PostcodeSearchUsage::fromPostcode)
                 .ifPresentOrElse(
                     postcodeSearchUsageRepository::save,
-                    () -> logger.warn("No postcode available in Mapit API response. Unable to track.")
+                    () -> logger.info("No valid postcode available in Mapit API response. Unable to track.")
                 );
         } catch (final Exception ex) {
-            logger.error("Tracking postcode for Mapit API call failed: ", ex);
+            logger.warn("Tracking postcode for Mapit API call failed: ", ex);
         }
         return response;
     }
