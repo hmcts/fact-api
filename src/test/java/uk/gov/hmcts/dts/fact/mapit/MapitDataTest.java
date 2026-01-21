@@ -163,4 +163,12 @@ class MapitDataTest {
 
         assertThrows(NotFoundException.class, mapitData::getRegionFromMapitData);
     }
+
+    @Test
+    void shouldConstructWithoutAPostcodeSpecified() {
+        final MapitData mapitData = new MapitData(1.2d, 2.3d, null, null);
+        assertThat(mapitData.getPostcode()).isNull();
+        assertThat(mapitData.getLat()).isEqualTo(1.2d);
+        assertThat(mapitData.getLon()).isEqualTo(2.3d);
+    }
 }
