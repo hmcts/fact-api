@@ -33,10 +33,6 @@ public class MapitData {
 
     JsonNode areas;
 
-    public MapitData(Double lat, Double lon, JsonNode shortcuts, JsonNode areas) {
-        this(lat, lon, null, shortcuts, areas);
-    }
-
     public boolean hasLatAndLonValues() {
         return null != getLat() && null != getLon();
     }
