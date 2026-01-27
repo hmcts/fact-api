@@ -5,8 +5,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import uk.gov.hmcts.dts.fact.entity.PostcodeSearchUsage;
 import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 import uk.gov.hmcts.dts.fact.mapit.MapitData;
+import uk.gov.hmcts.dts.fact.repositories.PostcodeSearchUsageRepository;
 
 import java.util.Optional;
 
@@ -18,6 +21,7 @@ public class MapitService {
 
     private final Logger logger;
     private final MapitClient mapitClient;
+    private final PostcodeSearchUsageRepository postcodeSearchUsageRepository;
 
     /**
      * Constructor for the MapitService.
@@ -26,9 +30,11 @@ public class MapitService {
      * @param mapitClient the client to get mapit data from
      */
     @Autowired
-    public MapitService(final Logger logger, final MapitClient mapitClient) {
+    public MapitService(final Logger logger, final MapitClient mapitClient,
+                        final PostcodeSearchUsageRepository postcodeSearchUsageRepository) {
         this.logger = logger;
         this.mapitClient = mapitClient;
+        this.postcodeSearchUsageRepository = postcodeSearchUsageRepository;
     }
 
     /**
@@ -41,7 +47,7 @@ public class MapitService {
 
         if (!postcode.isBlank()) {
             try {
-                final MapitData mapitData = mapitClient.getMapitData(postcode);
+                final MapitData mapitData = track(mapitClient.getMapitData(postcode));
 
                 if (mapitData.hasLatAndLonValues()) {
                     return Optional.of(mapitData);
@@ -102,5 +108,26 @@ public class MapitService {
             }
         }
         return false;
+    }
+
+    /**
+     * Passthrough method that tracks any postcode present in the {@link MapitData} response.
+     *
+     * @param response {@link MapitData} response
+     * @return the {@link MapitData} response
+     */
+    private MapitData track(MapitData response) {
+        try {
+            Optional.ofNullable(response.getPostcode())
+                .filter(postcode -> !postcode.isBlank())
+                .map(PostcodeSearchUsage::fromPostcode)
+                .ifPresentOrElse(
+                    postcodeSearchUsageRepository::save,
+                    () -> logger.info("No valid postcode available in Mapit API response. Unable to track.")
+                );
+        } catch (final Exception ex) {
+            logger.warn("Tracking postcode for Mapit API call failed: ", ex);
+        }
+        return response;
     }
 }

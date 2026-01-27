@@ -27,32 +27,32 @@ class MapitDataTest {
 
     @Test
     void shouldReturnTrueIfLonAndLatPresent() {
-        final MapitData mapitData = new MapitData(51.7, -1.2, null, null);
+        final MapitData mapitData = new MapitData(51.7, -1.2, null, null, null);
         assertThat(mapitData.hasLatAndLonValues()).isTrue();
     }
 
     @Test
     void shouldReturnFalseIfLonNotPresent() {
-        final MapitData mapitData = new MapitData(51.7, null, null, null);
+        final MapitData mapitData = new MapitData(51.7, null, null, null, null);
         assertThat(mapitData.hasLatAndLonValues()).isFalse();
     }
 
     @Test
     void shouldReturnFalseIfLatNotPresent() {
-        final MapitData mapitData = new MapitData(null, -1.2, null, null);
+        final MapitData mapitData = new MapitData(null, -1.2, null, null, null);
         assertThat(mapitData.hasLatAndLonValues()).isFalse();
     }
 
     @Test
     void shouldReturnFalseIfLatAndLonNotPresent() {
-        final MapitData mapitData = new MapitData(null, null, null, null);
+        final MapitData mapitData = new MapitData(null, null, null, null, null);
         assertThat(mapitData.hasLatAndLonValues()).isFalse();
     }
 
 
     @Test
     void shouldReturnOptionalEmptyWhenShortCutsNotFound() {
-        final MapitData mapitData = new MapitData(null, null, null, null);
+        final MapitData mapitData = new MapitData(null, null, null, null, null);
         assertThat(mapitData.getLocalAuthority()).isEmpty();
     }
 
@@ -60,7 +60,7 @@ class MapitDataTest {
     void shouldReturnOptionalEmptyWhenCouncilShortcutCantBeFound() {
         final JsonNode shortcuts = mock(JsonNode.class);
         when(shortcuts.get(matches(COUNCIL))).thenReturn(null);
-        final MapitData mapitData = new MapitData(null, null, shortcuts, null);
+        final MapitData mapitData = new MapitData(null, null, null, shortcuts, null);
         assertThat(mapitData.getLocalAuthority()).isEmpty();
     }
 
@@ -70,7 +70,7 @@ class MapitDataTest {
         when(shortcuts.get(matches(COUNCIL))).thenReturn(shortcuts);
         when(shortcuts.get(matches(COUNTY))).thenReturn(shortcuts);
         when(shortcuts.asText()).thenReturn(COUNCIL_AREA_NUMBER);
-        final MapitData mapitData = new MapitData(null, null, shortcuts, null);
+        final MapitData mapitData = new MapitData(null, null, null, shortcuts, null);
         assertThat(mapitData.getLocalAuthority()).isEmpty();
     }
 
@@ -82,7 +82,7 @@ class MapitDataTest {
         when(shortcuts.get(matches(COUNTY))).thenReturn(shortcuts);
         when(shortcuts.asText()).thenReturn(COUNCIL_AREA_NUMBER);
         when(areas.get(matches(COUNCIL_AREA_NUMBER))).thenReturn(null);
-        final MapitData mapitData = new MapitData(null, null, shortcuts, areas);
+        final MapitData mapitData = new MapitData(null, null, null, shortcuts, areas);
         assertThat(mapitData.getLocalAuthority()).isEmpty();
     }
 
@@ -97,7 +97,7 @@ class MapitDataTest {
         when(result.asText()).thenReturn(COUNCIL_12345);
         when(areas.get(matches(COUNCIL_AREA_NUMBER))).thenReturn(areas);
         when(areas.get(matches(NAME))).thenReturn(result);
-        final MapitData mapitData = new MapitData(null, null, shortcuts, areas);
+        final MapitData mapitData = new MapitData(null, null, null, shortcuts, areas);
         assertThat(mapitData.getLocalAuthority()).isPresent();
         assertThat(mapitData.getLocalAuthority()).contains(COUNCIL_12345);
     }
@@ -114,7 +114,7 @@ class MapitDataTest {
         when(result.asText()).thenReturn(COUNCIL_12345);
         when(areas.get(matches(COUNCIL_AREA_NUMBER))).thenReturn(areas);
         when(areas.get(matches(NAME))).thenReturn(result);
-        final MapitData mapitData = new MapitData(null, null, shortcuts, areas);
+        final MapitData mapitData = new MapitData(null, null, null, shortcuts, areas);
         assertThat(mapitData.getLocalAuthority()).isPresent();
         assertThat(mapitData.getLocalAuthority()).contains(COUNCIL_12345);
     }
@@ -129,7 +129,7 @@ class MapitDataTest {
         test.put("English Region", newNode);
         JsonNode areas = objectmapper.valueToTree(test);
 
-        final MapitData mapitData = new MapitData(null, null, null, areas);
+        final MapitData mapitData = new MapitData(null, null, null, null, areas);
 
         assertThat(mapitData.getRegionFromMapitData()).contains("North West");
     }
@@ -144,7 +144,7 @@ class MapitDataTest {
         test.put("Welsh Region", newNode);
         JsonNode areas = objectmapper.valueToTree(test);
 
-        final MapitData mapitData = new MapitData(null, null, null, areas);
+        final MapitData mapitData = new MapitData(null, null, null, null, areas);
 
         assertThat(mapitData.getRegionFromMapitData()).contains("North Wales");
     }
@@ -159,8 +159,9 @@ class MapitDataTest {
         test.put("No Region", newNode);
         JsonNode areas = objectmapper.valueToTree(test);
 
-        final MapitData mapitData = new MapitData(null, null, null, areas);
+        final MapitData mapitData = new MapitData(null, null, null, null, areas);
 
         assertThrows(NotFoundException.class, mapitData::getRegionFromMapitData);
     }
+
 }
