@@ -29,7 +29,9 @@ import uk.gov.hmcts.dts.fact.repositories.RegionRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceAreaRepository;
 import uk.gov.hmcts.dts.fact.repositories.ServiceRepository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -179,7 +181,12 @@ public class MigrationPrivateDataService {
             service.getName(),
             service.getNameCy(),
             service.getDescription(),
-            service.getDescriptionCy()
+            service.getDescriptionCy(),
+            Optional.ofNullable(service.getServiceAreas())
+                .map(serviceAreas -> serviceAreas.stream()
+                    .map(ServiceArea::getId)
+                    .toList())
+                .orElse(Collections.emptyList())
         );
     }
 

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -15,4 +17,5 @@ public class ServiceTypeData {
     private final String nameCy;
     private final String description;
     private final String descriptionCy;
+    private final List<Integer> serviceAreaIds;
 }
