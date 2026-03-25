@@ -20,7 +20,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.53.0'
   id 'org.sonarqube' version '7.2.3.7755'
   id 'org.flywaydb.flyway' version "$flywayVersion"
-  id 'io.freefair.lombok' version '9.1.0'
+  id 'io.freefair.lombok' version '9.2.0'
 }
 
 group = 'uk.gov.hmcts.dts'
@@ -214,7 +214,7 @@ dependencies {
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.postgresql', name: 'postgresql', version: versions.postgresql
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.10.2'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.12.0'
   implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.6.0'
   implementation group: 'com.googlecode.owasp-java-html-sanitizer', name: 'owasp-java-html-sanitizer', version: '20240325.1'
   implementation group: 'com.google.guava', name: 'guava', version: '33.5.0-jre'
