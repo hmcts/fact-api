@@ -77,3 +77,9 @@ resilience4j:
           limitForPeriod: 15
           limitRefreshPeriod: 1s
           timeoutDuration: 3s
+
+
+azure-maps:
+    client-id: ${AZURE_MAPS_CLIENT_ID:}
+    subscription-key: ${AZURE_MAPS_SUBSCRIPTION_KEY:}
+
