@@ -21,6 +21,7 @@ public class MapitData {
     private static final String COUNTY = "county";
     private static final String WELSH_REGION_CODE = "WAE";
     private static final String ENGLISH_REGION_CODE = "ER";
+    private static final String SCOTTISH_REGION_CODE = "SPC";
 
     @JsonProperty("wgs84_lat")
     Double lat;
@@ -64,10 +65,11 @@ public class MapitData {
     }
 
     public String getRegionFromMapitData() {
-        // For Welsh and English regions
+        // For Welsh, English and Scottish regions
         for (JsonNode mapitArea : this.areas) {
             if (WELSH_REGION_CODE.equals(mapitArea.get("type").asText())
-                || ENGLISH_REGION_CODE.equals(mapitArea.get("type").asText())) {
+                || ENGLISH_REGION_CODE.equals(mapitArea.get("type").asText())
+                || SCOTTISH_REGION_CODE.equals(mapitArea.get("type").asText())) {
                 return mapitArea.get("name").asText();
             }
         }
