@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    flywayVersion = '11.20.3'
+    flywayVersion = '12.4.0'
     postgresqlVersion = '42.7.10'
   }
   dependencies {
