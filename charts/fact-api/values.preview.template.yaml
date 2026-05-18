@@ -28,7 +28,7 @@ java:
     POSTGRES_DATABASE: "{{ .Values.postgresql.auth.database}}"
     POSTGRES_USER: "{{ .Values.postgresql.auth.username}}"
     POSTGRES_PASSWORD: "{{ .Values.postgresql.auth.password}}"
-    OAUTH_PROVIDER_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
+    OAUTH_PROVIDER_URL: https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
