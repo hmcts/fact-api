@@ -91,7 +91,7 @@ class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
 
         final var response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
-            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
             updatedJson
         );
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -105,7 +105,7 @@ class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
         //clean up by removing added record
         final var cleanUpResponse = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
-            Map.of(AUTHORIZATION, BEARER + authenticatedToken),
+            Map.of(AUTHORIZATION, BEARER + superAdminToken),
             originalJson
         );
         assertThat(cleanUpResponse.statusCode()).isEqualTo(OK.value());

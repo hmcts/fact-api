@@ -9,16 +9,22 @@ public class AdminFunctionalTestBase extends FunctionalTestBase {
     @Autowired
     private OAuthClient authClient;
 
-    protected String authenticatedToken;
-    protected String forbiddenToken;
-    protected String superAdminToken;
-    protected String viewerToken;
+    protected static String authenticatedToken;
+    protected static String forbiddenToken;
+    protected static String superAdminToken;
+    protected static String viewerToken;
+
+    private static final Object LOCK = new Object();
 
     @BeforeEach
     void setUpAuthenticationTokens() {
-        authenticatedToken = authClient.getToken();
-        forbiddenToken = authClient.getNobodyToken();
-        superAdminToken = authClient.getSuperAdminToken();
-        viewerToken = authClient.getViewerToken();
+        synchronized (LOCK) {
+            if (authenticatedToken == null) {
+                authenticatedToken = authClient.getToken();
+                forbiddenToken = authClient.getNobodyToken();
+                superAdminToken = authClient.getSuperAdminToken();
+                viewerToken = authClient.getViewerToken();
+            }
+        }
     }
 }

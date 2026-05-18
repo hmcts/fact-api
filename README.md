@@ -126,4 +126,3 @@ Then try restarting the application to build the api.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
