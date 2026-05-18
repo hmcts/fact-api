@@ -32,4 +32,4 @@ java:
           alias: APP_INSIGHTS_CONNECTION_STRING
   environment:
     IMAGE_BASE_URL: https://fact{{ .Values.global.environment }}.blob.core.windows.net/images
-    OAUTH_PROVIDER_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
+    OAUTH_PROVIDER_URL: https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net
