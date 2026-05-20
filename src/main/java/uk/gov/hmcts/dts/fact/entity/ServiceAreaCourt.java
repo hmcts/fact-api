@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -25,5 +26,6 @@ public class ServiceAreaCourt {
     @JoinColumn(name = "court_id")
     private Court court;
 
+    @Column(name = "catchment_type")
     private String catchmentType;
 }

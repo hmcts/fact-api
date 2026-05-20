@@ -5,8 +5,8 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,7 +16,6 @@ import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtInfoUpdate;
-import uk.gov.hmcts.dts.fact.model.admin.ImageFile;
 import uk.gov.hmcts.dts.fact.model.admin.NewCourt;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
 import uk.gov.hmcts.dts.fact.services.admin.AdminService;
@@ -31,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -118,11 +118,15 @@ class AdminCourtsControllerTest {
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName(testCourtName);
         newCourt.setServiceCentre(false);
+        String json = String.format(
+            "{\"newCourtName\":\"%s\",\"serviceCentre\":false,\"serviceAreas\":[],\"lon\":0.0,\"lat\":0.0}",
+            testCourtName
+        );
         when(adminService.addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre(),
                                       newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas())).thenReturn(expectedCourt);
-        mockMvc.perform(post(TEST_URL + "/")
+        mockMvc.perform(post(TEST_URL)
                             .with(csrf())
-                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                            .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
@@ -140,12 +144,16 @@ class AdminCourtsControllerTest {
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName(testCourtName);
         newCourt.setServiceCentre(true);
+        String json = String.format(
+            "{\"newCourtName\":\"%s\",\"serviceCentre\":true,\"serviceAreas\":[],\"lon\":0.0,\"lat\":0.0}",
+            testCourtName
+        );
         when(adminService.addNewCourt(testCourtName, testSlugName, newCourt.getServiceCentre(),
                                       newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas()))
             .thenReturn(expectedCourt);
-        mockMvc.perform(post(TEST_URL + "/")
+        mockMvc.perform(post(TEST_URL)
                             .with(csrf())
-                            .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+                            .content(json)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isCreated())
@@ -160,12 +168,13 @@ class AdminCourtsControllerTest {
         NewCourt newCourt = new NewCourt();
         newCourt.setNewCourtName("test court%$-");
         newCourt.setServiceCentre(false);
+        String json = "{\"newCourtName\":\"test court%$-\",\"serviceCentre\":false,\"serviceAreas\":[],\"lon\":0.0,\"lat\":0.0}";
         when(adminService.addNewCourt("test court%$-",
                                       "test-court%$-", newCourt.getServiceCentre(),
                                       newCourt.getLon(), newCourt.getLat(), newCourt.getServiceAreas())).thenReturn(expectedCourt);
         try {
-            mockMvc.perform(post(TEST_URL + "/")
-                                .content(OBJECT_MAPPER.writeValueAsString(newCourt))
+            mockMvc.perform(post(TEST_URL)
+                                .content(json)
                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                 .accept(MediaType.APPLICATION_JSON_VALUE));
         } catch (Exception e) {
@@ -204,7 +213,11 @@ class AdminCourtsControllerTest {
         when(adminService.getCourtBySlug(TEST_SEARCH_SLUG)).thenReturn(courtEntity);
         mockMvc.perform(get(String.format(TEST_URL + "/%s/general", TEST_SEARCH_SLUG)))
             .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson))
+            .andExpect(jsonPath("$.slug").value(courtEntity.getSlug()))
+            .andExpect(jsonPath("$.name").value(courtEntity.getName()))
+            .andExpect(jsonPath("$.nameCy").value(courtEntity.getNameCy()))
+            .andExpect(jsonPath("$.info").value(courtEntity.getInfo()))
+            .andExpect(jsonPath("$.infoCy").value(courtEntity.getInfoCy()))
             .andReturn();
     }
 
@@ -249,7 +262,7 @@ class AdminCourtsControllerTest {
             .andExpect(jsonPath("$.urgent_message").value(court.getAlert()))
             .andExpect(jsonPath("$.urgent_message_cy").value(court.getAlertCy()))
             .andExpect(jsonPath("$.info").value(court.getInfo()))
-            .andExpect(jsonPath("$.info_cy").value(court.getInfoCy()))
+            .andExpect(jsonPath("$.infoCy").value(court.getInfoCy()))
             .andReturn();
 
         verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SEARCH_SLUG, TEST_USER);
@@ -309,14 +322,9 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldUpdateCourtImageFile() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+        String json = String.format("{\"imageName\":\"%s\"}", TEST_COURT_PHOTO_NAME);
 
-        final ImageFile imageFile = new ImageFile();
-        imageFile.setImageName(TEST_COURT_PHOTO_NAME);
-
-        String json = mapper.writeValueAsString(imageFile);
-
-        when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenReturn(TEST_COURT_PHOTO_NAME);
+        when(adminService.updateCourtImage(TEST_SEARCH_SLUG, TEST_COURT_PHOTO_NAME)).thenReturn(TEST_COURT_PHOTO_NAME);
 
         mockMvc.perform(put(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG))
                             .with(csrf())
@@ -330,14 +338,10 @@ class AdminCourtsControllerTest {
 
     @Test
     void shouldNotUpdateCourtImageFileForUnknownSlug() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+        String json = String.format("{\"imageName\":\"%s\"}", TEST_COURT_PHOTO_NAME);
 
-        final ImageFile imageFile = new ImageFile();
-        imageFile.setImageName(TEST_COURT_PHOTO_NAME);
-
-        String json = mapper.writeValueAsString(imageFile);
-
-        when(adminService.updateCourtImage(TEST_SEARCH_SLUG, imageFile.getImageName())).thenThrow(new NotFoundException(SEARCH_CRITERIA));
+        when(adminService.updateCourtImage(eq(TEST_SEARCH_SLUG), eq(TEST_COURT_PHOTO_NAME)))
+            .thenThrow(new NotFoundException(SEARCH_CRITERIA));
         mockMvc.perform(put(String.format(TEST_URL + TEST_COURT_PHOTO_URL, TEST_SEARCH_SLUG))
                             .with(csrf())
                             .content(json)
@@ -347,6 +351,7 @@ class AdminCourtsControllerTest {
             .andExpect(content().json(JSON_NOT_FOUND_SEARCH_CRITERIA))
             .andReturn();
 
+        verify(adminService, times(1)).updateCourtImage(eq(TEST_SEARCH_SLUG), eq(TEST_COURT_PHOTO_NAME));
         verify(adminCourtLockService, times(1)).updateCourtLock(TEST_SEARCH_SLUG, TEST_USER);
     }
 }

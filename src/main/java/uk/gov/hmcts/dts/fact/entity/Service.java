@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -21,8 +22,12 @@ public class Service {
     @Id
     private Integer id;
     private String name;
+
+    @Column(name = "name_cy")
     private String nameCy;
     private String description;
+
+    @Column(name = "description_cy")
     private String descriptionCy;
     private String slug;
 

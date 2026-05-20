@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,8 +25,12 @@ public class Email extends Element {
     private Integer id;
     private String address;
     private String description;
+
+    @Column(name = "description_cy")
     private String descriptionCy;
     private String explanation;
+
+    @Column(name = "explanation_cy")
     private String explanationCy;
 
     @OneToOne()

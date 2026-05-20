@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,6 +34,7 @@ public class CourtAddress {
     @Id()
     @SequenceGenerator(name = "seq-gen-address", sequenceName = "search_courtaddress_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-address")
+    @Column(name = "id")
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "court_id")
@@ -40,20 +42,30 @@ public class CourtAddress {
     @OneToOne
     @JoinColumn(name = "address_type_id")
     private AddressType addressType;
+    @Column(name = "address")
     private String address;
+
+    @Column(name = "address_cy")
     private String addressCy;
+
+    @Column(name = "town_name")
     private String townName;
+
+    @Column(name = "town_name_cy")
     private String townNameCy;
     @OneToOne
     @JoinColumn(name = "county_id")
     private County county;
+    @Column(name = "postcode")
     private String postcode;
 
     @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
     private List<CourtSecondaryAddressType> courtSecondaryAddressType;
 
+    @Column(name = "sort_order")
     private Integer sortOrder;
 
+    @Column(name = "epim_id")
     private String epimId;
 
     public CourtAddress(final Court court, final AddressType addressType, final List<String> addressLines, final List<String> addressLinesCy,

@@ -6,8 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -93,7 +93,7 @@ class AdminCourtHistoryControllerTest {
         mockMvc.perform(get(PATH + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoriesJson));
+            .andExpect(content().json(courtHistoriesJson));
     }
 
     @Test
@@ -107,7 +107,7 @@ class AdminCourtHistoryControllerTest {
         mockMvc.perform(get(PATH + "/i-am-a-slug" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
@@ -121,7 +121,7 @@ class AdminCourtHistoryControllerTest {
         mockMvc.perform(get(PATH + "/id/4" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
@@ -143,7 +143,7 @@ class AdminCourtHistoryControllerTest {
         mockMvc.perform(get(PATH + "/court-id/12" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
@@ -157,7 +157,7 @@ class AdminCourtHistoryControllerTest {
         mockMvc.perform(get(PATH + "/name/fakeCourt1" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
@@ -216,7 +216,7 @@ class AdminCourtHistoryControllerTest {
         mockMvc.perform(delete(PATH + "/id/" + 4 + PATH_SUFFIX).with(csrf()))
                             .andExpect(status().isOk())
                             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                            .andExpect(content().string(courtHistoryJson));
+                            .andExpect(content().json(courtHistoryJson));
 
     }
 
@@ -240,7 +240,7 @@ class AdminCourtHistoryControllerTest {
         mockMvc.perform(delete(PATH + "/court-id/" + 11 + PATH_SUFFIX).with(csrf()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test

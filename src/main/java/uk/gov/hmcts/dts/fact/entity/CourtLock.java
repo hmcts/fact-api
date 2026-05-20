@@ -28,7 +28,11 @@ public class CourtLock {
     private Integer id;
     @Column(name = "lock_acquired")
     private LocalDateTime lockAcquired;
+
+    @Column(name = "user_email")
     private String userEmail;
+
+    @Column(name = "court_slug")
     private String courtSlug;
 
     public CourtLock(uk.gov.hmcts.dts.fact.model.admin.CourtLock courtLock) {

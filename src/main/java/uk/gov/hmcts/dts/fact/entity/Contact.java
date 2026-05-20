@@ -37,7 +37,11 @@ public class Contact extends Element {
     @Column(name = "name_cy")
     private String descriptionCy;
     private String explanation;
+
+    @Column(name = "explanation_cy")
     private String explanationCy;
+
+    @Column(name = "in_leaflet")
     private boolean inLeaflet;
     private boolean fax;
 

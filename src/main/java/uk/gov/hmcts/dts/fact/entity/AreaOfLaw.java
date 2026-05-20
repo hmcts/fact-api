@@ -24,7 +24,11 @@ public class AreaOfLaw {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-gen-aol")
     private Integer id;
     private String name;
+
+    @Column(name = "external_link")
     private String externalLink;
+
+    @Column(name = "external_link_cy")
     private String externalLinkCy;
     @Column(name = "external_link_desc")
     private String externalLinkDescription;

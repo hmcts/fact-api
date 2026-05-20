@@ -37,6 +37,6 @@ class SmokeTest {
         assertThat(response.statusCode()).isEqualTo(OK.value());
         // Mapit service will be marked as 'down' if the 'quota' endpoint can't be reached or the usage limit reached,
         // resulting in the overall health status to be 'down'
-        assertThat(response.asString().substring(1)).startsWith("\"status\":\"UP\"");
+        assertThat(response.jsonPath().getString("status")).isEqualTo("UP");
     }
 }

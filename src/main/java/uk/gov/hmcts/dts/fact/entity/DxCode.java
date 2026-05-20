@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +25,11 @@ public class DxCode {
     private Integer id;
     private String code;
     private String explanation;
+
+    @Column(name = "explanation_cy")
     private String explanationCy;
+
+    @Column(name = "in_leaflet")
     private boolean inLeaflet;
 
     public DxCode(final String code, final String explanation, final String explanationCy) {

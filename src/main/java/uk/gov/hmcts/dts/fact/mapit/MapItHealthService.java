@@ -1,11 +1,12 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.dts.fact.exception.MapitUsageException;
 
 import java.io.IOException;
@@ -27,12 +28,14 @@ public class MapItHealthService {
     private String mapitKey;
 
     private RestTemplate restTemplate = new RestTemplate();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public boolean isUp() throws IOException {
         final String fullPath = mapitUrl + mapitQuotaPath + "?api_key=" + mapitKey;
-        final ResponseEntity<JsonNode> response = restTemplate.getForEntity(fullPath, JsonNode.class);
+        final ResponseEntity<String> response = restTemplate.getForEntity(fullPath, String.class);
 
-        final JsonNode responseBody = response.getBody();
+        final String responseText = response.getBody();
+        final JsonNode responseBody = responseText == null ? null : objectMapper.readTree(responseText);
         if (responseBody != null) {
             final JsonNode quota = responseBody.get(QUOTA);
             if (quota != null) {

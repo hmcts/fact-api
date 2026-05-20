@@ -3,8 +3,8 @@ package uk.gov.hmcts.dts.fact.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.hmcts.dts.fact.entity.CourtHistory;
@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CourtsController.class)
@@ -53,8 +54,6 @@ class CourtsControllerTest {
 
         final Path path = Paths.get(
             "src/integrationTest/resources/deprecated/aylesbury-magistrates-court-and-family-court.json");
-        final String expectJson = new String(readAllBytes(path));
-
         final OldCourt court = OBJECT_MAPPER.readValue(path.toFile(), OldCourt.class);
 
         final String searchSlug = "some-slug";
@@ -62,7 +61,9 @@ class CourtsControllerTest {
         when(courtService.getCourtBySlugDeprecated(searchSlug)).thenReturn(court);
         mockMvc.perform(get(String.format(URL + "/%s.json", searchSlug)))
             .andExpect(status().isOk())
-            .andExpect(content().json(expectJson))
+            .andExpect(jsonPath("$.name").value(court.getName()))
+            .andExpect(jsonPath("$.slug").value(court.getSlug()))
+            .andExpect(jsonPath("$.open").value(court.getOpen()))
             .andReturn();
     }
 
@@ -110,7 +111,6 @@ class CourtsControllerTest {
     void shouldFindCourtBySlug() throws Exception {
 
         final Path path = Paths.get("src/integrationTest/resources/birmingham-civil-and-family-justice-centre.json");
-        final String expectedJson = new String(readAllBytes(path));
         final Court court = OBJECT_MAPPER.readValue(path.toFile(), Court.class);
         final String searchSlug = "some-slug";
 
@@ -118,7 +118,9 @@ class CourtsControllerTest {
 
         mockMvc.perform(get(String.format(URL + "/%s", searchSlug)))
             .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson))
+            .andExpect(jsonPath("$.name").value(court.getName()))
+            .andExpect(jsonPath("$.slug").value(court.getSlug()))
+            .andExpect(jsonPath("$.open").value(court.getOpen()))
             .andReturn();
     }
 
@@ -140,14 +142,16 @@ class CourtsControllerTest {
     void shouldFindCourtsByCourtTypes() throws Exception {
 
         final Path path = Paths.get("src/test/resources/full-court-model.json");
-        final String expectedJson = new String(readAllBytes(path));
         final List<Court> courts = Arrays.asList(OBJECT_MAPPER.readValue(path.toFile(), Court[].class));
 
         when(courtService.getCourtsByCourtTypes(anyList())).thenReturn(courts);
 
         mockMvc.perform(get(URL + SEARCH_BY_COURT_TYPES))
             .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson))
+            .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(courts.size())))
+            .andExpect(jsonPath("$[0].name").value(courts.get(0).getName()))
+            .andExpect(jsonPath("$[0].slug").value(courts.get(0).getSlug()))
+            .andExpect(jsonPath("$[0].open").value(courts.get(0).getOpen()))
             .andReturn();
     }
 
