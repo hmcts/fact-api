@@ -194,7 +194,7 @@ repositories {
 }
 
 def versions = [
-  reformLogging : '6.1.9',
+  reformLogging : '8.0.0',
   springBoot    : springBoot.class.package.implementationVersion,
   flyway        : "$flywayVersion",
   postgresql    : "$postgresqlVersion"
@@ -211,7 +211,6 @@ dependencies {
   implementation group: 'org.reactivestreams', name: 'reactive-streams', version: '1.0.4'
   implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '3.0.3'
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformLogging
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
   implementation group: 'org.postgresql', name: 'postgresql', version: versions.postgresql
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
