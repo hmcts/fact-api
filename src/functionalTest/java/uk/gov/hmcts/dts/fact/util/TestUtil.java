@@ -1,6 +1,6 @@
 package uk.gov.hmcts.dts.fact.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 @SuppressWarnings("PMD.TestClassWithoutTestCases")
 public final class TestUtil {

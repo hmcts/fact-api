@@ -44,6 +44,7 @@ public class CourtWithDistance {
     @JsonProperty("types")
     private List<String> courtTypes;
     private List<CourtAddress> addresses;
+    @JsonProperty("areas_of_law")
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
     private Boolean hideAols;

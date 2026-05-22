@@ -1,13 +1,14 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.dts.fact.entity.Audit;
 import uk.gov.hmcts.dts.fact.repositories.AuditRepository;
 import uk.gov.hmcts.dts.fact.repositories.AuditTypeRepository;
@@ -86,7 +87,9 @@ public class AdminAuditService {
      */
     @SneakyThrows
     public void saveAudit(String auditType, Object auditDataBefore, Object auditDataAfter, String auditLocation) {
-        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        ObjectMapper objectMapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();;
         auditRepository.save(new Audit(
             SecurityContextHolder.getContext().getAuthentication().getName(),
             auditTypeRepository.findByName(auditType),

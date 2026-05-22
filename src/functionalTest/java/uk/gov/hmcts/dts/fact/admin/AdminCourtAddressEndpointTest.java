@@ -1,10 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.CourtAddress;
@@ -106,7 +106,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateAddress() throws JsonProcessingException {
+    void shouldUpdateAddress() throws JacksonException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> expectedCourtAddress = addNewCourtAddress(currentCourtAddress);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAddress);
@@ -140,7 +140,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingCourtAddress() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtAddress() throws JacksonException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -152,7 +152,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingCourtAddress() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtAddress() throws JacksonException {
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final String testJson = objectMapper().writeValueAsString(currentCourtAddress);
 
@@ -163,7 +163,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotUpdateAddressWithInvalidPostcodes() throws JsonProcessingException {
+    void shouldNotUpdateAddressWithInvalidPostcodes() throws JacksonException {
 
         final List<CourtAddress> currentCourtAddress = getCurrentCourtAddress();
         final List<CourtAddress> courtAddressesToBeUpdated = createCourtAddresses();
@@ -187,7 +187,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldUpdateCoordinatesWhenPostcodeIsChanged() throws JsonProcessingException {
+    void shouldUpdateCoordinatesWhenPostcodeIsChanged() throws JacksonException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -245,7 +245,7 @@ class AdminCourtAddressEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* Shared utility methods. ***************************************************************/
 
-    private List<CourtAddress> getCurrentCourtAddress() throws JsonProcessingException {
+    private List<CourtAddress> getCurrentCourtAddress() throws JacksonException {
         final Response response = doGetRequest(
             PLYMOUTH_COMBINED_COURT_ADDRESS_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken)

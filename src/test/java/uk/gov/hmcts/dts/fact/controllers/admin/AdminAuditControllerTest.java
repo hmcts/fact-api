@@ -1,9 +1,5 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +8,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.dts.fact.entity.AuditType;
 import uk.gov.hmcts.dts.fact.model.admin.Audit;
 import uk.gov.hmcts.dts.fact.services.admin.AdminAuditService;
@@ -71,13 +71,13 @@ class AdminAuditControllerTest {
     );
 
     @BeforeAll
-    static void setUp() throws JsonProcessingException {
+    static void setUp() throws JacksonException {
         // If we do not include the register module here, the date will be outputted differently to
         // what we would expect, and will not match the json output from the controller call
         // based on how the spring framework deserializes it's requests etc
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        auditJson = OBJECT_MAPPER.writeValueAsString(AUDIT_LIST);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS).build();
+        auditJson = mapper.writeValueAsString(AUDIT_LIST);
     }
 
     @Test

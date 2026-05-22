@@ -83,7 +83,7 @@ public class AdminCourtsController {
      *
      * @return the list of all courts
      */
-    @GetMapping(path = "/")
+    @GetMapping(path = {"", "/"})
     @Role({FACT_ADMIN, FACT_VIEWER, FACT_SUPER_ADMIN})
     @Operation(summary = "Return court data for download")
     public ResponseEntity<List<uk.gov.hmcts.dts.fact.model.CourtForDownload>> getAllCourtsForDownload() {

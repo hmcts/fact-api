@@ -1,11 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtLock;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -66,10 +65,10 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    void shouldCreateLock() throws JsonProcessingException {
+    void shouldCreateLock() throws JacksonException {
 
         final CourtLock expectedCourtLock = createCourtLock();
-        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+        final String newCourtLockJson = objectMapper().writeValueAsString(expectedCourtLock);
 
         final var response = doPostRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,
@@ -94,9 +93,9 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForCreatingCourtLock() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingCourtLock() throws JacksonException {
         final CourtLock expectedCourtLock = createCourtLock();
-        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+        final String newCourtLockJson = objectMapper().writeValueAsString(expectedCourtLock);
 
         final Response response = doPostRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,
@@ -106,9 +105,9 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateCourtLockForViewer() throws JsonProcessingException {
+    void shouldNotCreateCourtLockForViewer() throws JacksonException {
         final CourtLock expectedCourtLock = createCourtLock();
-        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+        final String newCourtLockJson = objectMapper().writeValueAsString(expectedCourtLock);
 
         final Response response = doPostRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,
@@ -118,10 +117,10 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotDeleteCourtLockForViewer() throws JsonProcessingException {
+    void shouldNotDeleteCourtLockForViewer() throws JacksonException {
         //Create court lock to try and delete
         final CourtLock expectedCourtLock = createCourtLock();
-        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+        final String newCourtLockJson = objectMapper().writeValueAsString(expectedCourtLock);
 
         final var response = doPostRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,
@@ -151,9 +150,9 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenCreatingCourtLock() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingCourtLock() throws JacksonException {
         final CourtLock expectedCourtLock = createCourtLock();
-        final String newCourtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+        final String newCourtLockJson = objectMapper().writeValueAsString(expectedCourtLock);
 
         final Response response = doPostRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH, newCourtLockJson
@@ -162,12 +161,12 @@ class AdminCourtLockEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateCourtLockIfAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateCourtLockIfAlreadyExist() throws JacksonException {
         final CourtLock expectedCourtLock = createCourtLock();
-        final String courtLockJson = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(expectedCourtLock);
+        final String courtLockJson = objectMapper().writeValueAsString(expectedCourtLock);
         final CourtLock alreadyExistCourtLock = createCourtLock();
         alreadyExistCourtLock.setUserEmail("xyz");
-        final String courtLockJsonExisted = objectMapper().registerModule(new JavaTimeModule()).writeValueAsString(alreadyExistCourtLock);
+        final String courtLockJsonExisted = objectMapper().writeValueAsString(alreadyExistCourtLock);
 
         final var response = doPostRequest(
             BARNSLEY_LAW_COURT_LOCK_PATH,

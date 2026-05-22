@@ -1,13 +1,13 @@
 package uk.gov.hmcts.dts.fact;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.CourtReference;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithHistoricalName;
@@ -245,7 +245,7 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRetrieveCurrentCourtByHistoricalCourtName() throws JsonProcessingException {
+    void shouldRetrieveCurrentCourtByHistoricalCourtName() throws JacksonException {
         final String name = "Edinburgh Employment Tribunal";
 
         // Creating  court history
@@ -271,7 +271,7 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldReturnNoContentsForNonExistingCourtHistoricalName() throws JsonProcessingException {
+    void shouldReturnNoContentsForNonExistingCourtHistoricalName() throws JacksonException {
 
         // Creating  court history
         Response response1 = createCourtHistory();
@@ -286,15 +286,14 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
         cleanUp();
     }
 
-    private Response createCourtHistory() throws JsonProcessingException {
+    private Response createCourtHistory() throws JacksonException {
 
         final CourtHistory courtHistory = new CourtHistory(null, TEST_SEARCH_COURT_ID, TEST_SEARCH_COURT_NAME,
                                                            LocalDateTime.parse("2024-02-03T10:15:30"),
                                                            LocalDateTime.parse("2007-12-03T10:15:30"), "court-name-cy");
-        final ObjectMapper mapper = new ObjectMapper();
-
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
         String newCourtHistoryJson = mapper.writeValueAsString(courtHistory);
 
         return doPostRequest(

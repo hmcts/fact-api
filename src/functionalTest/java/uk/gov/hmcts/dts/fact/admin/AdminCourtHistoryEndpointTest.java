@@ -1,14 +1,14 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -37,19 +37,22 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
     private static final String COURT_HISTORY_SLUG_PATH = ADMIN_COURTS_ENDPOINT + "edinburgh-employment-tribunal/history";
     private static final int TEST_SEARCH_COURT_ID = 1479944;
     private static final String  TEST_SEARCH_COURT_NAME = "fakeCourt1";
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static ObjectMapper MAPPER = JsonMapper.builder()
+        .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .build();
 
     @BeforeAll
     static void initialise() {
-        MAPPER.registerModule(new JavaTimeModule());
-        MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        MAPPER = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
     }
 
 
     // Get Request Tests
 
     @Test
-    void shouldGetAllCourtHistory() throws JsonProcessingException {
+    void shouldGetAllCourtHistory() throws JacksonException {
         // Creating first court history
         Response response1 = createCourtHistory();
 
@@ -84,7 +87,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
     }
 
     @Test
-    void shouldGetAllCourtHistoryBySlug() throws JsonProcessingException {
+    void shouldGetAllCourtHistoryBySlug() throws JacksonException {
         // Creating  court history
         Response response1 = createCourtHistory();
 
@@ -102,7 +105,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
     }
 
     @Test
-    void shouldGetAllCourtHistoryByHistoryName() throws JsonProcessingException {
+    void shouldGetAllCourtHistoryByHistoryName() throws JacksonException {
         // Creating  court history
         Response response1 = createCourtHistory();
 
@@ -121,7 +124,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
     // Update Request Tests.
 
     @Test
-    void shouldUpdateCourtHistory() throws JsonProcessingException {
+    void shouldUpdateCourtHistory() throws JacksonException {
         // Creating  court history
         Response response = createCourtHistory();
 
@@ -157,7 +160,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
     }
 
     @Test
-    void shouldNotUpdateCourtHistoryWhenCourtSlugNotFound() throws JsonProcessingException {
+    void shouldNotUpdateCourtHistoryWhenCourtSlugNotFound() throws JacksonException {
         final var response = doPutRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
@@ -167,7 +170,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingCourtHistory() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtHistory() throws JacksonException {
         final var response = doPutRequest(
             COURT_HISTORY_SLUG_PATH,
             getTestCourtHistories()
@@ -176,7 +179,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingCourtHistories() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtHistories() throws JacksonException {
         final var response = doPutRequest(
             COURT_HISTORY_SLUG_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken),
@@ -222,7 +225,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
 
     // Shared utility methods
 
-    private Response createCourtHistory() throws JsonProcessingException {
+    private Response createCourtHistory() throws JacksonException {
 
         final CourtHistory courtHistory = new CourtHistory(null, TEST_SEARCH_COURT_ID, TEST_SEARCH_COURT_NAME,
                                                            LocalDateTime.parse("2024-02-03T10:15:30"),
@@ -236,7 +239,7 @@ import static uk.gov.hmcts.dts.fact.util.TestUtil.BEARER;
         );
     }
 
-    private static String getTestCourtHistories() throws JsonProcessingException {
+    private static String getTestCourtHistories() throws JacksonException {
         final List<CourtHistory> courtHistory = Arrays.asList(
             new CourtHistory(null, TEST_SEARCH_COURT_ID, TEST_SEARCH_COURT_NAME,
                              LocalDateTime.parse("2024-02-03T10:15:30"),

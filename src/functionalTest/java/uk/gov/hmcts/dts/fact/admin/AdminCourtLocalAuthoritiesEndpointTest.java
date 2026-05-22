@@ -1,9 +1,9 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.LocalAuthority;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -62,7 +62,7 @@ class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldUpdateCourtLocalAuthorities() throws JsonProcessingException {
+    void shouldUpdateCourtLocalAuthorities() throws JacksonException {
         final List<LocalAuthority> currentCourtLocalAuthorities = getCurrentLocalAuthorities();
         final List<LocalAuthority> expectedCourtLocalAuthorities = updateLocalAuthorities(currentCourtLocalAuthorities);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtLocalAuthorities);
@@ -97,7 +97,7 @@ class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void adminShouldBeForbiddenForUpdatingLocalAuthoritiesForAreasOfLaw() throws JsonProcessingException {
+    void adminShouldBeForbiddenForUpdatingLocalAuthoritiesForAreasOfLaw() throws JacksonException {
 
         final var response = doPutRequest(
             AYLESBURY_COURT_LOCAL_AUTHORITIES_AREAS_OF_LAW_PATH,
@@ -126,7 +126,7 @@ class AdminCourtLocalAuthoritiesEndpointTest extends AdminFunctionalTestBase {
         return updatedLocalAuthorities;
     }
 
-    private static String getTestLocalAuthorityJson() throws JsonProcessingException {
+    private static String getTestLocalAuthorityJson() throws JacksonException {
         final List<LocalAuthority> localAuthorities = Arrays.asList(
             new LocalAuthority(1, "test1"),
             new LocalAuthority(2, "test2")

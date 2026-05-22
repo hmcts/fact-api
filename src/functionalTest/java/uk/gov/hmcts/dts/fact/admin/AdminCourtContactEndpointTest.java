@@ -1,9 +1,9 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.admin.Contact;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
@@ -60,7 +60,7 @@ class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldAddAndRemoveContacts() throws JsonProcessingException {
+    void shouldAddAndRemoveContacts() throws JacksonException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -96,7 +96,7 @@ class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldChangePhoneNumberToFaxAndViceVersa() throws JsonProcessingException {
+    void shouldChangePhoneNumberToFaxAndViceVersa() throws JacksonException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -146,13 +146,13 @@ class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingContacts() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingContacts() throws JacksonException {
         final var response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, getTestContactsJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingContacts() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingContacts() throws JacksonException {
         final var response = doPutRequest(BIRMINGHAM_CONTACTS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestContactsJson());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
@@ -227,7 +227,7 @@ class AdminCourtContactEndpointTest extends AdminFunctionalTestBase {
         return updatedContacts;
     }
 
-    private static String getTestContactsJson() throws JsonProcessingException {
+    private static String getTestContactsJson() throws JacksonException {
         final List<Contact> contacts = Arrays.asList(
             new Contact(2, "0207123456", "explanation 1", "explanation cy 1", false),
             new Contact(5, "0207234567", "explanation 2", "explanation cy 2", false),

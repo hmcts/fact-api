@@ -62,7 +62,7 @@ public class CourtsController {
      * @param query - name, address, town or postcode
      * @return array of courts that match address or partial address
      */
-    @GetMapping
+    @GetMapping(params = "q")
     @Operation(summary = "Find courts by name, address, town or postcode")
     public ResponseEntity<List<CourtReference>> findCourtByNameOrAddressOrPostcodeOrTown(@RequestParam(name = "q") String query) {
         if (query.isEmpty()) {

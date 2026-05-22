@@ -1,10 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin.list;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.FacilityType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -108,7 +108,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateFacilityType() throws JsonProcessingException {
+    void shouldUpdateFacilityType() throws JacksonException {
         final FacilityType currentFacilityType = getCurrentFacility();
         final FacilityType expectedFacilityType = getUpdatedInterviewRoomFacility();
 
@@ -139,7 +139,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingFacilityType() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingFacilityType() throws JacksonException {
         final FacilityType currentFacilityType = getCurrentFacility();
         final String testJson = objectMapper().writeValueAsString(currentFacilityType);
 
@@ -151,7 +151,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingFacilityType() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingFacilityType() throws JacksonException {
         final FacilityType currentFacilityType = getCurrentFacility();
         final String testJson = objectMapper().writeValueAsString(currentFacilityType);
 
@@ -161,7 +161,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotFoundForUpdateWhenFacilityTypeDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForUpdateWhenFacilityTypeDoesNotExist() throws JacksonException {
         final FacilityType currentFacilityType = getCurrentFacility();
         currentFacilityType.setId(1234);
         final String testJson = objectMapper().writeValueAsString(currentFacilityType);
@@ -176,7 +176,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    void shouldCreateFacilityType() throws JsonProcessingException {
+    void shouldCreateFacilityType() throws JacksonException {
 
         final List<FacilityType> currentFacilityTypes = getCurrentFacilityTypes();
         final FacilityType expectedFacilityType = getUpdatedInterviewRoomFacility();
@@ -215,7 +215,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForCreatingFacilityType() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingFacilityType() throws JacksonException {
         final FacilityType currentFacility = getCurrentFacility();
         final String testJson = objectMapper().writeValueAsString(currentFacility);
         final Response response = doPostRequest(
@@ -226,7 +226,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenCreatingFacilityType() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingFacilityType() throws JacksonException {
         final FacilityType currentFacility = getCurrentFacility();
         final String testJson = objectMapper().writeValueAsString(currentFacility);
 
@@ -237,7 +237,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateFacilityTypeThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateFacilityTypeThatAlreadyExist() throws JacksonException {
         final FacilityType currentFacility = getCurrentFacility();
         final String testJson = objectMapper().writeValueAsString(currentFacility);
 
@@ -251,7 +251,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Reorder Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateReorderFacilityTypes() throws JsonProcessingException {
+    void shouldUpdateReorderFacilityTypes() throws JacksonException {
 
         final Response response = doGetRequest(
             GET_FACILITIES_ENDPOINT,
@@ -282,7 +282,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingReorderFacilityTypes() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingReorderFacilityTypes() throws JacksonException {
         final List<FacilityType> currentFacilityTypes = getCurrentFacilityTypes();
         final List<Integer> idList = currentFacilityTypes.stream().map(f -> f.getId()).collect(toList());
         final String testJson = objectMapper().writeValueAsString(idList);
@@ -295,7 +295,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingReorderFacilityType() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingReorderFacilityType() throws JacksonException {
         final List<FacilityType> currentFacilityTypes = getCurrentFacilityTypes();
         final List<Integer> idList = currentFacilityTypes.stream().map(f -> f.getId()).collect(toList());
         final String testJson = objectMapper().writeValueAsString(idList);
@@ -306,7 +306,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotUpdateWhenReorderFacilityTypeDoesNotExist() throws JsonProcessingException {
+    void shouldNotUpdateWhenReorderFacilityTypeDoesNotExist() throws JacksonException {
         final List<FacilityType> currentFacilityTypes = getCurrentFacilityTypes();
         final List<Integer> idList = currentFacilityTypes.stream().map(f -> f.getId()).collect(toList());
         idList.set(1,2000);
@@ -322,7 +322,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Delete request tests section. ***************************************************************/
 
     @Test
-    void adminShouldBeForbiddenForDeletingFacilityType() throws JsonProcessingException {
+    void adminShouldBeForbiddenForDeletingFacilityType() throws JacksonException {
 
         final var response = doDeleteRequest(
             GET_FACILITIES_ENDPOINT + TEST_INTERVIEW_ROOM_ID_NOT_FOUND,
@@ -332,7 +332,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenDeletingFacilityType() throws JsonProcessingException {
+    void shouldRequireATokenWhenDeletingFacilityType() throws JacksonException {
         final var response = doDeleteRequest(
             GET_FACILITIES_ENDPOINT + TEST_INTERVIEW_ROOM_ID_NOT_FOUND,
             getTestFacilityType()
@@ -341,7 +341,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotDeleteFacilityTypeNotFound() throws JsonProcessingException {
+    void shouldNotDeleteFacilityTypeNotFound() throws JacksonException {
 
         final var response = doDeleteRequest(
             GET_FACILITIES_ENDPOINT + TEST_INTERVIEW_ROOM_ID_NOT_FOUND,
@@ -352,7 +352,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotDeleteFacilityTypeInUse() throws JsonProcessingException {
+    void shouldNotDeleteFacilityTypeInUse() throws JacksonException {
 
         final var response = doDeleteRequest(
             GET_FACILITIES_ENDPOINT + TEST_INTERVIEW_ROOM_ID,
@@ -372,7 +372,7 @@ class AdminFacilitiesEndpointTest extends AdminFunctionalTestBase {
         return response.as(FacilityType.class);
     }
 
-    private String getTestFacilityType() throws JsonProcessingException {
+    private String getTestFacilityType() throws JacksonException {
         return objectMapper().writeValueAsString(getUpdatedInterviewRoomFacility());
     }
 

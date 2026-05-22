@@ -1,10 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.model.admin.SpoeAreaOfLaw;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -108,7 +108,7 @@ class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* PUT request tests section. ***************************************************************/
 
     @Test
-    void shouldUpdateCourtSpoeAreaOfLaw() throws JsonProcessingException {
+    void shouldUpdateCourtSpoeAreaOfLaw() throws JacksonException {
         final List<SpoeAreaOfLaw> currentCourtSpoeAreaOfLaw = getCurrentSpoeAreaOflaw();
         final List<SpoeAreaOfLaw> expectedCourtAreasOfLaw = updateCourtAreasOfLaw(currentCourtSpoeAreaOfLaw);
         final String updatedJson = objectMapper().writeValueAsString(expectedCourtAreasOfLaw);
@@ -145,14 +145,14 @@ class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingSpoeAreaOfLawForTheCourt() throws JacksonException {
         final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final var response = doPutRequest(ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH, testJson);
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingSpoeAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingSpoeAreaOfLawForTheCourt() throws JacksonException {
         final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final var response = doPutRequest(
             ABERYSTWYTH_JUSTICE_CENTRE_SPOE_AREAS_OF_LAW_PATH,
@@ -162,7 +162,7 @@ class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldnotUpdateAndReturnNotFoundWhenSpoeCourtDoesNotExist() throws JsonProcessingException {
+    void shouldnotUpdateAndReturnNotFoundWhenSpoeCourtDoesNotExist() throws JacksonException {
         final String testJson = objectMapper().writeValueAsString(getCurrentSpoeAreaOflaw());
         final Response response = doPutRequest(
             ABERYSTWYTH_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
@@ -173,7 +173,7 @@ class AdminCourtSpoeAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotUpdateSpoeAreaOfLawForTheCourtThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotUpdateSpoeAreaOfLawForTheCourtThatAlreadyExist() throws JacksonException {
         final String testJson = objectMapper()
             .writeValueAsString(updateCourtAreasOfLaw(updateCourtAreasOfLaw(getCurrentSpoeAreaOflaw())));
         final Response response = doPutRequest(

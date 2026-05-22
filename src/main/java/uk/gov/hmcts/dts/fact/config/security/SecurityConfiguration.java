@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.config.security;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,7 +18,7 @@ public class SecurityConfiguration {
         http
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.GET, "/admin/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/courts/").authenticated()
+                .requestMatchers(SecurityConfiguration::isCourtsDownloadRequest).authenticated()
                 .requestMatchers(HttpMethod.GET, "/courts/all").authenticated()
                 .requestMatchers(HttpMethod.GET, "/courts/{slug}/courtPhoto").authenticated()
                 .requestMatchers(HttpMethod.POST, "/**").authenticated()
@@ -29,6 +30,14 @@ public class SecurityConfiguration {
             .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
+    }
+
+    private static boolean isCourtsDownloadRequest(final HttpServletRequest request) {
+        final String requestPath = request.getRequestURI();
+        final boolean isCourtsPath = "/courts".equals(requestPath) || "/courts/".equals(requestPath);
+        return HttpMethod.GET.matches(request.getMethod())
+            && isCourtsPath
+            && request.getParameter("q") == null;
     }
 
     @Bean

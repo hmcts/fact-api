@@ -1,8 +1,8 @@
 package uk.gov.hmcts.dts.fact.admin.list;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.ContactType;
 import uk.gov.hmcts.dts.fact.model.admin.EmailType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -103,7 +103,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateContactType() throws JsonProcessingException {
+    void shouldUpdateContactType() throws JacksonException {
         final ContactType currentContactType = getCurrentContactType();
         final ContactType expectedContactType = getUpdatedContactType();
         final String updatedJson = objectMapper().writeValueAsString(expectedContactType);
@@ -133,7 +133,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingContactType() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingContactType() throws JacksonException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -145,7 +145,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingContactType() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingContactType() throws JacksonException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -155,7 +155,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotFoundForUpdateWhenContactTypeDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForUpdateWhenContactTypeDoesNotExist() throws JacksonException {
         final ContactType currentContactType = getCurrentContactType();
         currentContactType.setId(1234);
         final String testJson = objectMapper().writeValueAsString(currentContactType);
@@ -170,7 +170,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    void shouldCreateContactType() throws JsonProcessingException {
+    void shouldCreateContactType() throws JacksonException {
 
         final List<ContactType> currentContactType = getCurrentContactTypes();
         final ContactType expectedContactType = createContactType();
@@ -216,7 +216,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForCreatingContactType() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingContactType() throws JacksonException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -228,7 +228,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenCreatingContactType() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingContactType() throws JacksonException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 
@@ -238,7 +238,7 @@ class AdminContactTypeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateContactTypeThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateContactTypeThatAlreadyExist() throws JacksonException {
         final ContactType currentContactType = getCurrentContactType();
         final String testJson = objectMapper().writeValueAsString(currentContactType);
 

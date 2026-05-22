@@ -1,6 +1,5 @@
 package uk.gov.hmcts.dts.fact.services.admin.list;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.entity.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.CourtLocalAuthorityAreaOfLaw;
@@ -134,7 +134,7 @@ class AdminAreasOfLawServiceTest {
     }
 
     @Test
-    void shouldUpdateAreaOfLaw() throws JsonProcessingException {
+    void shouldUpdateAreaOfLaw() throws JacksonException {
         final List<AreaOfLaw> areasOfLawCopy = AREAS_OF_LAW
             .stream()
             .map(aol -> new AreaOfLaw(

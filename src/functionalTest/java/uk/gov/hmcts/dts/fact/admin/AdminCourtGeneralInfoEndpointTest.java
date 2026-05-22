@@ -1,11 +1,11 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.admin.CourtGeneralInfo;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -64,7 +64,7 @@ class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     private static String adminCourtInfoJson;
 
     @BeforeAll
-    static void initialise() throws JsonProcessingException {
+    static void initialise() throws JacksonException {
         adminCourtInfoJson = new ObjectMapper().writeValueAsString(EXPECTED_ADMIN_COURT_INFO);
     }
 
@@ -116,7 +116,7 @@ class AdminCourtGeneralInfoEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JsonProcessingException {
+    void shouldUpdateCourtGeneralInfoAsSuperAdmin() throws JacksonException {
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
                                                 "");
         assertThat(delResponse.statusCode()).isEqualTo(OK.value());

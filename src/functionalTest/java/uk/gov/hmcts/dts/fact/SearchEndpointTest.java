@@ -1,12 +1,15 @@
 package uk.gov.hmcts.dts.fact;
 
+import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
 import uk.gov.hmcts.dts.fact.util.FunctionalTestBase;
+import uk.gov.hmcts.dts.fact.util.TestUtil;
 
 import java.util.Comparator;
 import java.util.List;
@@ -22,13 +25,14 @@ import static org.springframework.http.HttpStatus.OK;
 class SearchEndpointTest extends FunctionalTestBase {
 
     private static final String SEARCH_ENDPOINT = "/search/";
+    private static final ObjectMapper OBJECT_MAPPER = TestUtil.objectMapper();
 
     @Test
     void shouldRetrieve10CourtDetailsSortedByDistance() {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results.json?postcode=OX1 1RZ");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
-        final List<CourtWithDistance> courts = response.body().jsonPath().getList(".", CourtWithDistance.class);
+        final List<CourtWithDistance> courts = deserializeCourts(response);
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
     }
@@ -39,7 +43,7 @@ class SearchEndpointTest extends FunctionalTestBase {
         final var response = doGetRequest(SEARCH_ENDPOINT + "results.json?includeClosed=true&postcode=OX1 1RZ&aol=" + aol);
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
-        final List<CourtWithDistance> courts = response.body().jsonPath().getList(".", CourtWithDistance.class);
+        final List<CourtWithDistance> courts = deserializeCourts(response);
         assertThat(courts.size()).isEqualTo(10);
         assertThat(courts).isSortedAccordingTo(Comparator.comparing(CourtWithDistance::getDistance));
         assertTrue(courts
@@ -54,15 +58,13 @@ class SearchEndpointTest extends FunctionalTestBase {
         final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?postcode=CF10 1ET", Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
-        final List<CourtWithDistance> welshCourts = welshResponse.body().jsonPath()
-            .getList(".", CourtWithDistance.class);
+        final List<CourtWithDistance> welshCourts = deserializeCourts(welshResponse);
         assertThat(welshCourts.get(0).getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
 
         final var englishResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?includeClosed=true&postcode=CF10 1ET");
         assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
 
-        final List<CourtWithDistance> englishCourts = englishResponse.body().jsonPath()
-            .getList(".", CourtWithDistance.class);
+        final List<CourtWithDistance> englishCourts = deserializeCourts(englishResponse);
         assertThat(englishCourts.get(0).getAddresses().get(0).getTownName()).isEqualTo("Cardiff");
     }
 
@@ -71,15 +73,13 @@ class SearchEndpointTest extends FunctionalTestBase {
         final var welshResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?q=caerdydd", Map.of(ACCEPT_LANGUAGE, "cy"));
         assertThat(welshResponse.statusCode()).isEqualTo(OK.value());
 
-        final List<CourtWithDistance> welshCourts = welshResponse.body().jsonPath()
-            .getList(".", CourtWithDistance.class);
+        final List<CourtWithDistance> welshCourts = deserializeCourts(welshResponse);
         assertThat(welshCourts.get(0).getAddresses().get(0).getTownName()).isEqualTo("Caerdydd");
 
         final var englishResponse = doGetRequest(SEARCH_ENDPOINT + "results.json?q=cardiff");
         assertThat(englishResponse.statusCode()).isEqualTo(OK.value());
 
-        final List<CourtWithDistance> englishCourts = englishResponse.body().jsonPath()
-            .getList(".", CourtWithDistance.class);
+        final List<CourtWithDistance> englishCourts = deserializeCourts(englishResponse);
         assertThat(englishCourts.get(0).getAddresses().get(0).getTownName()).isEqualTo("Cardiff");
     }
 
@@ -305,5 +305,13 @@ class SearchEndpointTest extends FunctionalTestBase {
         assertTrue(serviceAreaWithCourtReferencesWithDistance.getCourts().stream().map(CourtReferenceWithDistance::getOpen).anyMatch(d -> d.equals(
             false)));
 
+    }
+
+    private List<CourtWithDistance> deserializeCourts(final Response response) {
+        try {
+            return OBJECT_MAPPER.readerForListOf(CourtWithDistance.class).readValue(response.asString());
+        } catch (Exception exception) {
+            throw new RuntimeException("Unable to deserialize search response", exception);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,6 +63,7 @@ public class ServiceArea {
         // This constructor is intentionally empty. Nothing special is needed here.
     }
 
+    @JsonIgnore
     public ServiceArea(int id, String name, String nameCy, String description, String descriptionCy, String slug, String onlineUrl,
                        String onlineText, String onlineTextCy, String type, String text, String textCy, String catchmentMethod) {
         this.id = id;

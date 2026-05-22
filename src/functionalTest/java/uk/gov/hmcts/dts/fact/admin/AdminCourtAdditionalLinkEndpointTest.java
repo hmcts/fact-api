@@ -1,10 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.AdditionalLink;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -75,7 +75,7 @@ class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateAdditionalLink() throws JsonProcessingException {
+    void shouldUpdateAdditionalLink() throws JacksonException {
         final List<AdditionalLink> currentAdditionalLink = getCurrentAdditionalLink();
         final List<AdditionalLink> expectedAdditionalLink = addNewAdditionalLink(currentAdditionalLink);
         final String updatedJson = objectMapper().writeValueAsString(expectedAdditionalLink);
@@ -104,13 +104,13 @@ class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingAdditionalLinks() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingAdditionalLinks() throws JacksonException {
         final var response = doPutRequest(PLYMOUTH_COMBINED_COURT_ADDITIONAL_LINK_PATH, getTestAdditionalLink());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingAdditionalLinks() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingAdditionalLinks() throws JacksonException {
         final var response = doPutRequest(
             PLYMOUTH_COMBINED_COURT_ADDITIONAL_LINK_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestAdditionalLink()
@@ -119,7 +119,7 @@ class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotUpdateAdditionalLinkWhenCourtSlugNotFound() throws JsonProcessingException {
+    void shouldNotUpdateAdditionalLinkWhenCourtSlugNotFound() throws JacksonException {
         final var response = doPutRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + superAdminToken),
@@ -144,7 +144,7 @@ class AdminCourtAdditionalLinkEndpointTest extends AdminFunctionalTestBase {
         return updatedAdditionalLinks;
     }
 
-    private static String getTestAdditionalLink() throws JsonProcessingException {
+    private static String getTestAdditionalLink() throws JacksonException {
         final List<AdditionalLink> additionalLink = Arrays.asList(
             new AdditionalLink(TEST_URL,TEST_DESCRIPTION,TEST_DESCRIPTION_CY)
         );

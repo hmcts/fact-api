@@ -1,10 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -75,7 +75,7 @@ class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* PUT request tests section. ***************************************************************/
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @Test
-    void shouldUpdateCourtAreaOfLaw() throws JsonProcessingException {
+    void shouldUpdateCourtAreaOfLaw() throws JacksonException {
         final List<AreaOfLaw> currentCourtAreasOfLaw = getCurrentCourtAreasOfLaw()
             .stream()
             .map(aol -> {
@@ -118,13 +118,13 @@ class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingAreaOfLawForTheCourt() throws JacksonException {
         final var response = doPutRequest(AYLESBURY_COURT_AREAS_OF_LAW_PATH, getTestAreasOfLawJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingAreaOfLawForTheCourt() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingAreaOfLawForTheCourt() throws JacksonException {
         final var response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestAreasOfLawJson()
@@ -133,7 +133,7 @@ class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
+    void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JacksonException {
         final Response response = doPutRequest(
             AYLESBURY_COURT_AREAS_OF_LAW_NOT_FOUND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -162,7 +162,7 @@ class AdminCourtAreaOfLawEndpointTest extends AdminFunctionalTestBase {
         return updatedAreaOfLaw;
     }
 
-    private static String getTestAreasOfLawJson() throws JsonProcessingException {
+    private static String getTestAreasOfLawJson() throws JacksonException {
         AreaOfLaw areaOfLaw = new AreaOfLaw();
         areaOfLaw.setId(1);
         areaOfLaw.setName("test1");

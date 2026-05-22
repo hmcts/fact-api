@@ -1,9 +1,9 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.Email;
 import uk.gov.hmcts.dts.fact.model.admin.EmailType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -57,7 +57,7 @@ class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldUpdateEmails() throws JsonProcessingException {
+    void shouldUpdateEmails() throws JacksonException {
         final List<Email> expectedEmails = updateEmails(getCurrentEmails());
         final String json = objectMapper().writeValueAsString(expectedEmails);
 
@@ -69,13 +69,13 @@ class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingEmails() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingEmails() throws JacksonException {
         final var response = doPutRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, getTestEmails());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldBeForbiddenFromUpdatingEmails() throws JsonProcessingException {
+    void shouldBeForbiddenFromUpdatingEmails() throws JacksonException {
         final var response = doPutRequest(BEXLEY_MAGISTRATES_ALL_EMAILS_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestEmails());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
@@ -128,7 +128,7 @@ class AdminCourtEmailEndpointTest extends AdminFunctionalTestBase {
 
 
 
-    private static String getTestEmails() throws JsonProcessingException {
+    private static String getTestEmails() throws JacksonException {
         final List<Email> emails = Arrays.asList(
             new Email("Address 1", "Exp 1", "Exp 1 cy", 1),
             new Email("Address 2", "Exp 2", "Exp 2 cy", 2),
