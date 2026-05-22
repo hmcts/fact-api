@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.admin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -150,8 +151,12 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     private List<Facility> updateFacilities(final List<Facility> facilities) {
         for (Facility facility: facilities) {
-            facility.setDescription(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescription()));
-            facility.setDescriptionCy(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescriptionCy()));
+            facility.setDescription(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                StringEscapeUtils.unescapeHtml4(facility.getDescription())
+            )));
+            facility.setDescriptionCy(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                StringEscapeUtils.unescapeHtml4(facility.getDescriptionCy())
+            )));
         }
         final List<Facility> updatedFacilities = new ArrayList<>(facilities);
         Facility facility = new Facility();
