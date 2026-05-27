@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -53,6 +54,7 @@ public class Facility {
     )
     private FacilityType facilityType;
 
+    @JsonIgnore
     public Facility(final String description, final String descriptionCy,final FacilityType facilityType) {
         this.name = facilityType.getName();
         this.nameCy = facilityType.getNameCy();

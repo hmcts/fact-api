@@ -1,13 +1,13 @@
 package uk.gov.hmcts.dts.fact.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +25,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(NotFoundException.class)
-    ResponseEntity<String> notFoundExceptionHandler(final NotFoundException ex) throws JsonProcessingException {
+    ResponseEntity<String> notFoundExceptionHandler(final NotFoundException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
@@ -41,10 +41,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(InvalidPostcodeException.class)
-    ResponseEntity<String> invalidPostcodeExceptionHandler(final InvalidPostcodeException ex) throws JsonProcessingException {
+    ResponseEntity<String> invalidPostcodeExceptionHandler(final InvalidPostcodeException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
@@ -62,10 +62,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(InvalidEpimIdException.class)
-    ResponseEntity<String> invalidEpimIdExceptionHandler(final InvalidEpimIdException ex) throws JsonProcessingException {
+    ResponseEntity<String> invalidEpimIdExceptionHandler(final InvalidEpimIdException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
@@ -79,10 +79,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(LockExistsException.class)
-    ResponseEntity lockExistsExceptionHandler(final LockExistsException ex) throws JsonProcessingException {
+    ResponseEntity lockExistsExceptionHandler(final LockExistsException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         log.error("Lock is currently in use exception: {}", ex.getMessage());
@@ -96,10 +96,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<String> illegalArgumentExceptionHandler(final IllegalArgumentException ex) throws JsonProcessingException {
+    ResponseEntity<String> illegalArgumentExceptionHandler(final IllegalArgumentException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
@@ -134,10 +134,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(DuplicatedListItemException.class)
-    ResponseEntity<String> duplicateListItemExceptionHandler(final DuplicatedListItemException ex) throws JsonProcessingException {
+    ResponseEntity<String> duplicateListItemExceptionHandler(final DuplicatedListItemException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
@@ -150,10 +150,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(IllegalListItemException.class)
-    ResponseEntity<String> illegalListItemExceptionHandler(final IllegalListItemException ex) throws JsonProcessingException {
+    ResponseEntity<String> illegalListItemExceptionHandler(final IllegalListItemException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);
@@ -166,10 +166,10 @@ public class GlobalControllerExceptionHandler {
      *
      * @param ex the exception
      * @return the response entity
-     * @throws JsonProcessingException if the response entity cannot be converted to a string
+     * @throws JacksonException if the response entity cannot be converted to a string
      */
     @ExceptionHandler(ListItemInUseException.class)
-    ResponseEntity<String> listItemInUseExceptionHandler(final ListItemInUseException ex) throws JsonProcessingException {
+    ResponseEntity<String> listItemInUseExceptionHandler(final ListItemInUseException ex) throws JacksonException {
         HashMap<String, String> error = new HashMap<>();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_TYPE, APPLICATION_JSON);

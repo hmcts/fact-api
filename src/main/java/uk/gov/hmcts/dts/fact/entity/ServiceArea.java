@@ -1,6 +1,8 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -24,16 +26,30 @@ public class ServiceArea {
     @Id
     private Integer id;
     private String name;
+
+    @Column(name = "name_cy")
     private String nameCy;
     private String description;
+
+    @Column(name = "description_cy")
     private String descriptionCy;
     private String slug;
+
+    @Column(name = "online_url")
     private String onlineUrl;
+
+    @Column(name = "online_text")
     private String onlineText;
+
+    @Column(name = "online_text_cy")
     private String onlineTextCy;
     private String type;
     private String text;
+
+    @Column(name = "text_cy")
     private String textCy;
+
+    @Column(name = "catchment_method")
     private String catchmentMethod;
 
     @OneToMany(mappedBy = "servicearea")
@@ -47,6 +63,7 @@ public class ServiceArea {
         // This constructor is intentionally empty. Nothing special is needed here.
     }
 
+    @JsonIgnore
     public ServiceArea(int id, String name, String nameCy, String description, String descriptionCy, String slug, String onlineUrl,
                        String onlineText, String onlineTextCy, String type, String text, String textCy, String catchmentMethod) {
         this.id = id;

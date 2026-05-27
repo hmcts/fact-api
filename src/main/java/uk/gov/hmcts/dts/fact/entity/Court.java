@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,30 +40,53 @@ public class Court {
     @Id
     @SequenceGenerator(name = "seq-court-gen", sequenceName = "public.search_court_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq-court-gen")
+    @Column(name = "id")
     private Integer id;
 
+    @Column(name = "name")
     private String name;
+    @Column(name = "name_cy")
     private String nameCy;
+    @Column(name = "slug")
     private String slug;
+    @Column(name = "info")
     private String info;
+    @Column(name = "info_cy")
     private String infoCy;
+    @Column(name = "displayed")
     private Boolean displayed;
+    @Column(name = "directions")
     private String directions;
+    @Column(name = "directions_cy")
     private String directionsCy;
+    @Column(name = "image_file")
     private String imageFile;
+    @Column(name = "lat")
     private Double lat;
+    @Column(name = "lon")
     private Double lon;
+    @Column(name = "alert")
     private String alert;
+    @Column(name = "alert_cy")
     private String alertCy;
+    @Column(name = "number")
     private Integer number;
+    @Column(name = "cci_code")
     private Integer cciCode;
+    @Column(name = "magistrate_code")
     private Integer magistrateCode;
+    @Column(name = "location_code")
     private Integer locationCode;
+    @Column(name = "court_code")
     private Integer courtCode;
+    @Column(name = "welsh_enabled")
     private Boolean welshEnabled;
+    @Column(name = "hide_aols")
     private Boolean hideAols;
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private Timestamp updatedAt;
+    @Column(name = "region_id")
     private Integer regionId;
 
     @ManyToMany
@@ -121,6 +145,7 @@ public class Court {
     @OrderBy("sort_order")
     private List<CourtAddress> addresses;
 
+    @Column(name = "gbs")
     private String gbs;
 
     @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "courtId")

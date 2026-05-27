@@ -1,9 +1,10 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 
 import java.util.HashMap;
@@ -120,7 +121,7 @@ class MapitDataTest {
     }
 
     @Test
-    void shouldReturnEnglishRegion() throws JsonProcessingException {
+    void shouldReturnEnglishRegion() throws JacksonException {
         ObjectMapper objectmapper = new ObjectMapper();
 
         HashMap<String, JsonNode> test = new HashMap<>();
@@ -135,7 +136,7 @@ class MapitDataTest {
     }
 
     @Test
-    void shouldReturnWelshRegion() throws JsonProcessingException {
+    void shouldReturnWelshRegion() throws JacksonException {
         ObjectMapper objectmapper = new ObjectMapper();
 
         HashMap<String, JsonNode> test = new HashMap<>();
@@ -150,11 +151,11 @@ class MapitDataTest {
     }
 
     @Test
-    void shouldReturnErrorWhenNoRegionInformation() throws JsonProcessingException {
+    void shouldReturnErrorWhenNoRegionInformation() throws JacksonException {
         ObjectMapper objectmapper = new ObjectMapper();
 
         HashMap<String, JsonNode> test = new HashMap<>();
-        String newString = "{\"type\": \"PT\"}, {\"name\": \"Anywhere\"}";
+        String newString = "{\"type\": \"PT\"}";
         JsonNode newNode = objectmapper.readTree(newString);
         test.put("No Region", newNode);
         JsonNode areas = objectmapper.valueToTree(test);

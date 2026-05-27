@@ -2,7 +2,6 @@ package uk.gov.hmcts.dts.fact.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.hmcts.dts.fact.util.ActionConverter;
 
@@ -13,9 +12,5 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addConverter(new ActionConverter());
     }
 
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setUseTrailingSlashMatch(true);
-    }
 }
 

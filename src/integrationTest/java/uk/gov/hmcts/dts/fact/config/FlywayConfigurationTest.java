@@ -2,7 +2,7 @@ package uk.gov.hmcts.dts.fact.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import uk.gov.hmcts.dts.fact.data.migration.FlywayNoOpStrategy;

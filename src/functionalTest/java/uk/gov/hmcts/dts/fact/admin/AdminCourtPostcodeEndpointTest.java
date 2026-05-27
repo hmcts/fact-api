@@ -1,11 +1,11 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
 import java.util.Arrays;
@@ -123,7 +123,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* POST request tests section. ***************************************************************/
     @Test
-    void shouldCreateValidPostcodes() throws JsonProcessingException {
+    void shouldCreateValidPostcodes() throws JacksonException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -169,7 +169,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateDuplicatePostcodes() throws JsonProcessingException {
+    void shouldNotCreateDuplicatePostcodes() throws JacksonException {
 
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
                                                 "");
@@ -219,7 +219,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateInvalidPostcodes() throws JsonProcessingException {
+    void shouldNotCreateInvalidPostcodes() throws JacksonException {
 
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
 
@@ -234,7 +234,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void adminShouldBeForbiddenForCreatingPostcodes() throws JsonProcessingException {
+    void adminShouldBeForbiddenForCreatingPostcodes() throws JacksonException {
 
         final var response = doPostRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -244,13 +244,13 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenCreatingCourtPostcodes() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingCourtPostcodes() throws JacksonException {
         final var response = doPostRequest(BIRMINGHAM_COURT_POSTCODES_PATH, getTestPostcodesJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldNotBeAbleToCreatePostcodesWhenCourtNotFound() throws JsonProcessingException {
+    void shouldNotBeAbleToCreatePostcodesWhenCourtNotFound() throws JacksonException {
 
         final var response = doPostRequest(
             COURT_NOT_FIND_PATH,
@@ -262,7 +262,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    void shouldNotBeAbleToCreatePostcodesAlreadyExist() throws JsonProcessingException {
+    void shouldNotBeAbleToCreatePostcodesAlreadyExist() throws JacksonException {
 
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_ALREADY_THERE);
 
@@ -276,7 +276,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* Delete request tests section. ***************************************************************/
     @Test
-    void shouldNotDeleteInvalidPostcodes() throws JsonProcessingException {
+    void shouldNotDeleteInvalidPostcodes() throws JacksonException {
 
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
 
@@ -291,7 +291,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void adminShouldBeForbiddenForDeletingPostcodes() throws JsonProcessingException {
+    void adminShouldBeForbiddenForDeletingPostcodes() throws JacksonException {
 
         final var response = doDeleteRequest(
             BIRMINGHAM_COURT_POSTCODES_PATH,
@@ -301,13 +301,13 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenDeletingCourtPostcodes() throws JsonProcessingException {
+    void shouldRequireATokenWhenDeletingCourtPostcodes() throws JacksonException {
         final var response = doDeleteRequest(BIRMINGHAM_COURT_POSTCODES_PATH, getTestPostcodesJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldNotDeletePostcodesDoNotExist() throws JsonProcessingException {
+    void shouldNotDeletePostcodesDoNotExist() throws JacksonException {
 
         final String updatedJson = objectMapper().writeValueAsString(POSTCODES_DO_NOT_EXIST);
 
@@ -322,7 +322,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* PUT request tests section. ***************************************************************/
 
     @Test
-    void shouldMovePostcodesToADifferentCourt() throws JsonProcessingException {
+    void shouldMovePostcodesToADifferentCourt() throws JacksonException {
 
         final String postcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_TO_MOVE);
         Response response = doGetRequest(
@@ -368,7 +368,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void adminShouldBeForbiddenForMovingPostcodes() throws JsonProcessingException {
+    void adminShouldBeForbiddenForMovingPostcodes() throws JacksonException {
         final var response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -378,7 +378,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenMovingPostcodes() throws JsonProcessingException {
+    void shouldRequireATokenWhenMovingPostcodes() throws JacksonException {
         final var response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
             getTestPostcodesJson()
@@ -387,7 +387,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotMovePostcodesIfNotInSourceCourts() throws JsonProcessingException {
+    void shouldNotMovePostcodesIfNotInSourceCourts() throws JacksonException {
 
         // Clean up both destination court postcodes if lingering from previous run failure
         cleanUpTestData(BIRMINGHAM_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(POSTCODES_TO_MOVE_NOT_FOUND));
@@ -406,7 +406,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JsonProcessingException {
+    void shouldNotMovePostcodesIfAlreadyExistsInDestinationCourt() throws JacksonException {
 
         // Clean up both destination court postcodes if lingering from previous run failure
         cleanUpTestData(WOLVERHAMPTON_COURT_POSTCODES_PATH, objectMapper().writeValueAsString(singletonList(CONFLICT_POSTCODE)));
@@ -441,7 +441,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotMoveInvalidPostcodes() throws JsonProcessingException {
+    void shouldNotMoveInvalidPostcodes() throws JacksonException {
         final String invalidPostcodesToMoveJson = objectMapper().writeValueAsString(POSTCODES_INVALID);
         final var response = doPutRequest(
             BIRMINGHAM_TO_WOLVERHAMPTON_COURT_POSTCODES_PATH,
@@ -463,7 +463,7 @@ class AdminCourtPostcodeEndpointTest extends AdminFunctionalTestBase {
         return response.body().jsonPath().getList(".", String.class);
     }
 
-    private static String getTestPostcodesJson() throws JsonProcessingException {
+    private static String getTestPostcodesJson() throws JacksonException {
         final List<String> postcodes = Arrays.asList("B140", "B141", "B142");
         return objectMapper().writeValueAsString(postcodes);
     }

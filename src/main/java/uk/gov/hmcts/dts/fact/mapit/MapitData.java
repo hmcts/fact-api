@@ -1,11 +1,12 @@
 package uk.gov.hmcts.dts.fact.mapit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import tools.jackson.databind.JsonNode;
+
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 
 import java.util.Optional;

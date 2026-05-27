@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,5 +19,7 @@ public class AddressType {
     @Id
     private Integer id;
     private String name;
+
+    @Column(name = "name_cy")
     private String nameCy;
 }

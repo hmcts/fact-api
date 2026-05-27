@@ -2,11 +2,11 @@ package uk.gov.hmcts.dts.fact.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 import uk.gov.hmcts.dts.fact.entity.Court;
 import uk.gov.hmcts.dts.fact.entity.CourtType;
 import uk.gov.hmcts.dts.fact.entity.DxCode;
@@ -44,6 +44,7 @@ public class CourtWithDistance {
     @JsonProperty("types")
     private List<String> courtTypes;
     private List<CourtAddress> addresses;
+    @JsonProperty("areas_of_law")
     private List<AreaOfLaw> areasOfLaw;
     private Boolean displayed;
     private Boolean hideAols;

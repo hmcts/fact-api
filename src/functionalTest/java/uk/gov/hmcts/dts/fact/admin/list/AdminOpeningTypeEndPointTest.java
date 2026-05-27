@@ -1,8 +1,8 @@
 package uk.gov.hmcts.dts.fact.admin.list;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningType;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -99,7 +99,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateOpeningType() throws JsonProcessingException {
+    void shouldUpdateOpeningType() throws JacksonException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final OpeningType expectedOpeningType = getUpdatedOpeningType();
         final String updatedJson = objectMapper().writeValueAsString(expectedOpeningType);
@@ -129,7 +129,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingOpeningType() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingOpeningType() throws JacksonException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -141,7 +141,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingOpeningType() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingOpeningType() throws JacksonException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -151,7 +151,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotFoundForUpdateWhenOpeningTypeDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForUpdateWhenOpeningTypeDoesNotExist() throws JacksonException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         currentOpeningType.setId(123);
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
@@ -207,7 +207,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    void shouldCreateOpeningType() throws JsonProcessingException {
+    void shouldCreateOpeningType() throws JacksonException {
 
         final List<OpeningType> currentOpeningType = getCurrentOpeningTypes();
         final OpeningType expectedOpeningType = createOpeningType();
@@ -243,7 +243,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForCreatingOpeningType() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingOpeningType() throws JacksonException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -255,7 +255,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenCreatingOpeningType() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingOpeningType() throws JacksonException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 
@@ -265,7 +265,7 @@ class AdminOpeningTypeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateOpeningTypeThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateOpeningTypeThatAlreadyExist() throws JacksonException {
         final OpeningType currentOpeningType = getCurrentOpeningType();
         final String testJson = objectMapper().writeValueAsString(currentOpeningType);
 

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,10 +18,12 @@ public class ServiceAreaWithCourtReferencesWithDistance {
     private String onlineUrl;
     private List<CourtReferenceWithDistance> courts;
 
+    @JsonIgnore
     public ServiceAreaWithCourtReferencesWithDistance(final String slug) {
         this.slug = slug;
     }
 
+    @JsonIgnore
     public ServiceAreaWithCourtReferencesWithDistance(final uk.gov.hmcts.dts.fact.entity.ServiceArea serviceArea, final List<CourtReferenceWithDistance> courts) {
         this.slug = serviceArea.getSlug();
         this.name = chooseString(serviceArea.getNameCy(), serviceArea.getName());

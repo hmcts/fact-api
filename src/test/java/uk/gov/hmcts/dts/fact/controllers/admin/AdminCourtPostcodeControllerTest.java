@@ -1,17 +1,17 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.exception.PostcodeExistedException;
 import uk.gov.hmcts.dts.fact.exception.PostcodeNotFoundException;
@@ -89,7 +89,7 @@ class AdminCourtPostcodeControllerTest {
     }
 
     @BeforeAll
-    static void setUp() throws JsonProcessingException {
+    static void setUp() throws JacksonException {
         expectedPostcodeJson = OBJECT_MAPPER.writeValueAsString(TEST_POSTCODES);
         expectedExistedPostcodesJson = OBJECT_MAPPER.writeValueAsString(EXISTED_POSTCODE);
         expectedNotFoundPostcodesJson = OBJECT_MAPPER.writeValueAsString(NOT_FOUND_POSTCODE);

@@ -1,17 +1,17 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtHistory;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtHistoryService;
@@ -86,42 +86,46 @@ class AdminCourtHistoryControllerTest {
     @Test
     void shouldRetrieveAllCourtHistories() throws Exception {
         when(adminCourtHistoryService.getAllCourtHistory()).thenReturn(FAKE_COURT_HISTORIES);
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS).build();
 
-        final String courtHistoriesJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+        final String courtHistoriesJson = mapper.writeValueAsString(FAKE_COURT_HISTORIES);
         mockMvc.perform(get(PATH + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoriesJson));
+            .andExpect(content().json(courtHistoriesJson));
     }
 
     @Test
     void shouldRetrieveACourtHistoryBySlug() throws Exception {
         when(adminCourtHistoryService.getCourtHistoryByCourtSlug("i-am-a-slug")).thenReturn(FAKE_COURT_HISTORIES);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+
+        final String courtHistoryJson = mapper.writeValueAsString(FAKE_COURT_HISTORIES);
         mockMvc.perform(get(PATH + "/i-am-a-slug" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
     void shouldRetrieveACourtHistoryById() throws Exception {
         when(adminCourtHistoryService.getCourtHistoryById(4)).thenReturn(FAKE_COURT_HISTORY);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORY);
+
+        final String courtHistoryJson = mapper.writeValueAsString(FAKE_COURT_HISTORY);
         mockMvc.perform(get(PATH + "/id/4" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
@@ -136,28 +140,32 @@ class AdminCourtHistoryControllerTest {
     void shouldRetrieveCourtHistoriesByCourtId() throws Exception {
         when(adminCourtHistoryService.getCourtHistoryByCourtId(12)).thenReturn(FAKE_COURT_HISTORIES);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+
+        final String courtHistoryJson = mapper.writeValueAsString(FAKE_COURT_HISTORIES);
         mockMvc.perform(get(PATH + "/court-id/12" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
     void shouldRetrieveCourtHistoriesByName() throws Exception {
         when(adminCourtHistoryService.getCourtHistoryByCourtName("fakeCourt1")).thenReturn(FAKE_COURT_HISTORIES);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+
+        final String courtHistoryJson = mapper.writeValueAsString(FAKE_COURT_HISTORIES);
         mockMvc.perform(get(PATH + "/name/fakeCourt1" + PATH_SUFFIX))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
@@ -168,10 +176,12 @@ class AdminCourtHistoryControllerTest {
                                                             null);
         when(adminCourtHistoryService.addCourtHistory(newFakeCourtHistory)).thenReturn(newFakeCourtHistory);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(newFakeCourtHistory);
+
+        final String courtHistoryJson = mapper.writeValueAsString(newFakeCourtHistory);
 
         mockMvc.perform(post(PATH + "/" + PATH_SUFFIX)
                             .with(csrf())
@@ -190,10 +200,12 @@ class AdminCourtHistoryControllerTest {
                                                             null);
         when(adminCourtHistoryService.updateCourtHistory(updatedCourtHistory)).thenReturn(updatedCourtHistory);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(updatedCourtHistory);
+
+        final String courtHistoryJson = mapper.writeValueAsString(updatedCourtHistory);
 
         mockMvc.perform(put(PATH + PATH_SUFFIX)
                             .with(csrf())
@@ -208,15 +220,17 @@ class AdminCourtHistoryControllerTest {
     void shouldBeAbleToDeleteACourtHistoryById() throws Exception {
         when(adminCourtHistoryService.deleteCourtHistoryById(4)).thenReturn(FAKE_COURT_HISTORY);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORY);
+
+        final String courtHistoryJson = mapper.writeValueAsString(FAKE_COURT_HISTORY);
 
         mockMvc.perform(delete(PATH + "/id/" + 4 + PATH_SUFFIX).with(csrf()))
                             .andExpect(status().isOk())
                             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                            .andExpect(content().string(courtHistoryJson));
+                            .andExpect(content().json(courtHistoryJson));
 
     }
 
@@ -232,25 +246,29 @@ class AdminCourtHistoryControllerTest {
     void shouldBeAbleToDeleteAllCourtHistoryOfACourtById() throws Exception {
         when(adminCourtHistoryService.deleteCourtHistoriesByCourtId(11)).thenReturn(FAKE_COURT_HISTORIES);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+
+        final String courtHistoryJson = mapper.writeValueAsString(FAKE_COURT_HISTORIES);
 
         mockMvc.perform(delete(PATH + "/court-id/" + 11 + PATH_SUFFIX).with(csrf()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().string(courtHistoryJson));
+            .andExpect(content().json(courtHistoryJson));
     }
 
     @Test
     void shouldBeAbleToUpdateCourtHistoriesOfaGivenCourt() throws Exception {
         when(adminCourtHistoryService.updateCourtHistoriesBySlug(FAKE_COURT_SLUG, FAKE_COURT_HISTORIES)).thenReturn(FAKE_COURT_HISTORIES);
 
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
-        OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
 
-        final String courtHistoryJson = OBJECT_MAPPER.writeValueAsString(FAKE_COURT_HISTORIES);
+
+        final String courtHistoryJson = mapper.writeValueAsString(FAKE_COURT_HISTORIES);
 
         mockMvc.perform(put(PATH + "/" + FAKE_COURT_SLUG + PATH_SUFFIX)
                             .with(csrf())

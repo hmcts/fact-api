@@ -1,9 +1,9 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.html.sanitizer.OwaspHtmlSanitizer;
 import uk.gov.hmcts.dts.fact.model.admin.Facility;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -79,7 +79,7 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* PUT request tests section. ***************************************************************/
     @Test
-    void shouldUpdateCourtFacilities() throws JsonProcessingException {
+    void shouldUpdateCourtFacilities() throws JacksonException {
         final List<Facility> currentCourtFacilities = getCurrentFacilities();
         final List<Facility> facilitiesToBeUpdated = updateFacilities(currentCourtFacilities);
         final String updatedJson = objectMapper().writeValueAsString(facilitiesToBeUpdated);
@@ -114,13 +114,13 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingFacilitiesForTheCourt() throws JacksonException {
         final var response = doPutRequest(AYLESBURY_COURT_FACILITIES_PATH, getTestFacilities());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingFacilitiesForTheCourt() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingFacilitiesForTheCourt() throws JacksonException {
         final var response = doPutRequest(
             AYLESBURY_COURT_FACILITIES_PATH,
             Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestFacilities()
@@ -129,7 +129,7 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotUpdateFacilitiesWhenCourtSlugNotFound() throws JsonProcessingException {
+    void shouldNotUpdateFacilitiesWhenCourtSlugNotFound() throws JacksonException {
         final var response = doPutRequest(
             COURT_NOT_FIND_PATH,
             Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -162,7 +162,7 @@ class AdminCourtFacilityEndpointTest extends AdminFunctionalTestBase {
         return updatedFacilities;
     }
 
-    private static String getTestFacilities() throws JsonProcessingException {
+    private static String getTestFacilities() throws JacksonException {
         final List<Facility> facilities = Arrays.asList(
             new Facility(TEST_FACILITY_ID_1, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY),
             new Facility(TEST_FACILITY_ID_2, TEST_FACILITY_DESCRIPTION, TEST_FACILITY_DESCRIPTION_CY)

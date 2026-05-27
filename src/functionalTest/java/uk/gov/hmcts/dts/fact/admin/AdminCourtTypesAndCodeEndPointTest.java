@@ -1,10 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.CourtType;
 import uk.gov.hmcts.dts.fact.model.admin.CourtTypesAndCodes;
 import uk.gov.hmcts.dts.fact.model.admin.DxCode;
@@ -110,7 +110,7 @@ class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
     /************************************************************* Court type and code PUT request tests section. ***************************************************************/
 
     @Test
-    void shouldUpdateCourtTypesAndCode() throws JsonProcessingException {
+    void shouldUpdateCourtTypesAndCode() throws JacksonException {
 
         final var response = doGetRequest(
             WOLVERHAMTON_COURT_TYPES_AND_CODE_PATH,
@@ -143,7 +143,7 @@ class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingCourtTypesAndCode() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtTypesAndCode() throws JacksonException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
@@ -155,7 +155,7 @@ class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingCourtTypesAndCode() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtTypesAndCode() throws JacksonException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 
@@ -167,7 +167,7 @@ class AdminCourtTypesAndCodeEndPointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotUpdatingCourtTypesAndCodeForCourtDoesNotExist() throws JsonProcessingException {
+    void shouldNotUpdatingCourtTypesAndCodeForCourtDoesNotExist() throws JacksonException {
         final CourtTypesAndCodes currentCourtTypesAndCodes = getCurrentCourtTypesAndCodes();
         final String testJson = objectMapper().writeValueAsString(currentCourtTypesAndCodes);
 

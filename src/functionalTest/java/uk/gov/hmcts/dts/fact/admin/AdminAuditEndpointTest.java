@@ -1,12 +1,12 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.Audit;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -41,7 +41,7 @@ class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
 
     @BeforeEach
-    void setUpTestData() throws JsonProcessingException {
+    void setUpTestData() throws JacksonException {
         setUpOpeningTimes();
     }
 
@@ -108,7 +108,7 @@ class AdminAuditEndpointTest extends AdminFunctionalTestBase {
 
     /************************************************************* utility methods. ***************************************************************/
 
-    private void setUpOpeningTimes() throws JsonProcessingException {
+    private void setUpOpeningTimes() throws JacksonException {
         Response response = doGetRequest(ADMINISTRATIVE_COURT_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         final List<OpeningTime> currentOpeningTimes = response.body().jsonPath().getList(".", OpeningTime.class);
 

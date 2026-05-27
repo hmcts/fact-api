@@ -1,9 +1,9 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.Court;
 import uk.gov.hmcts.dts.fact.model.admin.OpeningTime;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
@@ -59,7 +59,7 @@ class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldAddAndRemoveOpeningTimes() throws JsonProcessingException {
+    void shouldAddAndRemoveOpeningTimes() throws JacksonException {
 
         //calling user delete lock endpoint to remove lock for the court
         final var delResponse = doDeleteRequest(DELETE_LOCK_BY_EMAIL_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken),
@@ -111,13 +111,13 @@ class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingOpeningTimes() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingOpeningTimes() throws JacksonException {
         final var response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, getTestOpeningTimeJson());
         assertThat(response.statusCode()).isEqualTo(UNAUTHORIZED.value());
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingOpeningTimes() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingOpeningTimes() throws JacksonException {
         final var response = doPutRequest(BIRMINGHAM_OPENING_TIMES_PATH, Map.of(AUTHORIZATION, BEARER + forbiddenToken), getTestOpeningTimeJson());
         assertThat(response.statusCode()).isEqualTo(FORBIDDEN.value());
     }
@@ -135,7 +135,7 @@ class AdminCourtOpeningTimeEndpointTest extends AdminFunctionalTestBase {
         return updatedOpeningTimes;
     }
 
-    private static String getTestOpeningTimeJson() throws JsonProcessingException {
+    private static String getTestOpeningTimeJson() throws JacksonException {
         final List<OpeningTime> openingTimes = Arrays.asList(
             new OpeningTime(2, "Monday to Friday 9.00am - 5.00pm"),
             new OpeningTime(5, "Monday to Friday 9.00am - 3.30pm"),

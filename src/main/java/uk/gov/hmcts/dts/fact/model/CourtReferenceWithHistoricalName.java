@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class CourtReferenceWithHistoricalName {
     private Integer region;
     private String historicalName;
 
+    @JsonIgnore
     public CourtReferenceWithHistoricalName(uk.gov.hmcts.dts.fact.entity.Court courtEntity, CourtHistory courtHistory) {
         this.name = chooseString(courtEntity.getNameCy(), courtEntity.getName());
         this.slug = courtEntity.getSlug();

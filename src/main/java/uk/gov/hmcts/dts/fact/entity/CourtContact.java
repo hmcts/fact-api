@@ -1,6 +1,7 @@
 package uk.gov.hmcts.dts.fact.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,6 +36,8 @@ public class CourtContact {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "contact_id")
     private Contact contact;
+
+    @Column(name = "sort_order")
     private Integer sortOrder;
 
     public CourtContact(final Court court, final Contact contact, final Integer sortOrder) {

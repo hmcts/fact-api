@@ -1,13 +1,13 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.hmcts.dts.fact.model.CourtForDownload;
 import uk.gov.hmcts.dts.fact.model.OpeningTime;
 import uk.gov.hmcts.dts.fact.model.admin.Court;
@@ -370,7 +370,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* court photo PUT request tests section. ***************************************************************/
 
     @Test
-    void shouldUpdateCourtPhoto() throws JsonProcessingException {
+    void shouldUpdateCourtPhoto() throws JacksonException {
         final var response = doGetRequest(
             CARDIFF_COURT_PHOTO_PATH, Map.of(AUTHORIZATION, BEARER + authenticatedToken));
         assertThat(response.statusCode()).isEqualTo(OK.value());
@@ -399,7 +399,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingCourtPhoto() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingCourtPhoto() throws JacksonException {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
@@ -410,7 +410,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingCourtPhoto() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingCourtPhoto() throws JacksonException {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
@@ -420,7 +420,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotFoundForPhotoUpdateWhenCourtDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForPhotoUpdateWhenCourtDoesNotExist() throws JacksonException {
         ImageFile imageFile = new ImageFile();
         imageFile.setImageName(TEST_STRING);
         final Response response = doPutRequest(
@@ -433,7 +433,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* court POST request tests section. ***************************************************************/
 
     @Test
-    void shouldCreateNewCourt() throws JsonProcessingException {
+    void shouldCreateNewCourt() throws JacksonException {
         EXPECTED_NEW_COURT.setNewCourtName("new court1");
         final String newCourtNameJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final var response = doPostRequest(
@@ -465,7 +465,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
 
 
     @Test
-    void shouldNotCreateCourtThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateCourtThatAlreadyExist() throws JacksonException {
         EXPECTED_NEW_COURT.setNewCourtName("aldershot Justice Centre");
         final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final Response response = doPostRequest(
@@ -476,7 +476,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void adminShouldBeForbiddenToCreateCourt() throws JsonProcessingException {
+    void adminShouldBeForbiddenToCreateCourt() throws JacksonException {
         final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final Response response = doPostRequest(
             COURTS_ENDPOINT,
@@ -486,7 +486,7 @@ class AdminCourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenCreatingNewCourt() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingNewCourt() throws JacksonException {
         final String testJson = objectMapper().writeValueAsString(EXPECTED_NEW_COURT);
         final Response response = doPostRequest(
             COURTS_ENDPOINT, testJson);

@@ -1,18 +1,19 @@
 package uk.gov.hmcts.dts.fact.controllers.admin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.hmcts.dts.fact.entity.CourtLock;
 import uk.gov.hmcts.dts.fact.exception.LockExistsException;
 import uk.gov.hmcts.dts.fact.services.admin.AdminCourtLockService;
@@ -51,7 +52,7 @@ class AdminCourtLockControllerTest {
     private static final String BASE_PATH = "/admin/courts/";
     private static final String CHILD_PATH = "/lock";
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final String TEST_SLUG_1 = "mosh-slug";
     private static final String TEST_SLUG_2 = "kupo-slug";
@@ -91,7 +92,10 @@ class AdminCourtLockControllerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+        ObjectMapper mapper = JsonMapper.builder()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
+
     }
 
     @Test
@@ -102,7 +106,7 @@ class AdminCourtLockControllerTest {
         MvcResult mvcResult = mockMvc.perform(get(BASE_PATH + TEST_SLUG + CHILD_PATH))
             .andExpect(status().isOk()).andReturn();
 
-        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(
+        assertThat(Arrays.asList(mapper.readValue(
             mvcResult.getResponse().getContentAsString(),
             uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class
         )))
@@ -116,13 +120,13 @@ class AdminCourtLockControllerTest {
 
         MvcResult mvcResult = mockMvc.perform(post(BASE_PATH + TEST_SLUG + CHILD_PATH)
                                                   .with(csrf())
-                                                  .content(OBJECT_MAPPER.writeValueAsString(EXPECTED_COURT_LOCK_LIST.get(
+                                                  .content(mapper.writeValueAsString(EXPECTED_COURT_LOCK_LIST.get(
                                                       0)))
                                                   .contentType(MediaType.APPLICATION_JSON)
                                                   .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated()).andReturn();
 
-        assertThat(OBJECT_MAPPER.readValue(
+        assertThat(mapper.readValue(
             mvcResult.getResponse().getContentAsString(),
             uk.gov.hmcts.dts.fact.model.admin.CourtLock.class
         ))
@@ -136,7 +140,7 @@ class AdminCourtLockControllerTest {
 
         mockMvc.perform(post(BASE_PATH + TEST_SLUG + CHILD_PATH)
                             .with(csrf())
-                            .content(OBJECT_MAPPER.writeValueAsString(EXPECTED_COURT_LOCK_LIST.get(0)))
+                            .content(mapper.writeValueAsString(EXPECTED_COURT_LOCK_LIST.get(0)))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isConflict())
@@ -152,7 +156,7 @@ class AdminCourtLockControllerTest {
                                                   .with(csrf()))
             .andExpect(status().isOk()).andReturn();
 
-        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(
+        assertThat(Arrays.asList(mapper.readValue(
             mvcResult.getResponse().getContentAsString(),
             uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class
         )))
@@ -168,7 +172,7 @@ class AdminCourtLockControllerTest {
                                                   .with(csrf()))
             .andExpect(status().isOk()).andReturn();
 
-        assertThat(Arrays.asList(OBJECT_MAPPER.readValue(
+        assertThat(Arrays.asList(mapper.readValue(
             mvcResult.getResponse().getContentAsString(),
             uk.gov.hmcts.dts.fact.model.admin.CourtLock[].class
         )))

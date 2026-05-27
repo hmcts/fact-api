@@ -1,8 +1,8 @@
 package uk.gov.hmcts.dts.fact.admin.list;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.AreaOfLaw;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -109,7 +109,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateAreaOfLaw() throws JsonProcessingException {
+    void shouldUpdateAreaOfLaw() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         final AreaOfLaw expectedAreaOfLaw = getUpdatedHousingPossessionAreaOfLaw();
         final String updatedJson = objectMapper().writeValueAsString(expectedAreaOfLaw);
@@ -139,7 +139,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingAreaOfLaw() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingAreaOfLaw() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
@@ -151,7 +151,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingAreaOfLaw() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingAreaOfLaw() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
@@ -161,7 +161,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotFoundForUpdateWhenAreaOfLawDoesNotExist() throws JsonProcessingException {
+    void shouldNotFoundForUpdateWhenAreaOfLawDoesNotExist() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         currentAreaOfLaw.setId(1234);
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
@@ -174,7 +174,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldReturnBadRequestForUpdateAreaOfLawWhenIdIsNull() throws JsonProcessingException {
+    void shouldReturnBadRequestForUpdateAreaOfLawWhenIdIsNull() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         currentAreaOfLaw.setId(null);
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
@@ -188,7 +188,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* POST request tests section. ***************************************************************/
 
     @Test
-    void shouldCreateAreaOfLaw() throws JsonProcessingException {
+    void shouldCreateAreaOfLaw() throws JacksonException {
 
         final List<AreaOfLaw> currentAreasOfLaw = getCurrentAreasOfLaw();
         final AreaOfLaw expectedAreaOfLaw = createAreaOfLaw();
@@ -225,7 +225,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForCreatingAreaOfLaw() throws JsonProcessingException {
+    void shouldBeForbiddenForCreatingAreaOfLaw() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
@@ -237,7 +237,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenCreatingAreaOfLaw() throws JsonProcessingException {
+    void shouldRequireATokenWhenCreatingAreaOfLaw() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
@@ -247,7 +247,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotCreateAreaOfLawThatAlreadyExist() throws JsonProcessingException {
+    void shouldNotCreateAreaOfLawThatAlreadyExist() throws JacksonException {
         final AreaOfLaw currentAreaOfLaw = getCurrentAreaOfLaw();
         final String testJson = objectMapper().writeValueAsString(currentAreaOfLaw);
 
@@ -261,7 +261,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Delete request tests section. ***************************************************************/
 
     @Test
-    void adminShouldBeForbiddenForDeletingAreasOfLaw() throws JsonProcessingException {
+    void adminShouldBeForbiddenForDeletingAreasOfLaw() throws JacksonException {
 
         final var response = doDeleteRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT + AREA_OF_LAW_ID_HOUSING_POSSESSION,
@@ -271,7 +271,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenDeletingAreaOfLaw() throws JsonProcessingException {
+    void shouldRequireATokenWhenDeletingAreaOfLaw() throws JacksonException {
         final Response response = doDeleteRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT + AREA_OF_LAW_ID_HOUSING_POSSESSION,
             getTestAreasOfLawJson()
@@ -280,7 +280,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotDeleteAreaOfLawNotFound() throws JsonProcessingException {
+    void shouldNotDeleteAreaOfLawNotFound() throws JacksonException {
 
         final var response = doDeleteRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT + AREA_OF_LAW_ID_NOT_FOUND,
@@ -291,7 +291,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldNotDeleteAreaOfLawInUse() throws JsonProcessingException {
+    void shouldNotDeleteAreaOfLawInUse() throws JacksonException {
 
         final var response = doDeleteRequest(
             ADMIN_AREAS_OF_LAW_ENDPOINT + AREA_OF_LAW_ID_HOUSING_POSSESSION,
@@ -328,7 +328,7 @@ class AdminAreasOfLawEndpointTest extends AdminFunctionalTestBase {
         );
     }
 
-    private String getTestAreasOfLawJson() throws JsonProcessingException {
+    private String getTestAreasOfLawJson() throws JacksonException {
         return objectMapper().writeValueAsString(getUpdatedHousingPossessionAreaOfLaw());
     }
 

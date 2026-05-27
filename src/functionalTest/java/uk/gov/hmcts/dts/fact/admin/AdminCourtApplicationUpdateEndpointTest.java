@@ -1,10 +1,10 @@
 package uk.gov.hmcts.dts.fact.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.core.JacksonException;
 import uk.gov.hmcts.dts.fact.model.admin.ApplicationUpdate;
 import uk.gov.hmcts.dts.fact.util.AdminFunctionalTestBase;
 
@@ -74,7 +74,7 @@ class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTestBase {
     /************************************************************* Update Request Tests. ***************************************************************/
 
     @Test
-    void shouldUpdateApplicationUpdatesTypes() throws JsonProcessingException {
+    void shouldUpdateApplicationUpdatesTypes() throws JacksonException {
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final List<ApplicationUpdate> expectedApplicationUpdateTypes = addNewApplicationUpdateType(currentApplicationUpdateTypes);
         final String updatedJson = objectMapper().writeValueAsString(expectedApplicationUpdateTypes);
@@ -104,7 +104,7 @@ class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRequireATokenWhenUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
+    void shouldRequireATokenWhenUpdatingApplicationUpdatesTypes() throws JacksonException {
 
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
@@ -113,7 +113,7 @@ class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldBeForbiddenForUpdatingApplicationUpdatesTypes() throws JsonProcessingException {
+    void shouldBeForbiddenForUpdatingApplicationUpdatesTypes() throws JacksonException {
 
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
@@ -125,7 +125,7 @@ class AdminCourtApplicationUpdateEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JsonProcessingException {
+    void shouldnotUpdateAndReturnNotFoundWhenCourtDoesNotExist() throws JacksonException {
 
         final List<ApplicationUpdate> currentApplicationUpdateTypes = getCurrentApplicationUpdateTypes();
         final String originalJson = objectMapper().writeValueAsString(currentApplicationUpdateTypes);
