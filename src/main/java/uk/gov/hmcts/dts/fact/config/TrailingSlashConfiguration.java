@@ -14,6 +14,13 @@ public class TrailingSlashConfiguration {
     public FilterRegistrationBean<Filter> trailingSlashHandlerFilter() {
         FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(
+            // Spring Boot 4  use strict path matching, so
+            // "/courts" and "/courts/" are treated as different request paths.
+            // During migration this caused endpoint and security matcher drift
+            // (for example public search vs admin-protected routes) depending on
+            // whether clients sent a trailing slash. Wrapping the request here
+            // normalizes paths early so controller mappings and auth rules behave
+            // consistently for both forms.
             UrlHandlerFilter
                 .trailingSlashHandler("/**")
                 .wrapRequest()
@@ -23,4 +30,3 @@ public class TrailingSlashConfiguration {
         return registrationBean;
     }
 }
-
