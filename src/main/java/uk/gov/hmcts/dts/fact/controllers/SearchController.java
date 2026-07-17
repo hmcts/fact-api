@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.dts.fact.entity.CourtByRoadDistance;
 import uk.gov.hmcts.dts.fact.model.CourtReferenceWithDistance;
 import uk.gov.hmcts.dts.fact.model.CourtWithDistance;
 import uk.gov.hmcts.dts.fact.model.ServiceAreaWithCourtReferencesWithDistance;
@@ -88,6 +89,15 @@ public class SearchController {
             message = "Provided postcode is not valid")
         @PathVariable String postcode) {
         return ok(courtService.getNearestCourtReferencesByPostcode(postcode));
+    }
+
+    @GetMapping(path = "/results/accurate/{postcode}")
+    public ResponseEntity<List<CourtByRoadDistance>> findCourtsByPostcodeAccurate(@Pattern(regexp =
+        "([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z]\\d{1,2})|(([A-Za-z]"
+            + "[A-Ha-hJ-Yj-y]\\d{1,2})|(([A-Za-z]\\d[A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y]"
+            + "\\d[A-Za-z]?))))\\s?\\d[A-Za-z]{2})",
+        message = "Provided postcode is not valid") @PathVariable String postcode) {
+            return ok(courtService.getCourtsByPostcodeAccurate(postcode));
     }
 
     /**
