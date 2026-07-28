@@ -154,23 +154,33 @@ class CourtsEndpointTest extends AdminFunctionalTestBase {
     }
 
     @Test
-    void shouldRetrieveCourtsByPrefixWhereDisplayedFalseAndCaseLower() {
-        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=a&active=false");
+    void shouldRetrieveDisplayedCourtsByLowerCasePrefix() {
+        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=a");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
-        assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'A'));
-        assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'a'));
+        assertThat(courtReferences)
+            .isNotEmpty()
+            .allSatisfy(court -> {
+                assertThat(court.getName()).startsWithIgnoringCase("a");
+                assertThat(court.getSlug()).startsWith("a");
+                assertThat(court.isDisplayed()).isTrue();
+            });
     }
 
     @Test
-    void shouldRetrieveCourtsByPrefixWhereDispayedTrueAndCaseUpper() {
-        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=B&active=true");
+    void shouldRetrieveDisplayedCourtsByUpperCasePrefix() {
+        final var response = doGetRequest(COURT_SEARCH_BY_PREFIX_AND_ACTIVE_ENDPOINT + "?prefix=B");
         assertThat(response.statusCode()).isEqualTo(OK.value());
 
         final List<CourtReference> courtReferences = response.body().jsonPath().getList(".", CourtReference.class);
-        assertTrue(courtReferences.stream().allMatch(c -> c.getName().charAt(0) == 'B'));
-        assertTrue(courtReferences.stream().allMatch(c -> c.getSlug().charAt(0) == 'b'));
+        assertThat(courtReferences)
+            .isNotEmpty()
+            .allSatisfy(court -> {
+                assertThat(court.getName()).startsWithIgnoringCase("b");
+                assertThat(court.getSlug()).startsWith("b");
+                assertThat(court.isDisplayed()).isTrue();
+            });
     }
 
     @Test
