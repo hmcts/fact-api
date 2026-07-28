@@ -17,6 +17,8 @@ public class CourtMigrationData {
     private final String name;
     private final String slug;
     private final Boolean open;
+    private final String warningNotice;
+    private final String warningNoticeCy;
     private final Integer regionId;
     @JsonProperty("is_service_centre")
     private final Boolean serviceCentre;

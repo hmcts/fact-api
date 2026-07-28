@@ -73,6 +73,8 @@ public class MigrationCourtDataMapper {
             court.getName(),
             court.getSlug(),
             Boolean.TRUE.equals(court.getDisplayed()),
+            court.getAlert(),
+            court.getAlertCy(),
             court.getRegionId(),
             court.getServiceCentre() != null,
             mapCourtServiceAreas(court),

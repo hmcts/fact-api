@@ -109,6 +109,7 @@ class MigrationPrivateDataServiceTest {
         court.setName("Test Court");
         court.setSlug("test-slug");
         court.setAlert("urgent notice");
+        court.setAlertCy("rhybudd brys");
         court.setDisplayed(Boolean.TRUE);
         court.setRegionId(9);
         court.setServiceCentre(new ServiceCentre());
@@ -282,6 +283,8 @@ class MigrationPrivateDataServiceTest {
         assertThat(first.getId()).isEqualTo("12");
         assertThat(first.getSlug()).isEqualTo("test-slug");
         assertThat(first.getOpen()).isTrue();
+        assertThat(first.getWarningNotice()).isEqualTo("urgent notice");
+        assertThat(first.getWarningNoticeCy()).isEqualTo("rhybudd brys");
         assertThat(first.getRegionId()).isEqualTo(9);
         assertThat(first.getServiceCentre()).isTrue();
         assertThat(first.getCourtServiceAreas()).hasSize(1);

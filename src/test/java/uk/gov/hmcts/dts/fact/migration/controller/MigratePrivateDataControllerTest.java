@@ -48,6 +48,8 @@ class MigratePrivateDataControllerTest {
             "Test Court",
             "test-slug",
             Boolean.TRUE,
+            "Urgent notice",
+            "Rhybudd brys",
             9,
             Boolean.TRUE,
             List.of(new CourtServiceAreaData(50, List.of(2, 3), "regional")),

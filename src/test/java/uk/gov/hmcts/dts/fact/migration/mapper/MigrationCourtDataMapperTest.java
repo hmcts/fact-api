@@ -1,5 +1,7 @@
 package uk.gov.hmcts.dts.fact.migration.mapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,7 +59,8 @@ class MigrationCourtDataMapperTest {
         court.setName("Test Court");
         court.setSlug("test-court");
         court.setDisplayed(true);
-        court.setAlert("notice");
+        court.setAlert("<p>Urgent &amp; important</p>");
+        court.setAlertCy("<p>Rhybudd &amp; pwysig</p>");
 
         when(courtAreaOfLawRepository.getCourtAreaOfLawByCourtId(1)).thenReturn(List.of());
         when(courtAreaOfLawSpoeRepository.getAllByCourtId(1)).thenReturn(List.of());
@@ -68,6 +71,11 @@ class MigrationCourtDataMapperTest {
         assertThat(result.getName()).isEqualTo("Test Court");
         assertThat(result.getSlug()).isEqualTo("test-court");
         assertThat(result.getOpen()).isTrue();
+        assertThat(result.getWarningNotice()).isEqualTo("<p>Urgent &amp; important</p>");
+        assertThat(result.getWarningNoticeCy()).isEqualTo("<p>Rhybudd &amp; pwysig</p>");
+        JsonNode json = new ObjectMapper().valueToTree(result);
+        assertThat(json.get("warning_notice").asText()).isEqualTo("<p>Urgent &amp; important</p>");
+        assertThat(json.get("warning_notice_cy").asText()).isEqualTo("<p>Rhybudd &amp; pwysig</p>");
         assertThat(result.getServiceCentre()).isFalse();
         assertThat(result.getCourtServiceAreas()).isNull();
         assertThat(result.getCourtLocalAuthorities()).isNull();
