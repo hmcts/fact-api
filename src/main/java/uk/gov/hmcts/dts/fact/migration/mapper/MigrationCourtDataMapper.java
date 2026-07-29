@@ -13,6 +13,7 @@ import uk.gov.hmcts.dts.fact.entity.CourtDxCode;
 import uk.gov.hmcts.dts.fact.entity.CourtLocalAuthorityAreaOfLaw;
 import uk.gov.hmcts.dts.fact.entity.Facility;
 import uk.gov.hmcts.dts.fact.entity.InPerson;
+import uk.gov.hmcts.dts.fact.entity.LocalAuthority;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.entity.ServiceAreaCourt;
 import uk.gov.hmcts.dts.fact.migration.model.CourtAreasOfLawData;
@@ -73,6 +74,8 @@ public class MigrationCourtDataMapper {
             court.getName(),
             court.getSlug(),
             Boolean.TRUE.equals(court.getDisplayed()),
+            court.getAlert(),
+            court.getAlertCy(),
             court.getRegionId(),
             court.getServiceCentre() != null,
             mapCourtServiceAreas(court),
@@ -113,10 +116,10 @@ public class MigrationCourtDataMapper {
                 List<Integer> localAuthorityIds = entry.getValue().stream()
                     .map(CourtLocalAuthorityAreaOfLaw::getLocalAuthority)
                     .filter(Objects::nonNull)
-                    .map(localAuthority -> localAuthority.getId())
+                    .map(LocalAuthority::getId)
                     .filter(Objects::nonNull)
                     .distinct()
-                    .collect(Collectors.toList());
+                    .toList();
 
                 if (localAuthorityIds.isEmpty()) {
                     return null;
@@ -256,7 +259,7 @@ public class MigrationCourtDataMapper {
             .map(AreaOfLaw::getId)
             .filter(Objects::nonNull)
             .distinct()
-            .collect(Collectors.toList());
+            .toList();
 
         String id = courtAreas.stream()
             .map(CourtAreaOfLaw::getId)
@@ -290,7 +293,7 @@ public class MigrationCourtDataMapper {
             .map(AreaOfLaw::getId)
             .filter(Objects::nonNull)
             .distinct()
-            .collect(Collectors.toList());
+            .toList();
 
         String id = courtAreas.stream()
             .map(CourtAreaOfLawSpoe::getId)
