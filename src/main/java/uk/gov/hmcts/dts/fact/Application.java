@@ -5,10 +5,9 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import uk.gov.hmcts.dts.fact.mapit.MapitClient;
 
 @SpringBootApplication
-@EnableFeignClients(basePackageClasses = MapitClient.class)
+@EnableFeignClients
 @ImportAutoConfiguration({FeignAutoConfiguration.class})
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class Application {
