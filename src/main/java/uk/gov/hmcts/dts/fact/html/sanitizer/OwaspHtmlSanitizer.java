@@ -15,12 +15,7 @@ public final class OwaspHtmlSanitizer {
      * @return the sanitized HTML string
      */
     public static String sanitizeHtml(String untrustedHtml) {
-        PolicyFactory policy = new HtmlPolicyBuilder()
-            .allowElements("a", "strong", "em")
-            .allowUrlProtocols("https", "mailto")
-            .allowAttributes("href").onElements("a")
-            .requireRelNofollowOnLinks()
-            .toFactory();
+        PolicyFactory policy = new HtmlPolicyBuilder().toFactory();
         return policy.sanitize(untrustedHtml);
     }
 }
