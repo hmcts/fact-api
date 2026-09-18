@@ -3,6 +3,7 @@ package uk.gov.hmcts.dts.fact.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.dts.fact.entity.CourtByRoadDistance;
 import uk.gov.hmcts.dts.fact.entity.ServiceArea;
 import uk.gov.hmcts.dts.fact.exception.InvalidPostcodeException;
 import uk.gov.hmcts.dts.fact.exception.NotFoundException;
@@ -55,6 +56,7 @@ public class CourtService {
     private final FallbackProximitySearch fallbackProximitySearch;
 
     private final CourtHistoryRepository courtHistoryRepository;
+    private final AzureMapsService azureMapsService;
 
     /**
      * Constructor for the CourtService.
@@ -76,7 +78,7 @@ public class CourtService {
                         final ServiceAreaRepository serviceAreaRepository,
                         final ServiceAreaSearchFactory serviceAreaSearchFactory,
                         final FallbackProximitySearch fallbackProximitySearch,
-                        final CourtHistoryRepository courtHistoryRepository) {
+                        final CourtHistoryRepository courtHistoryRepository, AzureMapsService azureMapsService) {
         this.mapitService = mapitService;
         this.courtWithDistanceRepository = courtWithDistanceRepository;
         this.proximitySearch = proximitySearch;
@@ -85,6 +87,7 @@ public class CourtService {
         this.serviceAreaSearchFactory = serviceAreaSearchFactory;
         this.fallbackProximitySearch = fallbackProximitySearch;
         this.courtHistoryRepository = courtHistoryRepository;
+        this.azureMapsService = azureMapsService;
     }
 
     /**
@@ -229,6 +232,10 @@ public class CourtService {
                   courtReferences.size(), postcode, Arrays.stream(courtReferences.toArray()).toArray()
         );
         return courtReferences;
+    }
+
+    public List<CourtByRoadDistance> getCourtsByPostcodeAccurate(String postcode) {
+        return azureMapsService.findNearestCourtsByRoad(postcode, 50);
     }
 
     public ServiceAreaWithCourtReferencesWithDistance getNearestCourtsByPostcodeSearch(final String postcode,
