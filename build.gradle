@@ -18,7 +18,7 @@ plugins {
   id 'org.springframework.boot' version '3.5.16'
   id 'org.owasp.dependencycheck' version '12.2.2'
   id 'com.github.ben-manes.versions' version '0.66.0'
-  id 'org.sonarqube' version '7.2.3.7755'
+  id 'org.sonarqube' version '7.5.0.8588'
   id 'org.flywaydb.flyway' version "$flywayVersion"
   id 'io.freefair.lombok' version '9.8.2'
 }
