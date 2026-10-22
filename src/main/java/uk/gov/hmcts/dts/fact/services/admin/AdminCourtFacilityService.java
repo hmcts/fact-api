@@ -1,5 +1,6 @@
 package uk.gov.hmcts.dts.fact.services.admin;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,8 +76,12 @@ public class AdminCourtFacilityService {
             .orElseThrow(() -> new NotFoundException(slug));
 
         courtFacilities.forEach(facility -> {
-            facility.setDescription(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescription()));
-            facility.setDescriptionCy(OwaspHtmlSanitizer.sanitizeHtml(facility.getDescriptionCy()));
+            facility.setDescription(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                StringEscapeUtils.unescapeHtml4(facility.getDescription())
+            )));
+            facility.setDescriptionCy(StringEscapeUtils.unescapeHtml4(OwaspHtmlSanitizer.sanitizeHtml(
+                StringEscapeUtils.unescapeHtml4(facility.getDescriptionCy())
+            )));
         });
 
         List<CourtFacility> existingList = getExistingCourtFacilities(courtEntity);
