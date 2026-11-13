@@ -13,6 +13,6 @@ class OwaspHtmlSanitizerTest {
         assertThat(sanitizeHtml("<p>urgent notice <a hrfe='#'>https://www.google.com</a></p>"))
             .isEqualTo("urgent notice https://www.google.com");
         assertThat(sanitizeHtml("<p>urgent notice <strong>bold</strong></p>"))
-            .isEqualTo("urgent notice <strong>bold</strong>");
+            .isEqualTo("urgent notice bold");
     }
 }
